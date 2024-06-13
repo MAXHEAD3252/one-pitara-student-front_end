@@ -44,7 +44,7 @@ const DashboardPage: FC=() => {
           <br />
           <br />
           <br />
-          Your Dashboard is under development <br />  <br /> It will be back soon...
+          Your Updated Dashboard is under development <br />  <br /> It will be back soon...
         </h1>
     </div>
     {/* <div className='row g-5 g-xl-10 mb-5 '>

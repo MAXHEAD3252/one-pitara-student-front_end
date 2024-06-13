@@ -150,7 +150,7 @@ const CreateEditEnquiry = ({ show, handleClose, enqId }: Props) => {
   };
 
   // Ensure data is an array and check for valid first element
-  
+    
 
   useEffect(() => {
     const fetchById = async () => {
