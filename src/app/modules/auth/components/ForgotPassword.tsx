@@ -228,7 +228,7 @@ export function ForgotPassword({role}) {
             </button>
           </Link>
         )}
-        {!showLogin && (
+        {/* {!showLogin && ( */}
           <Link to="/auth/login">
             <button
               type="button"
@@ -239,7 +239,7 @@ export function ForgotPassword({role}) {
               Login
             </button>
           </Link>
-        )}
+        {/* // )} */}
         </div>
       </div>
     </form>
