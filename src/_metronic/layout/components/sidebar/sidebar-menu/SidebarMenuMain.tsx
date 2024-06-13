@@ -56,7 +56,7 @@ const SidebarMenuMain = () => {
   };
 
 
-  const getIconPath = (moduleName) => {
+  const getIconPath = (moduleName) => {    
     // Convert module name to a valid filename format    
     // const iconName = moduleName.replace(/\s+/g, "-").toLowerCase();
     return `media/logos/${moduleName}.svg`;
