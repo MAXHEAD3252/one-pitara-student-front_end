@@ -17,7 +17,7 @@ const AdmissionsPage: FC = () => {
   const [displayComponent, setDisplayComponent] = useState("chart");
   const [selectedValue, setSelectedValue] = useState("current_year");
 
-  // @ts-expect-error
+  // @ts-expect-error    
   const handleSelectValue = (value) => {
     setSelectedValue(value);
   };
