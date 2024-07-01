@@ -90,6 +90,7 @@ export * from './tables/TablesWidget31'
 export * from './tables/TablesWidget32'
 export * from './tables/TablesWidget33'
 export * from './tables/TablesWidget34'
+export * from './tables/TablesWidget35'
 
 // engage
 export * from './engage/EngageWidget1'

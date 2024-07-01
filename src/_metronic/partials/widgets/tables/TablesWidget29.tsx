@@ -26,6 +26,8 @@ const TablesWidget29: React.FC<Props> = ({ className, role_id }) => {
           throw new Error("Network response was not ok");
         }
         const data = await response.json();
+        console.log(data);
+        
         setSchoolModules(data);
       } catch (error) {
         console.error("Error fetching school details:", error);

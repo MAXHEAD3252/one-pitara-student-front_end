@@ -41,6 +41,11 @@ import { Student } from "../pages/StaffPages/User.tsx/Student";
 import { Expense } from "../pages/StaffPages/Expense/Expense";
 import { EnquiryDetails } from "../pages/StaffPages/Enquiry/EnquiryDetails";
 import { StudentDetails } from "../pages/StaffPages/Student_Information/StudentDetails";
+import { StudentProfiles } from "../pages/StaffPages/Student_Managment/StudentProfiles";
+import {LMSDashboard} from "../pages/StaffPages/LMS/LMSDashboard";
+import { CourseContentManagement } from "../pages/StaffPages/LMS/CourseContentManagement/CourseContentManagement";
+import {SelectSections} from "../pages/StaffPages/LMS/CourseContentManagement/SelectSections";
+import {SelectSubject} from "../pages/StaffPages/LMS/CourseContentManagement/SelectSubject";
 
 export const routesConfig = {
   principal: [
@@ -193,7 +198,7 @@ export const routesConfig = {
     {
       path: "/enquiry-details",
       component: EnquiryDetails,
-      sidebarName: "Admission Enquiry",
+      sidebarName: "Inquiry Management",
     },
   ],
 
@@ -231,6 +236,46 @@ export const routesConfig = {
       path: "/dashboard",
       component: DashboardWrapper,
       sidebarName: "Dashboard",
+    },
+    {
+      path: "/enquiry-details",
+      component: EnquiryDetails,
+      sidebarName: "Inquiry Management",
+    },
+    {
+      path: "/student-profile",
+      component: StudentProfiles,
+      sidebarName: "Student Profiles",
+    },
+    {
+      path: "/lms-dashboard",
+      component: LMSDashboard,
+      sidebarName: "LMS Dashboard",
+    },
+    {
+      path: "/lms-course-management",
+      component: CourseContentManagement,
+      sidebarName: "Course Content Management",
+    },
+    {
+      path: "/select-sections/:classId",
+      component: SelectSections,
+    },
+    {
+      path: "/select-subjects/:classId/:section_id",
+      component: SelectSubject,
+    },
+    {
+      path: "/select-Topics",
+      // component: SelectSections,
+    },
+    {
+      path: "/upload-center",
+      // component: SelectSections,
+    },
+    {
+      path: "/view-topics",
+      component: CourseContentManagement,
     },
     {
       path: "/user-roles",
