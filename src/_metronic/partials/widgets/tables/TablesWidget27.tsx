@@ -1,5 +1,7 @@
 import { React, useState, useEffect } from "react";
 import { useAuth } from "../../../../app/modules/auth/core/Auth";
+import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
+
 type Props = {
   className: string;
   school_id?: number;
@@ -15,7 +17,7 @@ const TablesWidget27: React.FC<Props> = ({ className, school_id }) => {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          `http://127.0.0.1:5000/api/superadmin/permission-modules`
+          `${DOMAIN}/api/superadmin/permission-modules`
         );
         if (!response.ok) {
           throw new Error("Network response was not ok");
@@ -38,9 +40,8 @@ const TablesWidget27: React.FC<Props> = ({ className, school_id }) => {
         super_admin_id: auth?.id,
         permissions: permissions
       };
-      console.log(response);
   
-      const sendData = await fetch('http://127.0.0.1:5000/api/superadmin/store-permission', {
+      const sendData = await fetch('${DOMAIN}/api/superadmin/store-permission', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json' // Specify content type as JSON

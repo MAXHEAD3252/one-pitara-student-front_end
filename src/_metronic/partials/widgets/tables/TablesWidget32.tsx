@@ -34,7 +34,6 @@ const TablesWidget32: React.FC = () => {
 
     fetchEnquiries();
   }, []);
-  console.log(data);
 
   const handleSearch = (event) => {
     setSearchQuery(event.target.value);

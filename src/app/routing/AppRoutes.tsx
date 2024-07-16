@@ -35,7 +35,7 @@ const AppRoutes: FC = () => {
               <Route path="/*" element={<PrivateRoutes />} />
               if(auth.role === "student")
               {auth.role === "student" && (
-                <Route index element={<Navigate to="/DashboardStudent" />} />
+                <Route index element={<Navigate to="/dashboard" />} />
               )}
               {auth.role === "staff" && (
                 <Route index element={<Navigate to="/Dashboard" />} />

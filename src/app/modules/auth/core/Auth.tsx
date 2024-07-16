@@ -89,10 +89,10 @@ const AuthInit: FC<WithChildren> = ({ children }) => {
         setShowSplashScreen(false);
       }
     };
-    const requestStudent = async (mobile_no: string, role: string) => {
+    const requestStudent = async (user_id: string, role: string) => {
       try {
         if (!currentUser && role === "student") {
-          const { data } = await getStudentByToken(mobile_no);
+          const { data } = await getStudentByToken(user_id);
           if (data) {
             setCurrentUser(data);
           }
@@ -138,8 +138,8 @@ const AuthInit: FC<WithChildren> = ({ children }) => {
     };
 
     
-    if (auth && auth.mobile && auth.role) {
-      requestStudent(auth.mobile, auth.role);
+    if (auth && auth.user_id && auth.role) {
+      requestStudent(auth.user_id, auth.role);
     } else if (auth && auth.id && auth.role ==='staff') {
       requestStaff(auth.id);
     } 

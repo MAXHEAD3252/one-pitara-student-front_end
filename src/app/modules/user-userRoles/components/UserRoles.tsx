@@ -10,7 +10,6 @@ import { TablesWidget16 } from "../../../../_metronic/partials/widgets/tables/Ta
 const UserRolesPage: FC = () => {
   const [displayComponent, setDisplayComponent] = useState(false);
   const handleToggle = (value: boolean) => {
-    console.log(value);
     setDisplayComponent(value);
   };
 

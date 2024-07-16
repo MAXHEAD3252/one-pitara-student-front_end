@@ -35,7 +35,6 @@ const ListsWidget11: FC<Props> = () => {
           }
         );
         const data = await response.json();
-        console.log(data);
 
         // Get today's timetable
         const today = new Date().toLocaleDateString("en-US", {

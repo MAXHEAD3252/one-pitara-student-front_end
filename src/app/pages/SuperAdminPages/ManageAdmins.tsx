@@ -7,13 +7,13 @@ import { HeaderWrapper } from "../../../_metronic/layout/components/header_staff
 import { useEffect, useState } from "react";
 import { TablesWidget26 } from "../../../_metronic/partials/widgets/tables/TablesWidget26";
 import { CreateAdminModal } from "../../../_metronic/partials/modals/create-app-stepper/CreateAdminModal";
+import { DOMAIN } from "../../routing/ApiEndpoints";
 
 export const ManageAdminPage = () => {
   const [schools, setSchools] = useState([]);
   const [schoolId, setSchoolId] = useState(0);
   const [selectedSchool, setSelectedSchool] = useState(null);
   const [showModal, setShowModal]=useState(false);
-  console.log(schoolId);
   
 
   useEffect(() => {
@@ -21,7 +21,7 @@ export const ManageAdminPage = () => {
     const fetchSchools = async () => {
       try {
         const response = await fetch(
-          `http://127.0.0.1:5000/api/superadmin/get_schools`
+          `${DOMAIN}/api/superadmin/get_schools`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch schools");

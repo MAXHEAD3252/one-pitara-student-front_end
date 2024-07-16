@@ -111,7 +111,6 @@ const ToolbarDashBoard = () => {
   const handleRangeUpdate = (range: any) => {
     // Update the selected range in the main component
     setSelectedRange([range]);
-    console.log(range);
   };
 
   const handleCalendarToggle = () => {

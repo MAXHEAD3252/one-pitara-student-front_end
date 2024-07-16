@@ -13,7 +13,6 @@ type Props = {
 
 const TablesWidget21: FC<Props> = ({ className }) => {
   const { currentUser } = useAuth();
-  console.log(currentUser);
   
   const [tableData, setTableData] = useState([]);
   const [showCreateAppModal, setShowCreateAppModal] = useState(false);
@@ -40,7 +39,6 @@ const TablesWidget21: FC<Props> = ({ className }) => {
   };
   const handlePrimaryButtonClick = () => {
     setShowCreateAppModal(true);
-    console.log("clicked");
   };
   const handlePageClick = (page: number) => {
     setCurrentPage(page);
@@ -51,7 +49,6 @@ const TablesWidget21: FC<Props> = ({ className }) => {
     const fetchData = async () => {
       try {
         const session_id = currentUser?.student_session_id;
-        console.log(session_id);
         // Assuming currentUser contains the session_id
         const response = await fetch(
           "https://erp.innoveraschool.com/site/get_leave_request_details",
@@ -66,7 +63,6 @@ const TablesWidget21: FC<Props> = ({ className }) => {
         );
 
         const data = await response.json();
-        console.log(data);
 
         setTableData(data);
       } catch (error) {

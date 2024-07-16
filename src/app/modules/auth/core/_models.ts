@@ -176,5 +176,6 @@ export interface StudentModel {
   lastname:string
   token: string
   role:string
+  user_id:string
   
 }

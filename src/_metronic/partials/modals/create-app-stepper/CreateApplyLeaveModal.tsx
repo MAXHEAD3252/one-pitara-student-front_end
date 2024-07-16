@@ -69,7 +69,6 @@ const CreateApplyLeaveModal = ({ show, handleClose }: Props) => {
     const fetchData = async () => {
       try {
         const session_id = currentUser?.student_session_id;
-        console.log(session_id);
         // Assuming currentUser contains the session_id
         const response = await fetch(
           "https://erp.innoveraschool.com/site/get_leave_request_details",
@@ -84,7 +83,6 @@ const CreateApplyLeaveModal = ({ show, handleClose }: Props) => {
         );
 
         const data = await response.json();
-        console.log(data);
 
         setTableData(data);
       } catch (error) {

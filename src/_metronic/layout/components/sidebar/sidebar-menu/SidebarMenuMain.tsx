@@ -3,12 +3,15 @@ import { SidebarMenuItem } from "./SidebarMenuItem";
 import { useAuth } from "../../../../../app/modules/auth/core/Auth";
 import { useEffect, useState } from "react";
 import { routesConfig } from "../../../../../app/routing/RoutesConfig";
+import { DOMAIN } from "../../../../../app/routing/ApiEndpoints";
 
 const SidebarMenuMain = () => {
   const { currentUser } = useAuth();
   const userRole = currentUser?.role;
+  const userRoleName = currentUser?.roleName;
   const role_id = currentUser?.roleId;
   const [modulesData, setModulesData] = useState([]);
+
   
 
   useEffect(() => {
@@ -19,13 +22,16 @@ const SidebarMenuMain = () => {
         let apiUrl;
         switch (userRole) {
           case "admin":
-            apiUrl = `http://127.0.0.1:5000/api/superadmin/get-parent-module/${school_id}`;
+            apiUrl = `${DOMAIN}/api/superadmin/get-parent-module/${school_id}`;
             break;
           case "staff":
-            apiUrl = `http://127.0.0.1:5000/api/staff/get-modules/${school_id}/${role_id}`;
+            apiUrl = `${DOMAIN}/api/staff/get-modules/${school_id}/${role_id}`;
+            break;
+          case "student":
+            apiUrl = `${DOMAIN}/api/student/get-student-modules/${school_id}/${role_id}`;
             break;
           case "superadmin":
-            apiUrl = `http://127.0.0.1:5000/api/superadmin/get-modules`;
+            apiUrl = `${DOMAIN}/api/superadmin/get-modules`;
             break;
           default:
             throw new Error("Invalid user role");
@@ -47,10 +53,20 @@ const SidebarMenuMain = () => {
 
   
   const getPathForModule = (moduleName) => {
-    const userRoutes = routesConfig[userRole];
+    let userRoutes;
+    if(userRole === "admin" || "superadmin"){
+      userRoutes = routesConfig[userRole];
+    }else{
+      
+      userRoutes = routesConfig[userRoleName];
+      
+    }
+    
     const matchedRoute = userRoutes.find(
       (route) => route.sidebarName === moduleName
     );
+    
+    
 
     return matchedRoute ? matchedRoute.path : "/";
   };

@@ -8,7 +8,6 @@ import { ToolbarFeeMasterList } from "../../../../_metronic/layout/components/to
 const UserListPage: FC = () => {
   const [displayComponent, setDisplayComponent] = useState(false);
   const handleToggle = (value: boolean) => {
-    console.log(value);
     setDisplayComponent(value);
   };
 

@@ -2,6 +2,8 @@ import { useState } from "react";
 import * as Yup from "yup";
 import { useFormik } from "formik";
 import { Link } from "react-router-dom";
+import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
+
 
 const forgotPasswordSchema = Yup.object().shape({
   email: Yup.string().email("Wrong email format").required("Email is required"),
@@ -36,9 +38,8 @@ export function ForgotPassword({role}) {
         
         setLoading(true);
         
-        console.log(table);
         const response = await fetch(
-          "http://127.0.0.1:5000/api/staff/getemailchecked",  // Update with your actual API endpoint
+          "${DOMAIN}/api/staff/getemailchecked",  // Update with your actual API endpoint
           {
             method: "POST",
             headers: {
@@ -83,7 +84,7 @@ export function ForgotPassword({role}) {
         setLoading(true);
 
         const response = await fetch(
-          "http://127.0.0.1:5000/api/staff/updatepassword",  
+          "${DOMAIN}/api/staff/updatepassword",  
           {
             method: "POST",
             headers: {

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { Modal } from "react-bootstrap";
 import { useAuth } from "../../../../app/modules/auth/core/Auth";
+import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
 
 type Props = {
   show: boolean;
@@ -61,7 +62,7 @@ const CreateEnquiryAction = ({ show, handleClose, enqId }: Props) => {
   
       try {
         const response = await fetch(
-          `http://127.0.0.1:5000/api/staff/getEnquiryById/${schoolId}/${enqId}`
+          `${DOMAIN}/api/staff/getEnquiryById/${schoolId}/${enqId}`
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -90,7 +91,7 @@ const CreateEnquiryAction = ({ show, handleClose, enqId }: Props) => {
     e.preventDefault();
     try {
       const response = await fetch(
-        `http://127.0.0.1:5000/api/staff/update-followup/${schoolId}/${enqId}`,
+        `${DOMAIN}/api/staff/update-followup/${schoolId}/${enqId}`,
         {
           method: "PUT",
           headers: {

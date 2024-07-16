@@ -12,7 +12,6 @@ const ProfileHeader: FC = () => {
   const location = useLocation();
 
   const handleToggle = (value: boolean) => {
-    console.log(value);
   };
   return (
     <>

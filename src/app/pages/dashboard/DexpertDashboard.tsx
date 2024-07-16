@@ -4,30 +4,32 @@ import { PageTitle } from "../../../_metronic/layout/core";
 import { Content } from "../../../_metronic/layout/components/content";
 // import {useAuth} from '../../../../core/Auth'
 import { HeaderWrapper } from "../../../_metronic/layout/components/header_staff";
+// import { DOMAIN } from "../../../app/routing/ApiEndpoints";
+
 
 const DexpertDashboard: FC = () => {
   const [totalSchools, setTotalSchools] = useState<number | null>(null);
 
-  useEffect(() => {
-    // Fetch schools data from API
-    const fetchSchools = async () => {
-      try {
-        const response = await fetch(
-          `http://127.0.0.1:5000/api/superadmin/get_schools_count`
-        );
-        if (!response.ok) {
-          throw new Error("Failed to fetch schools");
-        }
-        const data = await response.json();
+  // useEffect(() => {
+  //   // Fetch schools data from API
+  //   const fetchSchools = async () => {
+  //     try {
+  //       const response = await fetch(
+  //         `${DOMAIN}/api/superadmin/get_schools_count`
+  //       );
+  //       if (!response.ok) {
+  //         throw new Error("Failed to fetch schools");
+  //       }
+  //       const data = await response.json();
 
-        setTotalSchools(data.totalSchools);
-      } catch (error) {
-        console.error("Error fetching schools:", error);
-      }
-    };
+  //       setTotalSchools(data.totalSchools);
+  //     } catch (error) {
+  //       console.error("Error fetching schools:", error);
+  //     }
+  //   };
 
-    fetchSchools();
-  }, []);
+  //   fetchSchools();
+  // }, []);
   return (
     <div className="bg-white">
       <HeaderWrapper toggleView={() => {}} />

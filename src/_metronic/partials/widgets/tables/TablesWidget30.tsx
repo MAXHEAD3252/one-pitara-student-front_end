@@ -1,5 +1,6 @@
 import { React, useState, useEffect } from "react";
 import { useAuth } from "../../../../app/modules/auth/core/Auth";
+import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
 
 const TablesWidget30: React.FC = ({ refresh, csvData }) => {
   const { currentUser } = useAuth();
@@ -10,7 +11,7 @@ const TablesWidget30: React.FC = ({ refresh, csvData }) => {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          `http://127.0.0.1:5000/api/staff/get-staff/${school_id}`
+          `${DOMAIN}/api/staff/get-staff/${school_id}`
         );
         if (!response.ok) {
           throw new Error("Network response was not ok");

@@ -24,13 +24,11 @@ const ChartsWidget15: FC = ({ selectedValue }: any) => {
     total_admissions_this_year: 0,
     total_admissions_past_year: 0,
   });
-  console.log(admissions);  
 
   const [admissionsData, setAdmissionsData] = useState<number[]>([0, 0]);
 
   // console.log(admissions.total_admissions_last_3_years[0].total_admissions);
 
-  console.log(admissions.total_admissions_this_year);
 
   const currentYear = new Date().getFullYear();
   const currentFinancialYear = `${currentYear - 1}-${currentYear}`;

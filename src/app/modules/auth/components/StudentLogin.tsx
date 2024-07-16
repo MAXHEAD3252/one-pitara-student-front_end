@@ -42,10 +42,9 @@ export function StudentLogin() {
       setLoading(true)
         try {
           const {data: auth} = await loginStudent(values.username, values.password)
-          console.log(auth);
           saveAuth(auth)
 
-          const {data: user} = await getStudentByToken(auth.mobile)
+          const {data: user} = await getStudentByToken(auth.user_id)
           
           setCurrentUser(user)
       } catch (error) {
@@ -57,6 +56,8 @@ export function StudentLogin() {
       }
     },
   })
+  
+  
 
   return (
     <form

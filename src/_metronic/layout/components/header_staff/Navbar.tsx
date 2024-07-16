@@ -18,7 +18,6 @@ type Props = {
 const Navbar = ({ toggleView = () => {} }: Props) => {
   const { currentUser } = useAuth();
   const userRole = currentUser?.role;
-  // console.log(userRole);
 
   const location = useLocation();
   const { config } = useLayout();

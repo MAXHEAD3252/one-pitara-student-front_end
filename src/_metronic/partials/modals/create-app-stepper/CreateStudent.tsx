@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { Modal } from "react-bootstrap";
 import { useAuth } from "../../../../app/modules/auth/core/Auth";
+import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
 // import "./Style.css";
 
 type Props = {
@@ -90,7 +91,7 @@ const CreateStudent = ({ show, handleClose, refresh }: Props) => {
 
       const schoolId = currentUser?.school_id;
       try {
-        const response = await fetch(`http://127.0.0.1:5000/api/staff/get-sections?schoolId=${schoolId}&classId=${formData.class}`);
+        const response = await fetch(`${DOMAIN}/api/staff/get-sections?schoolId=${schoolId}&classId=${formData.class}`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -111,7 +112,7 @@ const CreateStudent = ({ show, handleClose, refresh }: Props) => {
       if (!schoolId) return; 
 
       try {
-        const response = await fetch(`http://127.0.0.1:5000/api/staff/get-classes?schoolId=${schoolId}`);
+        const response = await fetch(`${DOMAIN}/api/staff/get-classes?schoolId=${schoolId}`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -128,7 +129,7 @@ const CreateStudent = ({ show, handleClose, refresh }: Props) => {
       if (!schoolId) return; 
 
       try {
-        const response = await fetch(`http://127.0.0.1:5000/api/staff/get-routes?schoolId=${schoolId}`);
+        const response = await fetch(`${DOMAIN}/api/staff/get-routes?schoolId=${schoolId}`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -146,7 +147,7 @@ const CreateStudent = ({ show, handleClose, refresh }: Props) => {
       if (!schoolId) return; 
 
       try {
-        const response = await fetch(`http://127.0.0.1:5000/api/staff/get-categories`);
+        const response = await fetch(`${DOMAIN}/api/staff/get-categories`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -167,7 +168,7 @@ const CreateStudent = ({ show, handleClose, refresh }: Props) => {
     e.preventDefault();
   
     try {
-      const response = await fetch("http://127.0.0.1:5000/api/staff/storeStudent", {
+      const response = await fetch("${DOMAIN}/api/staff/storeStudent", {
         method: 'POST',
           headers: {
             'Content-Type': 'application/json'

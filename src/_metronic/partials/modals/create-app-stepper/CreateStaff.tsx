@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 import { Modal } from "react-bootstrap";
 import { KTIcon } from "../../../helpers";
 import { useAuth } from "../../../../app/modules/auth/core/Auth";
+import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
 
 type Props = {
   show: boolean;
@@ -50,7 +51,7 @@ const CreateStaff = ({ show, handleClose, refresh }: Props) => {
     e.preventDefault();
     
     try {
-        const response = await fetch("http://127.0.0.1:5000/api/staff/store-staff", {
+        const response = await fetch("${DOMAIN}/api/staff/store-staff", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

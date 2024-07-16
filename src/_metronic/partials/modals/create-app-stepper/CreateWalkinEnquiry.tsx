@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { Modal } from "react-bootstrap";
 import { useAuth } from "../../../../app/modules/auth/core/Auth";
+import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
 // import "./Style.css";
 
 type Props = {
@@ -67,7 +68,7 @@ const CreateWalkinEnquiry = ({ show, handleClose }: Props) => {
   //     const schoolId = currentUser?.school_id;
   //     try {
   //       const response = await fetch(
-  //         `http://127.0.0.1:5000/api/staff/get-sections?schoolId=${schoolId}&classId=${formData.class}`
+  //         `${DOMAIN}/api/staff/get-sections?schoolId=${schoolId}&classId=${formData.class}`
   //       );
   //       if (!response.ok) {
   //         throw new Error(`HTTP error! status: ${response.status}`);
@@ -89,7 +90,7 @@ const CreateWalkinEnquiry = ({ show, handleClose }: Props) => {
 
       try {
         const response = await fetch(
-          `http://127.0.0.1:5000/api/staff/get-classes?schoolId=${schoolId}`
+          `${DOMAIN}/api/staff/get-classes?schoolId=${schoolId}`
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -108,7 +109,7 @@ const CreateWalkinEnquiry = ({ show, handleClose }: Props) => {
 
       try {
         const response = await fetch(
-          `http://127.0.0.1:5000/api/staff/get-reference?schoolId=${schoolId}`
+          `${DOMAIN}/api/staff/get-reference?schoolId=${schoolId}`
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -128,7 +129,7 @@ const CreateWalkinEnquiry = ({ show, handleClose }: Props) => {
 
       try {
         const response = await fetch(
-          `http://127.0.0.1:5000/api/staff/get-source?schoolId=${schoolId}`
+          `${DOMAIN}/api/staff/get-source?schoolId=${schoolId}`
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -147,7 +148,7 @@ const CreateWalkinEnquiry = ({ show, handleClose }: Props) => {
 
       try {
         const response = await fetch(
-          `http://127.0.0.1:5000/api/staff/get-session?schoolId=${schoolId}`
+          `${DOMAIN}/api/staff/get-session?schoolId=${schoolId}`
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -165,12 +166,10 @@ const CreateWalkinEnquiry = ({ show, handleClose }: Props) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
-    console.log(schoolId);
 
     try {
       const response = await fetch(
-        `http://127.0.0.1:5000/api/staff/walkinEnquiry/${schoolId}`,
+        `${DOMAIN}/api/staff/walkinEnquiry/${schoolId}`,
         {
           method: "POST",
           headers: {
@@ -201,7 +200,7 @@ const CreateWalkinEnquiry = ({ show, handleClose }: Props) => {
     
   //   try {
   //     const response = await fetch(
-  //       `http://127.0.0.1:5000/api/staff/walkinEnquiry/:${schoolId}`,
+  //       `${DOMAIN}/api/staff/walkinEnquiry/:${schoolId}`,
   //       {
   //         method: "POST",
   //         headers: {

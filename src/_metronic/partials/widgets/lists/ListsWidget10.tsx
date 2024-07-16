@@ -48,7 +48,6 @@ const ListsWidget10: FC<Props> = () => {
           }
         );
         const data = await response.json();
-        console.log(data);
 
         // Assuming the notices are an array in the response
         setNotices(data);

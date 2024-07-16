@@ -53,7 +53,6 @@ const TablesWidget19: FC = () => {
         );
 
         const data = await response.json();
-        console.log(data);
 
         // setTableData(data);
       } catch (error) {

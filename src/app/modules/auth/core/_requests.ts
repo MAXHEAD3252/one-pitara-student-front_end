@@ -1,15 +1,16 @@
 import axios from "axios";
 import { AdminModel, AuthModel, StudentModel,SuperAdminModel} from "./_models";
+import { DOMAIN } from "../../../routing/ApiEndpoints";
 
 const API_URL = import.meta.env.VITE_APP_API_URL;
 
-export const GET_STUDENT_BY_ACCESSTOKEN_URL = `https://erp.innoveraschool.com/site/get_erp_student_data`;
-export const GET_ADMIN_BY_ACCESSTOKEN_URL = `http://127.0.0.1:5000/api/staff/staff-details`;
-export const GET_SUPER_ADMIN_BY_ACCESSTOKEN_URL = `http://127.0.0.1:5000/api/superadmin/by_token`;
+export const GET_STUDENT_BY_ACCESSTOKEN_URL = `${DOMAIN}/api/student/student-details`;
+export const GET_ADMIN_BY_ACCESSTOKEN_URL = `${DOMAIN}/api/staff/staff-details`;
+export const GET_SUPER_ADMIN_BY_ACCESSTOKEN_URL = `${DOMAIN}/api/superadmin/by_token`;
 
-export const LOGIN_URL_STAFF = `http://127.0.0.1:5000/api/staff/staff-login`;
-export const LOGIN_URL_STUDENT = `https://erp.innoveraschool.com/site/userlogin_api/`;
-export const LOGIN_URL_SUPER_ADMIN = `http://127.0.0.1:5000/api/superadmin/login`;
+export const LOGIN_URL_STAFF = `${DOMAIN}/api/staff/staff-login`;
+export const LOGIN_URL_STUDENT = `${DOMAIN}/api/student/userlogin`;
+export const LOGIN_URL_SUPER_ADMIN = `${DOMAIN}/api/superadmin/login`;
 // export const REGISTER_URL = `${API_URL}/register`;
 export const REQUEST_PASSWORD_URL = `${API_URL}/forgot_password`;
 
@@ -97,9 +98,9 @@ export function requestPassword(username: string) {
   });
 }
 
-export async function getStudentByToken(token: string) {
+export async function getStudentByToken(user_id: string) {
   const response = await axios.post<StudentModel>(GET_STUDENT_BY_ACCESSTOKEN_URL, {
-    mobile_no: token,
+    user_id,
    } );
    
    return(

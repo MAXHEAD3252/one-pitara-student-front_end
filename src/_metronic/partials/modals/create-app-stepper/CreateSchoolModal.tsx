@@ -7,6 +7,7 @@ import {KTIcon} from '../../../helpers'
 import {Step1} from './steps/Step1'
 import {Step2} from './steps/Step2'
 import {Step3} from './steps/Step3'
+import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
 // import {Step4} from './steps/Step4'
 // import {Step5} from './steps/Step5'
 
@@ -25,12 +26,11 @@ const CreateSchoolModal = ({ show, handleClose,refresh }: Props) => {
   const [hasError, setHasError] = useState(false)
   const [formData, setFormData] =  useState<ICreateAppData | null>(null);
   
-console.log(formData);
 
     const fetchSchools = async () => {
       try {
         const Data = formData?.appBasic;
-        const response = await fetch('http://127.0.0.1:5000/api/superadmin/create_school', {
+        const response = await fetch('${DOMAIN}/api/superadmin/create_school', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'

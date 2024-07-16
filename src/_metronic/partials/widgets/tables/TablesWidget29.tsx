@@ -1,5 +1,7 @@
-import { React, useState, useEffect } from "react";
-import { useAuth } from "../../../../app/modules/auth/core/Auth";
+import { useState, useEffect } from "react";
+import { useAuth } from "../../../../app/modules/auth"; 
+import { DOMAIN ,getParentModule,storeModuleRequest} from '../../../../app/routing/ApiEndpoints'; 
+
 type Props = {
   className: string;
   role_id?: number;
@@ -8,10 +10,11 @@ type Props = {
 
 const TablesWidget29: React.FC<Props> = ({ className, role_id }) => {
   const { currentUser } = useAuth();
-  const [schoolModules, setSchoolModules] = useState([]);
+  const [schoolModules, setschoolModules] = useState([]);
   // const [selectedIds, setSelectedIds] = useState([ ]);
   const [selectedModules, setSelectedModules] = useState({});
-  const school_id = currentUser?.school_id;
+  
+  const schoolId = currentUser?.school_id;
   
 
   
@@ -20,22 +23,21 @@ const TablesWidget29: React.FC<Props> = ({ className, role_id }) => {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          `http://127.0.0.1:5000/api/superadmin/get-parent-module/${school_id}`
+          `${DOMAIN}/${getParentModule}/${schoolId}`
         );
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
         const data = await response.json();
-        console.log(data);
         
-        setSchoolModules(data);
+        setschoolModules(data);
       } catch (error) {
         console.error("Error fetching school details:", error);
       }
     };
 
     fetchData();
-  }, [school_id]);
+  }, [schoolId]);
 
   const handleCheckbox = (moduleName: string, headerLabel: string) => {
     const updatedSelectedModules = { ...selectedModules };
@@ -60,7 +62,7 @@ const TablesWidget29: React.FC<Props> = ({ className, role_id }) => {
     try {
     
       
-      const response = await fetch(`http://localhost:5000/api/superadmin/save-module-request`, {
+      const response = await fetch(`${DOMAIN}/${storeModuleRequest}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -87,7 +89,7 @@ const TablesWidget29: React.FC<Props> = ({ className, role_id }) => {
     <div className={`card ${className}`}>
       <div className="card-header border-0 pt-5">
         <h3 className="card-title align-items-start flex-column">
-          <span className="card-label fw-bold fs-3 mb-1">School Module</span>
+          <span className="card-label fw-bold fs-3 mb-1">school Module</span>
         </h3>
       </div>
       <div className="card-body py-3">

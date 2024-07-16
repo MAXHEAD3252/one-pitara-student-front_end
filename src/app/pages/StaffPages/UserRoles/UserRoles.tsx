@@ -8,28 +8,11 @@ const Roles: FC = () => {
 
 
   return (
-    <div className="bg-body-secondary">    
+    <div className="">    
     
 
       <Content>
-        <div className="row g-5 g-xl-10 mb-6 mb-xl-5">
-            <div 
-            style={{
-             
-            }}>
-                <label
-                >Add Role: </label>
-                <input type="text" name="role" placeholder="Add a role..."/>
-            <button
-            className="btn btn-primary"
-            style={{
-                display:"flex",
-                margin:'10px'
-            }}>save</button>
-            </div>
-          <TablesWidget28 className={" "} /> 
-        </div>
-       
+        <TablesWidget28 className={""} />
       </Content>
     </div>
   );

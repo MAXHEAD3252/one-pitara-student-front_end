@@ -1,37 +1,37 @@
 // routesConfig.js
 
 import { DashboardWrapper } from "../pages/dashboard/DashboardWrapper";
-import { MenuTestPage } from "../pages/MenuTestPage";
-import { BuilderPageWrapper } from "../pages/layout-builder/BuilderPageWrapper";
+// import { MenuTestPage } from "../pages/MenuTestPage";
+// import { BuilderPageWrapper } from "../pages/layout-builder/BuilderPageWrapper";
 import { FeeDetails } from "../pages/StaffPages/FeeDetails/FeeDetails";
 import { LeadGeneration } from "../pages/StaffPages/LeadGeneration/LeadGeneration";
 import { ViewFeeMaster } from "../pages/StaffPages/FeeDetails/ViewFeeMaster";
 import { Income } from "../pages/StaffPages/IncomeExpenseDash/Income";
 import { DashboardStudent } from "../pages/dashboard/DashboardStudent";
-import UserAdminPage from "../modules/user-userRoles/UserAdminPage";
-import { StuTimeTable } from "../pages/StudentPages/StuClassSchedule/StuTimeTable";
-import { StuFees } from "../pages/StudentPages/StuFees";
-import { StuHomeWork } from "../pages/StudentPages/StuHomework/StuHomeWork";
-import { StuApplyLeave } from "../pages/StudentPages/StuApplyLeave";
-import { StuNoticeBoard } from "../pages/StudentPages/StuNoticeBoard";
-import StuAttendance from "../pages/StudentPages/StuAttendance";
-import { StuSyllabusStatus } from "../pages/StudentPages/StuSyllabusStatus";
-import StuAssignments from "../pages/StudentPages/StuAssignments";
-import StuBookIssued from "../pages/StudentPages/StuBookIssued";
-import StuBooks from "../pages/StudentPages/StuBooks";
-import StuExamResult from "../pages/StudentPages/StuExamResult";
-import StuHostelRoom from "../pages/StudentPages/StuHostelRoom";
-import StuLessonPlan from "../pages/StudentPages/StuLessonPlan";
-import StuOnlineExam from "../pages/StudentPages/StuOnlineExam";
-import StuOtherDownload from "../pages/StudentPages/StuOtherDownload";
-import StuStudyMaterial from "../pages/StudentPages/StuStudyMaterial";
-import StuSyllabus from "../pages/StudentPages/StuSyllabus";
-import StuTransportRoute from "../pages/StudentPages/StuTransportRoute";
-import StuExamSchedule from "../pages/StudentPages/StuExamSchedule";
+// import UserAdminPage from "../modules/user-userRoles/UserAdminPage";
+// import { StuTimeTable } from "../pages/StudentPages/StuClassSchedule/StuTimeTable";
+// import { StuFees } from "../pages/StudentPages/StuFees";
+// import { StuHomeWork } from "../pages/StudentPages/StuHomework/StuHomeWork";
+// import { StuApplyLeave } from "../pages/StudentPages/StuApplyLeave";
+// import { StuNoticeBoard } from "../pages/StudentPages/StuNoticeBoard";
+// import StuAttendance from "../pages/StudentPages/StuAttendance";
+// import { StuSyllabusStatus } from "../pages/StudentPages/StuSyllabusStatus";
+// import StuAssignments from "../pages/StudentPages/StuAssignments";
+// import StuBookIssued from "../pages/StudentPages/StuBookIssued";
+// import StuBooks from "../pages/StudentPages/StuBooks";
+// import StuExamResult from "../pages/StudentPages/StuExamResult";
+// import StuHostelRoom from "../pages/StudentPages/StuHostelRoom";
+// import StuLessonPlan from "../pageCourseContentManagements/StudentPages/StuLessonPlan";
+// import StuOnlineExam from "../pages/StudentPages/StuOnlineExam";
+// import StuOtherDownload from "../pages/StudentPages/StuOtherDownload";
+// import StuStudyMaterial from "../pages/StudentPages/StuStudyMaterial";
+// import StuSyllabus from "../pages/StudentPages/StuSyllabus";
+// import StuTransportRoute from "../pages/StudentPages/StuTransportRoute";
+// import StuExamSchedule from "../pages/StudentPages/StuExamSchedule";
 import { Enquiry } from "../pages/StaffPages/Enquiry/Enquiry";
 import { Admissions } from "../pages/StaffPages/Admission/Admissions";
 import { DashboardDexpert } from "../pages/dashboard/DexpertDashboard";
-import { ManageAdmins } from "../pages/SuperAdminPages/ManageAdmins";
+// import { ManageAdmins } from "../pages/SuperAdminPages/ManageAdmins";
 import { ManageSchools } from "../pages/SuperAdminPages/ManageSchools";
 import { ManageModules } from "../pages/SuperAdminPages/ManageModules";
 import { UserRoles } from "../pages/StaffPages/UserRoles/UserRoles";
@@ -40,12 +40,43 @@ import { Staff } from "../pages/StaffPages/User.tsx/Staff";
 import { Student } from "../pages/StaffPages/User.tsx/Student";
 import { Expense } from "../pages/StaffPages/Expense/Expense";
 import { EnquiryDetails } from "../pages/StaffPages/Enquiry/EnquiryDetails";
-import { StudentDetails } from "../pages/StaffPages/Student_Information/StudentDetails";
+// import { StudentDetails } from "../pages/StaffPages/Student_Information/StudentDetails";
 import { StudentProfiles } from "../pages/StaffPages/Student_Managment/StudentProfiles";
-import {LMSDashboard} from "../pages/StaffPages/LMS/LMSDashboard";
+import { LMSDashboard } from "../pages/StaffPages/LMS/LMSDashboard";
 import { CourseContentManagement } from "../pages/StaffPages/LMS/CourseContentManagement/CourseContentManagement";
-import {SelectSections} from "../pages/StaffPages/LMS/CourseContentManagement/SelectSections";
-import {SelectSubject} from "../pages/StaffPages/LMS/CourseContentManagement/SelectSubject";
+import { SelectSections } from "../pages/StaffPages/LMS/SelectSections";
+import { SelectSubject } from "../pages/StaffPages/LMS/SelectSubject";
+import { SelectLesson } from "../pages/StaffPages/LMS/SelectLesson";
+import ClassWiseMaterial from "../pages/StaffPages/LMS/CourseContentManagement/ClassWiseMaterial";
+import { SelectTopic } from "../pages/StaffPages/LMS/SelectTopic";
+import { AssignmentsManagement } from "../pages/StaffPages/LMS/Assignments/AssignmentsManagement";
+import CheckAssignments from "../pages/StaffPages/LMS/Assignments/CheckAssignments";
+import { Assignments } from "../pages/StudentPages/Lms/Assignments";
+import { CourseContent } from "../pages/StudentPages/Lms/CourseContent";
+import { StudenLessons } from "../pages/StudentPages/Lms/StudentLessons";
+import { StudenTopics } from "../pages/StudentPages/Lms/StudentTopics";
+import { StudenTopicMaterial } from "../pages/StudentPages/Lms/StudentTopicMaterial";
+import { Class } from "../pages/StaffPages/AcademicManagement/Class";
+import { Section } from "../pages/StaffPages/AcademicManagement/Section";
+import { Subject } from "../pages/StaffPages/AcademicManagement/Subject";
+import { ClassroomResource } from "../pages/StaffPages/AcademicManagement/ClassroomResource";
+import { ClassTimetable } from "../pages/StaffPages/AcademicManagement/ClassTimetable";
+import { PromoteStudent } from "../pages/StaffPages/AcademicManagement/PromoteStudent";
+import { SchoolProfile } from "../pages/SuperAdminPages/SchoolProfile";
+import { ManageRoles } from "../pages/SuperAdminPages/ManageRoles";
+import { OnboardingRequest } from "../pages/SuperAdminPages/OnboradingRequest";
+import { ClassSchedule } from "../pages/StaffPages/AcademicManagement/ClassSchedule";
+import { TeachersTimetable } from "../pages/StaffPages/AcademicManagement/TeachersTimetable";
+import { AssignTeacher } from "../pages/StaffPages/AcademicManagement/AssignTeacher";
+import { SubjectGroup } from "../pages/StaffPages/AcademicManagement/SubjectGroup";
+import { GradingSystem } from "../pages/StaffPages/AcademicManagement/GradingSystem";
+import { SolpReports } from "../pages/StaffPages/AcademicManagement/SolpReports";
+import { VisitorManagement } from "../pages/StaffPages/FrontOffice/VisitorManagement";
+import { PhoneCallLog } from "../pages/StaffPages/FrontOffice/PhoneCallLog";
+import { MailAndDispatchManagement } from "../pages/StaffPages/FrontOffice/MailAndDispatchManagement";
+import { DisableStudent } from "../pages/StaffPages/Student_Managment/DisableStudent";
+import { EmployeeManagement } from "../pages/StaffPages/HumanResource/EmployeeManagement";
+// import {CourseContent} from "../pages/StudentPages/CourseContent";
 
 export const routesConfig = {
   principal: [
@@ -72,7 +103,7 @@ export const routesConfig = {
     { path: "/reports", component: DashboardWrapper, sidebarName: "Reports" },
     { path: "/events", component: DashboardWrapper, sidebarName: "Events" },
   ],
-  vicePrincipal: [
+  "Vice Principal": [
     {
       path: "/disciplinary-records",
       component: DashboardWrapper,
@@ -92,6 +123,11 @@ export const routesConfig = {
       path: "/student-analytics",
       component: DashboardWrapper,
       sidebarName: "Student Analytics",
+    },
+    {
+      path: "/lms-course-management",
+      component: CourseContentManagement,
+      sidebarName: "Course Content Management",
     },
     { path: "/events", component: DashboardWrapper, sidebarName: "Events" },
   ],
@@ -139,7 +175,13 @@ export const routesConfig = {
       sidebarName: "Communication Tools",
     },
   ],
-  teacher: [
+  Teacher: [
+    { path: "/", component: DashboardWrapper, sidebarName: "Dashboard" },
+    {
+      path: "/dashboard",
+      component: DashboardWrapper,
+      sidebarName: "Dashboard",
+    },
     {
       path: "/gradebook",
       component: DashboardWrapper,
@@ -170,22 +212,101 @@ export const routesConfig = {
       component: DashboardWrapper,
       sidebarName: "Communication Tools",
     },
+    {
+      path: "/lms-dashboard",
+      component: LMSDashboard,
+      sidebarName: "LMS Dashboard",
+    },
+    {
+      path: "/lms-course-management",
+      component: CourseContentManagement,
+      sidebarName: "Course Content Management",
+    },
+    {
+      path: "/lms-course-management/select-sections/:classId",
+      component: SelectSections,
+    },
+    {
+      path: "/lms-course-management/material-wise",
+      component: ClassWiseMaterial,
+    },
+    {
+      path: "/lms-course-management/select-subjects",
+      component: SelectSubject,
+    },
+    {
+      path: "/lms-course-management/select-lessons",
+      component: SelectLesson,
+    },
+    {
+      path: "/lms-course-management/select-Topics",
+      component: SelectTopic,
+    },
+
+    {
+      path: "/lms-Assigmnent-management",
+      component: AssignmentsManagement,
+      sidebarName: "Assignment Management",
+    },
+
+    {
+      path: "/lms-Assigmnent-management/assignment-wise",
+      component: CheckAssignments,
+    },
+    {
+      path: "/lms-Assigmnent-management/select-sections/:classId",
+      component: SelectSections,
+    },
+
+    {
+      path: "/lms-Assigmnent-management/select-subjects",
+      component: SelectSubject,
+    },
+    {
+      path: "/lms-Assigmnent-management/select-lessons",
+      component: SelectLesson,
+    },
+    {
+      path: "/lms-Assigmnent-management/select-Topics",
+      component: SelectTopic,
+    },
+    {
+      path: "/upload-center",
+      // component: SelectSections,
+    },
+    {
+      path: "/view-topics",
+      component: CourseContentManagement,
+    },
   ],
   student: [
+    { path: "/", component: DashboardStudent, sidebarName: "Dashboard" },
     {
-      path: "/student/dashboard",
+      path: "/dashboard",
       component: DashboardStudent,
       sidebarName: "Dashboard",
     },
     {
-      path: "/student/apply-leave",
-      component: StuApplyLeave,
-      sidebarName: "Apply Leave",
+      path: "/assignments",
+      component: Assignments,
+      sidebarName: "Assignments",
     },
     {
-      path: "/student/assignments",
-      component: StuAssignments,
-      sidebarName: "Assignments",
+      path: "/course-content",
+      component: CourseContent,
+      sidebarName: "Course Content",
+    },
+    {
+      path: "/course-content/lessons",
+      component: StudenLessons,
+    },
+    {
+      path: "/course-content/topics",
+      component: StudenTopics,
+    },
+    {
+      path: "/course-content/topicuploads",
+      component: StudenTopicMaterial,
     },
   ],
   staff: [
@@ -216,7 +337,7 @@ export const routesConfig = {
   // IT Support Staff
   // Office Staff
   // Registrar
-  //    
+  //
   // Accountant
   // Maintenance Worker
   // Security Personnel
@@ -248,6 +369,11 @@ export const routesConfig = {
       sidebarName: "Student Profiles",
     },
     {
+      path: "/employee-management",
+      component: EmployeeManagement,
+      sidebarName: "Employee Management",
+    },
+    {
       path: "/lms-dashboard",
       component: LMSDashboard,
       sidebarName: "LMS Dashboard",
@@ -258,16 +384,52 @@ export const routesConfig = {
       sidebarName: "Course Content Management",
     },
     {
-      path: "/select-sections/:classId",
+      path: "/lms-course-management/select-sections/:classId",
       component: SelectSections,
     },
     {
-      path: "/select-subjects/:classId/:section_id",
+      path: "/lms-course-management/material-wise",
+      component: ClassWiseMaterial,
+    },
+    {
+      path: "/lms-course-management/select-subjects",
       component: SelectSubject,
     },
     {
-      path: "/select-Topics",
-      // component: SelectSections,
+      path: "/lms-course-management/select-lessons",
+      component: SelectLesson,
+    },
+    {
+      path: "/lms-course-management/select-Topics",
+      component: SelectTopic,
+    },
+
+    {
+      path: "/lms-Assigmnent-management",
+      component: AssignmentsManagement,
+      sidebarName: "Assignment Management",
+    },
+
+    {
+      path: "/lms-Assigmnent-management/assignment-wise",
+      component: CheckAssignments,
+    },
+    {
+      path: "/lms-Assigmnent-management/select-sections/:classId",
+      component: SelectSections,
+    },
+
+    {
+      path: "/lms-Assigmnent-management/select-subjects",
+      component: SelectSubject,
+    },
+    {
+      path: "/lms-Assigmnent-management/select-lessons",
+      component: SelectLesson,
+    },
+    {
+      path: "/lms-Assigmnent-management/select-Topics",
+      component: SelectTopic,
     },
     {
       path: "/upload-center",
@@ -300,7 +462,7 @@ export const routesConfig = {
     {
       path: "/fee-&-payments",
       component: FeeDetails,
-      sidebarName: "Fees Master",
+      sidebarName: "Fee Management",
     },
     {
       path: "/lead-generation",
@@ -310,27 +472,101 @@ export const routesConfig = {
     {
       path: "/fee-&-payments/view-fee-master",
       component: ViewFeeMaster,
-      sidebarName: "View Fee Master",
     },
     {
-      path: "/income",
+      path: "/income-management",
       component: Income,
-      sidebarName: "Income",
+      sidebarName: "Income Management",
     },
     {
-      path: "/enquiry",
+      path: "/enquiry-report",
       component: Enquiry,
       sidebarName: "Admission Enquiry",
     },
     {
-      path: "/admissions",
+      path: "/admissions-report",
       component: Admissions,
-      sidebarName: "Admission Report",
+      sidebarName: "Admissions Analytics",
     },
     {
-      path: "/expense",
+      path: "/expense-management",
       component: Expense,
-      sidebarName: "Expense",
+      sidebarName: "Expense Management",
+    },
+    {
+      path: "/expense-management",
+      component: Expense,
+      sidebarName: "Expense Management",
+    },
+    {
+      path: "/manage-classes",
+      component: Class,
+      sidebarName: "Manage Classes",
+    },
+    {
+      path: "/manage-sections",
+      component: Section,
+      sidebarName: "Manage Sections",
+    },
+    {
+      path: "/class-resourse",
+      component: ClassroomResource,
+      sidebarName: "Classroom Resources",
+    },
+    {
+      path: "/class-timetable",
+      component: ClassTimetable,
+      sidebarName: "Class Timetable",
+    },
+    {
+      path: "/teacher-timetable",
+      component: TeachersTimetable,
+      sidebarName: "Teachers Timetable",
+    },
+    {
+      path: "/manage-subject",
+      component: Subject,
+      sidebarName: "Manage Subject",
+    },
+    {
+      path: "/promote-student",
+      component: PromoteStudent,
+      sidebarName: "Promote Student",
+    },
+    {
+      path: "/assign-classteacher",
+      component: AssignTeacher,
+      sidebarName: "Assign Class Teacher",
+    },
+    {
+      path: "/subject-group",
+      component: SubjectGroup,
+      sidebarName: "Subject Group",
+    },
+    {
+      path: "/grading-system",
+      component: GradingSystem,
+      sidebarName: "Grading System",
+    },
+    {
+      path: "/visitor-management",
+      component: VisitorManagement,
+      sidebarName: "Visitor Management",
+    },
+    {
+      path: "/phone-call-log",
+      component: PhoneCallLog,
+      sidebarName: "Phone Call Log",
+    },
+    {
+      path: "/postal-r&d-management",
+      component: MailAndDispatchManagement,
+      sidebarName: "Mail & Dispatch Management",
+    },
+    {
+      path: "/student-disable",
+      component: DisableStudent,
+      sidebarName: "Disable Student",
     },
   ],
   superadmin: [
@@ -340,20 +576,28 @@ export const routesConfig = {
       component: DashboardDexpert,
       sidebarName: "Dashboard",
     },
+
     {
-      path: "/superadmin/manage/admins",
-      component: ManageAdmins,
-      sidebarName: "Schools Admins",
+      path: "/superadmin/school-profile/:schoolId",
+      component: SchoolProfile,
     },
     {
-      path: "/superadmin/manage/schools",
+      path: "/superadmin/manage/academies",
       component: ManageSchools,
       sidebarName: "Schools",
     },
     {
-      path: "/superadmin/manage/modules",
+      path: "/superadmin/manage/academies/modules",
       component: ManageModules,
-      sidebarName: "Schools Modules",
+    },
+    {
+      path: "/superadmin/manage/academies/roles",
+      component: ManageRoles,
+    },
+    {
+      path: "/superadmin/manage/onboarding-requests",
+      component: OnboardingRequest,
+      sidebarName: "Onboarding Request",
     },
   ],
 

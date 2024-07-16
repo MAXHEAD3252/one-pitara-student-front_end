@@ -17,7 +17,6 @@ const CardsWidget14: FC = ({ selectedValue }:any) => {
   const [enquiries, setEnquiries] = useState<Enquiry[]>([]);
   const {currentUser} = useAuth();
   const schoolId = currentUser?.school_id;
-  console.log(schoolId);
 
   const fetchEnquiries = async () => {
     try {

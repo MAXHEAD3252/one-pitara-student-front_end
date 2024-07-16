@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Modal } from "react-bootstrap";
 import { useAuth } from "../../../../app/modules/auth/index.ts";
+import { DOMAIN } from "../../../../app/routing/ApiEndpoints.tsx";
 
 type Props = {
   show: boolean;
@@ -33,7 +34,7 @@ const EditFessMasterModal = ({ show, onHide, feeId }: Props) => {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          `http://127.0.0.1:5000/api/staff/getfeemaster/${schoolId}/${feeId}`
+          `${DOMAIN}/api/staff/getfeemaster/${schoolId}/${feeId}`
         );
         const data = await response.json();
 
@@ -61,7 +62,7 @@ const EditFessMasterModal = ({ show, onHide, feeId }: Props) => {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          `http://127.0.0.1:5000/api/staff/getfeemaster-dropdown/${schoolId}`
+          `${DOMAIN}/api/staff/getfeemaster-dropdown/${schoolId}`
         );
         const data = await response.json();
 
@@ -118,7 +119,7 @@ const EditFessMasterModal = ({ show, onHide, feeId }: Props) => {
     if (Object.keys(modifiedData).length > 0) {
       try {
         const response = await fetch(
-          `http://127.0.0.1:5000/api/staff/updateFeeMasterById/${schoolId}/${feeId}`,
+          `${DOMAIN}/api/staff/updateFeeMasterById/${schoolId}/${feeId}`,
           {
             method: "PUT",
             headers: {
@@ -128,7 +129,6 @@ const EditFessMasterModal = ({ show, onHide, feeId }: Props) => {
           }
         );
         const data = await response.json();
-        console.log(data);
         if (response.ok) {
           onHide();
         }

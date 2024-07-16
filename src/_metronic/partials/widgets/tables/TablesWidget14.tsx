@@ -3,6 +3,8 @@ import "../../../../app/pages/StaffPages/FeeDetails/style.css";
 //  backgroundColor: "#F5F5F5",
 import { useAuth } from "../../../../app/modules/auth/index.ts";
 import { EditFessMasterModal } from "../../modals/create-app-stepper/EditFessMasterModal.tsx";
+import { DOMAIN } from "../../../../app/routing/ApiEndpoints.tsx";
+
 const TablesWidget14: React.FC = () => {
   const [feeData, setFeeData] = useState([]);
   const { currentUser } = useAuth();
@@ -15,7 +17,7 @@ const TablesWidget14: React.FC = () => {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          `http://127.0.0.1:5000/api/staff/getfeemaster-list/${schoolId}/${19}`
+          `${DOMAIN}/api/staff/getfeemaster-list/${schoolId}/${19}`
         );
         const data = await response.json();
 
@@ -120,6 +122,7 @@ const TablesWidget14: React.FC = () => {
                     fontWeight: "700",
                     lineHeight: "21.86px",
                     color: "#FFFFFF",
+                    fontFamily:'Manrope'
                   }}
                 >
                   Fee Master List: 2022- 2023{" "}

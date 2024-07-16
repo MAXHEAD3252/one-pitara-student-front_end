@@ -51,7 +51,7 @@ const StudentPage: FC = () => {
 
     // try {
     //   const response = await fetch(
-    //     "http://127.0.0.1:5000/api/staff/import-st",
+    //     "${DOMAIN}/api/staff/import-st",
     //     {
     //       method: "POST",
     //       body: formData,
@@ -75,7 +75,7 @@ const StudentPage: FC = () => {
 
   return (
     <div className="bg-body-secondary">
-      {/* api = http://127.0.0.1:5000/api/staff/store-staff  to add staff*/}
+      {/* api = ${DOMAIN}/api/staff/store-staff  to add staff*/}
       <Content>
         <div className="row g-5 g-xl-10 mb-6 mb-xl-5">
           <div

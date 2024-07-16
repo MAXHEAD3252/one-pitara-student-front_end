@@ -5,6 +5,7 @@ import { CreateWalkinEnquiry } from "../../modals/create-app-stepper/CreateWalki
 import { CreateEnquiryAction } from "../../modals/create-app-stepper/CreateEnquiryAction";
 import { CreateEditEnquiry } from "../../modals/create-app-stepper/CreateEditEnquiry";
 import { useAuth } from "../../../../app/modules/auth/core/Auth";
+import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
 
 const TablesWidget34: React.FC = () => {
   const [data, setData] = useState([]);
@@ -49,7 +50,7 @@ const TablesWidget34: React.FC = () => {
     const fetchEnquiries = async () => {
       try {
         const response = await fetch(
-          `http://127.0.0.1:5000/api/staff/getEnquiryList/${schoolId}`
+          `${DOMAIN}/api/staff/getEnquiryList/${schoolId}`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch data");

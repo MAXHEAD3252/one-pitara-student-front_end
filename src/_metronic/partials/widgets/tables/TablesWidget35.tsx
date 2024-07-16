@@ -6,49 +6,79 @@ import { CreateEnquiryAction } from "../../modals/create-app-stepper/CreateEnqui
 import { CreateEditEnquiry } from "../../modals/create-app-stepper/CreateEditEnquiry";
 import { useAuth } from "../../../../app/modules/auth/core/Auth";
 import { UploadsFilter } from "../../modals/create-app-stepper/UploadsFilter";
+import { UploadMaterialModal } from "../../modals/create-app-stepper/UploadMaterialModal";
+import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
 
-const TablesWidget35: React.FC = () => {
-  const [data, setData] = useState([]);
-  
-  const [filteredData, setFilteredData] = useState([]);
-    
-  const [searchQuery, setSearchQuery] = useState();
-const { currentUser } = useAuth();
-  const schoolId = currentUser?.school_id;
-
-  const [showModal, setShowModal] = useState(false);
-//   const [showActionModal, setShowActionModal] = useState(false);
-//   const [showEditModal, setShowEditModal] = useState(false);
-const [filterData, setFilterData] = useState([]); 
-
-
-const applyfilters = (data) =>{
-  setFilterData(data);
+interface TablesWidgetProps {
+  classId: string;
+  sectionId?: string;
+  subjectId?: string;
+  lessonId?: string;
+  topicId?: string;
 }
 
-useEffect(() => {
-  if (Object.values(filterData).some(value => value !== '')) {
-    console.log(Object.values(filterData));
-    
-    // Apply filters based on filterData
-    const filteredResult = data.filter(item => {
-      // Implement your filtering logic based on filterData fields
-      return (
-        (filterData.class === '' || item.className === filterData.class) &&
-        (filterData.section === '' || item.sectionName === filterData.section) &&
-        (filterData.subject === '' || item.subjectName === filterData.subject) &&
-        (filterData.lesson === '' || item.lessonName === filterData.lesson) &&
-        (filterData.topic === '' || item.topicName === filterData.topic) &&
-        (filterData.isPublic === '' || item.isPublic === (filterData.isPublic === 'true'))
-      );
-    });
-    setFilteredData(filteredResult); // Update filtered data state
-  } else {
-    // If no filters are applied, show original data
-    setFilteredData(data);
-  }
-}, [filterData, data]);
+interface DataItem {
+  class: string;
+  section: string;
+  subject: string;
+  type: string;
+  lesson: string;
+  topic: string;
+  title: string;
+  upload_type: string;
+  staff_name: string;
+  created_at: Date;
+  updated_at: Date;
+}
+
+
+const TablesWidget35: React.FC<TablesWidgetProps> = ({
+  classId,
+  sectionId,
+  subjectId,
+  lessonId,
+  topicId,
+}) => {
+  const [data, setData] = useState([]);
+  const [refresh, setRefresh] = useState(false);
+  const [filteredData, setFilteredData] = useState<DataItem[]>([]);
   
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const { currentUser } = useAuth();
+  
+  const school_id = (currentUser as any)?.school_id;
+
+  const [showModal, setShowModal] = useState(false);
+  //   const [showActionModal, setShowActionModal] = useState(false);
+  //   const [showEditModal, setShowEditModal] = useState(false);
+  const [filterData, setFilterData] = useState([]);
+
+  const applyfilters = (data: any) => {
+    setFilterData(data);
+  };
+
+  // useEffect(() => {
+  //   if (Object.values(filterData).some(value => value !== '')) {
+  //     console.log(Object.values(filterData));
+
+  //     // Apply filters based on filterData
+  //     const filteredResult = data.filter(item => {
+  //       // Implement your filtering logic based on filterData fields
+  //       return (
+  //         (filterData.class === '' || item.className === filterData.class) &&
+  //         (filterData.section === '' || item.sectionName === filterData.section) &&
+  //         (filterData.subject === '' || item.subjectName === filterData.subject) &&
+  //         (filterData.lesson === '' || item.lessonName === filterData.lesson) &&
+  //         (filterData.topic === '' || item.topicName === filterData.topic) &&
+  //         (filterData.isPublic === '' || item.isPublic === (filterData.isPublic === 'true'))
+  //       );
+  //     });
+  //     setFilteredData(filteredResult); // Update filtered data state
+  //   } else {
+  //     // If no filters are applied, show original data
+  //     setFilteredData(data);
+  //   }
+  // }, [filterData, data]);
 
   const handleModal = () => {
     setShowModal(true);
@@ -57,37 +87,51 @@ useEffect(() => {
     setShowModal(false);
   };
 
-//   const handleActionModal = (value) => {
-//     setEnqId(value)
-//     setShowActionModal(true);
-//   };
-//   const handleActionModalClose = () => {
-//     setShowActionModal(false);
-//   };
+  //   const handleActionModal = (value) => {
+  //     setEnqId(value)
+  //     setShowActionModal(true);
+  //   };
+  //   const handleActionModalClose = () => {
+  //     setShowActionModal(false);
+  //   };
 
-  
-//   const handleModalEdit=(value)=>{
-//     setEnqId(value)
-//     setShowEditModal(true)
-//       }
+  //   const handleModalEdit=(value)=>{
+  //     setEnqId(value)
+  //     setShowEditModal(true)
+  //       }
 
-//       const handleModalEditClose=()=>{
-//         setShowEditModal(false)
-//           }
-
+  //       const handleModalEditClose=()=>{
+  //         setShowEditModal(false)
+  //           }
 
   useEffect(() => {
     const fetchUploads = async () => {
       try {
-        const response = await fetch(
-          `http://127.0.0.1:5000/api/staff/get-alluploads/${schoolId}`
-        );
+        const queryParams = new URLSearchParams({
+          class_id: classId,
+          section_id: sectionId || "",
+          subject_id: subjectId || "",
+          lesson_id: lessonId || "",
+          topic_id: topicId || "",
+        }).toString();
+        const teacher_id = currentUser?.id;
+        let response;
+        if (currentUser?.roleName === "Teacher") {
+          response = await fetch(
+            `${DOMAIN}/api/staff/get-alluploadsbyteacher/${school_id}/${teacher_id}?${queryParams}`
+          );
+        } else {
+          response = await fetch(
+            `${DOMAIN}/api/staff/get-alluploadsbyid/${school_id}?${queryParams}`
+          );
+        }
+
         if (!response.ok) {
           throw new Error("Failed to fetch data");
         }
+
         const responseData = await response.json();
         setData(responseData);
-        
         setFilteredData(responseData);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -95,33 +139,28 @@ useEffect(() => {
     };
 
     fetchUploads();
-  }, [schoolId]);
+  }, [classId, sectionId, subjectId, lessonId, topicId,refresh]);
 
-  const handleSearch = (e) => {
+  const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value.toLowerCase();
-    setSearchQuery(query);    
-  
-    const filtered = data.filter(item => 
-      item.class.toLowerCase().includes(query) ||
-      item.section.toLowerCase().includes(query) 
-      || item.subject.toLowerCase().includes(query)
-      || item.type.toLowerCase().includes(query)
+    setSearchQuery(query);
+
+    const filtered = data.filter(
+      (item) =>
+        item.class.toLowerCase().includes(query) ||
+        item.section.toLowerCase().includes(query) ||
+        item.subject.toLowerCase().includes(query) ||
+        item.type.toLowerCase().includes(query)
     );
-  
+
     setFilteredData(filtered);
   };
-  
 
-
-
-
-
-  const formatDate = (dateString) => {
-    const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
+  const formatDate = (dateString: any) => {
+    const options = { year: "numeric", month: "2-digit", day: "2-digit" };
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-GB', options);
+    return date.toLocaleDateString("en-GB", options);
   };
-
 
   return (
     <div
@@ -183,7 +222,7 @@ useEffect(() => {
                   // borderCollapse: "collapse",
 
                   // border:'1px solid'
-                  width: "98%",
+                  width: "100%",
                 }}
                 className="col-xxl-12 col-lg-6"
               >
@@ -193,10 +232,10 @@ useEffect(() => {
                       color: "#FFF",
                       fontSize: "16px",
                       fontWeight: "700",
-                      fontFamily:'Manrope'
+                      fontFamily: "Manrope",
                     }}
                   >
-                    Recent Uploads
+                    Recent Uploaded Materials
                   </span>
                 </div>
                 <div
@@ -261,7 +300,7 @@ useEffect(() => {
                       aria-label="Search"
                       aria-describedby="addon-wrapping"
                       onChange={handleSearch}
-        value={searchQuery}
+                      value={searchQuery}
                     />
                   </div>
                   <div>
@@ -279,8 +318,8 @@ useEffect(() => {
                         color: "#FFF",
                         cursor: "pointer",
                       }}
-                    //   onClick={handleModal}
-                    // 
+                        onClick={handleModal}
+                      
                     >
                       <svg
                         width="17"
@@ -321,78 +360,22 @@ useEffect(() => {
                       Upload
                     </span>
                   </div>
-
-
-                  <div>
-                    <span
-                      className=""
-                      style={{
-                        height: "36px",
-                        border: "1px solid #D9D9D9",
-                        width: "90px",
-                        borderRadius: "8px",
-                        padding: "8px 10px 8px 10px",
-                        gap: "10px",
-                        display: "flex",
-                        alignItems: "center",
-                        color: "#FFF",
-                        cursor: "pointer",
-                      }}
-                      onClick={handleModal}
-                    >
-                      <svg
-                        width="17"
-                        height="16"
-                        viewBox="0 0 17 16"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M7.16672 9.3333C8.27129 9.3333 9.16672 10.2287 9.16672 11.3333C9.16672 12.4379 8.27129 13.3333 7.16672 13.3333C6.06215 13.3333 5.16672 12.4379 5.16672 11.3333C5.16672 10.2287 6.06215 9.3333 7.16672 9.3333Z"
-                          stroke="white"
-                        />
-                        <path
-                          d="M10.5 2.66667C9.39546 2.66667 8.50003 3.5621 8.50003 4.66667C8.50003 5.77124 9.39546 6.66667 10.5 6.66667C11.6046 6.66667 12.5 5.77124 12.5 4.66667C12.5 3.5621 11.6046 2.66667 10.5 2.66667Z"
-                          stroke="white"
-                        />
-                        <path
-                          d="M10.8334 11.3057L15.5 11.3057"
-                          stroke="white"
-                          stroke-linecap="round"
-                        />
-                        <path
-                          d="M6.83337 4.63898L2.16671 4.63898"
-                          stroke="white"
-                          stroke-linecap="round"
-                        />
-                        <path
-                          d="M2.16672 11.3057L3.50005 11.3057"
-                          stroke="white"
-                          stroke-linecap="round"
-                        />
-                        <path
-                          d="M15.5 4.63898L14.1667 4.63898"
-                          stroke="white"
-                          stroke-linecap="round"
-                        />
-                      </svg>
-                      Filters
-                    </span>
-                  </div>
                 </div>
               </caption>
             </div>
+
             <tr
               style={{
                 height: "61px",
-                gap: "40px",
+                // gap: "40px",
                 display: "flex",
-                paddingTop: "10px",
+                // paddingTop: "10px",
                 paddingLeft: "30px",
+                justifyContent:'space-between',
                 // paddingBottom:'10px',
                 // position: "sticky",
                 // top: 0,
-                width: "auto",
+                width: "95%",
                 // border:'1px solid white',
                 overflowY: "auto",
                 overflowX: "hidden",
@@ -401,7 +384,7 @@ useEffect(() => {
               }}
             >
               <th>
-                <div style={{ width: "10px" }}>
+                <div style={{ width: "20px" }}>
                   <span
                     style={{
                       fontSize: "13px",
@@ -415,7 +398,7 @@ useEffect(() => {
                 </div>
               </th>
               <th>
-                <div style={{ width: "30px" }}>
+                <div style={{ width: "40px" }}>
                   <span
                     style={{
                       fontSize: "13px",
@@ -428,72 +411,87 @@ useEffect(() => {
                   </span>
                 </div>
               </th>
-              <th>
-                <div style={{ width: "65px" }}>
-                  <span
-                    style={{
-                      fontSize: "13px",
-                      fontWeight: "600",
-                      lineHeight: "18px",
-                      color: "#FFFFFF",
-                      fontFamily:'Manrope'
-                    }}
-                  >
-                    Section
-                  </span>
-                </div>
-              </th>
-              <th>
-                <div style={{ width: "70px" }}>
-                  <span
-                    style={{
-                      fontSize: "13px",
-                      fontWeight: "600",
-                      lineHeight: "18px",
-                      color: "#FFFFFF",
-                      fontFamily:'Manrope'
-                    }}
-                  >
-                    Subject
-                  </span>
-                </div>
-              </th>
-              <th>
-                <div style={{ width: "70px" }}>
-                  <span
-                    style={{
-                      fontSize: "13px",
-                      fontWeight: "600",
-                      lineHeight: "18px",
-                      color: "#FFFFFF",
-                      fontFamily:'Manrope'
-                    }}
-                  >
-                    Lesson
-                  </span>
-                </div>
-              </th>
-              
-              <th>
-                <div style={{ width: "120px" }}>
-                  <span
-                    style={{
-                      fontSize: "13px",
-                      fontWeight: "600",
-                      lineHeight: "18px",
-                      color: "#FFFFFF",
-                      fontFamily:'Manrope'
-                    }}
-                  >
-                    Topic
-                  </span>
-                </div>
-              </th>
 
+              {sectionId ? (
+                <th>
+                  <div style={{ width: "60px" }}>
+                    <span
+                      style={{
+                        fontSize: "13px",
+                        fontWeight: "600",
+                        lineHeight: "18px",
+                        color: "#FFFFFF",
+                        fontFamily: "Manrope",
+                      }}
+                    >
+                      Section
+                    </span>
+                  </div>
+                </th>
+              ) : (
+                <></>
+              )}
+              {subjectId ? (
+                <th>
+                  <div style={{ width: "80px" }}>
+                    <span
+                      style={{
+                        fontSize: "13px",
+                        fontWeight: "600",
+                        lineHeight: "18px",
+                        color: "#FFFFFF",
+                        fontFamily: "Manrope",
+                      }}
+                    >
+                      Subject
+                    </span>
+                  </div>
+                </th>
+              ) : (
+                <></>
+              )}
+              {lessonId ? (
+                <th>
+                  <div style={{ width: "195px" }}>
+                    <span
+                      style={{
+                        fontSize: "13px",
+                        fontWeight: "600",
+                        lineHeight: "18px",
+                        color: "#FFFFFF",
+                        fontFamily: "Manrope",
+                      }}
+                    >
+                      Lesson
+                    </span>
+                  </div>
+                </th>
+              ) : (
+                <></>
+              )}
+              {topicId ? (
+                <th>
+                  <div style={{ width: "90px" }}>
+                    <span
+                      style={{
+                        fontSize: "13px",
+                        fontWeight: "600",
+                        lineHeight: "18px",
+                        color: "#FFFFFF",
+                        fontFamily: "Manrope",
+                      }}
+                    >
+                      Topic
+                    </span>
+                  </div>
+                </th>
+              ) : (
+                <></>
+              )}
               <th>
                 <div
                   style={{
-                    width: "150px",
+                    width: "215px",
                   }}
                 >
                   <span
@@ -502,10 +500,71 @@ useEffect(() => {
                       fontWeight: "600",
                       lineHeight: "18px",
                       color: "#FFFFFF",
-                      fontFamily:'Manrope'
+                      fontFamily: "Manrope",
                     }}
                   >
                     Title
+                  </span>
+                </div>
+              </th>
+              <th>
+                <div
+                  style={{
+                    width: "70px",
+                  }}
+                >
+                  <span
+                    style={{
+                      fontSize: "13px",
+                      fontWeight: "600",
+                      lineHeight: "18px",
+                      color: "#FFFFFF",
+                      fontFamily: "Manrope",
+                    }}
+                  >
+                    Type
+                  </span>
+                </div>
+              </th>
+
+              
+
+              <th>
+                <div
+                  style={{
+                    width: "100px",
+                  }}
+                >
+                  <span
+                    style={{
+                      fontSize: "13px",
+                      fontWeight: "600",
+                      lineHeight: "18px",
+                      color: "#FFFFFF",
+                      fontFamily: "Manrope",
+                    }}
+                  >
+                    Created By
+                  </span>
+                </div>
+              </th>
+
+              <th>
+                <div
+                  style={{
+                    width: "100px",
+                  }}
+                >
+                  <span
+                    style={{
+                      fontSize: "13px",
+                      fontWeight: "600",
+                      lineHeight: "18px",
+                      color: "#FFFFFF",
+                      fontFamily: "Manrope",
+                    }}
+                  >
+                    Created At
                   </span>
                 </div>
               </th>
@@ -522,107 +581,7 @@ useEffect(() => {
                       fontWeight: "600",
                       lineHeight: "18px",
                       color: "#FFFFFF",
-                      fontFamily:'Manrope'
-                    }}
-                  >
-                    Note
-                  </span>
-                </div>
-              </th>
-              <th>
-                <div
-                  style={{
-                    width: "60px",
-                  }}
-                >
-                  <span
-                    style={{
-                      fontSize: "13px",
-                      fontWeight: "600",
-                      lineHeight: "18px",
-                      color: "#FFFFFF",
-                      fontFamily:'Manrope'
-                    }}
-                  >
-                    Type
-                  </span>
-                </div>
-              </th>
-
-
-              <th>
-                <div
-                  style={{
-                    width: "100px",
-                  }}
-                >
-                  <span
-                    style={{
-                      fontSize: "13px",
-                      fontWeight: "600",
-                      lineHeight: "18px",
-                      color: "#FFFFFF",
-                      fontFamily:'Manrope'
-                    }}
-                  >
-                    Is Public
-                  </span>
-                </div>
-              </th>
-
-              <th>
-                <div
-                  style={{
-                    width: "90px",
-                  }}
-                >
-                  <span
-                    style={{
-                      fontSize: "13px",
-                      fontWeight: "600",
-                      lineHeight: "18px",
-                      color: "#FFFFFF",
-                      fontFamily:'Manrope'
-                    }}
-                  >
-                    Created By
-                  </span>
-                </div>
-              </th>
-
-              <th>
-                <div
-                  style={{
-                    width: "60px",
-                  }}
-                >
-                  <span
-                    style={{
-                      fontSize: "13px",
-                      fontWeight: "600",
-                      lineHeight: "18px",
-                      color: "#FFFFFF",
-                      fontFamily:'Manrope'
-                    }}
-                  >
-                    Created At
-                  </span>
-                </div>
-              </th>
-
-              <th>
-                <div
-                  style={{
-                    width: "100px",
-                  }}
-                >
-                  <span
-                    style={{
-                      fontSize: "13px",
-                      fontWeight: "600",
-                      lineHeight: "18px",
-                      color: "#FFFFFF",
-                      fontFamily:'Manrope'
+                      fontFamily: "Manrope",
                     }}
                   >
                     Updated At
@@ -638,7 +597,7 @@ useEffect(() => {
                     // border:'1px solid',
                     display: "flex",
                     justifyContent: "end",
-                    fontFamily:'Manrope'
+                    fontFamily: "Manrope",
                   }}
                 >
                   <span
@@ -665,28 +624,30 @@ useEffect(() => {
               flexDirection: "column",
               minHeight: "calc(100vh - 550px)",
               overflowY: "auto",
+              backgroundColor: "#F5F5F5",
+
             }}
           >
             {filteredData.map((item, index) => (
-            <tr key={index}
+              <tr
+                key={index}
                 style={{
                   height: "61px",
-                  gap: "30px",
                   paddingLeft: "30px",
-                  paddingRight: "30px",
-                  paddingTop: "16px",
-                  width: "100%",
+                  justifyContent:'space-between',
+                  // paddingBottom:'10px',
+                  // position: "sticky",
+                  // top: 0,
+                  alignItems:'center',
+                  width: "94% ",
                   display: "flex",
-                  backgroundColor: index % 2 === 0 ? "#F5F5F5" : "#FFF",
                   // border:'1px solid'
                 }}
               >
-
-
                 <td>
                   <div
                     style={{
-                      width: "15px",
+                      width: "25px",
                       display: "flex",
                       justifyContent: "start",
                       flexDirection: "column",
@@ -699,20 +660,19 @@ useEffect(() => {
                         fontWeight: "600",
                         lineHeight: "18px",
                         color: "#000000",
-                        fontFamily:'Manrope'
+                        fontFamily: "Manrope",
                         // border:'1px solid'
                       }}
                     >
-                       {index}
+                      {index}
                     </span>
                   </div>
                 </td>
 
-
                 <td>
                   <div
                     style={{
-                      width: "60px",
+                      width: "55px",
                       display: "flex",
                       justifyContent: "start",
                       flexDirection: "column",
@@ -724,7 +684,7 @@ useEffect(() => {
                         fontWeight: "500",
                         lineHeight: "18px",
                         color: "#1F1F1F",
-                        fontFamily:'Manrope'
+                        fontFamily: "Manrope",
                       }}
                     >
                       {item.class}
@@ -732,81 +692,118 @@ useEffect(() => {
                   </div>
                 </td>
 
+                {item.section ? (
+                  <td>
+                    <div
+                      className="overflow-hidden whitespace-nowrap"
+                      style={{
+                        width: "65px",
+                        // paddingLeft:'5px',
+                        display: "flex",
+                        justifyContent: "start",
+                        flexDirection: "column",
+                      }}
+                    >
+                      <span
+                        data-tooltip-id={`tooltip-${index}`}
+                        style={{
+                          fontSize: "14px",
+                          fontWeight: "500",
+                          lineHeight: "18px",
+                          color: "#1F1F1F",
+                          fontFamily: "Manrope",
+                        }}
+                      >
+                        {item.section}
+                      </span>
+                    </div>
+                  </td>
+                ) : (
+                  <></>
+                )}
 
-
-
+                {item.subject ? (
+                  <td>
+                    <div
+                      className=" flex justify-start flex-col overflow-hidden whitespace-nowrap text-ellipsis"
+                      style={{ width: "90px" }}
+                    >
+                      <span
+                        className="font-normal leading-6 text-gray-800 w-100 overflow-hidden"
+                        style={{
+                          width: "60px",
+                          overflow: "hidden",
+                          fontSize: "14px",
+                          fontWeight: "500",
+                          fontFamily: "Manrope",
+                        }}
+                      >
+                        {item.subject}
+                      </span>
+                    </div>
+                  </td>
+                ) : (
+                  <></>
+                )}
+                {item.lesson ? (
+                  <td>
+                    <div
+                      className=" flex justify-start flex-col overflow-hidden whitespace-nowrap text-ellipsis"
+                      style={{ width: "200px" }}
+                    >
+                      <span
+                        data-tooltip-id={`tooltip-${index}`}
+                        className="font-normal leading-6 text-gray-800 w-100 overflow-hidden"
+                        style={{
+                          width: "60px",
+                          overflow: "hidden",
+                          fontSize: "14px",
+                          fontWeight: "500",
+                          fontFamily: "Manrope",
+                        }}
+                      >
+                        {item.lesson}
+                      </span>
+                    </div>
+                  </td>
+                ) : (
+                  <></>
+                )}
+                {item.topic ? (
+                  <td>
+                    <div
+                      style={{
+                        width: "100px",
+                        display: "flex",
+                        justifyContent: "start",
+                        flexDirection: "column",
+                      }}
+                    >
+                      <span
+                        style={{
+                          fontSize: "14px",
+                          width: "60px",
+                          textAlign: "center",
+                          borderRadius: "5px",
+                          padding: "5px",
+                          fontWeight: "500",
+                          lineHeight: "18px",
+                          color: "#000",
+                          fontFamily: "Manrope",
+                          // backgroundColor: "#FFE7E1",
+                        }}
+                      >
+                        {item.topic}
+                      </span>
+                    </div>
+                  </td>
+                ) : (
+                  <></>
+                )}
                 <td>
                   <div
-                    className="overflow-hidden whitespace-nowrap"
                     style={{
-                      width: "60px",
-                      // paddingLeft:'5px',
-                      display: "flex",
-                      justifyContent: "start",
-                      flexDirection: "column",
-                    }}
-                  >
-                    <span
-                      data-tooltip-id={`tooltip-${index}`}
-                      style={{
-                        fontSize: "14px",
-                        fontWeight: "500",
-                        lineHeight: "18px",
-                        color: "#1F1F1F",
-                        fontFamily:'Manrope'
-                      }}
-                    >
-                      {item.section}
-                    </span>
-                  </div>
-                </td>
-
-
-
-                <td>
-                  <div
-                    className=" flex justify-start flex-col overflow-hidden whitespace-nowrap text-ellipsis"
-                    style={{ width: "80px" }}
-                  >
-                    <span
-                      className="font-normal leading-6 text-gray-800 w-100 overflow-hidden"
-                      style={{
-                        width: "60px",
-                        overflow: "hidden",
-                        fontSize: "14px",
-                        fontWeight: "500",
-                        fontFamily:'Manrope'
-                      }}
-                    >
-                      {item.subject}
-                    </span>
-                  </div>
-                </td>
-                <td>
-                  <div
-                    className=" flex justify-start flex-col overflow-hidden whitespace-nowrap text-ellipsis"
-                    style={{ width: "70px" }}
-                  >
-                    <span
-                      data-tooltip-id={`tooltip-${index}`}
-                      className="font-normal leading-6 text-gray-800 w-100 overflow-hidden"
-                      style={{
-                        width: "60px",
-                        overflow: "hidden",
-                        fontSize: "14px",
-                        fontWeight: "500",
-                        fontFamily:'Manrope'
-                      }}
-                    >
-                      {item.lesson}
-                    </span>
-                  </div>
-                </td>
-
-                <td>
-                  <div
-                    style={{
-                      width: "80px",
+                      width: "230px",
                       display: "flex",
                       justifyContent: "start",
                       flexDirection: "column",
@@ -821,35 +818,7 @@ useEffect(() => {
                         padding: "5px",
                         fontWeight: "500",
                         lineHeight: "18px",
-                        color: "#000",
-                        fontFamily:'Manrope',
-                        // backgroundColor: "#FFE7E1",
-                      }}
-                    >
-                     {item.topic}
-                    </span>
-                  </div>
-                </td>
-
-                <td>
-                  <div
-                    style={{
-                      width: "180px",
-                      display: "flex",
-                      justifyContent: "start",
-                      flexDirection: "column",
-                    }}
-                  >
-                    <span
-                      style={{
-                        fontSize: "14px",
-                        width: "60px",
-                        textAlign: "center",
-                        borderRadius: "5px",
-                        padding: "5px",
-                        fontWeight: "500",
-                        lineHeight: "18px",
-                        fontFamily:'Manrope',
+                        fontFamily: "Manrope",
                       }}
                     >
                       {item.title}
@@ -859,33 +828,6 @@ useEffect(() => {
                 <td>
                   <div
                     style={{
-                      width: "150px",
-                      display: "flex",
-                      justifyContent: "start",
-                      flexDirection: "column",
-                    }}
-                  >
-                    <span
-                      style={{
-                        fontSize: "14px",
-                        width: "60px",
-                        textAlign: "center",
-                        borderRadius: "5px",
-                        // padding: "5px",
-                        fontWeight: "500",
-                        lineHeight: "18px",
-                        color: "#000",
-                        fontFamily:'Manrope'
-                        // backgroundColor: "#FFE7E1",
-                      }}
-                    >
-                     {item.note}
-                    </span>
-                  </div>
-                </td>
-                <td>
-                  <div
-                    style={{
                       width: "80px",
                       display: "flex",
                       justifyContent: "start",
@@ -902,18 +844,19 @@ useEffect(() => {
                         fontWeight: "500",
                         lineHeight: "18px",
                         color: "#000",
-                        fontFamily:'Manrope'
+                        fontFamily: "Manrope",
                         // backgroundColor: "#FFE7E1",
                       }}
                     >
-                     {item.type}
+                      {item.upload_type}
                     </span>
                   </div>
                 </td>
+                
                 <td>
                   <div
                     style={{
-                      width: "100px",
+                      width: "110px",
                       display: "flex",
                       justifyContent: "start",
                       flexDirection: "column",
@@ -929,18 +872,18 @@ useEffect(() => {
                         fontWeight: "500",
                         lineHeight: "18px",
                         color: "#000",
-                        fontFamily:'Manrope'
+                        fontFamily: "Manrope",
                         // backgroundColor: "#FFE7E1",
                       }}
                     >
-                     {item.is_public}
+                      {item.staff_name}
                     </span>
                   </div>
                 </td>
                 <td>
                   <div
                     style={{
-                      width: "120px",
+                      width: "110px",
                       display: "flex",
                       justifyContent: "start",
                       flexDirection: "column",
@@ -956,18 +899,18 @@ useEffect(() => {
                         fontWeight: "500",
                         lineHeight: "18px",
                         color: "#000",
-                        fontFamily:'Manrope'
+                        fontFamily: "Manrope",
                         // backgroundColor: "#FFE7E1",
                       }}
                     >
-                     {item.created_by_name}
+                      {formatDate(item.created_at)}
                     </span>
                   </div>
                 </td>
                 <td>
                   <div
                     style={{
-                      width: "80px",
+                      width: "110px",
                       display: "flex",
                       justifyContent: "start",
                       flexDirection: "column",
@@ -983,38 +926,11 @@ useEffect(() => {
                         fontWeight: "500",
                         lineHeight: "18px",
                         color: "#000",
-                        fontFamily:'Manrope'
+                        fontFamily: "Manrope",
                         // backgroundColor: "#FFE7E1",
                       }}
                     >
-                     {formatDate(item.created_at)}
-                    </span>
-                  </div>
-                </td>
-                <td>
-                  <div
-                    style={{
-                      width: "70px",
-                      display: "flex",
-                      justifyContent: "start",
-                      flexDirection: "column",
-                    }}
-                  >
-                    <span
-                      style={{
-                        fontSize: "14px",
-                        width: "60px",
-                        textAlign: "center",
-                        borderRadius: "5px",
-                        // padding: "5px",
-                        fontWeight: "500",
-                        lineHeight: "18px",
-                        color: "#000",
-                        fontFamily:'Manrope'
-                        // backgroundColor: "#FFE7E1",
-                      }}
-                    >
-                     {formatDate(item.updated_at)}
+                      {formatDate(item.updated_at)}
                     </span>
                   </div>
                 </td>
@@ -1030,57 +946,53 @@ useEffect(() => {
                       // border:'1px solid'
                     }}
                   >
-                 <button
-                        type="button"
-                        className="btn"
-                        style={
-                          {
-                            backgroundColor: "#1F3259",
-                            fontFamily:'Manrope',
-                            fontSize:'12px',
-                            fontWeight:'600',
-                            color:'#FFF'
-                          }
-                          
-                        }
-                        // onClick={()=>handleModalEdit(item.id)}
-                        
-                      >
-                        Edit
-                      </button>
-                      <button
-                        type="button"
-                        className="btn"
-                        style={
-                          {
-                            border:'1px solid #1F3259',
-                            fontFamily:'Manrope',
-                            fontSize:'12px',
-                            fontWeight:'600',
-                            color:'#1F3259'
-                          }
-                        }
-                        // onClick={()=>handleActionModal(item.id)}
-                      >
-                        Action
-                      </button>
+                    <button
+                      type="button"
+                      className="btn"
+                      style={{
+                        backgroundColor: "#1F3259",
+                        fontFamily: "Manrope",
+                        fontSize: "12px",
+                        fontWeight: "600",
+                        color: "#FFF",
+                      }}
+                      // onClick={()=>handleModalEdit(item.id)}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      type="button"
+                      className="btn"
+                      style={{
+                        border: "1px solid #1F3259",
+                        fontFamily: "Manrope",
+                        fontSize: "12px",
+                        fontWeight: "600",
+                        color: "#1F3259",
+                      }}
+                      // onClick={()=>handleActionModal(item.id)}
+                    >
+                      Action
+                    </button>
                   </div>
                 </td>
               </tr>
             ))}
           </tbody>
-
-          
-          <UploadsFilter show={showModal} handleClose={handleModalClose} filterData={applyfilters}/>
+{/* 
+          <UploadsFilter
+            show={showModal}
+            handleClose={handleModalClose}
+            filterData={applyfilters}
+          /> */}
           {/* <CreateEnquiryAction show={showActionModal} handleClose={handleActionModalClose} enqId={enqId}/> */}
-          {/* <CreateEditEnquiry show={showEditModal} handleClose={handleModalEditClose} enqId={enqId}/> */}
+          <UploadMaterialModal show={showModal} handleClose={handleModalClose}  refresh={setRefresh}/>
 
           {/* end::Table body */}
         </table>
 
         {/* modal */}
 
-       
         {/* <div
           className="modal fade"
           id="staticBackdrop"
@@ -1266,4 +1178,3 @@ useEffect(() => {
 };
 
 export { TablesWidget35 };
-

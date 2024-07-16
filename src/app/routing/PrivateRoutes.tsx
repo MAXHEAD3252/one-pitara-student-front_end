@@ -256,17 +256,33 @@ const PrivateRoutes = () => {
   const { currentUser } = useAuth();
   const [userRole, setUserRole] = useState("");
 
+  // useEffect(() => {
+  //   const fetchUserRole = async () => {
+     
+  //       setUserRole(currentUser?.role);
+  //   };
+
+  //   fetchUserRole();
+  // }, [currentUser]);
+
+  
+  // const roleRoutes = routesConfig[userRole] || [];
+  
   useEffect(() => {
     const fetchUserRole = async () => {
-      if (currentUser) {
-        setUserRole(currentUser.role);
+      if (currentUser && currentUser.roleName === "Teacher") {
+        setUserRole(currentUser.roleName);
+      }else{
+        setUserRole(currentUser?.role);
       }
     };
 
     fetchUserRole();
   }, [currentUser]);
 
+  
   const roleRoutes = routesConfig[userRole] || [];
+  
 
   if (!userRole) {
     // If user role is not yet fetched, render nothing

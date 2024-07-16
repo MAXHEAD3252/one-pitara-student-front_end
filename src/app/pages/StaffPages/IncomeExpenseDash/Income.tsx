@@ -17,7 +17,6 @@ const IncomePage: FC = () => {
   const handleToggle = (value: string) => {
     // console.log(value);
     setDisplayComponent(value);
-    console.log(value);
   };
 
   return (

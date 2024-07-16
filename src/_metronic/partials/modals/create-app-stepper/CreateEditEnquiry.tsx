@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { Modal } from "react-bootstrap";
 import { useAuth } from "../../../../app/modules/auth/core/Auth";
+import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
 // import "./Style.css";
 
 type Props = {
@@ -61,7 +62,7 @@ const CreateEditEnquiry = ({ show, handleClose, enqId }: Props) => {
 
       try {
         const response = await fetch(
-          `http://127.0.0.1:5000/api/staff/get-classes?schoolId=${schoolId}`
+          `${DOMAIN}/api/staff/get-classes?schoolId=${schoolId}`
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -80,7 +81,7 @@ const CreateEditEnquiry = ({ show, handleClose, enqId }: Props) => {
 
       try {
         const response = await fetch(
-          `http://127.0.0.1:5000/api/staff/get-source?schoolId=${schoolId}`
+          `${DOMAIN}/api/staff/get-source?schoolId=${schoolId}`
         );
         if (!response.ok) {
           throw new Error(`Error in Fetching source ${response.status}`);
@@ -99,7 +100,7 @@ const CreateEditEnquiry = ({ show, handleClose, enqId }: Props) => {
 
       try {
         const response = await fetch(
-          `http://127.0.0.1:5000/api/staff/get-reference?schoolId=${schoolId}`
+          `${DOMAIN}/api/staff/get-reference?schoolId=${schoolId}`
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -119,7 +120,7 @@ const CreateEditEnquiry = ({ show, handleClose, enqId }: Props) => {
 
       try {
         const response = await fetch(
-          `http://127.0.0.1:5000/api/staff/get-session?schoolId=${schoolId}`
+          `${DOMAIN}/api/staff/get-session?schoolId=${schoolId}`
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -156,7 +157,7 @@ const CreateEditEnquiry = ({ show, handleClose, enqId }: Props) => {
     const fetchById = async () => {
       try {
         const response = await fetch(
-          `http://127.0.0.1:5000/api/staff/getEnquiryById/${schoolId}/${enqId}`,
+          `${DOMAIN}/api/staff/getEnquiryById/${schoolId}/${enqId}`,
           {
             method: "GET",
             headers: {
@@ -235,7 +236,7 @@ const CreateEditEnquiry = ({ show, handleClose, enqId }: Props) => {
 
     try {
       const response = await fetch(
-        `http://127.0.0.1:5000/api/staff/updateEnquiryById/${schoolId}/${id}`,
+        `${DOMAIN}/api/staff/updateEnquiryById/${schoolId}/${id}`,
         {
           method: "PUT",
           headers: {

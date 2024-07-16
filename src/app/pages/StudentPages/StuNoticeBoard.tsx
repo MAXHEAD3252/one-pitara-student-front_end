@@ -79,7 +79,6 @@ const class_id = currentUser?.class_id;
           // }
         );
         const data = await response.json();
-        console.log(data);
 
         // Filter timetable data for the specific day
         setNotices(data);
