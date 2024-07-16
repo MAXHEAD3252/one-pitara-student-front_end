@@ -38,6 +38,7 @@ const CreateStaff = ({ show, handleClose, refresh }: Props) => {
   });
   
 
+                      /* @ts-ignore */
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -46,12 +47,13 @@ const CreateStaff = ({ show, handleClose, refresh }: Props) => {
       [name]: value,
     }));
   };
+                      /* @ts-ignore */
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     
     try {
-        const response = await fetch("${DOMAIN}/api/staff/store-staff", {
+        const response = await fetch(`${DOMAIN}/api/staff/store-staff`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

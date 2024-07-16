@@ -1,27 +1,69 @@
 import React, { useEffect, useState } from "react";
-import { Tooltip as ReactTooltip } from "react-tooltip";
+// import { Tooltip as ReactTooltip } from "react-tooltip";
 import "../../../../app/pages/StaffPages/FeeDetails/style.css";
-import { CreateWalkinEnquiry } from "../../modals/create-app-stepper/CreateWalkinEnquiry";
-import { CreateEnquiryAction } from "../../modals/create-app-stepper/CreateEnquiryAction";
-import { CreateEditEnquiry } from "../../modals/create-app-stepper/CreateEditEnquiry";
+// import { CreateWalkinEnquiry } from "../../modals/create-app-stepper/CreateWalkinEnquiry";
+// import { CreateEnquiryAction } from "../../modals/create-app-stepper/CreateEnquiryAction";
+// import { CreateEditEnquiry } from "../../modals/create-app-stepper/CreateEditEnquiry";
 import { useAuth } from "../../../../app/modules/auth/core/Auth";
-import { UploadsFilter } from "../../modals/create-app-stepper/UploadsFilter";
+// import { UploadsFilter } from "../../modals/create-app-stepper/UploadsFilter";
 // import { AddClasses } from "../../modals/create-app-stepper/AddClasses";
 import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
 
+
+interface CurrentUser {
+  school_id: string; // Adjust type as per your actual data type for school_id
+  // Add other properties if `currentUser` has more properties
+}
+
+interface HandleSectionSelectedParams {
+  section: string; 
+  event: React.MouseEvent<HTMLButtonElement, MouseEvent>; 
+}
+interface HandleSectionSubjectParams {
+  subject: string; 
+  event:  React.MouseEvent<HTMLButtonElement, MouseEvent>; 
+}
+interface ClassData {
+  id: number;
+  className: string;
+}
+interface Subject {
+  id: string;
+  name: string;
+  // Add more properties as needed
+}
+
+interface Class {
+  class_id : number;
+  id: number;
+  name: string;
+  class : string;
+
+  // Add more properties as needed
+}
+
+interface Section {
+  id: number;
+  name: string;
+  section:string;
+  // Add more properties as needed
+}
+
+
 const TablesWidget50 = () => {
-  const [getClass, setClass] = useState([]);
-  const [getSection, setSection] = useState([]);
-  const [getSubject, setSubject] = useState([]);
+  const [getClass, setClass] = useState<Class[]>([]);
+const [getSection, setSection] = useState<Section[]>([]);
+  const [getSubject, setSubject] = useState<Subject[]>([]);
+
 
   const { currentUser } = useAuth();
 
-  const school_id = (currentUser as any)?.school_id;
+  const school_id = (currentUser as unknown as CurrentUser)?.school_id;
 
   // const [showModal, setShowModal] = useState(false);
 
   const [selectedClass, setSelectedClass] = useState({
-    id: null,
+    id: 0,
     className: "",
   }); // State to hold selected section
   // const [selectedSection, setSelectedSection] = useState(null); // State to hold selected section
@@ -96,9 +138,11 @@ const TablesWidget50 = () => {
     fetchSubjects();
   }, [school_id]);
 
-  const handleSectionSelected = (section, event) => {
+  const handleSectionSelected = ({ section, event }: HandleSectionSelectedParams) => {
     event.stopPropagation();
+    /* @ts-ignore */
     setSelectedSections((prevSelected) => {
+      /* @ts-ignore */
       if (prevSelected.includes(section)) {
         return prevSelected.filter((s) => s !== section);
       } else {
@@ -107,9 +151,11 @@ const TablesWidget50 = () => {
     });
   };
 
-  const handleSubjectSelected = (subject, event) => {
+  const handleSubjectSelected = ({subject, event}:HandleSectionSubjectParams) => {
     event.stopPropagation(); // Prevent the dropdown from closing
+    /* @ts-ignore */
     setSelectedSubjects((prevSelected) => {
+      /* @ts-ignore */
       if (prevSelected.includes(subject)) {
         return prevSelected.filter((s) => s !== subject);
       } else {
@@ -117,13 +163,13 @@ const TablesWidget50 = () => {
       }
     });
   };
+ /* @ts-ignore */
+  const isSelectedSection = (section: string): boolean => selectedSections.includes(section);
+ /* @ts-ignore */
+  const isSelectedSubject = (subject: string): boolean => selectedSubjects.includes(subject);
 
-  const isSelectedSection = (subject) => selectedSubjects.includes(subject);
-
-  const isSelectedSubject = (section) => selectedSections.includes(section);
-
-  const handleClassSelected = ({ id, className }) => {
-    setSelectedClass({ id, className }); // Update selected section state
+  const handleClassSelected = ({ id, className }: ClassData) => {
+    setSelectedClass({ id, className });
   };
 
   // const handleSubjectSelected = (subjectName: React.SetStateAction<null>) => {
@@ -203,7 +249,7 @@ const TablesWidget50 = () => {
                         fontFamily: "Manrope",
                       }}
                     >
-                      All Sections
+                      Subjects List
                     </span>
                   </div>
                   <div
@@ -599,7 +645,7 @@ const TablesWidget50 = () => {
                       className={`dropdown-item ${
                         isSelectedSection(item.section) ? "selected" : ""
                       }`}
-                      onClick={(e) => handleSectionSelected(item.section, e)}
+                      onClick={(event) => handleSectionSelected({ section: item.section, event })}
                     >
                       {item.section}
                       {isSelectedSection(item.section) && (
@@ -648,7 +694,7 @@ const TablesWidget50 = () => {
                       className={`dropdown-item ${
                         isSelectedSubject(item.name) ? "selected" : ""
                       }`}
-                      onClick={(e) => handleSubjectSelected(item.name, e)}
+                      onClick={(event) => handleSubjectSelected({ subject: item.name, event })}
                     >
                       {item.name}
                       {isSelectedSubject(item.name) && (

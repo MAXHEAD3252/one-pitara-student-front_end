@@ -1,54 +1,65 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { SetStateAction, useCallback, useEffect, useMemo, useState } from "react";
 import { DOMAIN, getTimetableStudentWise } from "../../../../app/routing/ApiEndpoints";
 import { Calendar, Views, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
-// import '../lib/css/react-big-calendar.css'
 import { useAuth } from "../../../../app/modules/auth/core/Auth";
-import '../../../../app/pages/StudentPages/style.css'
-// import { components } from "../../../assets/ts";
-// import { color } from "highcharts";
+import '../../../../app/pages/StudentPages/style.css';
 import { toAbsoluteUrl } from "../../../helpers";
 
-
 const localizer = momentLocalizer(moment);
-// type Keys = keyof typeof Views;
-
 
 export const VIEW_OPTIONS = [
-  {id:Views.DAY, label :"Day"},
-  {id:Views.WEEK, label :"Week"},
-  {id:Views.MONTH, label :"Month"}
-]
+  { id: Views.DAY, label: "Day" },
+  { id: Views.WEEK, label: "Week" },
+  { id: Views.MONTH, label: "Month" }
+];
 
 interface TablesWidget25Props {
   defaultViewProp: string; // Define the prop 'defaultViewProp'
-}
-
-interface TablesWidget25Props {
-  defaultViewProp: string;
   toolbarAction: string | null; // Define toolbarAction as a string or null
-  DateText: (text: string) => void;
-  Clicks:number | 0 // Define DateText as a function that accepts a string
+  DateText: (datetext: SetStateAction<null>) => void; // Define DateText as a function that accepts a string
+  Clicks: number; // Define Clicks as a number
 }
 
+interface TimetableEvent {
+  subject_name: string;
+  staff_name: string;
+  staff_surname: string;
+  start_time: string;
+  end_time: string;
+  day: string;
+}
 
+interface EventData {
+  title: string;
+  description: string;
+  teacher: string;
+  startHour: number;
+  startMinute: number;
+  endHour: number;
+  endMinute: number;
+  day: string;
+}
 
-const TablesWidget25: React.FC<TablesWidget25Props> = ({ defaultViewProp, toolbarAction, DateText, Clicks}) => {
+const TablesWidget25: React.FC<TablesWidget25Props> = ({ defaultViewProp, toolbarAction, DateText, Clicks }) => {
   const [view, setView] = useState(Views.WEEK);
   const [date, setDate] = useState<Date>(moment("2024-03-28").toDate());
-  // const [dateText, setDateText] = useState(null);
-  const [eventsData, setEventsData] = useState([]);
- 
+  const [eventsData, setEventsData] = useState<EventData[]>([]);
   
   useEffect(() => {
     const matchingOption = VIEW_OPTIONS.find(option => option.label.toLowerCase() === defaultViewProp.toLowerCase());
     if (matchingOption) {
+                            /* @ts-ignore */
+
       setView(matchingOption.id);
     }
   }, [defaultViewProp]);
 
   const onPrevClick = useCallback(() => {
+                          /* @ts-ignore */
+
     if (view === Views.DAY) {
       setDate(moment(date).subtract(1, "d").toDate());
     } else if (view === Views.WEEK) {
@@ -57,7 +68,9 @@ const TablesWidget25: React.FC<TablesWidget25Props> = ({ defaultViewProp, toolba
       setDate(moment(date).subtract(1, "M").toDate());
     }
   }, [view, date]);
-  const onNextClick = useCallback(() => {
+
+  const onNextClick = useCallback(() => {                      /* @ts-ignore */
+
     if (view === Views.DAY) {
       setDate(moment(date).add(1, "d").toDate());
     } else if (view === Views.WEEK) {
@@ -67,37 +80,40 @@ const TablesWidget25: React.FC<TablesWidget25Props> = ({ defaultViewProp, toolba
     }
   }, [view, date]);
 
-
   useEffect(() => {
     if (toolbarAction === 'prev') {
       onPrevClick();
     } else if (toolbarAction === 'next') {
       onNextClick();
     }
-  }, [toolbarAction,Clicks]);
+  }, [toolbarAction, Clicks, onPrevClick, onNextClick]);
   
-  // Reset click count if toolbarAction changes
-
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const dateTextConverter = useMemo(()=>{
-    if(view === Views.DAY) {
-      DateText(moment(date).format("ddd,MMM DD"))
+  const dateTextConverter = useMemo(() => {                     
+ /* @ts-ignore */
+    if (view === Views.DAY) {
+       /* @ts-ignore */
+      DateText(moment(date).format("ddd, MMM DD"));
     }
-    if(view === Views.WEEK){
-      const from =  moment(date)?.startOf("week");
-      const to =  moment(date)?.endOf("week");
-      DateText(`${from.format("MMM DD")} to ${to.format("MMM DD")}`)
-    }
-    if(view === Views.MONTH){
-      DateText(moment(date).format("MMMM YYYY"))
-    }
-  },[view,date])
+    if (view === Views.WEEK) {
+      const from = moment(date).startOf("week");
+      const to = moment(date).endOf("week");
+       /* @ts-ignore */
+      DateText(`${from.format("MMM DD")} to ${to.format("MMM DD")}`);
+    }                      /* @ts-ignore */
 
-  const { auth } = useAuth();
-  const classId = auth?.class_id;
-  const sectionId = auth?.section_id;
-  const [timetable, setTimetable] = useState([]);
+    if (view === Views.MONTH) {
+       /* @ts-ignore */
+      DateText(moment(date).format("MMMM YYYY"));
+    }
+  }, [view, date, DateText]);
+
+  const { currentUser } = useAuth();
+                        /* @ts-ignore */
+
+  const classId = currentUser?.class_id;                      /* @ts-ignore */
+
+  const sectionId = currentUser?.section_id;
+  const [timetable, setTimetable] = useState<TimetableEvent[]>([]);
 
   const fetchTimeTable = async () => {
     try {
@@ -114,179 +130,115 @@ const TablesWidget25: React.FC<TablesWidget25Props> = ({ defaultViewProp, toolba
 
   useEffect(() => {
     fetchTimeTable();
-  }, []); 
+  }, []);
 
+  useEffect(() => {
+    const mappedData = timetable.map(item => ({
+      title: item.subject_name,
+      description: `Teacher: ${item.staff_name} ${item.staff_surname}`,
+      teacher: `${item.staff_name} ${item.staff_surname}`,
+      startHour: parseInt(item.start_time.substring(0, 2)),
+      startMinute: parseInt(item.start_time.substring(3, 5)),
+      endHour: parseInt(item.end_time.substring(0, 2)),
+      endMinute: parseInt(item.end_time.substring(3, 5)),
+      day: item.day
+    }));
+    setEventsData(mappedData);
+  }, [timetable]);
 
-// const events = generateEventsForWeekdays(2024, 2025);
+  function generateEvents(startDate: Date, endDate: Date, eventsData: EventData[]) {                      /* @ts-ignore */
 
-// function generateEventsForWeekdays(startYear, endYear) {
-//   const events = [];
+    const events = [];
+    const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+                        /* @ts-ignore */
 
-//   // Define the days of the week
-//   const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-
-//   for (let year = startYear; year <= endYear; year++) {
-//     for (let month = 0; month < 12; month++) { // Loop through each month (January is 0, December is 11)
-//       const firstOfMonth = new Date(year, month, 1);
-//       const lastOfMonth = new Date(year, month + 1, 0);
-      
-//       // Loop through each day of the month
-//       for (let day = 1; day <= lastOfMonth.getDate(); day++) {
-//         const currentDate = new Date(year, month, day);
-        
-//         // Check if the current day is a weekday
-//         const currentDayOfWeek = daysOfWeek[currentDate.getDay()];
-//         if (currentDayOfWeek !== 'Saturday' && currentDayOfWeek !== 'Sunday') { // Exclude weekends
-//           const event = {
-//             title: 'English', // Example title
-//             description: 'Discussion about project updates', // Example description
-//             teacher: 'Rekha Tendulkar', // Example teacher
-//             start: new Date(year, month, day, 8, 10), // Assuming start at 8:10 AM
-//             end: new Date(year, month, day, 9, 10), // Assuming end at 9:10 AM
-//             day: currentDayOfWeek // Include the day of the week
-//           };
-//           events.push(event);
-//         }
-//       }
-//     }
-//   }
-
-//   return events;
-// }
-
-
-// const events = [
-//   {
-//     title: 'English',
-//     description: 'Discussion about project updates',
-//     teacher: 'Rekha Tendulkar',
-//     start: new Date(2024, 2, 28, 8, 10), // year, month (0-indexed), day, hour, minute
-//     end: new Date(2024, 2, 28, 9, 10),
-//   },
-// ];
-
-
-useEffect(() => {
-  // Map the timetable data to the format of eventsData
-  const mappedData = timetable.map(item => ({
-    title: item.subject_name,
-    description: `Teacher: ${item.staff_name} ${item.staff_surname}`,
-    teacher: `${item.staff_name} ${item.staff_surname}`,
-    startHour: parseInt(item.start_time.substring(0, 2)),
-    startMinute: parseInt(item.start_time.substring(3, 5)),
-    endHour: parseInt(item.end_time.substring(0, 2)),
-    endMinute: parseInt(item.end_time.substring(3, 5)),
-    day: item.day
-  }));
-  setEventsData(mappedData);
-}, [timetable]);
-
-
-function generateEvents(startDate, endDate, eventsData) {
-  const events = [];
-  const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-  
-  // Iterate over the date range
-  let currentDate = new Date(startDate);
-  while (currentDate <= endDate) {
-    const dayOfWeek = daysOfWeek[currentDate.getDay()];
+    const currentDate = new Date(startDate);
+    while (currentDate <= endDate) {
+      const dayOfWeek = daysOfWeek[currentDate.getDay()];
     
-    // Find events for the current day of the week
-    const dayEvents = eventsData.filter(event => event.day === dayOfWeek);
+      const dayEvents = eventsData.filter(event => event.day === dayOfWeek);
     
-    // Assign events to the current date
-    dayEvents.forEach(event => {
-      const start = new Date(currentDate);
-      start.setHours(event.startHour);
-      start.setMinutes(event.startMinute);
+      dayEvents.forEach(event => {
+        const start = new Date(currentDate);
+        start.setHours(event.startHour);
+        start.setMinutes(event.startMinute);
       
-      const end = new Date(currentDate);
-      end.setHours(event.endHour);
-      end.setMinutes(event.endMinute);
+        const end = new Date(currentDate);
+        end.setHours(event.endHour);
+        end.setMinutes(event.endMinute);
       
-      events.push({
-        title: event.title,
-        description: event.description,
-        teacher: event.teacher,
-        start: start,
-        end: end,
-        day: dayOfWeek
+        events.push({
+          title: event.title,
+          description: event.description,
+          teacher: event.teacher,
+          start: start,
+          end: end,
+          day: dayOfWeek
+        });
       });
-    });
     
-    // Move to the next day
-    currentDate.setDate(currentDate.getDate() + 1);
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+                        /* @ts-ignore */
+
+    return events;
   }
-  
-  return events;
-}
 
-// Define the start and end dates (January 1 to March 28)
-const startDate = new Date(2024, 0, 1); // January 1, 2024
-const endDate = new Date(2024, 2, 28); // March 28, 2024
+  const startDate = new Date(2024, 0, 1); // January 1, 2024
+  const endDate = new Date(2024, 2, 28); // March 28, 2024
 
-// Generate events for the specified date range
-const events = generateEvents(startDate, endDate, eventsData);
-// const events = generatedEvents(2024, 2025);
+  const events = generateEvents(startDate, endDate, eventsData);
 
-const MyTimeGutter = () => {
-  return (
-    <div className="rbc-label rbc-time-header-gutter" style={{ width: '100%',height:'100%', minWidth: '50px', maxWidth: '64.5156px', color: '#000',display:'flex',justifyContent:'center',alignItems:'center', fontSize:'16px',fontFamily:'Manrope', fontWeight:'500'}}>
-    Time
-  </div>  );
-};
-
-const EventComponent = ({ event }) => (
-  <div style={{
-    display:'flex',
-    flexDirection:'column',
-    justifyContent:'space-between',
-    height:'100%',  
-    // marginTop:'5px',
-    padding:'5px',
-    // gap:'10px' , 
-    fontFamily:'Manrope',
-  }}>
-    <div style={{display:'flex',justifyContent:'space-between'}}>
-    <span style={{fontFamily:'Manrope', fontWeight:'600',fontSize:'16px',color:'#212121'}}>{event.title}</span>
-    <img src={toAbsoluteUrl('media/avatars/abc-block.png')} style={{width:'25px',height:'25px'}}/>
+  const MyTimeGutter = () => {
+    return (
+      <div className="rbc-label rbc-time-header-gutter" style={{ width: '100%', height:'100%', minWidth: '50px', maxWidth: '64.5156px', color: '#000', display:'flex', justifyContent:'center', alignItems:'center', fontSize:'16px', fontFamily:'Manrope', fontWeight:'500' }}>
+        Time
+      </div>
+    );
+  };
+  const EventComponent = ({ event }: { event: any }) => (
+    <div style={{
+      display:'flex',
+      flexDirection:'column',
+      justifyContent:'space-between',
+      height:'100%',
+      padding:'5px',
+      fontFamily:'Manrope',
+    }}>
+      <div style={{display:'flex', justifyContent:'space-between'}}>
+        <span style={{ fontFamily:'Manrope', fontWeight:'600', fontSize:'16px', color:'#212121' }}>{event.title}</span>
+        <img src={toAbsoluteUrl('media/avatars/abc-block.png')} style={{ width:'25px', height:'25px' }} alt="Avatar" />
+      </div>
+      <div style={{display:'flex', flexDirection:'column', gap:'5px'}}>
+        <span style={{ color:'#727272', fontSize:'12px', fontWeight:'400' }}>{event.description}</span>
+        <div><img src={toAbsoluteUrl('media/avatars/profile.png')} style={{ borderRadius:'15px', width:'25px', height:'25px' }} alt="Profile" /> {event.teacher}</div>
+      </div>
     </div>
-    <div style={{display:'flex',flexDirection:'column',gap:'5px'}}>
-    <span style={{color:'#727272', fontSize:'12px',fontWeight:'400'}}>{event.description}</span>
-    <div><img src={toAbsoluteUrl('media/avatars/profile.png')} style={{borderRadius:'15px', width:'25px',height:'25px'}}/> {event.teacher}</div>
-    </div>
-  </div>
-);
-
-
-
+  );
 
   return (
     <div style={{ height: 700, borderRadius:'10px' }}>
-    <Calendar
-       localizer={localizer}
-       defaultView={Views.WEEK}
-      startAccessor="start"
-      endAccessor="end"
-      events={events} 
-       style={{ height: 800 }}
-       toolbar={false}
-       view={view}
-       min={new Date("2024-03-28T08:00:00")} 
-       max={new Date("2024-03-28T17:00:00")}
-       components={{ timeGutterHeader: MyTimeGutter , event: EventComponent}}
-       showMultiDayTimes
-       date={date}
-       
-       
-    />
-   
-  </div>
-
+      <Calendar
+        localizer={localizer}
+        defaultView={Views.WEEK}
+        startAccessor="start"
+        endAccessor="end"
+        events={events}
+        style={{ height: 800 }}
+        toolbar={false}
+        view={view}
+        min={new Date("2024-03-28T08:00:00")}
+        max={new Date("2024-03-28T17:00:00")}
+        components={{ timeGutterHeader: MyTimeGutter, event: EventComponent }}
+        showMultiDayTimes
+        date={date}
+      />
+    </div>
   );
 };
 
 export { TablesWidget25 };
+
 
 
 

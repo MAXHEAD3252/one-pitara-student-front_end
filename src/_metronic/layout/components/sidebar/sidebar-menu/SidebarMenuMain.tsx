@@ -1,7 +1,7 @@
 import { SidebarMenuItemWithSub } from "./SidebarMenuItemWithSub";
 import { SidebarMenuItem } from "./SidebarMenuItem";
 import { useAuth } from "../../../../../app/modules/auth/core/Auth";
-import { useEffect, useState } from "react";
+import { Key, useEffect, useState } from "react";
 import { routesConfig } from "../../../../../app/routing/RoutesConfig";
 import { DOMAIN } from "../../../../../app/routing/ApiEndpoints";
 
@@ -52,17 +52,17 @@ const SidebarMenuMain = () => {
   }, [currentUser]);
 
   
-  const getPathForModule = (moduleName) => {
+  const getPathForModule = (moduleName: string) => {
     let userRoutes;
-    if(userRole === "admin" || "superadmin"){
+    if (userRole === "admin" || userRole === "superadmin") {
       userRoutes = routesConfig[userRole];
     }else{
-      
+      /* @ts-ignore */
       userRoutes = routesConfig[userRoleName];
       
     }
-    
-    const matchedRoute = userRoutes.find(
+    const matchedRoute = userRoutes?.find(
+      /* @ts-ignore */
       (route) => route.sidebarName === moduleName
     );
     
@@ -72,7 +72,7 @@ const SidebarMenuMain = () => {
   };
 
 
-  const getIconPath = (moduleName) => {    
+  const getIconPath = (moduleName: string) => {    
     // Convert module name to a valid filename format    
     // const iconName = moduleName.replace(/\s+/g, "-").toLowerCase();
     return `media/logos/${moduleName}.svg`;
@@ -107,7 +107,10 @@ const SidebarMenuMain = () => {
                 {key}
               </span>
             </div>
-            {modulesData[key].map((moduleDataItem, index) => (
+            
+            {
+            /* @ts-ignore */
+            modulesData[key].map((moduleDataItem: string[], index: Key | null | undefined) => (
               <SidebarMenuItem
                 key={index}
                 icon=""

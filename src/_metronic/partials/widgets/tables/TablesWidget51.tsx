@@ -9,12 +9,24 @@ import { useAuth } from "../../../../app/modules/auth/core/Auth";
 // import { AddClasses } from "../../modals/create-app-stepper/AddClasses";
 import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
 
-const TablesWidget51 = () => {
-  const [filteredData, setFilteredData] = useState([]);
+interface CurrentUser {
+  school_id: string; // Adjust type as per your actual data type for school_id
+  // Add other properties if `currentUser` has more properties
+}
 
+interface Data {
+  type: string;
+  code: string;
+  name: string;
+  // Add more properties as needed
+}
+
+
+const TablesWidget51 = () => {
+  const [filteredData, setFilteredData] = useState<Data[]>([]);
   const { currentUser } = useAuth();
 
-  const school_id = (currentUser as any)?.school_id;
+  const school_id = (currentUser as unknown as CurrentUser)?.school_id;
 
   // const [showModal, setShowModal] = useState(false);
 

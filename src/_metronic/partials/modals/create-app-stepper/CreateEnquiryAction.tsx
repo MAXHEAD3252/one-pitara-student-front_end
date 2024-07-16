@@ -19,17 +19,17 @@ const CreateEnquiryAction = ({ show, handleClose, enqId }: Props) => {
     follow_up_date: "",
     status: "",
     name: "",
-    fathername: "",
+    father_name: "",
     father_phone: "",
   });
-  
-  const [formData, setFormData] = useState({
 
+  const [formData, setFormData] = useState({
     status: "",
     is_move_to_adm: "",
     school_id: schoolId,
     follow_up_date: "",
   });
+  /* @ts-ignore */
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -42,24 +42,24 @@ const CreateEnquiryAction = ({ show, handleClose, enqId }: Props) => {
       [name]: type === "checkbox" ? checked : value,
     }));
   };
-  const formatDateToYYYYMMDD = (dateString) => {
+  const formatDateToYYYYMMDD = (dateString: string | null | undefined): string => {
     if (!dateString) return "";
     
     const date = new Date(dateString);
-    if (isNaN(date)) return ""; // Return empty string if date is invalid
-  
+    if (isNaN(date.getTime())) return ""; // Use getTime() to check if date is valid
+    
     const day = String(date.getDate()).padStart(2, '0');
     const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
     const year = date.getFullYear();
-  
+    
     return `${year}-${month}-${day}`;
   };
   
-  
+
   useEffect(() => {
     const fetchEnquiryById = async () => {
       if (!schoolId || !enqId) return;
-  
+
       try {
         const response = await fetch(
           `${DOMAIN}/api/staff/getEnquiryById/${schoolId}/${enqId}`
@@ -68,25 +68,27 @@ const CreateEnquiryAction = ({ show, handleClose, enqId }: Props) => {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
-  
+
         // Ensure data is an array and check for valid first element
-        const follow_up_date = data?.[0]?.follow_up_date ? formatDateToYYYYMMDD(data[0].follow_up_date) : "";
-  
+        const follow_up_date = data?.[0]?.follow_up_date
+          ? formatDateToYYYYMMDD(data[0].follow_up_date)
+          : "";
+
         setEnqdata({
           name: data[0]?.name || "",
+          /* @ts-ignore */
           father_contact_number: data[0]?.father_contact_number || "",
           father_name: data[0]?.father_name || "",
-          follow_up_date: follow_up_date || "", 
+          follow_up_date: follow_up_date || "",
           status: data[0]?.status || "",
-        })
+        });
       } catch (error) {
         console.error("Error fetching Enquiry:", error);
       }
     };
     fetchEnquiryById();
   }, [schoolId, enqId]);
-  
-
+/* @ts-ignore */
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -111,11 +113,10 @@ const CreateEnquiryAction = ({ show, handleClose, enqId }: Props) => {
       console.log("Follow-up updated successfully:", data);
       handleClose();
     } catch (error) {
-      console.error("Error updating follow-up:", error.message);
+
+      console.error("Error updating follow-up:", error);
     }
   };
-
-
 
   return createPortal(
     <Modal
@@ -217,7 +218,9 @@ const CreateEnquiryAction = ({ show, handleClose, enqId }: Props) => {
                         fontWeight: "500",
                       }}
                     >
-                      {enqdata?.father_name}
+                      
+                      {
+                      enqdata?.father_name}
                     </span>{" "}
                   </span>
                   <span
@@ -235,7 +238,8 @@ const CreateEnquiryAction = ({ show, handleClose, enqId }: Props) => {
                         fontWeight: "500",
                       }}
                     >
-                      {enqdata?.father_contact_number}
+                      {
+                      enqdata?.father_phone}
                     </span>{" "}
                   </span>
                 </div>
@@ -264,9 +268,7 @@ const CreateEnquiryAction = ({ show, handleClose, enqId }: Props) => {
                   value={enqdata.follow_up_date}
                   onChange={handleChange}
                 />
-                <label htmlFor="follow_up_date">
-                  Follow up date 
-                </label>
+                <label htmlFor="follow_up_date">Follow up date</label>
               </div>
 
               <div

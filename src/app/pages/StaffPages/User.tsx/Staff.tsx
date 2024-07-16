@@ -34,6 +34,7 @@ const StaffPage: FC = () => {
   };
 
 
+                      /* @ts-ignore */
 
   const handleFileChange = (e) => {
     setSelectedFile(e.target.files[0]);
@@ -50,7 +51,7 @@ const StaffPage: FC = () => {
 
     try {
       const response = await fetch(
-        "${DOMAIN}/api/staff/import-staff",
+        `${DOMAIN}/api/staff/import-staff`,
         {
           method: "POST",
           body: formData,

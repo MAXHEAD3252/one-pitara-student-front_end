@@ -252,9 +252,19 @@ import { useAuth } from "../../app/modules/auth/core/Auth";
 import { useEffect, useState } from "react";
 import { routesConfig } from "./RoutesConfig";
 
+interface RouteConfig {
+  path: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  component: React.ComponentType<any>;
+}
+
+interface RoutesConfig {
+  [key: string]: RouteConfig[];
+}
+
 const PrivateRoutes = () => {
   const { currentUser } = useAuth();
-  const [userRole, setUserRole] = useState("");
+  const [userRole, setUserRole] = useState<string | null>(null);
 
   // useEffect(() => {
   //   const fetchUserRole = async () => {
@@ -270,26 +280,26 @@ const PrivateRoutes = () => {
   
   useEffect(() => {
     const fetchUserRole = async () => {
-      if (currentUser && currentUser.roleName === "Teacher") {
-        setUserRole(currentUser.roleName);
-      }else{
-        setUserRole(currentUser?.role);
+      if (currentUser) {
+        if (currentUser.roleName === "Teacher") {
+          setUserRole(currentUser.roleName);
+        } else {
+          setUserRole(currentUser.role || null);
+        }
       }
     };
 
     fetchUserRole();
   }, [currentUser]);
 
-  
-  const roleRoutes = routesConfig[userRole] || [];
-  
+  const roleRoutes = userRole ? (routesConfig as RoutesConfig)[userRole] || [] : [];
 
   if (!userRole) {
     // If user role is not yet fetched, render nothing
     return null;
   }
 
-  const AuthRedirect = () => <Navigate to={"/"} />;
+  const AuthRedirect = () => <Navigate to="/" />;
 
   return (
     <Routes>

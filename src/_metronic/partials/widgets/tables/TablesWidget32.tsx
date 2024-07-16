@@ -1,11 +1,25 @@
-import React, { useEffect, useState } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import "../../../../app/pages/StaffPages/FeeDetails/style.css";
 import { useAuth } from "../../../../app/modules/auth/index.ts";
 
+
+interface Enquiry {
+  date: string;
+  class?: number; // Adjust type as per actual data structure
+  name: string;
+  source: string;
+  email: string;
+  follow_up_date: string;
+  father_name: string;
+  status: string;
+  // Add more fields as per your actual data structure
+}
+
+
 const TablesWidget32: React.FC = () => {
-  const [data, setData] = useState([]);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [data, setData] = useState<Enquiry[]>([]);
+  const [searchQuery, setSearchQuery] = useState<string>("");
   const {currentUser} = useAuth();
   const schoolId = currentUser?.school_id;
 
@@ -18,7 +32,7 @@ const TablesWidget32: React.FC = () => {
         if (!response.ok) {
           throw new Error("Failed to fetch data");
         }
-        const responseData = await response.json();
+        const responseData: Enquiry[] = await response.json();
         const formattedData = responseData.map((item) => ({
           ...item,
           date: new Date(item.date).toISOString().split("T")[0],
@@ -35,7 +49,7 @@ const TablesWidget32: React.FC = () => {
     fetchEnquiries();
   }, []);
 
-  const handleSearch = (event) => {
+  const handleSearch = (event: ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
   };
 

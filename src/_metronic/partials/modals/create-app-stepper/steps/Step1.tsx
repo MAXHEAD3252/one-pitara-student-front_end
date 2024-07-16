@@ -210,7 +210,11 @@ const Step1 = ({ data, updateData, hasError }: StepProps) => (
           >
             <option value="">Select State</option>
             {/* Populate states based on selected country */}
-            {stateData[data.appBasic.country] &&
+            
+            {
+             /* @ts-ignore */
+            stateData[data.appBasic.country] &&
+             /* @ts-ignore */
               stateData[data.appBasic.country].map((state) => (
                 <option key={state} value={state}>
                   {state}

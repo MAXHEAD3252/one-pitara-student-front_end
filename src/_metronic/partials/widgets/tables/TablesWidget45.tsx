@@ -19,7 +19,7 @@ interface Category {
 }
 
 interface Props {
-  school_id?: number;
+  school_id?: string | null;
 }
 
 const TablesWidget45: React.FC<Props> = ({ school_id }) => {
@@ -95,7 +95,7 @@ const TablesWidget45: React.FC<Props> = ({ school_id }) => {
         return;
       }
 
-      const response = await fetch("${DOMAIN}/api/superadmin/store-permission", {
+      const response = await fetch(`${DOMAIN}/api/superadmin/store-permission`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -236,6 +236,8 @@ const TablesWidget45: React.FC<Props> = ({ school_id }) => {
                                 role="switch"
                                 id={`flexSwitchCheck-${module.module_id}`}
                                 onClick={() => handleCheckboxClick(module.module_id, item.id)}
+                                                      /* @ts-ignore */
+
                                 disabled={school_id === 0 || !school_id}
                                 checked={selectedIds[`${item.id}:${module.module_id}`]}
                               />
@@ -263,6 +265,8 @@ const TablesWidget45: React.FC<Props> = ({ school_id }) => {
                 justifyContent: "end",
               }}
               onClick={handleSubmit}
+                                    /* @ts-ignore */
+
               disabled={school_id === 0 || !school_id}
             >
               Submit

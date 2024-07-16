@@ -1,4 +1,6 @@
 export interface AuthModel {
+  user_id(user_id: AuthModel, role: string): unknown
+  // user_id: AuthModel | undefined
   id: string
   api_token: AuthModel | undefined
   email: string | undefined
@@ -6,11 +8,14 @@ export interface AuthModel {
   mobile: string | undefined
   mobile_no: string | undefined
   res_code: string
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   message(arg0: string, message: any): unknown
   // mobile: string
   username: string
   refreshToken?: string
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data: any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   error:any
   }
 
@@ -58,12 +63,24 @@ export interface SuperAdminModel {
   id:string,
   username:string,
   role:string,
+  roleId?:string,
+  roleName?:string,
+  school_id?:string,
+  firstname?:string,
+  middlename?:string,
+  lastname?:string,
+  admission_no?:number,
+  email?:string,
+  roll_no?:string
+  student_session_id?:number
 }
 
 export interface AdminModel {
   
     id: string,
-    role:string
+    role:string,
+    roleId?:string,
+    roleName?:string,
     employee_id: string,
     lang_id: string,
     department: string,
@@ -120,6 +137,7 @@ export interface AdminModel {
     admission_no:string 
     student_session_id :string
     class_id:string,
+    school_id?:string,
 }
   
 
@@ -144,7 +162,9 @@ export interface StudentModel {
   // communication?: UserCommunicationModel
   // address?: UserAddressModel
   // socialNetworks?: UserSocialNetworksModel
-
+  roleId?:string,
+  school_id?:string,
+  roleName?:string,
   student_id:string,
   admission_no: string,
   roll_no: string,

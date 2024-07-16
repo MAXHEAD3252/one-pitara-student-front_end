@@ -68,10 +68,11 @@ const ChartsWidget15: FC = ({ selectedValue }: any) => {
   }, [selectedValue]);
 
   useEffect(() => {
-    const thisYear = parseInt(admissions.total_admissions_this_year);
-    const pastYear = parseInt(admissions.total_admissions_past_year);
-    setAdmissionsData([thisYear, pastYear]);
+    // Destructure admissions directly
+    const { total_admissions_this_year, total_admissions_past_year } = admissions;
+    setAdmissionsData([total_admissions_this_year, total_admissions_past_year]);
   }, [admissions]);
+  
 
   const optionsMOM = {
     chart: {

@@ -1,11 +1,35 @@
 import React from "react";
-import { Modal, Button } from "react-bootstrap";
+import { Modal } from "react-bootstrap";
 import { KTIcon } from "../../../helpers";
+
+interface School {
+  name: string;
+  email: string;
+  phone: string;
+  address: string;
+  country: string;
+  state: string;
+  type_of_school: string;
+  educational_board: string;
+  languages: string;
+  date_format: string;
+  time_format: string;
+  currency: string;
+  currency_symbol: string;
+  start_month: string;
+  image: string;
+  school_logo: string;
+  school_small_logo: string;
+  academic_year: string;
+  bank_account_no: string;
+  ifsc_code: string;
+  bank_name: string;
+}
 
 type Props = {
   show: boolean;
   onHide: () => void;
-  school: [];
+  school: School;
 };
 
 const CreateSchoolDetailModal = ({ show, onHide, school }: Props) => {

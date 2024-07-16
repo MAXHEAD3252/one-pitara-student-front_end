@@ -1,16 +1,29 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from "react";
 import { CreateAdminModal } from "../../../../_metronic/partials/modals/create-app-stepper/CreateAdminModal";
 import { DOMAIN, getAdminBySchoolId } from "../../../../app/routing/ApiEndpoints";
 // import { CreateEditEmployee } from "../../modals/create-app-stepper/CreateEditEmployee";
 // import  CreateDeleteEmployee  from "../../modals/create-app-stepper/CreateDeleteEmployee";
 
-const TablesWidget44: React.FC = ({ schoolId }) => {
-  const [schoolDetails, setSchoolDetails] = useState([]);
+interface TablesWidget44Props {
+  schoolId: string | undefined;
+}
+interface SchoolDetails {
+  employee_id: number;
+  name: string;
+  surname: string;
+  email: string;
+  contact_no: string;
+  // Add more properties as per your actual data structure
+}
+
+const TablesWidget44: React.FC<TablesWidget44Props> = ({ schoolId }:any) => {
+  const [schoolDetails, setSchoolDetails] = useState<SchoolDetails[]>([]);
   const [showModal, setShowModal] = useState(false);
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [empId, setEmpId] = useState(0);
-  const [editEmployee, setEditEmployee] = useState(null);
-  const [showDeleteModal, setShowDeleteModal] =useState(false)
+  // const [showEditModal, setShowEditModal] = useState(false);
+  // const [empId, setEmpId] = useState(0);
+  // const [editEmployee, setEditEmployee] = useState(null);
+  // const [showDeleteModal, setShowDeleteModal] =useState(false)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -40,25 +53,25 @@ const TablesWidget44: React.FC = ({ schoolId }) => {
     setShowModal(false);
   };
 
-  const handleModalEdit = (employeeId) => {
-      setShowEditModal(true);
-      setEmpId(employeeId)
-  };
+  // const handleModalEdit = (employeeId) => {
+  //     setShowEditModal(true);
+  //     setEmpId(employeeId)
+  // };
 
-  const handleModalEditClose = () => {
-    setShowEditModal(false);
-    setEditEmployee(null); // Reset editEmployee state after closing modal
-  };
+  // const handleModalEditClose = () => {
+  //   setShowEditModal(false);
+  //   setEditEmployee(null); // Reset editEmployee state after closing modal
+  // };
 
-  const handleDeleteModal =(employeeId) =>{
-    setShowDeleteModal(true);
-    setEmpId(employeeId)
-  }
+  // const handleDeleteModal =(employeeId) =>{
+  //   setShowDeleteModal(true);
+  //   setEmpId(employeeId)
+  // }
 
-  const handleDeleteModalClose = () =>{
-    setShowDeleteModal(false);
+  // const handleDeleteModalClose = () =>{
+  //   setShowDeleteModal(false);
 
-  }
+  // }
 
   return (
     <div
@@ -186,7 +199,7 @@ const TablesWidget44: React.FC = ({ schoolId }) => {
             <CreateAdminModal
               show={showModal}
               onHide={handleCloseModal}
-              schoolIdId={schoolId}
+              schoolId={schoolId}
             />
           </caption>
           <div style={{ display: "flex", justifyContent: "center" }}>
@@ -434,7 +447,7 @@ const TablesWidget44: React.FC = ({ schoolId }) => {
                         fontWeight: '600',
                         color: '#FFF'
                       }}
-                      onClick={() => handleModalEdit(schoolDetail.employee_id)}
+                      // onClick={() => handleModalEdit(schoolDetail.employee_id)}
                     >
                       Edit
                     </button>
@@ -448,7 +461,7 @@ const TablesWidget44: React.FC = ({ schoolId }) => {
                         fontWeight: '600',
                         color: '#FFF'
                       }}
-                      onClick={() => handleDeleteModal(schoolDetail.employee_id)}
+                      // onClick={() => handleDeleteModal(schoolDetail.employee_id)}
                     >
                       Delete
                     </button>
@@ -458,7 +471,10 @@ const TablesWidget44: React.FC = ({ schoolId }) => {
             ))
           ) : (
             <tr>
-              <td colSpan="5">No Admins for the school</td>
+              <td
+              
+              /* @ts-ignore */
+              colSpan="5">No Admins for the school</td>
             </tr>
           )}
           {/* <CreateEditEmployee show={showEditModal} handleClose={handleModalEditClose} empId={empId} school_id={schoolId}/>

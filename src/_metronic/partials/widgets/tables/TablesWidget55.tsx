@@ -1,29 +1,42 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from "react";
-import { Tooltip as ReactTooltip } from "react-tooltip";
+// import { Tooltip as ReactTooltip } from "react-tooltip";
 import "../../../../app/pages/StaffPages/FeeDetails/style.css";
-import { CreateWalkinEnquiry } from "../../modals/create-app-stepper/CreateWalkinEnquiry";
-import { CreateEnquiryAction } from "../../modals/create-app-stepper/CreateEnquiryAction";
-import { CreateEditEnquiry } from "../../modals/create-app-stepper/CreateEditEnquiry";
+// import { CreateWalkinEnquiry } from "../../modals/create-app-stepper/CreateWalkinEnquiry";
+// import { CreateEnquiryAction } from "../../modals/create-app-stepper/CreateEnquiryAction";
+// import { CreateEditEnquiry } from "../../modals/create-app-stepper/CreateEditEnquiry";
 import { useAuth } from "../../../../app/modules/auth/core/Auth";
-import { UploadsFilter } from "../../modals/create-app-stepper/UploadsFilter";
+// import { UploadsFilter } from "../../modals/create-app-stepper/UploadsFilter";
 // import { AddClasses } from "../../modals/create-app-stepper/AddClasses";
 import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
 
+interface FilterData {
+  id: number;
+  firstname: string;
+  lastname: string;
+  admission_no: string;
+  dob: string;
+  mobileno: string;
+  father_name: string;
+  gender: string;
+  // Add other properties as needed
+}
+
 const TablesWidget55 = () => {
-  const [filteredData, setFilteredData] = useState([]);
+  const [filteredData, setFilteredData] = useState<FilterData[]>([]);
 
   const { currentUser } = useAuth();
 
   const school_id = (currentUser as any)?.school_id;
 
-  const [showModal, setShowModal] = useState(false);
+  // const [showModal, setShowModal] = useState(false);
 
-  const handleModal = () => {
-    setShowModal(true);
-  };
-  const handleModalClose = () => {
-    setShowModal(false);
-  };
+  // const handleModal = () => {
+  //   setShowModal(true);
+  // };
+  // const handleModalClose = () => {
+  //   setShowModal(false);
+  // };
 
   useEffect(() => {
     const fetchStudents = async () => {
@@ -54,6 +67,10 @@ const TablesWidget55 = () => {
     return `${year}-${month}-${day}`;
   };
 
+
+  function handleModal(): void {
+    throw new Error("Function not implemented.");
+  }
 
   return (
     <div className="d-flex" style={{ gap: "10px" }}>

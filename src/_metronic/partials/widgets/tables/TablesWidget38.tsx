@@ -2,11 +2,23 @@ import React, { useEffect, useState } from "react";
 import { useAuth } from "../../../../app/modules/auth/core/Auth";
 import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
 
+
+interface Announcement {
+  classes: string;
+  sections: string;
+  subjects: string;
+  announcement_title:string;
+  staff:string;
+  start_date:string;
+}
+
+
+
 const TablesWidget38: React.FC = () => {
   const { currentUser } = useAuth();
   const school_id = currentUser?.school_id;
 
-  const [getAllAnnouncements, setAllAnnouncemnets] = useState([]);
+  const [getAllAnnouncements, setAllAnnouncemnets] = useState<Announcement[]>([]);
 
   useEffect(() => {
     const fetchAllAnnouncements = async () => {
@@ -25,13 +37,18 @@ const TablesWidget38: React.FC = () => {
     };
 
     fetchAllAnnouncements();
-  }, []);
+  }, [school_id]);
 
-  const formatDate = (dateString) => {
-    const options = { year: "numeric", month: "2-digit", day: "2-digit" };
+  const formatDate = (dateString: string): string => {
+    const options: Intl.DateTimeFormatOptions = { year: "numeric", month: "2-digit", day: "2-digit" };
     const date = new Date(dateString);
+    if (isNaN(date.getTime())) {
+      // Handle invalid date
+      return "Invalid Date";
+    }
     return date.toLocaleDateString("en-GB", options);
   };
+  
 
   return (
     <div

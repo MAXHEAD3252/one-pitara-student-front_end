@@ -1,15 +1,27 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { DOMAIN, getStaffRoles } from "../../../../app/routing/ApiEndpoints";
 import { useAuth } from "../../../../app/modules/auth";
 
 
+interface SchoolRole {
+  id: string;
+  role_name: string;
+  role_id:number;
+  is_active: number;
+  username:string;
+  updated_at:string;
+  // Add more fields as per your role structure
+}
+
 const TablesWidget28 = () => {
-  const [schoolRoles, setSchoolRoles] = useState([]);
+  const [schoolRoles, setSchoolRoles] = useState<SchoolRole[]>([]);
+  
   const { currentUser } = useAuth();
   const schoolId = currentUser?.school_id;
 
-  const [roleId, setRoleId] = useState(null);
   const Navigate = useNavigate();
   useEffect(() => {
     const fetchData = async () => {
@@ -29,8 +41,7 @@ const TablesWidget28 = () => {
     fetchData();
   }, []);
 
-  const handleClick = (roleId) => {
-    setRoleId(roleId);
+  const handleClick = (roleId: number) => {
     Navigate("/user-roles/permission", { state: { roleId } });
   };
 
@@ -300,7 +311,7 @@ const TablesWidget28 = () => {
                             color: "#FFF",
                           }}
                           onClick={() => {
-                            handleClick(role.id);
+                            handleClick(role.role_id);
                           }}
                         >
                           Manage Permissions

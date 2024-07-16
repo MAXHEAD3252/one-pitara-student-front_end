@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 import { FC, useEffect, useState } from "react";
 import { PageTitle } from "../../../../_metronic/layout/core";
 import { useIntl } from "react-intl";
@@ -8,8 +10,21 @@ import { useAuth } from "../../../modules/auth";
 import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
 
 
+interface Visitor {
+  id: string; // Replace with actual types as needed
+  name: string;
+  purpose: string;
+  contact: string;
+  no_of_people: string;
+  id_proof: string;
+  date: string;
+  in_time: string;
+  out_time: string;
+  // Add other fields here
+}
+
 const VisitorManagementPage: FC = () => {
-  const [visitors, setVisitors] = useState([]);
+  const [visitors, setVisitors] = useState<Visitor[]>([]);
   const {currentUser} = useAuth();
   const [refreshData, setRefreshData] = useState(false);
   const navigate = useNavigate();

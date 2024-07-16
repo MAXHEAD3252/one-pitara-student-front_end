@@ -5,20 +5,29 @@ import { PageTitle } from "../../../_metronic/layout/core";
 import { Content } from "../../../_metronic/layout/components/content";
 import { HeaderWrapper } from "../../../_metronic/layout/components/header_staff";
 import { useEffect, useState } from "react";
+import { DOMAIN } from "../../routing/ApiEndpoints";
 // import { CreateacademyDetailModal } from "../../../_metronic/partials";
 // import { AddAcademyModal } from "../../../_metronic/partials/modals/create-app-stepper/AddAcademyModal";
-import { useNavigate } from "react-router-dom";
-import { DOMAIN } from "../../routing/ApiEndpoints";
+// import { useNavigate } from "react-router-dom";
+// import { DOMAIN } from "../../routing/ApiEndpoints";
+
+interface Academies {
+  id: string; // Adjust the type as per your data structure
+  academy_name: string;
+  academy_phone:string;
+  // Add other properties if needed
+}
 
 export const OnboardingRequestPage = () => {
-  const [academies, setAcademies] = useState([]);
+  const [academies, setAcademies] = useState<Academies[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [totalAcademies, setTotalAcademies] = useState(0);
-  const [showModal, setShowModal] = useState(false);
-  const [showCreateAppModal, setShowCreateAppModal] = useState(false);
-  const [selectedacademy, setSelectedacademy] = useState(0);
-  const [refreshData, setRefreshData] = useState(false);
-  const navigate = useNavigate();
-  console.log(academies);
+  // const [showModal, setShowModal] = useState(false);
+  // const [showCreateAppModal, setShowCreateAppModal] = useState(false);
+  // const [selectedacademy, setSelectedacademy] = useState(0);
+  // const [refreshData, setRefreshData] = useState(false);
+  // const navigate = useNavigate();
+  // console.log(academies);
   
 
   useEffect(() => {
@@ -42,7 +51,7 @@ export const OnboardingRequestPage = () => {
     };
 
     fetchAcademies();
-  }, [refreshData]);
+  }, []);
 
   // const editDetails = (id) => {
   //   // Navigate to a page/modal to edit details of the academy with the given ID
@@ -52,13 +61,13 @@ export const OnboardingRequestPage = () => {
   //   // Implement logic to delete the academy with the given ID
   // };
 
-  const handlePrimaryButtonClick = () => {
-    setShowCreateAppModal(true);
-  };
+  // const handlePrimaryButtonClick = () => {
+  //   setShowCreateAppModal(true);
+  // };
 
-  const handleModalClose = () => {
-    setShowCreateAppModal(false);
-  };
+  // const handleModalClose = () => {
+  //   setShowCreateAppModal(false);
+  // };
 
   // const handleCloseModal = () => {
   //   setShowModal(false);
@@ -230,7 +239,7 @@ export const OnboardingRequestPage = () => {
                         flexDirection: "row",
                         cursor: "pointer",
                       }}
-                      onClick={handlePrimaryButtonClick}
+                      // onClick={handlePrimaryButtonClick}
                       data-bs-toggle="modal"
                       data-bs-target="#staticBackdrop"
                     >
@@ -474,7 +483,7 @@ export const OnboardingRequestPage = () => {
                           fontFamily: "Manrope",
                         }}
                       >
-                        {group.academy_email}
+                        {group.academy_name}
                       </div>
                     </td>
                     <td style={{ maxWidth: "355px", minWidth: "280px" }}>

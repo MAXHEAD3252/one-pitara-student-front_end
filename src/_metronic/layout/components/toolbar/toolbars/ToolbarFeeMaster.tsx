@@ -2,7 +2,7 @@ import clsx from "clsx";
 import { SetStateAction, useEffect, useState } from "react";
 import { useLayout } from "../../../core";
 import HeaderCalendar from "../../../../partials/layout/header-menus/HeaderCalendar";
-import { format, subDays, startOfDay, endOfDay } from "date-fns";
+import { format} from "date-fns";
 import "../../../../../app/pages/StaffPages/FeeDetails/style.css";
 import isEqual from "date-fns/fp/isEqual";
 
@@ -86,7 +86,9 @@ const ToolbarFeeMaster = ({ onSelectValue } : any) => {
     if (selectedRange.length === 0) {
       setSelectedTab('current_year');
     } else {
+      /* @ts-ignore */
       const startDateFormatted = format(selectedRange[0].startDate, 'yyyy-MM-dd');
+      /* @ts-ignore */
       const endDateFormatted = format(selectedRange[0].endDate, 'yyyy-MM-dd');
       const formattedRange = `${startDateFormatted},${endDateFormatted}`;
   
@@ -113,6 +115,7 @@ const ToolbarFeeMaster = ({ onSelectValue } : any) => {
   const handleRangeUpdate = (range: any) => {
     // Check if both start date and end date are selected and different
     if (range.startDate && range.endDate && !isEqual(range.startDate, range.endDate)) {
+      /* @ts-ignore */
         setSelectedRange([range]);
     }
 };
@@ -608,8 +611,10 @@ const ToolbarFeeMaster = ({ onSelectValue } : any) => {
               {selectedRange.length > 0 && (
                 <div>
                   {`${format(
+                    /* @ts-ignore */
                     selectedRange[0].startDate,
                     "dd MMM yyyy"
+                    /* @ts-ignore */
                   )} - ${format(selectedRange[0].endDate, "dd MMM yyyy")}`}
                 </div>
               )}

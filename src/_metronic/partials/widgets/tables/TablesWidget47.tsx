@@ -14,7 +14,7 @@ interface Role {
 }
 
 interface Props {
-  school_id?: number;
+  school_id?: string | null;
 }
 
 const TablesWidget47: React.FC<Props> = ({ school_id }) => {
@@ -97,7 +97,7 @@ const TablesWidget47: React.FC<Props> = ({ school_id }) => {
 
 
       const response = await fetch(
-        "${DOMAIN}/api/superadmin/store-roles",
+        `${DOMAIN}/api/superadmin/store-roles`,
         {
           method: "POST",
           headers: {
@@ -248,6 +248,8 @@ const TablesWidget47: React.FC<Props> = ({ school_id }) => {
                 justifyContent: "end",
               }}
               onClick={handleSubmit}
+                                    /* @ts-ignore */
+
               disabled={school_id === 0 || !school_id}
             >
               Submit

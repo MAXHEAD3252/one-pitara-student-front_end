@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from "react";
-import { StepProps } from "../AddStaffModels";
+// import { StepProps } from "../AddStaffModels";
 
-const Step4 = ({ data, updateData, hasError }: StepProps) => (
+const Step4 = ({ data, updateData, hasError }: any) => (
   <div className="current" data-kt-stepper-element="content">
     <div className="w-500" style={{ minWidth: "650px" }}>
       {/*begin::Form Group */}

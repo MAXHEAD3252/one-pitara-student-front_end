@@ -97,7 +97,7 @@ const TablesWidget46: React.FC<Props> = ({ school_id }) => {
 
 
       const response = await fetch(
-        "${DOMAIN}/api/superadmin/store-roles",
+        `${DOMAIN}/api/superadmin/store-roles`,
         {
           method: "POST",
           headers: {

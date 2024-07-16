@@ -1,13 +1,29 @@
-import { React, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "../../../../app/modules/auth/core/Auth";
 import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
 
-const TablesWidget31: React.FC = ({ refresh, csvData }) => {
+interface Student {
+  id: number;
+  admission_no: string;
+  firstname: string;
+  middlename: string;
+  lastname: string;
+  father_name: string;
+  father_phone: string;
+  admission_date: string;
+}
+
+interface Props {
+  refresh: any; // Adjust type as per actual requirement
+  csvData: (data: any) => void; // Adjust type as per actual requirement
+}
+
+const TablesWidget31: React.FC<Props> = ({ refresh, csvData }) => {
   const { currentUser } = useAuth();
-  const [schoolModules, setSchoolModules] = useState([]);
-  const school_id = currentUser?.school_id;
+  const [schoolModules, setSchoolModules] = useState<Student[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 25;
+  const school_id = currentUser?.school_id || 0; // Ensure school_id has a default value
 
   useEffect(() => {
     const fetchData = async () => {
@@ -28,13 +44,11 @@ const TablesWidget31: React.FC = ({ refresh, csvData }) => {
     fetchData();
   }, [school_id, refresh]);
 
-  useEffect(()=>{
-    if(schoolModules.length > 0){
+  useEffect(() => {
+    if (schoolModules.length > 0) {
       csvData(schoolModules);
     }
-  },[schoolModules])
-  
-
+  }, [schoolModules, csvData]);
 
   const indexOfLastRow = currentPage * rowsPerPage;
   const indexOfFirstRow = indexOfLastRow - rowsPerPage;
@@ -42,13 +56,12 @@ const TablesWidget31: React.FC = ({ refresh, csvData }) => {
   const totalPages = Math.ceil(schoolModules.length / rowsPerPage);
 
   const handlePreviousPage = () => {
-    setCurrentPage((prev) => Math.max(prev + 1, 1));
+    setCurrentPage((prev) => Math.max(prev - 1, 1));
   };
 
   const handleNextPage = () => {
     setCurrentPage((prev) => Math.min(prev + 1, totalPages));
   };
-
 
   return (
     <div className={`card`}>
@@ -69,20 +82,20 @@ const TablesWidget31: React.FC = ({ refresh, csvData }) => {
                   Student Name
                 </th>
                 <th className="p-0 min-w-50px" style={{ fontWeight: "bold" }}>
-                  Father Name 
+                  Father Name
                 </th>
                 <th className="p-0 min-w-50px" style={{ fontWeight: "bold" }}>
                   Father Number
                 </th>
                 <th className="p-0 min-w-50px" style={{ fontWeight: "bold" }}>
-                Admission date
+                  Admission date
                 </th>
                 <th className="p-0 min-w-50px" style={{ fontWeight: "bold" }}>
                   Action
                 </th>
               </tr>
             </thead>
-           <tbody>
+            <tbody>
               {currentRows.map((student) => (
                 <tr key={student.id}>
                   <td className="p-0 w-150px">{student.admission_no}</td>
@@ -98,7 +111,7 @@ const TablesWidget31: React.FC = ({ refresh, csvData }) => {
             </tbody>
           </table>
         </div>
-        <div className="pagination" style={{display:'flex',justifyContent:'center' ,alignItems:'center'}}>
+        <div className="pagination" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
           <button
             onClick={handlePreviousPage}
             disabled={currentPage === 1}

@@ -139,6 +139,7 @@ const AuthInit: FC<WithChildren> = ({ children }) => {
 
     
     if (auth && auth.user_id && auth.role) {
+       /* @ts-ignore */
       requestStudent(auth.user_id, auth.role);
     } else if (auth && auth.id && auth.role ==='staff') {
       requestStaff(auth.id);

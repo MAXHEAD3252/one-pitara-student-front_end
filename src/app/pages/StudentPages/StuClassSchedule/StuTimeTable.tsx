@@ -16,15 +16,15 @@ const StudentTimeTablePage: FC = () => {
     // Update the view state when the view changes
     setView(newView);
   };
-  const handleToolbarAction = (toolbarAction) =>{
+  const handleToolbarAction = (toolbarAction: SetStateAction<null>) =>{
     setToolBarAction(toolbarAction);
   }
-  const handleDateText =(datetext)=>{
+  const handleDateText =(datetext: SetStateAction<null>)=>{
     // console.log(datetext);
     setDateTextValue(datetext)
     
   }
-  const handleClickCount = (click) =>{
+  const handleClickCount = (click: SetStateAction<number>) =>{
     setClickCount(click)
   }
   return (

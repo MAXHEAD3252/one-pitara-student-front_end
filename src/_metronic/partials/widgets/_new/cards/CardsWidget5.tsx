@@ -1,12 +1,31 @@
 import { FC, useEffect, useState } from "react";
-import { TablesWidget37 } from "../../tables/TablesWidget37";
 import {
   DOMAIN,
   get_schoolbyid,
 } from "../../../../../app/routing/ApiEndpoints";
 
-const CardsWidget5: FC = ({ schoolId }) => {
-  const [schoolDetail, setschoolDetails] = useState({});
+
+interface CardsWidget5Props {
+  schoolId: string | undefined;
+}
+
+interface SchoolDetail {
+  id: string; // Replace with actual types as needed
+  name: string;
+  address: string;
+  email: string;
+  phone: string;
+  state: string;
+  country: string;
+  bank_account_no: string;
+  bank_name: string;
+  // Add other fields here as needed
+}
+  
+
+const CardsWidget5: FC<CardsWidget5Props> = ({ schoolId }) => {
+const [schoolDetail, setschoolDetails] = useState<SchoolDetail | null>(null);
+
 
   useEffect(() => {
     const fetchData = async () => {

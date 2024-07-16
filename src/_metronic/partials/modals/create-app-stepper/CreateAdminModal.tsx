@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Modal, Button } from "react-bootstrap";
+import { Modal } from "react-bootstrap";
 import { KTIcon } from "../../../helpers";
 
 type Props = {
   show: boolean;
   onHide: () => void;
-  schoolId: number;
+  schoolId: number | null;
 };
 
 const CreateAdminModal = ({ show, onHide, schoolId }: Props) => {
@@ -74,7 +74,7 @@ const [passwordError, setpasswordError] = useState('');
     )
   },[schoolId]);
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
@@ -90,7 +90,7 @@ const [passwordError, setpasswordError] = useState('');
           setpasswordError('Password do not match');
         }
       };
-
+/* @ts-ignore */
   const handleFileChnage=(e)=>
     {
       const file=e.target.files[0];
@@ -105,7 +105,7 @@ const [passwordError, setpasswordError] = useState('');
           )
         }
     }
-  
+  /* @ts-ignore */
   const handleSubmit = async (e) => {
     e.preventDefault(); 
     // console.log('firn',formData);
@@ -346,6 +346,7 @@ const [passwordError, setpasswordError] = useState('');
                         className="form-control form-control-lg form-control-solid border-black"
                         name="marital_status"
                         value={formData.marital_status}
+                        /* @ts-ignore */
                         onChange={handleChange}
                       >
                         <option value="">Select Maritial Status...</option>
@@ -497,6 +498,7 @@ const [passwordError, setpasswordError] = useState('');
                         className="form-control form-control-lg form-control-solid border-black"
                         name="gender"
                         value={formData.gender}
+                        /* @ts-ignore */
                         onChange={handleChange}
                       >
                         <option value="">Select a gender</option>
@@ -582,6 +584,7 @@ const [passwordError, setpasswordError] = useState('');
                   color: "#fff",
                   border: "none",
                 }}
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 onClick={(e)=>{
                  // e.preventDefault(); 
                 onHide();

@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { FC, useEffect, useState } from "react";
 import { PageTitle } from "../../../../_metronic/layout/core";
 import { useIntl } from "react-intl";
@@ -7,9 +9,20 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../modules/auth";
 import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
 
+interface Mails {
+  id: string; // Adjust the type as per your data structure
+  reference_no: string;
+  to_title: string;
+  address: string;
+  note: string;
+  from_title: string;
+  date: string;
+  type: string;
+  // Add other properties if needed
+}
 
 const MailAndDispatchManagementPage: FC = () => {
-  const [mails, setMail] = useState([]);
+  const [mails, setMail] =useState<Mails[]>([]);
   const {currentUser} = useAuth();
   const [refreshData, setRefreshData] = useState(false);
   const navigate = useNavigate();

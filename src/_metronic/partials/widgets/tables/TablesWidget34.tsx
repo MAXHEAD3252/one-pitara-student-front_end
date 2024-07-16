@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from "react";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import "../../../../app/pages/StaffPages/FeeDetails/style.css";
@@ -7,10 +8,27 @@ import { CreateEditEnquiry } from "../../modals/create-app-stepper/CreateEditEnq
 import { useAuth } from "../../../../app/modules/auth/core/Auth";
 import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
 
+
+interface DataItem {
+  status : string;
+  name : string;
+}
+interface FilterData {
+  id:number;
+  date: string;
+  class: string;
+  name: string;
+  source: string;
+  email: string;
+  follow_up_date: string;
+  status: string;
+  // Add other properties as needed
+}
+
 const TablesWidget34: React.FC = () => {
-  const [data, setData] = useState([]);
+  const [data, setData] = useState<DataItem[]>([]);
   
-  const [filteredData, setFilteredData] = useState([]);  
+  const [filteredData, setFilteredData] = useState<FilterData[]>([]); 
   const [searchQuery, setSearchQuery] = useState(0); 
   const { currentUser } = useAuth();
   const schoolId = currentUser?.school_id;
@@ -27,7 +45,7 @@ const TablesWidget34: React.FC = () => {
     setShowModal(false);
   };
 
-  const handleActionModal = (value) => {
+  const handleActionModal = (value:number) => {
     setEnqId(value)
     setShowActionModal(true);
   };
@@ -36,7 +54,7 @@ const TablesWidget34: React.FC = () => {
   };
 
   
-  const handleModalEdit=(value)=>{
+  const handleModalEdit=(value:number)=>{
     setEnqId(value)
     setShowEditModal(true)
       }
@@ -67,7 +85,7 @@ const TablesWidget34: React.FC = () => {
     fetchEnquiries();
   }, [schoolId]);
 
-  const handleSearch = (e) => {
+  const handleSearch = (e:any) => {
     const query = e.target.value.toLowerCase();
     setSearchQuery(query);    
   
@@ -75,7 +93,7 @@ const TablesWidget34: React.FC = () => {
       item.status.toLowerCase().includes(query) ||
       item.name.toLowerCase().includes(query)
     );
-  
+   /* @ts-ignore */
     setFilteredData(filtered);
   };
   
@@ -84,9 +102,10 @@ const TablesWidget34: React.FC = () => {
 
 
 
-  const formatDate = (dateString) => {
+  const formatDate = (dateString: string | number | Date) => {
     const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
     const date = new Date(dateString);
+     /* @ts-ignore */
     return date.toLocaleDateString('en-GB', options);
   };
 

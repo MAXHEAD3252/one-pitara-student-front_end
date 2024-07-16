@@ -1,11 +1,26 @@
-import { React, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "../../../../app/modules/auth/core/Auth";
 import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
 
-const TablesWidget30: React.FC = ({ refresh, csvData }) => {
+interface Staff {
+  id: number;
+  employee_id: string;
+  name: string;
+  surname: string;
+  role_name: string;
+  email: string;
+  contact_no: string;
+}
+
+interface Props {
+  refresh: any; // Adjust type as per actual requirement
+  csvData: (data: any) => void; // Adjust type as per actual requirement
+}
+
+const TablesWidget30: React.FC<Props> = ({ refresh, csvData }) => {
   const { currentUser } = useAuth();
-  const [schoolModules, setSchoolModules] = useState([]);
-  const school_id = currentUser?.school_id;
+  const [schoolModules, setSchoolModules] = useState<Staff[]>([]);
+  const school_id = currentUser?.school_id || 0; // Ensure school_id has a default value
 
   useEffect(() => {
     const fetchData = async () => {
@@ -26,12 +41,11 @@ const TablesWidget30: React.FC = ({ refresh, csvData }) => {
     fetchData();
   }, [school_id, refresh]);
 
-  useEffect(()=>{
-    if(schoolModules.length > 0){
+  useEffect(() => {
+    if (schoolModules.length > 0) {
       csvData(schoolModules);
     }
-  },[schoolModules])
-  
+  }, [schoolModules, csvData]);
 
   return (
     <div className={`card`}>

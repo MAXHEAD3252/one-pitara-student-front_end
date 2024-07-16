@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { ChangeEvent,useEffect, useState } from "react";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import "../../../../app/pages/StaffPages/FeeDetails/style.css";
 import { CreateWalkinEnquiry } from "../../modals/create-app-stepper/CreateWalkinEnquiry";
@@ -27,8 +27,8 @@ interface DataItem {
   title: string;
   upload_type: string;
   staff_name: string;
-  created_at: Date;
-  updated_at: Date;
+  created_at: string;
+  updated_at: string;
 }
 
 
@@ -39,7 +39,7 @@ const TablesWidget39: React.FC<TablesWidgetProps> = ({
   lessonId,
   topicId,
 }) => {
-  const [data, setData] = useState([]);
+  const [data, setData] = useState<DataItem[]>([]);
 
   const [filteredData, setFilteredData] = useState<DataItem[]>([]);
 
@@ -114,7 +114,7 @@ const [searchQuery, setSearchQuery] = useState<string>('');
           lesson_id: lessonId || "",
           topic_id: topicId || "",
         }).toString();
-        const teacher_id = currentUser?.id;
+        const teacher_id = (currentUser as any)?.school_id;
         let response;
         if (currentUser?.roleName === "Teacher") {
           response = await fetch(
@@ -157,9 +157,13 @@ const [searchQuery, setSearchQuery] = useState<string>('');
     setFilteredData(filtered);
   };
 
-  const formatDate = (dateString: any) => {
-    const options = { year: "numeric", month: "2-digit", day: "2-digit" };
+  const formatDate = (dateString: string): string => {
+    const options: Intl.DateTimeFormatOptions = { year: "numeric", month: "2-digit", day: "2-digit" };
     const date = new Date(dateString);
+    if (isNaN(date.getTime())) {
+      // Handle invalid date
+      return "Invalid Date";
+    }
     return date.toLocaleDateString("en-GB", options);
   };
 

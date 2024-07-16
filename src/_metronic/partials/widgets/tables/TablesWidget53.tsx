@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from "react";
 // import { Tooltip as ReactTooltip } from "react-tooltip";
 import "../../../../app/pages/StaffPages/FeeDetails/style.css";
@@ -9,11 +10,35 @@ import { useAuth } from "../../../../app/modules/auth/core/Auth";
 // import { AddClasses } from "../../modals/create-app-stepper/AddClasses";
 import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
 
+
+interface FilterData {
+  class_name: number;
+  section: string;
+  staff_name: string;
+  
+}
+interface Class {
+  class_id: number;
+  class: string;
+  
+}
+interface Section {
+  id: number;
+  section: string;
+  
+}
+interface Teacher {
+  id: number;
+  name: string;
+  
+}
+
+
 const TablesWidget53 = () => {
-  const [filteredData, setFilteredData] = useState([]);
-  const [getClass, setClass] = useState([]);
-  const [getTeachers, setTeachers] = useState([]);
-  const [getSection, setSection] = useState([]);
+  const [filteredData, setFilteredData] = useState<FilterData[]>([]);
+  const [getClass, setClass] = useState<Class[]>([]);
+  const [getTeachers, setTeachers] = useState<Teacher[]>([]);
+  const [getSection, setSection] = useState<Section[]>([]);
   const [selectedClass, setSelectedClass] = useState({
     id: null,
     className: "",
@@ -118,15 +143,15 @@ const TablesWidget53 = () => {
     fetchSections();
   }, [selectedClass?.id]);
 
-  const handleSectionSelected = (sectionName: React.SetStateAction<null>) => {
+  const handleSectionSelected = ({sectionName}:any) => {
     setSelectedSection(sectionName); // Update selected section state
   };
 
-  const handleClassSelected = ({ id, className }) => {
+  const handleClassSelected = ({ id, className }:any) => {
     
     setSelectedClass({ id, className }); // Update selected section state
   };
-  const handleTeacherSelected = ({ id, name }) => {
+  const handleTeacherSelected = ({ id, name }:any) => {
     
     setSelectedTeacher({ id, name }); // Update selected section state
   };

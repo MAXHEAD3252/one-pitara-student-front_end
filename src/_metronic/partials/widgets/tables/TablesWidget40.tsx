@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { CreateAdminModal } from "../../../../_metronic/partials/modals/create-app-stepper/CreateAdminModal";
+// import { CreateAdminModal } from "../../../../_metronic/partials/modals/create-app-stepper/CreateAdminModal";
 // import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
 import { DOMAIN,getAssignedRoles } from "../../../../app/routing/ApiEndpoints";
 import { useNavigate } from "react-router-dom";
@@ -8,9 +8,16 @@ interface TablesWidget40Props {
   schoolId: string | null;
 }
 
+interface SchoolDetail {
+  role_id:number;
+  role_name:string;
+  user_name : string;
+  upadated_at : string;
+  is_active : string;
+}
 
 const TablesWidget40: React.FC<TablesWidget40Props> =  ({ schoolId }) => {
-  const [schoolDetails, setSchoolDetails] = useState([]);
+  const [schoolDetails, setSchoolDetails] = useState<SchoolDetail[]>([]);
   
   const Navigate = useNavigate();
 
@@ -427,7 +434,9 @@ const TablesWidget40: React.FC<TablesWidget40Props> =  ({ schoolId }) => {
               ))
             ) : (
               <tr>
-                <td colSpan="5">No Admins for the school</td>
+                <td 
+                /* @ts-ignore */
+                colSpan="5">No Admins for the school</td>
               </tr>
             )}
           </div>

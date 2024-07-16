@@ -1,22 +1,21 @@
 import { useAuth } from "../../../../app/modules/auth/core/Auth";
-import { useState } from "react";
-import { KTIcon, toAbsoluteUrl } from "../../../../_metronic/helpers";
+// import { useState } from "react";
+import { KTIcon } from "../../../../_metronic/helpers";
 import { Dropdown1 } from "../../../../_metronic/partials";
-import { StudentProfile } from "../../../../app/modules/dashboardprofile/StudentProfile";
-import { StudentFees } from "../../../../app/modules/dashboardprofile/StudentFees";
-import { StudentExam } from "../../../../app/modules/dashboardprofile/StudentExam";
-import { StudentDocuments } from "../../../../app/modules/dashboardprofile/StudentDocuments";
-import { StudentTimeline } from "../../../../app/modules/dashboardprofile/StudentTimline";
-import { CardsWidget17 } from "../../widgets";
+// import { StudentProfile } from "../../../../app/modules/dashboardprofile/StudentProfile";
+// import { StudentFees } from "../../../../app/modules/dashboardprofile/StudentFees";
+// import { StudentExam } from "../../../../app/modules/dashboardprofile/StudentExam";
+// import { StudentDocuments } from "../../../../app/modules/dashboardprofile/StudentDocuments";
+// import { StudentTimeline } from "../../../../app/modules/dashboardprofile/StudentTimline";
+// import { CardsWidget17 } from "../../widgets";
 
 const Dashboardheader = () => {
   const { currentUser } = useAuth();
-  console.log(currentUser);
-  const [activeTab, setActiveTab] = useState("overview");
+  // const [activeTab, setActiveTab] = useState("overview");
 
-  const handleTabClick = (tab: string) => {
-    setActiveTab(tab);
-  };
+  // const handleTabClick = (tab: string) => {
+  //   setActiveTab(tab);
+  // };
 
   return (
     <div>

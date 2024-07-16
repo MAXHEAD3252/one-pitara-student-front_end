@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // routesConfig.js
 
 import { DashboardWrapper } from "../pages/dashboard/DashboardWrapper";
@@ -44,7 +45,7 @@ import { EnquiryDetails } from "../pages/StaffPages/Enquiry/EnquiryDetails";
 import { StudentProfiles } from "../pages/StaffPages/Student_Managment/StudentProfiles";
 import { LMSDashboard } from "../pages/StaffPages/LMS/LMSDashboard";
 import { CourseContentManagement } from "../pages/StaffPages/LMS/CourseContentManagement/CourseContentManagement";
-import { SelectSections } from "../pages/StaffPages/LMS/SelectSections";
+import  SelectSections  from "../pages/StaffPages/LMS/SelectSections";
 import { SelectSubject } from "../pages/StaffPages/LMS/SelectSubject";
 import { SelectLesson } from "../pages/StaffPages/LMS/SelectLesson";
 import ClassWiseMaterial from "../pages/StaffPages/LMS/CourseContentManagement/ClassWiseMaterial";

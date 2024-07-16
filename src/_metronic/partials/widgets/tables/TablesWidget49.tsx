@@ -1,29 +1,39 @@
 import React, { useEffect, useState } from "react";
-import { Tooltip as ReactTooltip } from "react-tooltip";
+// import { Tooltip as ReactTooltip } from "react-tooltip";
 import "../../../../app/pages/StaffPages/FeeDetails/style.css";
-import { CreateWalkinEnquiry } from "../../modals/create-app-stepper/CreateWalkinEnquiry";
-import { CreateEnquiryAction } from "../../modals/create-app-stepper/CreateEnquiryAction";
-import { CreateEditEnquiry } from "../../modals/create-app-stepper/CreateEditEnquiry";
+// import { CreateWalkinEnquiry } from "../../modals/create-app-stepper/CreateWalkinEnquiry";
+// import { CreateEnquiryAction } from "../../modals/create-app-stepper/CreateEnquiryAction";
+// import { CreateEditEnquiry } from "../../modals/create-app-stepper/CreateEditEnquiry";
 import { useAuth } from "../../../../app/modules/auth/core/Auth";
-import { UploadsFilter } from "../../modals/create-app-stepper/UploadsFilter";
+// import { UploadsFilter } from "../../modals/create-app-stepper/UploadsFilter";
 // import { AddClasses } from "../../modals/create-app-stepper/AddClasses";
 import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
 
+interface CurrentUser {
+  school_id: string; // Adjust type as per your actual data type for school_id
+  // Add other properties if `currentUser` has more properties
+}
+
+interface ClassData {
+  id: number;
+  section: string[];
+}
+
 const TablesWidget49 = () => {
-  const [filteredData, setFilteredData] = useState([]);
+  const [filteredData, setFilteredData] = useState<ClassData[]>([]);
 
   const { currentUser } = useAuth();
 
-  const school_id = (currentUser as any)?.school_id;
+  const school_id = (currentUser as unknown as CurrentUser)?.school_id;
 
-  const [showModal, setShowModal] = useState(false);
+  // const [showModal, setShowModal] = useState(false);
 
-  const handleModal = () => {
-    setShowModal(true);
-  };
-  const handleModalClose = () => {
-    setShowModal(false);
-  };
+  // const handleModal = () => {
+  //   setShowModal(true);
+  // };
+  // const handleModalClose = () => {
+  //   setShowModal(false);
+  // };
 
   useEffect(() => {
     const fetchClasses = async () => {

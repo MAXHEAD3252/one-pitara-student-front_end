@@ -3,8 +3,6 @@ import { useIntl } from "react-intl";
 import { PageTitle } from "../../../../_metronic/layout/core";
 import { Content } from "../../../../_metronic/layout/components/content";
 import { HeaderWrapper } from "../../../../_metronic/layout/components/header_staff";
-import { TablesWidget30 } from "../../../../_metronic/partials/widgets/tables/TablesWidget30";
-import { CreateStaff } from "../../../../_metronic/partials/modals/create-app-stepper/CreateStaff";
 import * as XLSX from 'xlsx';
 import { TablesWidget31 } from "../../../../_metronic/partials/widgets";
 import { CreateStudent } from "../../../../_metronic/partials";
@@ -34,6 +32,7 @@ const StudentPage: FC = () => {
   };
 
 
+                      /* @ts-ignore */
 
   const handleFileChange = (e) => {
     setSelectedFile(e.target.files[0]);
@@ -51,7 +50,7 @@ const StudentPage: FC = () => {
 
     // try {
     //   const response = await fetch(
-    //     "${DOMAIN}/api/staff/import-st",
+    //     `${DOMAIN}/api/staff/import-st`,
     //     {
     //       method: "POST",
     //       body: formData,

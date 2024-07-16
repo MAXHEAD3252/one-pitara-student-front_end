@@ -1,41 +1,87 @@
-import { useEffect, useRef, useState } from "react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { Modal } from "react-bootstrap";
-import { StepperComponent } from "../../../assets/ts/components";
-import { KTIcon } from "../../../helpers";
-import DatePicker from "react-datepicker";
+// import { StepperComponent } from "../../../assets/ts/components";
+// import { KTIcon } from "../../../helpers";
+// import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { TablesWidget18 } from "../../widgets/tables/TablesWidget18";
+// import { TablesWidget18 } from "../../widgets/tables/TablesWidget18";
 import { useAuth } from "../../../../app/modules/auth";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
 
 type Props = {
   show: boolean;
   handleClose: () => void;
-  filterData:() => Array;
+  filterData: () => string[]; // Adjust the return type based on what your filterData function actually returns
 };
+
+interface FormData{
+  className: string;
+  classId?: number; // Optional if needed
+  sectionName: string;
+  sectionId?: number; // Optional if needed
+  subjectName: string;
+  subjectId?: number; // Optional if needed
+  lessonName: string;
+  lessonId?: number; // Optional if needed
+  topicName: string;
+  topicId?: number; // Optional if needed
+  isPublic: boolean | ''; // Adjust based on what 'isPublic' represents
+}
+
+interface ClassItem {
+  id: number;
+  class: string;
+}
+
+interface SectionItem {
+  class_section_id: any;
+  id: number;
+  name: string;
+  section: string;
+  class_secion : string;
+}
+
+interface SubjectItem {
+  subject_id: number;
+  subject_name: string;
+  class_section_subject_id:string,
+}
+
+interface LessonItem {
+  lesson_id: number;
+  lesson_name: string;
+  class_section_subject_lesson_id:string;
+}
+
+interface TopicItem {
+  topic_id: number;
+  topic_name: string;
+}
 
 const modalsRoot = document.getElementById("root-modals") || document.body;
 
-const UploadsFilter = ({ show, handleClose, filterData }: Props) => {
+const UploadsFilter: React.FC<Props> = ({ show, handleClose, filterData }) => {
 
   const { currentUser } = useAuth();
   const school_id = currentUser?.school_id;
-  const [getClasses, setClasses] = useState([]);
-  const [getSections, setSections] = useState([]);
-  const [getSubjects, setSubjects] = useState([]);
-  const [getLessons, setLessons] = useState([]);
-  const [getTopics, setTopics] = useState([]);
+
+  const [getClasses, setClasses] = useState<ClassItem[]>([]);
+  const [getSections, setSections] = useState<SectionItem[]>([]);
+  const [getSubjects, setSubjects] = useState<SubjectItem[]>([]);
+  const [getLessons, setLessons] = useState<LessonItem[]>([]);
+  const [getTopics, setTopics] = useState<TopicItem[]>([]);
 
   
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     className: '',
     sectionName: '',
     subjectName: '',
     lessonName: '',
     topicName: '',
-    isPublic: '', // New field for Is Public
+    isPublic: '', // Initialize with an appropriate value based on its type
   });
 
   
@@ -161,11 +207,12 @@ const UploadsFilter = ({ show, handleClose, filterData }: Props) => {
 
   const handleSave = () => {
     handleClose();
-    const dta = formData;    
+    const dta = formData; 
+     /* @ts-ignore */   
     filterData(dta)
   };
 
-  const handleClassSelect = (id, name) => {
+  const handleClassSelect = ({id, name}:any) => {
     setSelectedClass({ id, name });
     setFormData({
       ...formData,
@@ -174,7 +221,7 @@ const UploadsFilter = ({ show, handleClose, filterData }: Props) => {
     });
   };
 
-const handleSectionSelect = (id, name,class_section_id) =>{
+const handleSectionSelect = ({id, name,class_section_id}:any) =>{
   setSelectedSection({id,name,class_section_id});
   setFormData({
     ...formData,
@@ -183,7 +230,7 @@ const handleSectionSelect = (id, name,class_section_id) =>{
   });
 };
 
-const handleSubjectSelect = (id, name,class_section_subject_id) =>{
+const handleSubjectSelect = ({id, name,class_section_subject_id}:any) =>{
   setSelectedSubjects({id,name,class_section_subject_id});
   setFormData({
     ...formData,
@@ -192,7 +239,7 @@ const handleSubjectSelect = (id, name,class_section_subject_id) =>{
   });
   
 };
-const handleLessonSelect = (id, name,class_section_subject_lesson_id) =>{
+const handleLessonSelect = ({id, name,class_section_subject_lesson_id}:any) =>{
   setSelectedLesson({id,name,class_section_subject_lesson_id});
   setFormData({
     ...formData,
@@ -201,7 +248,7 @@ const handleLessonSelect = (id, name,class_section_subject_lesson_id) =>{
   });
 };
 
-const handleTopicSelect = (id, name) =>{
+const handleTopicSelect = ({id, name}:any) =>{
   setSelectedTopic({id,name});
   setFormData({
     ...formData,
@@ -307,7 +354,7 @@ const handleTopicSelect = (id, name) =>{
               >
                 {getClasses.map((item) => (
                   <li key={item.id}>
-                    <button className="dropdown-item"  onClick={() => handleClassSelect(item.id, item.class)}>{item.class}</button>
+                    <button className="dropdown-item"  onClick={() => handleClassSelect({id: item.id, name: item.class})}>{item.class}</button>
                   </li>
                 ))}
               </ul>
@@ -354,7 +401,7 @@ const handleTopicSelect = (id, name) =>{
               >
                 {getSections.map((item) => (
                   <li key={item.id}>
-                    <button className="dropdown-item" onClick={() => handleSectionSelect(item.id, item.section, item.class_section_id)}>{item.section}</button>
+                    <button className="dropdown-item" onClick={() => handleSectionSelect({id: item.id,name: item.section,class_section_id: item.class_section_id})}>{item.section}</button>
                   </li>
                 ))}
               </ul>
@@ -394,7 +441,7 @@ const handleTopicSelect = (id, name) =>{
               <ul className="dropdown-menu" style={{ width: "100%" }}>
               {getSubjects.map((item) => (
                   <li key={item.subject_id}>
-                    <button className="dropdown-item"  onClick={() => handleSubjectSelect(item.subject_id, item.subject_name,item.class_section_subject_id)}>{item.subject_name}</button>
+                    <button className="dropdown-item"  onClick={() => handleSubjectSelect({id:item.subject_id,name: item.subject_name,class_section_subject_id: item.class_section_subject_id})}>{item.subject_name}</button>
                   </li>
                 ))}
               </ul>
@@ -434,7 +481,7 @@ const handleTopicSelect = (id, name) =>{
               <ul className="dropdown-menu" style={{ width: "100%" }}>
               {getLessons.map((item) => (
                   <li key={item.lesson_id}>
-                    <button className="dropdown-item"  onClick={() => handleLessonSelect(item.lesson_id, item.lesson_name,item.class_section_subject_lesson_id )}>{item.lesson_name}</button>
+                    <button className="dropdown-item"  onClick={() => handleLessonSelect({id:item.lesson_id,name: item.lesson_name, class_section_subject_lesson_id:item.class_section_subject_lesson_id })}>{item.lesson_name}</button>
                   </li>
                 ))}
               </ul>
@@ -474,7 +521,7 @@ const handleTopicSelect = (id, name) =>{
               <ul className="dropdown-menu" style={{ width: "100%" }}>
               {getTopics.map((item) => (
                   <li key={item.topic_id}>
-                    <button className="dropdown-item"  onClick={() => handleTopicSelect(item.topic_id, item.topic_name)}>{item.topic_name}</button>
+                    <button className="dropdown-item"  onClick={() => handleTopicSelect({id:item.topic_id, name:item.topic_name})}>{item.topic_name}</button>
                   </li>
                 ))}
               </ul>

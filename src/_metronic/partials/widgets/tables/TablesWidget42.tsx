@@ -1,15 +1,23 @@
 import React, { useEffect, useState } from "react";
-import { DOMAIN,getSchoolModuleById } from "../../../../app/routing/ApiEndpoints";
+import {
+  DOMAIN,
+  getSchoolModuleById,
+} from "../../../../app/routing/ApiEndpoints";
 import { useNavigate } from "react-router-dom";
 
-
 interface TablesWidget42Props {
-  schoolId: string | null;
+  schoolId: string | undefined;
 }
 
+interface SchoolModule {
+  parent_name: string; // Replace with actual types as needed
+  module_name: string;
+  can_view: string;
+  // Add other fields here
+}
 
 const TablesWidget42: React.FC<TablesWidget42Props> = ({ schoolId }) => {
-  const [schoolModules, setSchoolModules] = useState([]);
+  const [schoolModules, setSchoolModules] = useState<SchoolModule[]>([]);
   const Navigate = useNavigate();
 
   useEffect(() => {
@@ -31,10 +39,9 @@ const TablesWidget42: React.FC<TablesWidget42Props> = ({ schoolId }) => {
     fetchData();
   }, [schoolId]);
 
-  const handleModules = () => () => {    
+  const handleModules = () => () => {
     Navigate(`/superadmin/manage/academies/modules?schoolId=${schoolId}`);
   };
-  
 
   return (
     <div
@@ -79,7 +86,6 @@ const TablesWidget42: React.FC<TablesWidget42Props> = ({ schoolId }) => {
         >
           <caption
             style={{
-            
               paddingLeft: "20px",
               paddingRight: "20px",
               display: "flex",
@@ -102,63 +108,64 @@ const TablesWidget42: React.FC<TablesWidget42Props> = ({ schoolId }) => {
                 Manage Modules
               </span>
             </div>
-            <div style={{display:'flex'}}>
-            <span
-                  style={{
-                    height: "36px",
-                    borderRadius: "8px",
-                    padding: "8px 10px 8px 10px",
-                    gap: "5px",
-                    backgroundColor: "#FFFFFF",
-                    display: "flex",
-                    flexDirection: "row",
-                    cursor: "pointer",
-                  }}
-                  onClick={handleModules()}
-                  data-bs-toggle="modal"
-                  data-bs-target="#staticBackdrop"
+            <div style={{ display: "flex" }}>
+              <span
+                style={{
+                  height: "36px",
+                  borderRadius: "8px",
+                  padding: "8px 10px 8px 10px",
+                  gap: "5px",
+                  backgroundColor: "#FFFFFF",
+                  display: "flex",
+                  flexDirection: "row",
+                  cursor: "pointer",
+                }}
+                onClick={handleModules()}
+                data-bs-toggle="modal"
+                data-bs-target="#staticBackdrop"
+              >
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 20 20"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
                 >
-                  <svg
-                    width="20"
-                    height="20"
-                    viewBox="0 0 20 20"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
+                  <g clip-path="url(#clip0_103_1850)">
+                    <path
+                      d="M1.66663 10C1.66663 6.07165 1.66663 4.10746 2.88701 2.88708C4.1074 1.66669 6.07159 1.66669 9.99996 1.66669C13.9283 1.66669 15.8925 1.66669 17.1129 2.88708C18.3333 4.10746 18.3333 6.07165 18.3333 10C18.3333 13.9284 18.3333 15.8926 17.1129 17.113C15.8925 18.3334 13.9283 18.3334 9.99996 18.3334C6.07159 18.3334 4.1074 18.3334 2.88701 17.113C1.66663 15.8926 1.66663 13.9284 1.66663 10Z"
+                      stroke="black"
+                      stroke-width="1.5"
+                    />
+                    <path
+                      d="M12.5 10L10 10M10 10L7.5 10M10 10L10 7.5M10 10L10 12.5"
+                      stroke="black"
+                      stroke-width="1.5"
+                      stroke-linecap="round"
+                    />
+                  </g>
+                  <defs>
+                    <clipPath id="clip0_103_1850">
+                      <rect width="20" height="20" fill="white" />
+                    </clipPath>
+                  </defs>
+                </svg>
+                <div style={{ width: "75px", height: "9px" }}>
+                  <span
+                    style={{
+                      fontSize: "12px",
+                      fontWeight: "500",
+                      color: "#000000",
+                      lineHeight: "16.39px",
+                      fontFamily: "Manrope",
+                    }}
                   >
-                    <g clip-path="url(#clip0_103_1850)">
-                      <path
-                        d="M1.66663 10C1.66663 6.07165 1.66663 4.10746 2.88701 2.88708C4.1074 1.66669 6.07159 1.66669 9.99996 1.66669C13.9283 1.66669 15.8925 1.66669 17.1129 2.88708C18.3333 4.10746 18.3333 6.07165 18.3333 10C18.3333 13.9284 18.3333 15.8926 17.1129 17.113C15.8925 18.3334 13.9283 18.3334 9.99996 18.3334C6.07159 18.3334 4.1074 18.3334 2.88701 17.113C1.66663 15.8926 1.66663 13.9284 1.66663 10Z"
-                        stroke="black"
-                        stroke-width="1.5"
-                      />
-                      <path
-                        d="M12.5 10L10 10M10 10L7.5 10M10 10L10 7.5M10 10L10 12.5"
-                        stroke="black"
-                        stroke-width="1.5"
-                        stroke-linecap="round"
-                      />
-                    </g>
-                    <defs>
-                      <clipPath id="clip0_103_1850">
-                        <rect width="20" height="20" fill="white" />
-                      </clipPath>
-                    </defs>
-                  </svg>
-                  <div style={{ width: "75px", height: "9px" }}>
-                    <span
-                      style={{
-                        fontSize: "12px",
-                        fontWeight: "500",
-                        color: "#000000",
-                        lineHeight: "16.39px",
-                        fontFamily:'Manrope'
-                      }}
-                      
-                    >
-                      {schoolModules.length === 0 ? "Add Modules" : "Edit Modules"}
-                    </span>
-                  </div>
-                </span>
+                    {schoolModules.length === 0
+                      ? "Add Modules"
+                      : "Edit Modules"}
+                  </span>
+                </div>
+              </span>
             </div>
           </caption>
           <div style={{ display: "flex", justifyContent: "center" }}>
@@ -181,13 +188,13 @@ const TablesWidget42: React.FC<TablesWidget42Props> = ({ schoolId }) => {
                 <span
                   style={{
                     fontSize: "12px",
-                      fontWeight: "700",
-                      lineHeight: "18px",
-                      color: "#FFFFFF",
-                      position: "sticky",
-                      top: "0",
-                      zIndex: "1",
-                      fontFamily:'Manrope'
+                    fontWeight: "700",
+                    lineHeight: "18px",
+                    color: "#FFFFFF",
+                    position: "sticky",
+                    top: "0",
+                    zIndex: "1",
+                    fontFamily: "Manrope",
                   }}
                 >
                   Id
@@ -197,13 +204,13 @@ const TablesWidget42: React.FC<TablesWidget42Props> = ({ schoolId }) => {
                 <span
                   style={{
                     fontSize: "12px",
-                      fontWeight: "700",
-                      lineHeight: "18px",
-                      color: "#FFFFFF",
-                      position: "sticky",
-                      top: "0",
-                      zIndex: "1",
-                      fontFamily:'Manrope'
+                    fontWeight: "700",
+                    lineHeight: "18px",
+                    color: "#FFFFFF",
+                    position: "sticky",
+                    top: "0",
+                    zIndex: "1",
+                    fontFamily: "Manrope",
                   }}
                 >
                   Group Name
@@ -213,13 +220,13 @@ const TablesWidget42: React.FC<TablesWidget42Props> = ({ schoolId }) => {
                 <span
                   style={{
                     fontSize: "12px",
-                      fontWeight: "700",
-                      lineHeight: "18px",
-                      color: "#FFFFFF",
-                      position: "sticky",
-                      top: "0",
-                      zIndex: "1",
-                      fontFamily:'Manrope'
+                    fontWeight: "700",
+                    lineHeight: "18px",
+                    color: "#FFFFFF",
+                    position: "sticky",
+                    top: "0",
+                    zIndex: "1",
+                    fontFamily: "Manrope",
                   }}
                 >
                   Module Name
@@ -235,7 +242,7 @@ const TablesWidget42: React.FC<TablesWidget42Props> = ({ schoolId }) => {
                     position: "sticky",
                     top: "0",
                     zIndex: "1",
-                    fontFamily:'Manrope'
+                    fontFamily: "Manrope",
                   }}
                 >
                   Can View
@@ -263,9 +270,7 @@ const TablesWidget42: React.FC<TablesWidget42Props> = ({ schoolId }) => {
               justifyContent: "space-between",
               width: "100%",
               backgroundColor: "#F7F9FB",
-              flexDirection:'column',
-              
-
+              flexDirection: "column",
             }}
           >
             {schoolId ? (
@@ -277,16 +282,15 @@ const TablesWidget42: React.FC<TablesWidget42Props> = ({ schoolId }) => {
                     height: "61px",
                     display: "flex",
                     paddingLeft: "24px",
-                    backgroundColor: index % 2 === 0 ? '#F7F9FB' : '#FFFFFF',
+                    backgroundColor: index % 2 === 0 ? "#F7F9FB" : "#FFFFFF",
                     paddingTop: "18px",
-                    gap:'60px',
-            paddingBottom:'15px'
+                    gap: "60px",
+                    paddingBottom: "15px",
 
                     // justifyContent: "space-between",
-
                   }}
                 >
-                  <td style={{width:'10%'}}>
+                  <td style={{ width: "10%" }}>
                     <div
                       className=""
                       style={{
@@ -351,7 +355,7 @@ const TablesWidget42: React.FC<TablesWidget42Props> = ({ schoolId }) => {
                           fontFamily: "Manrope",
                         }}
                       >
-                       {moduleDetail.module_name}
+                        {moduleDetail.module_name}
                       </span>
                     </div>
                   </td>
@@ -382,7 +386,12 @@ const TablesWidget42: React.FC<TablesWidget42Props> = ({ schoolId }) => {
               ))
             ) : (
               <tr>
-                <td colSpan="5">No Modules Assign to the school</td>
+                <td
+                  /* @ts-ignore */
+                  colSpan="5"
+                >
+                  No Modules Assign to the school
+                </td>
               </tr>
             )}
           </div>

@@ -1,12 +1,12 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { FC, useEffect, useState } from "react";
 import { useIntl } from "react-intl";
 import { PageTitle } from "../../../../_metronic/layout/core";
 import { Content } from "../../../../_metronic/layout/components/content";
-import { TablesWidget28 } from "../../../../_metronic/partials/widgets/tables/TablesWidget28";
 import { HeaderWrapper } from "../../../../_metronic/layout/components/header_staff";
 import { DOMAIN } from "../../../routing/ApiEndpoints";
 import { useAuth } from "../../../modules/auth/core/Auth";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 
 const useQuery = () => {
@@ -33,12 +33,17 @@ const SelectSubjectPage: FC = () => {
 
   const { currentUser } = useAuth();
   const Navigate = useNavigate();
+                        /* @ts-ignore */
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const school_id = (currentUser as any)?.school_id;
   const [getSubjects, setSubjects] = useState<Subject[]>([]);
   
 useEffect(()=>{
   const fetchSubjects = async () => {
-    const teacher_id = currentUser?.id;
+                          /* @ts-ignore */
+
+     const teacher_id = currentUser?.id;
     try {
       let response;
       if (currentUser?.roleName == "Teacher") {

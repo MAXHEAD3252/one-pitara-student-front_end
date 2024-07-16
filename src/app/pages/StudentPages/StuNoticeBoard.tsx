@@ -20,7 +20,7 @@ const StudentNoticeBoardPage: FC = () => {
   const startOfMonth = new Date(currentDate);
   startOfMonth.setMonth(currentDate.getMonth() - 1); // One month before
 
-  const formattedStartDate = startOfMonth.toISOString().split("T")[0];
+  // const formattedStartDate = startOfMonth.toISOString().split("T")[0];
   // const c = currentDate.toISOString().split('T')[0];
   const currentDateOnly= currentDate.toISOString().split('T')[0];
 
@@ -52,6 +52,7 @@ const StudentNoticeBoardPage: FC = () => {
    // paginate(pageNumber);
   
 const {currentUser}=useAuth();
+ /* @ts-ignore */
 const class_id = currentUser?.class_id;
 // console.log("class id",class_id)
 

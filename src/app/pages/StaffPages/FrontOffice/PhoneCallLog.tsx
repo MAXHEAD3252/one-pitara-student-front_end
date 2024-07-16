@@ -1,26 +1,33 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { FC, useEffect, useState } from "react";
 import { PageTitle } from "../../../../_metronic/layout/core";
 import { useIntl } from "react-intl";
 import { HeaderWrapper } from "../../../../_metronic/layout/components/header_staff";
 import { Content } from "../../../../_metronic/layout/components/content";
-import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../modules/auth";
 import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
 
-
+interface CallLogs {
+  id: string; // Replace with actual types as needed
+  name: string;
+  address: string;
+  contact: string;
+  date: string;
+  desciption: string;
+  follow_up_date: string;
+  call_duration: string;
+  call_type: string;
+  // Add other fields here
+}
 const PhoneCallLogPage: FC = () => {
-  const [callLogs, setCallLogs] = useState([]);
+  const [callLogs, setCallLogs] = useState<CallLogs[]>([]);
   const {currentUser} = useAuth();
   const [refreshData, setRefreshData] = useState(false);
-  const navigate = useNavigate();
-  console.log(callLogs);
   
-  // console.log(visitors);
   const schoolId = currentUser?.school_id;
   
 
   useEffect(() => {
-    // Function to fetch academies data from API
     const fetchAcademies = async () => {
       try {
         const response = await fetch(

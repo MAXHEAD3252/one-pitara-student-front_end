@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React from "react";
 // import { FC } from "react";
 import { useIntl } from "react-intl";
@@ -10,12 +12,20 @@ import { CreateSchoolModal } from "../../../_metronic/partials/modals/create-app
 import { useNavigate } from "react-router-dom";
 import { DOMAIN } from "../../routing/ApiEndpoints";
 
+interface School {
+  id: number;
+  name: string;
+  email: string;
+  phone: string;
+  address: string;
+  // Add other properties as needed
+}
 
 export const ManageSchoolsPage = () => {
-  const [schools, setSchools] = useState([]);
-  const [showModal, setShowModal] = useState(false);
-  const [showCreateAppModal, setShowCreateAppModal] = useState(false);
-  const [selectedSchool, setSelectedSchool] = useState(0);
+  const [schools, setSchools] = useState<School[]>([]);
+  // const [showModal, setShowModal] = useState(false);
+  // const [showCreateAppModal, setShowCreateAppModal] = useState(false);
+  // const [selectedSchool, setSelectedSchool] = useState(0);
   const [refreshData, setRefreshData] = useState(false);
   const navigate = useNavigate();
   
@@ -54,14 +64,14 @@ export const ManageSchoolsPage = () => {
     setShowCreateAppModal(true);
   };
 
-  const handleModalClose = () => {
-    setShowCreateAppModal(false);
-  };
+  // const handleModalClose = () => {
+  //   setShowCreateAppModal(false);
+  // };
 
-  const handleCloseModal = () => {
-    setShowModal(false);
-  };
-  const handleViewSchool = (value) => {
+  // const handleCloseModal = () => {
+  //   setShowModal(false);
+  // };
+  const handleViewSchool = (value: any) => {
     const schoolId = value;
 
     navigate(`/superadmin/school-profile/${schoolId}`);
@@ -642,3 +652,7 @@ const ManageSchools = () => {
 };
 
 export { ManageSchools };
+  function setShowCreateAppModal(arg0: boolean) {
+    throw new Error("Function not implemented.");
+  }
+

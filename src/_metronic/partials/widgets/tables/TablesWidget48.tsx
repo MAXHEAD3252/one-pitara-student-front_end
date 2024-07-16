@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Tooltip as ReactTooltip } from "react-tooltip";
+// import { Tooltip as ReactTooltip } from "react-tooltip";
 import "../../../../app/pages/StaffPages/FeeDetails/style.css";
-import { CreateWalkinEnquiry } from "../../modals/create-app-stepper/CreateWalkinEnquiry";
-import { CreateEnquiryAction } from "../../modals/create-app-stepper/CreateEnquiryAction";
-import { CreateEditEnquiry } from "../../modals/create-app-stepper/CreateEditEnquiry";
+// import { CreateWalkinEnquiry } from "../../modals/create-app-stepper/CreateWalkinEnquiry";
+// import { CreateEnquiryAction } from "../../modals/create-app-stepper/CreateEnquiryAction";
+// import { CreateEditEnquiry } from "../../modals/create-app-stepper/CreateEditEnquiry";
 import { useAuth } from "../../../../app/modules/auth/core/Auth";
-import { UploadsFilter } from "../../modals/create-app-stepper/UploadsFilter";
+// import { UploadsFilter } from "../../modals/create-app-stepper/UploadsFilter";
 import { AddClasses } from "../../modals/create-app-stepper/AddClasses";
 import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
 
@@ -17,25 +17,37 @@ interface TablesWidgetProps {
   topicId?: string;
 }
 
-interface DataItem {
+
+
+interface ClassData {
   class: string;
-  section: string;
-  subject: string;
-  type: string;
-  lesson: string;
-  topic: string;
-  title: string;
-  upload_type: string;
-  staff_name: string;
-  created_at: Date;
-  updated_at: Date;
+  sections: string[];
+}
+
+// interface DataItem {
+//   class: string;
+//   section: string;
+//   subject: string;
+//   type: string;
+//   lesson: string;
+//   topic: string;
+//   title: string;
+//   upload_type: string;
+//   staff_name: string;
+//   created_at: Date;
+//   updated_at: Date;
+// }
+
+interface CurrentUser {
+  school_id: string; // Adjust type as per your actual data type for school_id
+  // Add other properties if `currentUser` has more properties
 }
 
 
 const TablesWidget48: React.FC<TablesWidgetProps> = () => {
-  const [data, setData] = useState([]);
+  const [data, setData] = useState<ClassData[]>([]);
   const { currentUser } = useAuth();
-  const school_id = (currentUser as any)?.school_id;
+  const school_id = (currentUser as unknown as CurrentUser)?.school_id;
   const [showModal, setShowModal] = useState(false);
   //   const [showActionModal, setShowActionModal] = useState(false);
   //   const [showEditModal, setShowEditModal] = useState(false);

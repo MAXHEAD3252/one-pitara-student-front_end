@@ -2,11 +2,23 @@ import React, { useEffect, useState } from "react";
 import { useAuth } from "../../../../app/modules/auth/core/Auth";
 import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
 
+
+
+interface Deadline {
+  id: number;
+  title: string;
+  class: string; 
+  type : string;
+  subject : string;
+  staff_name : string;
+  end_date : string;
+}
+
 const TablesWidget37: React.FC = () => {
   const { currentUser } = useAuth();
   const school_id = currentUser?.school_id;
 
-  const [allUpcomingDeadlines, setAllUpcomingDeadlines] = useState([]);
+  const [allUpcomingDeadlines, setAllUpcomingDeadlines] = useState<Deadline[]>([]);
 
   useEffect(() => {
     const fetchAllAnnouncements = async () => {
@@ -28,11 +40,12 @@ const TablesWidget37: React.FC = () => {
   }, []);
 
 
-  const formatDate = (dateString) => {
-    const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
-    const date = new Date(dateString);
+  const formatDate = (dateString: string): string => {
+    const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: '2-digit', day: '2-digit' };
+    const date: Date = new Date(dateString);
     return date.toLocaleDateString('en-GB', options);
-  };
+};
+
 
 
   return (

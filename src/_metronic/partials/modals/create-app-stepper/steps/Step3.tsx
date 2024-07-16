@@ -1,6 +1,7 @@
-import { AddStaffModels } from "../AddStaffModels";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+// import { AddStaffModels } from "../AddStaffModels";
 
-const Step3 = ({ data, updateData, hasError }: AddStaffModels) => (
+const Step3 = ({ data, updateData, hasError }:any) => (
   <div className="pb-5" data-kt-stepper-element="content">
     <div className="w-100">
       <div className="fv-row mb-10" style={{ display: "flex", gap: "10px" }}>

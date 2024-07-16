@@ -2,13 +2,23 @@ import React, { useEffect, useState } from "react";
 import { useAuth } from "../../../../app/modules/auth/core/Auth";
 import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
 
+interface Uploads {
+  id: number;
+  class: string;
+  section: string;
+  subject: string;
+  staff_name: string;
+  upload_type: string;
+  created_at: string;
+  // Add other properties as needed
+}
 
 const TablesWidget36: React.FC = () => {
 
   const { currentUser } = useAuth();
   const school_id = currentUser?.school_id;
 
-  const [getAllUploads, setAllUploads] = useState([]);
+  const [getAllUploads, setAllUploads] = useState<Uploads[]>([]);
 
 
   useEffect(() => {
@@ -31,9 +41,10 @@ const TablesWidget36: React.FC = () => {
   }, []);
 
 
-  const formatDate = (dateString) => {
+  const formatDate = (dateString: string | number | Date) => {
     const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
     const date = new Date(dateString);
+     /* @ts-ignore */
     return date.toLocaleDateString('en-GB', options);
   };
 

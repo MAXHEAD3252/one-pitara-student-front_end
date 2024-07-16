@@ -12,7 +12,7 @@ const Roles: FC = () => {
     
 
       <Content>
-        <TablesWidget28 className={""} />
+        <TablesWidget28 />
       </Content>
     </div>
   );

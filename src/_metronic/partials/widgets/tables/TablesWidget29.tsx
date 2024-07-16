@@ -1,36 +1,31 @@
-import { useState, useEffect } from "react";
-import { useAuth } from "../../../../app/modules/auth"; 
-import { DOMAIN ,getParentModule,storeModuleRequest} from '../../../../app/routing/ApiEndpoints'; 
+import React, { useState, useEffect } from "react";
+import { useAuth } from "../../../../app/modules/auth";
+import { DOMAIN, getParentModule, storeModuleRequest } from "../../../../app/routing/ApiEndpoints";
+
+type ModuleInfo = [string, string]; // Define type for module info array
+type SelectedModules = Record<string, string[]>; // Define type for selected modules object
 
 type Props = {
   className: string;
-  role_id?: number;
-
+  role_id?: number | null;
 };
 
 const TablesWidget29: React.FC<Props> = ({ className, role_id }) => {
   const { currentUser } = useAuth();
-  const [schoolModules, setschoolModules] = useState([]);
-  // const [selectedIds, setSelectedIds] = useState([ ]);
-  const [selectedModules, setSelectedModules] = useState({});
-  
-  const schoolId = currentUser?.school_id;
-  
+  const [schoolModules, setSchoolModules] = useState<Record<string, ModuleInfo[]>>({}); // Specify type for schoolModules
+  const [selectedModules, setSelectedModules] = useState<SelectedModules>({}); // Specify type for selectedModules
 
-  
+  const schoolId = currentUser?.school_id || 0; // Ensure schoolId has a default value
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(
-          `${DOMAIN}/${getParentModule}/${schoolId}`
-        );
+        const response = await fetch(`${DOMAIN}/${getParentModule}/${schoolId}`);
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
         const data = await response.json();
-        
-        setschoolModules(data);
+        setSchoolModules(data);
       } catch (error) {
         console.error("Error fetching school details:", error);
       }
@@ -40,50 +35,46 @@ const TablesWidget29: React.FC<Props> = ({ className, role_id }) => {
   }, [schoolId]);
 
   const handleCheckbox = (moduleName: string, headerLabel: string) => {
-    const updatedSelectedModules = { ...selectedModules };
+    setSelectedModules((prevSelectedModules) => {
+      const updatedSelectedModules = { ...prevSelectedModules };
 
-    if (!updatedSelectedModules[moduleName]) {
-      updatedSelectedModules[moduleName] = [];
-    }
+      if (!updatedSelectedModules[moduleName]) {
+        updatedSelectedModules[moduleName] = [];
+      }
 
-    const index = updatedSelectedModules[moduleName].indexOf(headerLabel);
-    if (index !== -1) {
-      updatedSelectedModules[moduleName].splice(index, 1);
-    } else {
-      updatedSelectedModules[moduleName].push(headerLabel);
-    }
+      const index = updatedSelectedModules[moduleName].indexOf(headerLabel);
+      if (index !== -1) {
+        updatedSelectedModules[moduleName].splice(index, 1);
+      } else {
+        updatedSelectedModules[moduleName].push(headerLabel);
+      }
 
-    setSelectedModules(updatedSelectedModules);
-    
+      return updatedSelectedModules;
+    });
   };
-
 
   const handleSubmit = async () => {
     try {
-    
-      
       const response = await fetch(`${DOMAIN}/${storeModuleRequest}`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ school_id, role_id, selectedModules }),
+        body: JSON.stringify({ school_id: schoolId, role_id, selectedModules }),
       });
-  
+
       if (!response.ok) {
-        throw new Error('Network response was not ok');
+        throw new Error("Network response was not ok");
       }
-  
+
       const data = await response.json();
-      console.log('Data submitted successfully:', data);
+      console.log("Data submitted successfully:", data);
       // Handle success, if needed
     } catch (error) {
-      console.error('Error submitting data:', error);
+      console.error("Error submitting data:", error);
       // Handle error, if needed
     }
   };
-  
-  
 
   return (
     <div className={`card ${className}`}>
@@ -115,9 +106,7 @@ const TablesWidget29: React.FC<Props> = ({ className, role_id }) => {
                   return (
                     <tr key={index}>
                       <td>
-                        <div
-                          style={{ paddingLeft: "15px", paddingBottom: "15px" }}
-                        >
+                        <div style={{ paddingLeft: "15px", paddingBottom: "15px" }}>
                           <span
                             className="menu-section"
                             style={{
@@ -140,7 +129,7 @@ const TablesWidget29: React.FC<Props> = ({ className, role_id }) => {
                       {[...Array(headerLabels.length)].map((_, i) => (
                         <td key={i} className="py-2 px-4">
                           {modules.map((moduleName, index) => {
-                            const checkboxId = `${moduleName}:${headerLabels[i]}`;
+                            const checkboxId = `${moduleName[0]}:${headerLabels[i]}`;
 
                             return (
                               <div style={{ display: "flex" }} key={index}>
@@ -149,13 +138,12 @@ const TablesWidget29: React.FC<Props> = ({ className, role_id }) => {
                                     className="form-check-input"
                                     type="checkbox"
                                     id={`flexSwitchCheck-${index}`}
-                                    onClick={() =>
-                                      handleCheckbox(
-                                        moduleName[0],
-                                        headerLabels[i]
-                                      )
+                                    onChange={() =>
+                                      handleCheckbox(moduleName[0], headerLabels[i])
                                     }
-                                    checked={selectedModules[checkboxId]}
+                                    checked={selectedModules[checkboxId]?.includes(
+                                      headerLabels[i]
+                                    )}
                                   />
                                   <label
                                     className="form-check-label"
@@ -173,22 +161,12 @@ const TablesWidget29: React.FC<Props> = ({ className, role_id }) => {
             </tbody>
           </table>
 
-          <div
-            className="d-flex justify-content-end"
-            style={{
-              paddingRight: "30px",
-            }}
-          >
+          <div className="d-flex justify-content-end" style={{ paddingRight: "30px" }}>
             <button
-              className="btn btn-primary "
-              style={{
-                display: "flex",
-                justifyContent: "end",
-              }}
+              className="btn btn-primary"
+              style={{ display: "flex", justifyContent: "end" }}
               onClick={handleSubmit}
-              // disabled={school_id===0 ||!school_id}
-
-              // disabled={!modulesWithAccess.length || !itemsWithAccess.length}
+              // disabled={!schoolId || Object.keys(selectedModules).length === 0}
             >
               Submit
             </button>

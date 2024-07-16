@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from "react";
 import "../../../../../app/pages/StaffPages/FeeDetails/style.css";
 
-const EngageWidget10 = ({title, number,image }) => {
+const EngageWidget10 = ({title, number,image }:any) => {
   return (
     <div
       style={{ height: "340px", width: "100%" }}

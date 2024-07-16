@@ -11,6 +11,28 @@ type Props = {
   refresh: (refresh: boolean) => void;
 };
 
+interface Section {
+  id: string; // Adjust the type as per your data structure
+  section: string;
+  // Add other properties if needed
+}
+
+interface Class {
+  id: string; // Adjust the type as per your data structure
+  class: string;
+  // Add other properties if needed
+}
+interface Category {
+  id: string; // Adjust the type as per your data structure
+  category: string;
+  // Add other properties if needed
+}
+interface Route {
+  id: string; // Adjust the type as per your data structure
+  route_title: string;
+  // Add other properties if needed
+}
+
 const modalsRoot = document.getElementById("root-modals") || document.body;
 
 const CreateStudent = ({ show, handleClose, refresh }: Props) => {
@@ -18,10 +40,10 @@ const CreateStudent = ({ show, handleClose, refresh }: Props) => {
   // console.log(currentUser);
   
   const schoolId = currentUser?.school_id;
-  const [sections, setSections] = useState([]);
-  const [classes, setClasses] = useState([]);
-  const [routes, setRoutes] = useState([]);
-  const [categories, setCategory] = useState([]);
+  const [sections, setSections] = useState<Section[]>([]);
+  const [classes, setClasses] = useState<Class[]>([]);
+  const [routes, setRoutes] = useState<Route[]>([]);
+  const [categories, setCategory] = useState<Category[]>([]);
 
   const [formData, setFormData] = useState({
     admission_no: 0,
@@ -76,7 +98,7 @@ const CreateStudent = ({ show, handleClose, refresh }: Props) => {
     pincode:"",
     school_id: schoolId,
   });
-  
+  /* @ts-ignore */
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevState) => ({
@@ -163,12 +185,12 @@ const CreateStudent = ({ show, handleClose, refresh }: Props) => {
 
 
 
-  
+  /* @ts-ignore */
   const handleSubmit = async (e) => {
     e.preventDefault();
   
     try {
-      const response = await fetch("${DOMAIN}/api/staff/storeStudent", {
+      const response = await fetch(`${DOMAIN}/api/staff/storeStudent`, {
         method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -611,8 +633,9 @@ const CreateStudent = ({ show, handleClose, refresh }: Props) => {
                     className="form-control"
                     id="studentPhoto"
                     name="studentPhoto"
-                    placeholder=""
-                    value={formData.studentPhoto}
+                    placeholder=""  
+                    /* @ts-ignore */
+                    value={formData?.studentPhoto}
                     onChange={handleChange}
                   />
                   <label htmlFor="studentPhoto">Student Photo</label>
@@ -1352,7 +1375,7 @@ const CreateStudent = ({ show, handleClose, refresh }: Props) => {
                     id="hostel_room_id"
                     aria-label="Default select example"
                     name="bloddGroup"
-                    value={formData.bloddGroup}
+                    value={formData.blood_group}
                     onChange={handleChange}
                   >
                     <option value="" selected>
@@ -1376,7 +1399,7 @@ const CreateStudent = ({ show, handleClose, refresh }: Props) => {
                     id="hostel_room_id"
                     aria-label="Default select example"
                     name="hostel_room_id"
-                    value={formData.hostel_room_id}
+                    value={formData.hostel}
                     onChange={handleChange}
                   >
                     <option value="" selected>

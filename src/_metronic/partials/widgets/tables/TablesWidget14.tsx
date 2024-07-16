@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from "react";
 import "../../../../app/pages/StaffPages/FeeDetails/style.css";
 //  backgroundColor: "#F5F5F5",
@@ -5,13 +6,25 @@ import { useAuth } from "../../../../app/modules/auth/index.ts";
 import { EditFessMasterModal } from "../../modals/create-app-stepper/EditFessMasterModal.tsx";
 import { DOMAIN } from "../../../../app/routing/ApiEndpoints.tsx";
 
+// Define interfaces
+interface FeeItem {
+  fee_type: string;
+  fee_amount: number;
+  fee_id: number;
+}
+
+interface GroupedData {
+ 
+    name: string;
+    fees: FeeItem[];
+}
+
 const TablesWidget14: React.FC = () => {
-  const [feeData, setFeeData] = useState([]);
+  const [feeData, setFeeData] = useState<GroupedData[]>([]);
   const { currentUser } = useAuth();
   const schoolId = currentUser?.school_id;
-
-  const [showModal, setShowModal] = useState(false);
-  const [feeId, setFeeId] = useState(null);
+  const [showModal, setShowModal] = useState<boolean>(false);
+  const [feeId, setFeeId] = useState<number | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -19,27 +32,45 @@ const TablesWidget14: React.FC = () => {
         const response = await fetch(
           `${DOMAIN}/api/staff/getfeemaster-list/${schoolId}/${19}`
         );
+        if (!response.ok) {
+          throw new Error("Failed to fetch data");
+        }
         const data = await response.json();
 
-        // Grouping fee data by fee_group_id`
-        const groupedData = data.reduce((acc, item) => {
-          const { fee_group_id, fee_group_name, fee_type, fee_amount, fee_id } =
-            item;
-          if (!acc[fee_group_id]) {
-            acc[fee_group_id] = {
-              name: fee_group_name,
-              fees: [{ type: fee_type, amount: fee_amount, fid: fee_id }],
-            };
-          } else {
-            acc[fee_group_id].fees.push({
-              type: fee_type,
-              amount: fee_amount,
-              fid: fee_id,
-            });
-          }
-          return acc;
-        }, {});
+        // Grouping fee data by fee_group_id
+        const groupedData: GroupedData = data.reduce(
+          (acc: GroupedData, item: any) => {
+            const {
+              fee_group_id,
+              fee_group_name,
+              fee_type,
+              fee_amount,
+              fee_id,
+            } = item;
+ /* @ts-ignore */
+            if (!acc[fee_group_id]) {
+               /* @ts-ignore */
+              acc[fee_group_id] = {
+                name: fee_group_name,
+                 /* @ts-ignore */
+                fees: [{ type: fee_type, amount: fee_amount, fid: fee_id }],
+              };
+            } else {
+               /* @ts-ignore */
+              acc[fee_group_id].fees.push({
+                 /* @ts-ignore */
+                type: fee_type,
+                amount: fee_amount,
+                fid: fee_id,
+              });
+            }
 
+            return acc;
+          },
+          {}
+        );
+
+        /* @ts-ignore */
         setFeeData(Object.values(groupedData));
       } catch (error) {
         console.error("Error fetching fee data:", error);
@@ -47,12 +78,13 @@ const TablesWidget14: React.FC = () => {
     };
 
     fetchData();
-  }, [showModal]);
+  }, [schoolId]);
 
-  function handleOpenModal(id: any): void {
+  function handleOpenModal(id: number): void {
     setFeeId(id);
     setShowModal(true);
   }
+
   function handleCloseModal(): void {
     setShowModal(false);
   }
@@ -122,7 +154,7 @@ const TablesWidget14: React.FC = () => {
                     fontWeight: "700",
                     lineHeight: "21.86px",
                     color: "#FFFFFF",
-                    fontFamily:'Manrope'
+                    fontFamily: "Manrope",
                   }}
                 >
                   Fee Master List: 2022- 2023{" "}
@@ -363,6 +395,7 @@ const TablesWidget14: React.FC = () => {
                         fontFamily: "Manrope",
                       }}
                     >
+                      
                       {group.name}
                     </span>
                   </div>
@@ -403,10 +436,17 @@ const TablesWidget14: React.FC = () => {
                             textAlign: "start",
                           }}
                         >
-                          <span className="text-gray-900">{`${fee.type} RS${fee.amount}`}</span>
+                          <span className="text-gray-900">
+                            {
+                              /* @ts-ignore */
+                              `${fee.type} RS${fee.amount}`
+                            }
+                          </span>
                           <div>
                             <button
                               //  onClick={() => handleOpenModal(fee.fid)} // Replace fee.id with the actual id
+                                                    /* @ts-ignore */
+
                               onClick={() => handleOpenModal(fee.fid)} // Replace fee.id with the actual id
                               style={{
                                 background: "none",

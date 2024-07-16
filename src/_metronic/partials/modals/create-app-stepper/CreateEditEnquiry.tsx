@@ -11,49 +11,102 @@ type Props = {
   enqId: number;
   // refresh: (refresh: boolean) => void;
 };
+type Reference = {
+  id: string;
+  reference: string;
+};
 
 const modalsRoot = document.getElementById("root-modals") || document.body;
+interface Source {
+  id: string; // Adjust the type as per your data structure
+  source: string;
+  // Add other properties if needed
+}
+interface Class {
+  class: string;
+  id: string; // Adjust the type as per your data structure
+  // Add other properties if needed
+}
+interface Session {
+  session: string;
+  id: string; // Adjust the type as per your data structure
+  // Add other properties if needed
+}
+
+
+interface FormData {
+  name: string;
+  father_organization: string;
+  contact: string;
+  mother_name: string;
+  mother_contact_number: string;
+  mother_occupation: string;
+  mother_organization: string;
+  description: string;
+  note: string;
+  address: string;
+  date: string;
+  reference: string;
+  status: string;
+  date_of_birth: string;
+  father_contact_number: string;
+  current_school: string;
+  gender: string;
+  father_type_of_work: string;
+  academic_year: string;
+  father_name: string;
+  father_occupation: string;
+  email: string;
+  class_id: string;
+  class: string;
+  source_id: string;
+  source: string;
+  follow_up_date: string;
+  reference_id:string;
+}
 
 const CreateEditEnquiry = ({ show, handleClose, enqId }: Props) => {
   const { currentUser } = useAuth();
 
   const schoolId = currentUser?.school_id;
 
-  const [data, setData] = useState({});
-  const [source, setSource] = useState([]);
-  const [reference, setReference] = useState([]);
-  const [classes, setClasses] = useState([]);
-  const [sessions, setSessions] = useState([]);
+  // const [data, setData] = useState({});
+  const [source, setSource] = useState<Source[]>([]);
+  const [reference, setReference] = useState<Reference[]>([]);
+  const [classes, setClasses] = useState<Class[]>([]);
+  const [sessions, setSessions] =  useState<Session[]>([]);
   const [changedFields, setChangedFields] = useState({});
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     name: "",
-    contact: "",
-    address: "",
-    date: "",
-    reference_id: "",
-    status: "",
-    gender: "",
-    current_school: "",
-    academic_year: "",
-    date_of_birth: "",
-    email: "",
-    class_id: "",
-    source_id: "",
-    follow_up_date: "",
-    father_name: "",
-    father_contact_number: "",
-    father_occupation: "",
-    father_type_of_work: "",
     father_organization: "",
+    contact: "",
     mother_name: "",
     mother_contact_number: "",
     mother_occupation: "",
     mother_organization: "",
     description: "",
     note: "",
+    address: "",
+    date: "",
+    reference: "",
+    status: "",
+    date_of_birth: "",
+    father_contact_number: "",
+    current_school: "",
+    gender: "",
+    father_type_of_work: "",
+    academic_year: "",
+    father_name: "",
+    father_occupation: "",
+    email: "",
+    class_id: "",
+    class: "",
+    source_id: "",
+    source: "",
+    follow_up_date: "",
+    reference_id:""
   });
-
 
   useEffect(() => {
     const fetchClasses = async () => {
@@ -135,12 +188,11 @@ const CreateEditEnquiry = ({ show, handleClose, enqId }: Props) => {
     fetchSessions();
   }, [currentUser]);
 
-
-
-  const formatDateToYYYYMMDD = (dateString) => {
+  const formatDateToYYYYMMDD = (dateString: string | number | Date) => {
     if (!dateString) return "";
 
     const date = new Date(dateString);
+    /* @ts-ignore */
     if (isNaN(date)) return ""; // Return empty string if date is invalid
 
     const day = String(date.getDate()).padStart(2, "0");
@@ -151,7 +203,6 @@ const CreateEditEnquiry = ({ show, handleClose, enqId }: Props) => {
   };
 
   // Ensure data is an array and check for valid first element
-    
 
   useEffect(() => {
     const fetchById = async () => {
@@ -170,52 +221,54 @@ const CreateEditEnquiry = ({ show, handleClose, enqId }: Props) => {
         }
 
         const data = await response.json();
-        const follow_up_date = data?.[0]?.follow_up_date
+
+        // Format dates if they exist
+        const followUpDate = data?.[0]?.follow_up_date
           ? formatDateToYYYYMMDD(data[0].follow_up_date)
           : "";
-        const date_of_birth = data?.[0]?.follow_up_date
-          ? formatDateToYYYYMMDD(data[0].follow_up_date)
+        const dateOfBirth = data?.[0]?.date_of_birth
+          ? formatDateToYYYYMMDD(data[0].date_of_birth)
           : "";
 
         setFormData({
           name: data[0]?.name || "",
           father_organization: data[0]?.father_organization || "",
-
           contact: data[0]?.contact || "",
           mother_name: data[0]?.mother_name || "",
           mother_contact_number: data[0]?.mother_contact_number || "",
           mother_occupation: data[0]?.mother_occupation || "",
           mother_organization: data[0]?.mother_organization || "",
-
           description: data[0]?.description || "",
           note: data[0]?.note || "",
           address: data[0]?.address || "",
           date: data[0]?.date || "",
           reference: data[0]?.reference || "",
+          reference_id: data[0]?.reference_id || "",
           status: data[0]?.status || "",
-          date_of_birth: date_of_birth || "",
+          date_of_birth: dateOfBirth,
           father_contact_number: data[0]?.father_contact_number || "",
           current_school: data[0]?.current_school || "",
           gender: data[0]?.gender || "",
-
           father_type_of_work: data[0]?.father_type_of_work || "",
           academic_year: data[0]?.academic_year || "",
-
           father_name: data[0]?.father_name || "",
           father_occupation: data[0]?.father_occupation || "",
           email: data[0]?.email || "",
+          class_id: data[0]?.class_id || "",
           class: data[0]?.class || "",
+          source_id: data[0]?.source_id || "",
           source: data[0]?.source || "",
-          follow_up_date: follow_up_date || "",
+          follow_up_date: followUpDate,
         });
       } catch (error) {
-        console.error("Error fetching sections:", error);
+        console.error("Error fetching enquiry details:", error);
       }
     };
 
     fetchById();
   }, [schoolId, enqId]);
 
+  /* @ts-ignore */
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevFormData) => ({
@@ -229,7 +282,7 @@ const CreateEditEnquiry = ({ show, handleClose, enqId }: Props) => {
       [name]: value,
     }));
   };
-
+  /* @ts-ignore */
   const handleSubmit = async (e) => {
     e.preventDefault();
     const id = enqId;
@@ -458,8 +511,12 @@ const CreateEditEnquiry = ({ show, handleClose, enqId }: Props) => {
                     value={formData.source_id}
                     onChange={handleChange}
                   >
-                    {!source.some((value) => value.id === formData.source_id) && (
-                      <option value={formData.source_id}>{formData.source_id}</option>
+                    {!source.some(
+                      (value) => value.id === formData.source_id
+                    ) && (
+                      <option value={formData.source_id}>
+                        {formData.source_id}
+                      </option>
                     )}{" "}
                     {source.map((value) => (
                       <option key={value.id} value={value.id}>

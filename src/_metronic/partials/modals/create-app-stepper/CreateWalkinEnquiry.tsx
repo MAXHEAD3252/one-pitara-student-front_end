@@ -11,6 +11,31 @@ type Props = {
   // refresh: (refresh: boolean) => void;
 };
 
+interface Reference {
+  id: string; // Adjust the type as per your data structure
+  name: string;
+  reference:string;
+  source:string;
+  // Add other properties if needed
+}
+interface Source {
+  id: string; // Adjust the type as per your data structure
+  name: string;
+  reference:string;
+  source:string;
+  // Add other properties if needed
+}
+
+interface ClassDetails {
+  id : string;
+  class : string;
+}
+
+interface Sessions {
+  id : string;
+  session : string;
+}
+
 const modalsRoot = document.getElementById("root-modals") || document.body;
 
 const CreateWalkinEnquiry = ({ show, handleClose }: Props) => {
@@ -19,11 +44,11 @@ const CreateWalkinEnquiry = ({ show, handleClose }: Props) => {
 
   const schoolId = currentUser?.school_id;
   // const [sections, setSections] = useState([]);
-  const [classes, setClasses] = useState([]);
-  const [sessions, setSessions] = useState([]);
+  const [classes, setClasses] = useState<ClassDetails[]>([]);
+  const [sessions, setSessions] = useState<Sessions[]>([]);
   
-  const [source, setSource] = useState([]);
-  const [reference, setReference] = useState([]);
+  const [source, setSource] = useState<Source[]>([]);
+  const [reference, setReference] = useState<Reference[]>([]);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -53,6 +78,7 @@ const CreateWalkinEnquiry = ({ show, handleClose }: Props) => {
     school_id: schoolId,
   });
 
+  /* @ts-ignore */
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevState) => ({
@@ -60,7 +86,6 @@ const CreateWalkinEnquiry = ({ show, handleClose }: Props) => {
       [name]: value,
     }));
   };
-
   // useEffect(() => {
   //   const fetchSections = async () => {
   //     if (!formData.class) return;
@@ -163,7 +188,7 @@ const CreateWalkinEnquiry = ({ show, handleClose }: Props) => {
     fetchSessions();
   }, [currentUser]);
 
-
+/* @ts-ignore */
   const handleSubmit = async (e) => {
     e.preventDefault();
 
