@@ -5,6 +5,7 @@ import { Content } from "../../../_metronic/layout/components/content";
 import { FeedsWidget2 } from "../../../_metronic/partials/widgets";
 import Pagination from "react-bootstrap/Pagination";
 import { useAuth } from "../../modules/auth/core/Auth";
+import { DOMAIN } from "../../routing/ApiEndpoints";
 interface RowData {
   title: string;
   publish_date: string; // Adjust types as needed
@@ -67,7 +68,7 @@ const class_id = currentUser?.class_id;
       try {
         // const class_id = currentUser?.class_id;
         const response = await fetch(
-          `http://localhost:5000/api/student/notice-board/latest-month-data/${class_id}/${start_date}/${end_date}`,
+          `${DOMAIN}/api/student/notice-board/latest-month-data/${class_id}/${start_date}/${end_date}`,
           // {
           //   method: "POST",
           //   headers: {

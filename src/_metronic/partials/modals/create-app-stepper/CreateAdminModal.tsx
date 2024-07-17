@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Modal } from "react-bootstrap";
 import { KTIcon } from "../../../helpers";
+import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
 
 type Props = {
   show: boolean;
@@ -112,7 +113,7 @@ const [passwordError, setpasswordError] = useState('');
     
     try {
       const response = await fetch(
-        "http://localhost:5000/api/superadmin/create_admin",
+        `${DOMAIN}/api/superadmin/create_admin`,
         {
           method: "POST",
           headers: {

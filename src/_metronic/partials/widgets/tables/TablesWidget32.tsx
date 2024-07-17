@@ -2,6 +2,7 @@ import React, { ChangeEvent, useEffect, useState } from "react";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import "../../../../app/pages/StaffPages/FeeDetails/style.css";
 import { useAuth } from "../../../../app/modules/auth/index.ts";
+import { DOMAIN } from "../../../../app/routing/ApiEndpoints.tsx";
 
 
 interface Enquiry {
@@ -27,7 +28,7 @@ const TablesWidget32: React.FC = () => {
     const fetchEnquiries = async () => {
       try {
         const response = await fetch(
-          `http://localhost:5000/api/staff/get-enquires/${schoolId}`
+          `${DOMAIN}/api/staff/get-enquires/${schoolId}`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch data");

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useRef, FC ,useState, SetStateAction} from "react";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
@@ -5,38 +6,24 @@ import "../../../../app/pages/StaffPages/FeeDetails/style.css";
 import { DOMAIN,getMonthWiseEnquiries } from '../../../../app/routing/ApiEndpoints.tsx'; 
 import { useAuth } from "../../../../app/modules/auth/index.ts";
 
-
-
-interface DataItem {
-  total_enquiries: number;
-  total_won: string;
-}
-
-interface ParsedDataItem {
-  total_enquiries: number;
-  total_won: number;
-}
-
-interface SeriesData {
-  name: string;
-  data: number[];
-  stack: string;
-  showInLegend: boolean;
-  color: string;
-  dashStyle?: string;
-  visible?: boolean;
-}
-
-interface ChartData {
-  categories: string[];
-  series: SeriesData[];
-}
-
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const ChartsWidget14: FC = ({ selectedValue }:any) => {
   const chartRef = useRef<HTMLDivElement | null>(null );
   
-  const [chartData, setChartData] = useState<ChartData | null>(null);
+  const [chartData, setChartData] = useState({ categories: [
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+    "Jan",
+    "Feb",
+    "Mar"
+  ],series:{} });
   const [showOptimized, setShowOptimized] = useState(false);
   const [selectedRadio, setSelectedRadio] = useState("Cumulative");
   const {currentUser} = useAuth();
@@ -58,15 +45,19 @@ const ChartsWidget14: FC = ({ selectedValue }:any) => {
         const jsonData = await response.json();
         // console.log(jsonData);
         
-        const currentYearData: DataItem[] = []; // your current year data here
-const lastYearData: DataItem[] = []; // your last year data here
-
-const enquiryData: number[] = currentYearData.map((item: DataItem): number => item.total_enquiries);
-const conversionData: number[] = currentYearData.map((item: DataItem): number => parseInt(item.total_won, 10));
-
-// Extract values from last year data
-const lastYearEnquiryData: number[] = lastYearData.map((item: DataItem): number => item.total_enquiries);
-const lastYearConversionData: number[] = lastYearData.map((item: DataItem): number => parseInt(item.total_won, 10));
+        const currentYearData = jsonData.currentYear;
+        const lastYearData = jsonData.lastYear;
+        
+        // Extract month numbers from current year data
+        // const currentYearMonths = currentYearData.map(item => item.month);
+        
+        // Extract values from current year data
+        const enquiryData = currentYearData.map((item: { total_enquiries: any; }) => item.total_enquiries);
+        const conversionData = currentYearData.map((item: { total_won: string; }) => parseInt(item.total_won, 10));
+        
+        // Extract values from last year data
+        const lastYearEnquiryData = lastYearData.map((item: { total_enquiries: any; }) => item.total_enquiries);
+        const lastYearConversionData = lastYearData.map((item: { total_won: string; }) => parseInt(item.total_won, 10));
         
         
   // console.log(enquiryData,conversionData);
@@ -137,7 +128,7 @@ const lastYearConversionData: number[] = lastYearData.map((item: DataItem): numb
       enabled: false,
     },
     xAxis: {
-      categories: chartData?.categories,
+      categories: chartData.categories,
       gridLineWidth: 0,
       labels: {
         fontSize: "14px",
@@ -291,7 +282,7 @@ const lastYearConversionData: number[] = lastYearData.map((item: DataItem): numb
     //     color: "#E6A4B4",
     //   },
     // ],
-    series: chartData?.series,
+    series: chartData.series,
   };
 
   const optionsMOM = {
@@ -310,7 +301,7 @@ const lastYearConversionData: number[] = lastYearData.map((item: DataItem): numb
           text: null, // Remove title
         },
         xAxis: {
-          categories: chartData?.categories,
+          categories: chartData.categories,
           labels: {
               style: {
                 fontSize: "12px",
@@ -428,7 +419,7 @@ const lastYearConversionData: number[] = lastYearData.map((item: DataItem): numb
           },
         },
         
-        series: chartData?.series,
+        series: chartData.series,
       // });
     }
   // }, [chartData]);

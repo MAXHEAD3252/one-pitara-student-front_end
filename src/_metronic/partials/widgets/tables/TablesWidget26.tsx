@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
 
 type SchoolDetail = {
   id: number;
@@ -21,7 +22,7 @@ const TablesWidget26: React.FC<Props> = ({ className, school_id }) => {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          `http://localhost:5000/api/superadmin/get_admin/${school_id}`
+          `${DOMAIN}/api/superadmin/get_admin/${school_id}`
         );
         if (!response.ok) {
           throw new Error("Network response was not ok");
