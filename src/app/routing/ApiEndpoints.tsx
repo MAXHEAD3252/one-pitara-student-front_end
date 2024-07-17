@@ -1,6 +1,6 @@
 // Define your base domain
-// const DOMAIN = 'http://onepitaraapi.payplatter.in/';
-const DOMAIN = 'http://localhost:5000';
+const DOMAIN = 'http://onepitaraapi.payplatter.in/';
+// const DOMAIN = 'http://localhost:5000';
 
 //enquiries page endpoints
 const getTotalNumberofEnquiries = 'api/staff/gettotalnumbers';
