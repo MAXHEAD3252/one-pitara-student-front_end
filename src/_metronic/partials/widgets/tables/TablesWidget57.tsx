@@ -3,8 +3,8 @@ import React, { useEffect, useState } from "react";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import "../../../../app/pages/StaffPages/FeeDetails/style.css";
 import { CreateWalkinEnquiry } from "../../modals/create-app-stepper/CreateWalkinEnquiry";
-import { CreateEnquiryAction } from "../../modals/create-app-stepper/CreateEnquiryAction";
-import { CreateEditEnquiry } from "../../modals/create-app-stepper/CreateEditEnquiry";
+import { CreateAdmissionEnquiryReject } from "../../modals/create-app-stepper/CreateAdmissionEnquiryReject";
+import { CreateEditAdmissionEnquiry } from "../../modals/create-app-stepper/CreateEditAdmissionEnquiry";
 import { useAuth } from "../../../../app/modules/auth/core/Auth";
 import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
 
@@ -26,7 +26,7 @@ interface FilterData {
   // Add other properties as needed
 }
 
-const TablesWidget34: React.FC = () => {
+const TablesWidget57: React.FC = () => {
   const [data, setData] = useState<DataItem[]>([]);
   
   const [filteredData, setFilteredData] = useState<FilterData[]>([]); 
@@ -69,7 +69,7 @@ const TablesWidget34: React.FC = () => {
     const fetchEnquiries = async () => {
       try {
         const response = await fetch(
-          `${DOMAIN}/api/staff/getEnquiryList/${schoolId}`
+          `${DOMAIN}/api/staff/getadmissionenquiries/${schoolId}`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch data");
@@ -184,7 +184,7 @@ const TablesWidget34: React.FC = () => {
                       fontFamily:'Manrope'
                     }}
                   >
-                    Enquiry List
+                    Admission Enquiry List
                   </span>
                 </div>
                 <div
@@ -345,22 +345,7 @@ const TablesWidget34: React.FC = () => {
                 </div>
               </th>
               <th>
-                <div style={{ width: "110px" }}>
-                  <span
-                    style={{
-                      fontSize: "13px",
-                      fontWeight: "600",
-                      lineHeight: "18px",
-                      color: "#FFFFFF",
-                      fontFamily:'Manrope'
-                    }}
-                  >
-                    Class
-                  </span>
-                </div>
-              </th>
-              <th>
-                <div style={{ width: "250px" }}>
+                <div style={{ width: "200px" }}>
                   <span
                     style={{
                       fontSize: "13px",
@@ -375,6 +360,21 @@ const TablesWidget34: React.FC = () => {
                 </div>
               </th>
               <th>
+                <div style={{ width: "110px" }}>
+                  <span
+                    style={{
+                      fontSize: "13px",
+                      fontWeight: "600",
+                      lineHeight: "18px",
+                      color: "#FFFFFF",
+                      fontFamily:'Manrope'
+                    }}
+                  >
+                    Gender
+                  </span>
+                </div>
+              </th>
+              <th>
                 <div style={{ width: "155px" }}>
                   <span
                     style={{
@@ -385,7 +385,7 @@ const TablesWidget34: React.FC = () => {
                       fontFamily:'Manrope'
                     }}
                   >
-                    Source
+                    Date Of Birth
                   </span>
                 </div>
               </th>
@@ -405,7 +405,7 @@ const TablesWidget34: React.FC = () => {
                 </div>
               </th>
               <th>
-                <div style={{ width: "180px" }}>
+                <div style={{ width: "140px" }}>
                   <span
                     style={{
                       fontSize: "13px",
@@ -518,7 +518,7 @@ const TablesWidget34: React.FC = () => {
                 <td>
                   <div
                     style={{
-                      width: "110px",
+                      width: "200px",
                       display: "flex",
                       justifyContent: "start",
                       flexDirection: "column",
@@ -533,7 +533,7 @@ const TablesWidget34: React.FC = () => {
                         fontFamily:'Manrope'
                       }}
                     >
-                      {item.class}
+                      {item.name}
                     </span>
                   </div>
                 </td>
@@ -541,7 +541,7 @@ const TablesWidget34: React.FC = () => {
                   <div
                     className="overflow-hidden whitespace-nowrap"
                     style={{
-                      width: "250px",
+                      width: "110px",
                       // paddingLeft:'5px',
                       display: "flex",
                       justifyContent: "start",
@@ -558,7 +558,7 @@ const TablesWidget34: React.FC = () => {
                         fontFamily:'Manrope'
                       }}
                     >
-                      {item.name}
+                      {item.gender}
                     </span>
                   </div>
                   <ReactTooltip
@@ -589,7 +589,7 @@ const TablesWidget34: React.FC = () => {
                         fontFamily:'Manrope'
                       }}
                     >
-                      {item.source}
+                      {formatDate(item.date_of_birth)}
                     </span>
                   </div>
                 </td>
@@ -630,7 +630,7 @@ const TablesWidget34: React.FC = () => {
                 <td>
                   <div
                     style={{
-                      width: "180px",
+                      width: "140px",
                       display: "flex",
                       justifyContent: "start",
                       flexDirection: "column",
@@ -711,7 +711,7 @@ const TablesWidget34: React.FC = () => {
                         onClick={()=>handleModalEdit(item.enquiry_id)}
                         
                       >
-                        Edit
+                        start Admission Process
                       </button>
                       <button
                         type="button"
@@ -727,7 +727,7 @@ const TablesWidget34: React.FC = () => {
                         }
                         onClick={()=>handleActionModal(item.enquiry_id)}
                       >
-                        Action
+                        Reject
                       </button>
                   </div>
                 </td>
@@ -735,8 +735,8 @@ const TablesWidget34: React.FC = () => {
             ))}
           </tbody>
           <CreateWalkinEnquiry show={showModal} handleClose={handleModalClose} />
-          <CreateEnquiryAction show={showActionModal} handleClose={handleActionModalClose} enqId={enqId}/>
-          <CreateEditEnquiry show={showEditModal} handleClose={handleModalEditClose} enqId={enqId}/>
+          <CreateAdmissionEnquiryReject show={showActionModal} handleClose={handleActionModalClose} enqId={enqId}/>
+          <CreateEditAdmissionEnquiry show={showEditModal} handleClose={handleModalEditClose} enqId={enqId}/>
 
           {/* end::Table body */}
         </table>
@@ -928,5 +928,5 @@ const TablesWidget34: React.FC = () => {
   );
 };
 
-export { TablesWidget34 };
+export { TablesWidget57 };
 

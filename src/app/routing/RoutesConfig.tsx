@@ -29,7 +29,7 @@ import { DashboardStudent } from "../pages/dashboard/DashboardStudent";
 // import StuSyllabus from "../pages/StudentPages/StuSyllabus";
 // import StuTransportRoute from "../pages/StudentPages/StuTransportRoute";
 // import StuExamSchedule from "../pages/StudentPages/StuExamSchedule";
-import { Enquiry } from "../pages/StaffPages/Enquiry/Enquiry";
+import { EnquiryReport } from "../pages/StaffPages/AnalyticsAndReporting/EnquiryReport";
 import { Admissions } from "../pages/StaffPages/Admission/Admissions";
 import { DashboardDexpert } from "../pages/dashboard/DexpertDashboard";
 // import { ManageAdmins } from "../pages/SuperAdminPages/ManageAdmins";
@@ -40,7 +40,6 @@ import { UserRolesPermission } from "../pages/StaffPages/UserRoles/UserRolesPerm
 import { Staff } from "../pages/StaffPages/User.tsx/Staff";
 import { Student } from "../pages/StaffPages/User.tsx/Student";
 import { Expense } from "../pages/StaffPages/Expense/Expense";
-import { EnquiryDetails } from "../pages/StaffPages/Enquiry/EnquiryDetails";
 // import { StudentDetails } from "../pages/StaffPages/Student_Information/StudentDetails";
 import { StudentProfiles } from "../pages/StaffPages/Student_Managment/StudentProfiles";
 import { LMSDashboard } from "../pages/StaffPages/LMS/LMSDashboard";
@@ -77,6 +76,8 @@ import { PhoneCallLog } from "../pages/StaffPages/FrontOffice/PhoneCallLog";
 import { MailAndDispatchManagement } from "../pages/StaffPages/FrontOffice/MailAndDispatchManagement";
 import { DisableStudent } from "../pages/StaffPages/Student_Managment/DisableStudent";
 import { EmployeeManagement } from "../pages/StaffPages/HumanResource/EmployeeManagement";
+import { EnquiryManagement } from "../pages/StaffPages/FrontOffice/EnquiryManagment";
+import { AdmissionEnquiry } from "../pages/StaffPages/AdmissionsAndEnrollment/AdmissionEnquiry";
 // import {CourseContent} from "../pages/StudentPages/CourseContent";
 
 export const routesConfig = {
@@ -317,11 +318,11 @@ export const routesConfig = {
       component: DashboardWrapper,
       sidebarName: "Dashboard",
     },
-    {
-      path: "/enquiry-details",
-      component: EnquiryDetails,
-      sidebarName: "Inquiry Management",
-    },
+    // {
+    //   path: "/enquiry-details",
+    //   component: EnquiryDetails,
+    //   sidebarName: "Inquiry Management",
+    // },
   ],
 
   //     Principal
@@ -360,9 +361,14 @@ export const routesConfig = {
       sidebarName: "Dashboard",
     },
     {
-      path: "/enquiry-details",
-      component: EnquiryDetails,
-      sidebarName: "Inquiry Management",
+      path: "/enquiry-management",
+      component: EnquiryManagement,
+      sidebarName: "Enquiry Management",
+    },
+    {
+      path: "/enquiry-report",
+      component: EnquiryReport,
+      sidebarName: "Enquiry Report",
     },
     {
       path: "/student-profile",
@@ -480,9 +486,9 @@ export const routesConfig = {
       sidebarName: "Income Management",
     },
     {
-      path: "/enquiry-report",
-      component: Enquiry,
-      sidebarName: "Admission Enquiry",
+      path: "/admission-enquiries",
+      component: AdmissionEnquiry,
+      sidebarName: "Admission Enquiries",
     },
     {
       path: "/admissions-report",

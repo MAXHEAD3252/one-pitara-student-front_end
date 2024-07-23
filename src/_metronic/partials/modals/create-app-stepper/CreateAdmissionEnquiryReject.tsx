@@ -12,7 +12,7 @@ type Props = {
 
 const modalsRoot = document.getElementById("root-modals") || document.body;
 
-const CreateEnquiryAction = ({ show, handleClose, enqId }: Props) => {
+const CreateAdmissionEnquiryReject = ({ show, handleClose, enqId }: Props) => {
   const { currentUser } = useAuth();
   const schoolId = currentUser?.school_id;
   const [enqdata, setEnqdata] = useState({
@@ -326,4 +326,4 @@ const CreateEnquiryAction = ({ show, handleClose, enqId }: Props) => {
   );
 };
 
-export { CreateEnquiryAction };
+export { CreateAdmissionEnquiryReject };

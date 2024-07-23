@@ -42,7 +42,7 @@ const ChartsWidget14: FC = ({ selectedValue }:any) => {
         if (!response.ok) {
           throw new Error("Failed to fetch data");
         }
-        const jsonData = await response.json();
+        const jsonData = await response.json();       
         // console.log(jsonData);
         
         const currentYearData = jsonData.currentYear;

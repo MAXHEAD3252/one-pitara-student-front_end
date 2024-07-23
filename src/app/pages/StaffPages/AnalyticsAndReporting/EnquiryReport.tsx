@@ -138,7 +138,7 @@ const FeeDetailsPage: FC = () => {
   );
 };
 
-const Enquiry: FC = () => {
+const EnquiryReport: FC = () => {
   const intl = useIntl();
   return (
     <>
@@ -150,4 +150,4 @@ const Enquiry: FC = () => {
   );
 };
 
-export { Enquiry };
+export { EnquiryReport };

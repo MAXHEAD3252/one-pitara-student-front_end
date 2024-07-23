@@ -13,7 +13,7 @@ import { useNavigate } from "react-router-dom";
 import { DOMAIN } from "../../routing/ApiEndpoints";
 
 interface School {
-  id: number;
+  id: string;
   name: string;
   email: string;
   phone: string;
@@ -71,6 +71,8 @@ export const ManageSchoolsPage = () => {
   // const handleCloseModal = () => {
   //   setShowModal(false);
   // };
+
+
   const handleViewSchool = (value: any) => {
     const schoolId = value;
 
@@ -466,7 +468,7 @@ export const ManageSchoolsPage = () => {
                             fontFamily: "Manrope",
                           }}
                         >
-                          {group.id}
+                          {group.school_id}
                         </span>
                       </div>
                     </td>
@@ -551,7 +553,7 @@ export const ManageSchoolsPage = () => {
                             display: "flex",
                             // alignItems: "center",
                           }}
-                          onClick={() => handleViewSchool(group.id)}
+                          onClick={() => handleViewSchool(group.school_id)}
                         >
                           <img
                             src="/media/svg/files/view.svg"

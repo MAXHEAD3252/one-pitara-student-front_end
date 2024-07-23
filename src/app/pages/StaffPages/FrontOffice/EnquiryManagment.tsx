@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { FC, SetStateAction, useState } from "react";
 import { useIntl } from "react-intl";
 import { PageTitle } from "../../../../_metronic/layout/core";
@@ -46,7 +47,7 @@ const EnquiryTablePage: FC = () => {
   );
 };
 
-const EnquiryDetails: FC = () => {
+const EnquiryManagement: FC = () => {
   const intl = useIntl();
   return (
     <>
@@ -58,4 +59,4 @@ const EnquiryDetails: FC = () => {
   );
 };
 
-export { EnquiryDetails };
+export { EnquiryManagement };

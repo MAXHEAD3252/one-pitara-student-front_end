@@ -13,27 +13,49 @@ type Props = {
 
 interface Reference {
   id: string; // Adjust the type as per your data structure
-  name: string;
-  reference:string;
-  source:string;
+  reference: string;
   // Add other properties if needed
 }
 interface Source {
   id: string; // Adjust the type as per your data structure
-  name: string;
-  reference:string;
-  source:string;
+  source: string;
   // Add other properties if needed
 }
 
 interface ClassDetails {
-  id : string;
-  class : string;
+  id: string;
+  class: string;
 }
 
 interface Sessions {
-  id : string;
-  session : string;
+  id: string;
+  session: string;
+}
+
+interface FormData {
+  name: string;
+  contact: string;
+  address: string;
+  reference_id: number;
+  reference: string;
+  description: string;
+  follow_up_date: Date;
+  note: string;
+  source_id: number;
+  source: string;
+  email: string;
+  status: string;
+  enquiry_type: string;
+  class_id: number;
+  class: string;
+  gender: string;
+  date_of_birth: Date;
+  current_school: string;
+  academic_year: string;
+  father_name: string;
+  father_contact_number: string;
+  mother_name: string;
+  mother_contact_number: string;
 }
 
 const modalsRoot = document.getElementById("root-modals") || document.body;
@@ -46,45 +68,56 @@ const CreateWalkinEnquiry = ({ show, handleClose }: Props) => {
   // const [sections, setSections] = useState([]);
   const [classes, setClasses] = useState<ClassDetails[]>([]);
   const [sessions, setSessions] = useState<Sessions[]>([]);
-  
-  const [source, setSource] = useState<Source[]>([]);
-  const [reference, setReference] = useState<Reference[]>([]);
 
-  const [formData, setFormData] = useState({
+  const [source, setSource] = useState<Source[]>([]);
+  
+  const [reference, setReference] = useState<Reference[]>([]);
+  // const [showForm, setShowForm] = useState('general');
+
+  const [formData, setFormData] = useState<FormData>({
     name: "",
     contact: "",
     address: "",
+    reference_id: 0,
     reference: "",
+    description: "",
+    follow_up_date:new Date,
+    note: "",
+    source_id: 0,
     source: "",
     email: "",
+    status: "Active",
+    enquiry_type: "General",
+    class_id: 0,
     class: "",
-    status: "",
-    date_of_birth: "",
     gender: "",
+    date_of_birth:null,
     current_school: "",
+    academic_year: "",
     father_name: "",
     father_contact_number: "",
-    father_occupation: "",
-    father_type_of_work: "",
-    father_organization: "",
     mother_name: "",
     mother_contact_number: "",
-    mother_occupation: "",
-    mother_organization: "",
-    academic_year: "",
-    description: "",
-    follow_up_date: "",
-    note: "",
-    school_id: schoolId,
   });
 
   /* @ts-ignore */
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
+  
+    if (name === 'reference' || name === 'source' || name === 'academic_year' || name === 'class') {
+      const [id, text] = value.split(':');
+      
+      setFormData((prevState) => ({
+        ...prevState,
+        [`${name}_id`]: id,
+        [name]: text,
+      }));
+    } else {
+      setFormData((prevState) => ({
+        ...prevState,
+        [name]: value,
+      }));
+    }
   };
   // useEffect(() => {
   //   const fetchSections = async () => {
@@ -188,7 +221,7 @@ const CreateWalkinEnquiry = ({ show, handleClose }: Props) => {
     fetchSessions();
   }, [currentUser]);
 
-/* @ts-ignore */
+  /* @ts-ignore */
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -213,7 +246,7 @@ const CreateWalkinEnquiry = ({ show, handleClose }: Props) => {
       handleClose();
       // refresh(true);
     } catch (error) {
-      console.error("Error creating student:", error);
+      console.error("Error creating Enquiry:", error);
     }
   };
 
@@ -221,8 +254,7 @@ const CreateWalkinEnquiry = ({ show, handleClose }: Props) => {
   //   e.preventDefault();
   //   console.log(formData)
   //   console.log(schoolId);
-    
-    
+
   //   try {
   //     const response = await fetch(
   //       `${DOMAIN}/api/staff/walkinEnquiry/:${schoolId}`,
@@ -417,9 +449,10 @@ const CreateWalkinEnquiry = ({ show, handleClose }: Props) => {
                     value={formData.reference}
                     onChange={handleChange}
                   >
-                    <option value="reference">Reference</option>
+                    <option value="reference">{formData.reference ? formData.reference : "Selecr Reference" }</option>
                     {reference.map((value) => (
-                      <option key={value.id} value={value.id}>
+                      <option key={value.id} 
+                      value={`${value.id}:${value.reference}`}>
                         {value.reference}
                       </option>
                     ))}
@@ -442,9 +475,10 @@ const CreateWalkinEnquiry = ({ show, handleClose }: Props) => {
                     value={formData.source}
                     onChange={handleChange}
                   >
-                    <option value="source">Source</option>
+                    <option value="">{formData.source ? formData.source : "Selecr Source" }</option>
                     {source.map((value) => (
-                      <option key={value.id} value={value.id}>
+                      <option key={value.id} 
+                      value={`${value.id}:${value.source}`}>
                         {value.source}
                       </option>
                     ))}
@@ -452,6 +486,7 @@ const CreateWalkinEnquiry = ({ show, handleClose }: Props) => {
                   <label htmlFor="source">Select Source</label>
                 </div>
               </div>
+
               {/* row end */}
 
               {/* row start */}
@@ -459,31 +494,6 @@ const CreateWalkinEnquiry = ({ show, handleClose }: Props) => {
                 className="fv-row mb-10"
                 style={{ display: "flex", gap: "10px" }}
               >
-                <div
-                  className="form-floating mb-3"
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    width: "100%",
-                  }}
-                >
-                  <select
-                    className="form-select"
-                    id="class"
-                    name="class"
-                    aria-label="Default select example"
-                    value={formData.class}
-                    onChange={handleChange}
-                  >
-                    <option value="class">Class</option>
-                    {classes.map((value) => (
-                      <option key={value.id} value={value.id}>
-                        {value.class}
-                      </option>
-                    ))}
-                  </select>
-                  <label htmlFor="Class">Select Class</label>
-                </div>
                 <div
                   className="form-floating mb-3"
                   style={{
@@ -523,317 +533,6 @@ const CreateWalkinEnquiry = ({ show, handleClose }: Props) => {
                   <input
                     type="date"
                     className="form-control"
-                    id="date_of_birth"
-                    name="date_of_birth"
-                    placeholder=""
-                    value={formData.date_of_birth}
-                    onChange={handleChange}
-                  />
-                  <label htmlFor="date_of_birth">Date_of_birth</label>
-                </div>
-              </div>
-              {/* row end */}
-
-              {/* row start */}
-              <div
-                className="fv-row mb-10"
-                style={{ display: "flex", gap: "10px" }}
-              >
-                <div
-                  className="form-floating mb-3"
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    width: "100%",
-                  }}
-                >
-                  <select
-                    className="form-select"
-                    id="gender"
-                    name="gender"
-                    aria-label="Default select example"
-                    value={formData.gender}
-                    onChange={handleChange}
-                  >
-                    <option defaultChecked disabled>Gender</option>
-                    <option value="male">Male</option>
-                    <option value="female">Female</option>
-                    {/* {classes.map((value) => (
-                      <option key={value.id} value={value.id}>
-                        {value.reference}
-                      </option>
-                    ))} */}
-                  </select>
-                  <label htmlFor="gender">Select Gender</label>
-                </div>
-                <div
-                  className="form-floating mb-3"
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    width: "100%",
-                  }}
-                >
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="current_school"
-                    name="current_school"
-                    placeholder=""
-                    value={formData.current_school}
-                    onChange={handleChange}
-                  />
-                  <label htmlFor="current_school">Current_school</label>
-                </div>
-                <div
-                  className="form-floating mb-3"
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    width: "100%",
-                  }}
-                >
-                  <select
-                    className="form-select"
-                    id="academic_year"
-                    name="academic_year"
-                    aria-label="Default select example"
-                    value={formData.academic_year}
-                    onChange={handleChange}
-                  >
-                    <option value="academic_year">Academic_year</option>
-                    {sessions.map((value) => (
-                      <option key={value.id} value={value.id}>
-                        {value.session}
-                      </option>
-                    ))}
-                  </select>
-                  <label htmlFor="academic_year">Academic_year</label>
-                </div>
-              </div>
-              {/* row end */}
-
-              {/* row start */}
-              <div
-                className="fv-row mb-10"
-                style={{ display: "flex", gap: "10px" }}
-              >
-                <div
-                  className="form-floating mb-3"
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    width: "100%",
-                  }}
-                >
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="father_name"
-                    name="father_name"
-                    placeholder=""
-                    value={formData.father_name}
-                    onChange={handleChange}
-                  />
-                  <label htmlFor="father_name">Father name</label>
-                </div>
-                <div
-                  className="form-floating mb-3"
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    width: "100%",
-                  }}
-                >
-                  <input
-                    type="tel"
-                    className="form-control"
-                    id="father_contact_number"
-                    name="father_contact_number"
-                    placeholder=""
-                    value={formData.father_contact_number}
-                    onChange={handleChange}
-                  />
-                  <label htmlFor="father_contact_number">
-                    Father contact no
-                  </label>
-                </div>
-                <div
-                  className="form-floating mb-3"
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    width: "100%",
-                  }}
-                >
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="father_occupation"
-                    name="father_occupation"
-                    placeholder=""
-                    value={formData.father_occupation}
-                    onChange={handleChange}
-                  />
-                  <label htmlFor="father_occupation">Father occupation</label>
-                </div>
-              </div>
-              {/* row end */}
-
-              {/* row start */}
-              <div
-                className="fv-row mb-10"
-                style={{ display: "flex", gap: "10px" }}
-              >
-                <div
-                  className="form-floating mb-3"
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    width: "100%",
-                  }}
-                >
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="father_type_of_work"
-                    name="father_type_of_work"
-                    placeholder=""
-                    value={formData.father_type_of_work}
-                    onChange={handleChange}
-                  />
-                  <label htmlFor="father_type_of_work">
-                    Father type of work
-                  </label>
-                </div>
-                <div
-                  className="form-floating mb-3"
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    width: "100%",
-                  }}
-                >
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="father_organization"
-                    name="father_organization"
-                    placeholder=""
-                    value={formData.father_organization}
-                    onChange={handleChange}
-                  />
-                  <label htmlFor="father_organization">
-                    Father organization
-                  </label>
-                </div>
-                <div
-                  className="form-floating mb-3"
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    width: "100%",
-                  }}
-                >
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="mother_name"
-                    name="mother_name"
-                    placeholder=""
-                    value={formData.mother_name}
-                    onChange={handleChange}
-                  />
-                  <label htmlFor="mother_name">Mother name</label>
-                </div>
-              </div>
-              {/* row end */}
-
-              {/* row start */}
-              <div
-                className="fv-row mb-10"
-                style={{ display: "flex", gap: "10px" }}
-              >
-                <div
-                  className="form-floating mb-3"
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    width: "100%",
-                  }}
-                >
-                  <input
-                    type="tel"
-                    className="form-control"
-                    id="mother_contact_number"
-                    name="mother_contact_number"
-                    placeholder=""
-                    value={formData.mother_contact_number}
-                    onChange={handleChange}
-                  />
-                  <label htmlFor="mother_contact_number">
-                    Mother contact number
-                  </label>
-                </div>
-                <div
-                  className="form-floating mb-3"
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    width: "100%",
-                  }}
-                >
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="mother_occupation"
-                    name="mother_occupation"
-                    placeholder=""
-                    value={formData.mother_occupation}
-                    onChange={handleChange}
-                  />
-                  <label htmlFor="mother_occupation">Mother occupation</label>
-                </div>
-                <div
-                  className="form-floating mb-3"
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    width: "100%",
-                  }}
-                >
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="mother_organization"
-                    name="mother_organization"
-                    placeholder=""
-                    value={formData.mother_organization}
-                    onChange={handleChange}
-                  />
-                  <label htmlFor="mother_organization">
-                    Mother organization
-                  </label>
-                </div>
-              </div>
-              {/* row end */}
-
-              {/* row start */}
-              <div
-                className="fv-row mb-10"
-                style={{ display: "flex", gap: "10px" }}
-              >
-                <div
-                  className="form-floating mb-3"
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    width: "100%",
-                  }}
-                >
-                  <input
-                    type="date"
-                    className="form-control"
                     id="follow_up_date"
                     name="follow_up_date"
                     placeholder=""
@@ -842,6 +541,32 @@ const CreateWalkinEnquiry = ({ show, handleClose }: Props) => {
                   />
                   <label htmlFor="follow_up_date">Follow up date</label>
                 </div>
+                
+                <div
+                  className="form-floating mb-3"
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    width: "100%",
+                  }}
+                >
+                  <select
+                    className="form-control"
+                    id="enquiry_type"
+                    name="enquiry_type"
+                    value={formData.enquiry_type}
+                    onChange={handleChange}
+                  >
+                    <option value="general">General</option>
+                    <option value="admission">Admission</option>
+                  </select>
+                  <label htmlFor="enquiry_type">Enquiry Type</label>
+                </div>
+              </div>
+              <div
+                className="fv-row mb-10"
+                style={{ display: "flex", gap: "10px" }}
+              >
                 <div
                   className="form-floating mb-3"
                   style={{
@@ -881,7 +606,223 @@ const CreateWalkinEnquiry = ({ show, handleClose }: Props) => {
                   <label htmlFor="note">Note</label>
                 </div>
               </div>
-              {/* row end */}
+              {formData.enquiry_type === "admission" && (
+                <>
+                  <div
+                    className="fv-row mb-10"
+                    style={{ display: "flex", gap: "10px" }}
+                  >
+                    <div
+                  className="form-floating mb-3"
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    width: "100%",
+                  }}
+                >
+                  <select
+                    className="form-select"
+                    id="class"
+                    name="class"
+                    aria-label="Default select example"
+                    value={formData.class}
+                    onChange={handleChange}
+                  >
+                    <option value="class">{formData.class ? formData.class : "Selecr Class" }</option>
+                    {classes.map((value) => (
+                      <option key={value.id}  value={`${value.id}:${value.class}`}>
+                        {value.class}
+                      </option>
+                    ))}   
+                  </select>
+                  <label htmlFor="Class">Select Class</label>
+                </div>
+                    <div
+                      className="form-floating mb-3"
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        width: "100%",
+                      }}
+                    >
+                      <input
+                        type="date"
+                        className="form-control"
+                        id="date_of_birth"
+                        name="date_of_birth"
+                        placeholder=""
+                        value={formData.date_of_birth}
+                        onChange={handleChange}
+                      />
+                      <label htmlFor="date_of_birth">Date_of_birth</label>
+                    </div>
+                    <div
+                      className="form-floating mb-3"
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        width: "100%",
+                      }}
+                    >
+                      <select
+                        className="form-select"
+                        id="gender"
+                        name="gender"
+                        aria-label="Default select example"
+                        value={formData.gender}
+                        onChange={handleChange}
+                      >
+                        <option defaultChecked disabled>
+                          Gender
+                        </option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        {/* {classes.map((value) => (
+      <option key={value.id} value={value.id}>
+        {value.reference}
+      </option>
+    ))} */}
+                      </select>
+                      <label htmlFor="gender">Select Gender</label>
+                    </div>
+                   
+                  </div>
+                  <div
+                    className="fv-row mb-10"
+                    style={{ display: "flex", gap: "10px" }}
+                  >
+                    <div
+                      className="form-floating mb-3"
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        width: "100%",
+                      }}
+                    >
+                      <select
+                        className="form-select"
+                        id="academic_year"
+                        name="academic_year"
+                        aria-label="Default select example"
+                        value={formData.academic_year}
+                        onChange={handleChange}
+                      >
+                        <option value="academic_year">{formData.academic_year ? formData.academic_year : "Selecr Session" }</option>
+                        {sessions.map((value) => (
+                          <option key={value.id}  value={`${value.id}:${value.session}`}>
+                            {value.session}
+                          </option>
+                        ))}
+                      </select>
+                      <label htmlFor="academic_year">Academic_year</label>
+                    </div>
+                    <div
+                      className="form-floating mb-3"
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        width: "100%",
+                      }}
+                    >
+                      <input
+                        type="text"
+                        className="form-control"
+                        id="father_name"
+                        name="father_name"
+                        placeholder=""
+                        value={formData.father_name}
+                        onChange={handleChange}
+                      />
+                      <label htmlFor="father_name">Father name</label>
+                    </div>
+                    <div
+                      className="form-floating mb-3"
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        width: "100%",
+                      }}
+                    >
+                      <input
+                        type="tel"
+                        className="form-control"
+                        id="father_contact_number"
+                        name="father_contact_number"
+                        placeholder=""
+                        value={formData.father_contact_number}
+                        onChange={handleChange}
+                      />
+                      <label htmlFor="father_contact_number">
+                        Father contact no
+                      </label>
+                    </div>
+                  </div>
+                  <div
+                    className="fv-row mb-10"
+                    style={{ display: "flex", gap: "10px" }}
+                  >
+                    <div
+                      className="form-floating mb-3"
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        width: "100%",
+                      }}
+                    >
+                      <input
+                        type="text"
+                        className="form-control"
+                        id="mother_name"
+                        name="mother_name"
+                        placeholder=""
+                        value={formData.mother_name}
+                        onChange={handleChange}
+                      />
+                      <label htmlFor="mother_name">Mother name</label>
+                    </div>
+                    <div
+                      className="form-floating mb-3"
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        width: "100%",
+                      }}
+                    >
+                      <input
+                        type="tel"
+                        className="form-control"
+                        id="mother_contact_number"
+                        name="mother_contact_number"
+                        placeholder=""
+                        value={formData.mother_contact_number}
+                        onChange={handleChange}
+                      />
+                      <label htmlFor="mother_contact_number">
+                        Mother contact number
+                      </label>
+                    </div>
+                    <div
+                      className="form-floating mb-3"
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        width: "100%",
+                      }}
+                    >
+                      <input
+                        type="text"
+                        className="form-control"
+                        id="current_school"
+                        name="current_school"
+                        placeholder=""
+                        value={formData.current_school}
+                        onChange={handleChange}
+                      />
+                      <label htmlFor="current_school">Current_school</label>
+                    </div>
+                  </div>
+                </>
+              )}
 
               <div style={{ display: "flex", justifyContent: "end" }}>
                 <button className="btn btn-primary" type="submit">

@@ -59,7 +59,7 @@ interface FormData {
     mother_contact_number: string,
 }
 
-const CreateEditEnquiry = ({ show, handleClose, enqId }: Props) => {
+const CreateEditAdmissionEnquiry = ({ show, handleClose, enqId }: Props) => {
   const { currentUser } = useAuth();
 
   const schoolId = currentUser?.school_id;
@@ -963,4 +963,4 @@ const CreateEditEnquiry = ({ show, handleClose, enqId }: Props) => {
   );
 };
 
-export { CreateEditEnquiry };
+export { CreateEditAdmissionEnquiry };
