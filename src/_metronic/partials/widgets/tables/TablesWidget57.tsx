@@ -14,6 +14,13 @@ interface DataItem {
   name : string;
 }
 interface FilterData {
+  gender: string;
+  date_of_birth: string | number | Date;
+  student_phone: string;
+  phone: string | number | Date;
+  student_email: string;
+  student_name: string;
+  created_at: string | number | Date;
   id:number
   enquiry_id:string;
   date: string;
@@ -30,6 +37,8 @@ const TablesWidget57: React.FC = () => {
   const [data, setData] = useState<DataItem[]>([]);
   
   const [filteredData, setFilteredData] = useState<FilterData[]>([]); 
+  console.log(filteredData);
+  
   const [searchQuery, setSearchQuery] = useState(0); 
   const { currentUser } = useAuth();
   const schoolId = currentUser?.school_id;
@@ -511,7 +520,7 @@ const TablesWidget57: React.FC = () => {
                         // border:'1px solid'
                       }}
                     >
-                       {formatDate(item.date)}
+                       {formatDate(item.created_at)}
                     </span>
                   </div>
                 </td>
@@ -533,7 +542,7 @@ const TablesWidget57: React.FC = () => {
                         fontFamily:'Manrope'
                       }}
                     >
-                      {item.name}
+                      {item.student_name}
                     </span>
                   </div>
                 </td>
@@ -609,7 +618,7 @@ const TablesWidget57: React.FC = () => {
                         fontFamily:'Manrope'
                       }}
                     >
-                      {item.email}
+                      {item.student_email}
                     </span>
                   </div>
                   <ReactTooltip
@@ -650,7 +659,7 @@ const TablesWidget57: React.FC = () => {
                         // backgroundColor: "#FFE7E1",
                       }}
                     >
-                     {formatDate(item.follow_up_date)}
+                     {item.student_phone}
                     </span>
                   </div>
                 </td>
