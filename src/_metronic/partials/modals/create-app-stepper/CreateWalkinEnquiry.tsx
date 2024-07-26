@@ -3,23 +3,19 @@ import { createPortal } from "react-dom";
 import { Modal } from "react-bootstrap";
 import { useAuth } from "../../../../app/modules/auth/core/Auth";
 import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
-// import "./Style.css";
 
 type Props = {
   show: boolean;
   handleClose: () => void;
-  // refresh: (refresh: boolean) => void;
 };
 
 interface Reference {
-  id: string; // Adjust the type as per your data structure
+  id: string;
   reference: string;
-  // Add other properties if needed
 }
 interface Source {
-  id: string; // Adjust the type as per your data structure
+  id: string;
   source: string;
-  // Add other properties if needed
 }
 
 interface ClassDetails {
@@ -33,9 +29,9 @@ interface Sessions {
 }
 
 interface FormData {
-  name: string;
-  contact: string;
-  address: string;
+  student_name: string;
+  student_phone: string;
+  student_address: string;
   reference_id: number;
   reference: string;
   description: string;
@@ -43,7 +39,7 @@ interface FormData {
   note: string;
   source_id: number;
   source: string;
-  email: string;
+  student_email: string;
   status: string;
   enquiry_type: string;
   class_id: number;
@@ -53,60 +49,62 @@ interface FormData {
   current_school: string;
   academic_year: string;
   father_name: string;
-  father_contact_number: string;
+  father_phone: string;
   mother_name: string;
-  mother_contact_number: string;
+  mother_phone: string;
 }
 
 const modalsRoot = document.getElementById("root-modals") || document.body;
 
 const CreateWalkinEnquiry = ({ show, handleClose }: Props) => {
   const { currentUser } = useAuth();
-  // console.log(currentUser);
 
   const schoolId = currentUser?.school_id;
-  // const [sections, setSections] = useState([]);
+  /* @ts-ignore */
+  const userId = currentUser?.id;
+
   const [classes, setClasses] = useState<ClassDetails[]>([]);
   const [sessions, setSessions] = useState<Sessions[]>([]);
-
   const [source, setSource] = useState<Source[]>([]);
-  
   const [reference, setReference] = useState<Reference[]>([]);
-  // const [showForm, setShowForm] = useState('general');
-
   const [formData, setFormData] = useState<FormData>({
-    name: "",
-    contact: "",
-    address: "",
+    enquiry_type: "General",
+    student_name: "",
+    student_phone: "",
+    student_address: "",
     reference_id: 0,
-    reference: "",
     description: "",
-    follow_up_date:new Date,
+    follow_up_date: new Date(),
     note: "",
     source_id: 0,
     source: "",
-    email: "",
-    status: "Active",
-    enquiry_type: "General",
+    student_email: "",
     class_id: 0,
     class: "",
+    status: "Active",
+    /* @ts-ignore */
+    date_of_birth: "",
     gender: "",
-    date_of_birth:null,
     current_school: "",
-    academic_year: "",
     father_name: "",
-    father_contact_number: "",
+    father_phone: "",
     mother_name: "",
-    mother_contact_number: "",
+    mother_phone: "",
+    academic_year: "",
+    reference: "",
   });
-
   /* @ts-ignore */
   const handleChange = (e) => {
     const { name, value } = e.target;
-  
-    if (name === 'reference' || name === 'source' || name === 'academic_year' || name === 'class') {
-      const [id, text] = value.split(':');
-      
+
+    if (
+      name === "reference" ||
+      name === "source" ||
+      name === "academic_year" ||
+      name === "class"
+    ) {
+      const [id, text] = value.split(":");
+
       setFormData((prevState) => ({
         ...prevState,
         [`${name}_id`]: id,
@@ -119,27 +117,23 @@ const CreateWalkinEnquiry = ({ show, handleClose }: Props) => {
       }));
     }
   };
-  // useEffect(() => {
-  //   const fetchSections = async () => {
-  //     if (!formData.class) return;
 
-  //     const schoolId = currentUser?.school_id;
-  //     try {
-  //       const response = await fetch(
-  //         `${DOMAIN}/api/staff/get-sections?schoolId=${schoolId}&classId=${formData.class}`
-  //       );
-  //       if (!response.ok) {
-  //         throw new Error(`HTTP error! status: ${response.status}`);
-  //       }
-  //       const data = await response.json();
-  //       setSections(data);
-  //     } catch (error) {
-  //       console.error("Error fetching sections:", error);
-  //     }
-  //   };
-
-  //   fetchSections();
-  // }, [formData.class]);
+  useEffect(() => {
+    if (formData.enquiry_type === "general") {
+      /* @ts-ignore */
+      setFormData((prevState) => ({
+        ...prevState,
+        date_of_birth: null,
+        gender: "",
+        current_school: "",
+        father_name: "",
+        father_phone: "",
+        mother_name: "",
+        mother_phone: "",
+        academic_year: "",
+      }));
+    }
+  }, [formData.enquiry_type]);
 
   useEffect(() => {
     const fetchClasses = async () => {
@@ -224,10 +218,9 @@ const CreateWalkinEnquiry = ({ show, handleClose }: Props) => {
   /* @ts-ignore */
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
       const response = await fetch(
-        `${DOMAIN}/api/staff/walkinEnquiry/${schoolId}`,
+        `${DOMAIN}/api/staff/walkinEnquiry/${schoolId}/${userId}`,
         {
           method: "POST",
           headers: {
@@ -249,38 +242,6 @@ const CreateWalkinEnquiry = ({ show, handleClose }: Props) => {
       console.error("Error creating Enquiry:", error);
     }
   };
-
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   console.log(formData)
-  //   console.log(schoolId);
-
-  //   try {
-  //     const response = await fetch(
-  //       `${DOMAIN}/api/staff/walkinEnquiry/:${schoolId}`,
-  //       {
-  //         method: "POST",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //         },
-  //         body: JSON.stringify({
-  //           formData,
-  //         }),
-  //       }
-  //     );
-
-  //     if (!response.ok) {
-  //       throw new Error("Failed to create student");
-  //     }
-
-  //     const data = await response.json();
-  //     console.log("Student created successfully:", data);
-  //     handleClose();
-  //     // refresh(true);
-  //   } catch (error) {
-  //     console.error("Error creating student:", error);
-  //   }
-  // };
 
   return createPortal(
     <Modal
@@ -360,13 +321,13 @@ const CreateWalkinEnquiry = ({ show, handleClose }: Props) => {
                   <input
                     type="text"
                     className="form-control"
-                    id="name"
-                    name="name"
+                    id="student_name"
+                    name="student_name"
                     placeholder=""
-                    value={formData.name}
+                    value={formData.student_name}
                     onChange={handleChange}
                   />
-                  <label htmlFor="admission_no">Name</label>
+                  <label htmlFor="admissstudent_nameion_no">Name</label>
                 </div>
                 <div
                   className="form-floating mb-3"
@@ -379,13 +340,13 @@ const CreateWalkinEnquiry = ({ show, handleClose }: Props) => {
                   <input
                     type="tel"
                     className="form-control"
-                    id="contact"
-                    name="contact"
+                    id="student_phone"
+                    name="student_phone"
                     placeholder=""
-                    value={formData.contact}
+                    value={formData.student_phone}
                     onChange={handleChange}
                   />
-                  <label htmlFor="contact">Contact no</label>
+                  <label htmlFor="contstudent_phoneact">Contact no</label>
                 </div>
                 <div
                   className="form-floating mb-3"
@@ -398,18 +359,15 @@ const CreateWalkinEnquiry = ({ show, handleClose }: Props) => {
                   <input
                     type="text"
                     className="form-control"
-                    id="address"
-                    name="address"
+                    id="student_address"
+                    name="student_address"
                     placeholder=""
-                    value={formData.address}
+                    value={formData.student_address}
                     onChange={handleChange}
                   />
-                  <label htmlFor="address">Address</label>
+                  <label htmlFor="student_address">Address</label>
                 </div>
               </div>
-              {/* row end */}
-
-              {/* row start */}
               <div
                 className="fv-row mb-10"
                 style={{ display: "flex", gap: "10px" }}
@@ -425,13 +383,13 @@ const CreateWalkinEnquiry = ({ show, handleClose }: Props) => {
                   <input
                     type="email"
                     className="form-control"
-                    id="email"
-                    name="email"
+                    id="student_email"
+                    name="student_email"
                     placeholder=""
-                    value={formData.email}
+                    value={formData.student_email}
                     onChange={handleChange}
                   />
-                  <label htmlFor="admission_no">E-Mail</label>
+                  <label htmlFor="student_email">E-Mail</label>
                 </div>
                 <div
                   className="form-floating mb-3"
@@ -449,10 +407,16 @@ const CreateWalkinEnquiry = ({ show, handleClose }: Props) => {
                     value={formData.reference}
                     onChange={handleChange}
                   >
-                    <option value="reference">{formData.reference ? formData.reference : "Selecr Reference" }</option>
+                    <option value="reference">
+                      {formData.reference
+                        ? formData.reference
+                        : "Selecr Reference"}
+                    </option>
                     {reference.map((value) => (
-                      <option key={value.id} 
-                      value={`${value.id}:${value.reference}`}>
+                      <option
+                        key={value.id}
+                        value={`${value.id}:${value.reference}`}
+                      >
                         {value.reference}
                       </option>
                     ))}
@@ -475,10 +439,14 @@ const CreateWalkinEnquiry = ({ show, handleClose }: Props) => {
                     value={formData.source}
                     onChange={handleChange}
                   >
-                    <option value="">{formData.source ? formData.source : "Selecr Source" }</option>
+                    <option value="">
+                      {formData.source ? formData.source : "Selecr Source"}
+                    </option>
                     {source.map((value) => (
-                      <option key={value.id} 
-                      value={`${value.id}:${value.source}`}>
+                      <option
+                        key={value.id}
+                        value={`${value.id}:${value.source}`}
+                      >
                         {value.source}
                       </option>
                     ))}
@@ -536,12 +504,13 @@ const CreateWalkinEnquiry = ({ show, handleClose }: Props) => {
                     id="follow_up_date"
                     name="follow_up_date"
                     placeholder=""
+                    /* @ts-ignore */
                     value={formData.follow_up_date}
                     onChange={handleChange}
                   />
                   <label htmlFor="follow_up_date">Follow up date</label>
                 </div>
-                
+
                 <div
                   className="form-floating mb-3"
                   style={{
@@ -613,30 +582,35 @@ const CreateWalkinEnquiry = ({ show, handleClose }: Props) => {
                     style={{ display: "flex", gap: "10px" }}
                   >
                     <div
-                  className="form-floating mb-3"
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    width: "100%",
-                  }}
-                >
-                  <select
-                    className="form-select"
-                    id="class"
-                    name="class"
-                    aria-label="Default select example"
-                    value={formData.class}
-                    onChange={handleChange}
-                  >
-                    <option value="class">{formData.class ? formData.class : "Selecr Class" }</option>
-                    {classes.map((value) => (
-                      <option key={value.id}  value={`${value.id}:${value.class}`}>
-                        {value.class}
-                      </option>
-                    ))}   
-                  </select>
-                  <label htmlFor="Class">Select Class</label>
-                </div>
+                      className="form-floating mb-3"
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        width: "100%",
+                      }}
+                    >
+                      <select
+                        className="form-select"
+                        id="class"
+                        name="class"
+                        aria-label="Default select example"
+                        value={formData.class}
+                        onChange={handleChange}
+                      >
+                        <option value="class">
+                          {formData.class ? formData.class : "Selecr Class"}
+                        </option>
+                        {classes.map((value) => (
+                          <option
+                            key={value.id}
+                            value={`${value.id}:${value.class}`}
+                          >
+                            {value.class}
+                          </option>
+                        ))}
+                      </select>
+                      <label htmlFor="Class">Select Class</label>
+                    </div>
                     <div
                       className="form-floating mb-3"
                       style={{
@@ -651,6 +625,7 @@ const CreateWalkinEnquiry = ({ show, handleClose }: Props) => {
                         id="date_of_birth"
                         name="date_of_birth"
                         placeholder=""
+                        /* @ts-ignore */
                         value={formData.date_of_birth}
                         onChange={handleChange}
                       />
@@ -685,7 +660,6 @@ const CreateWalkinEnquiry = ({ show, handleClose }: Props) => {
                       </select>
                       <label htmlFor="gender">Select Gender</label>
                     </div>
-                   
                   </div>
                   <div
                     className="fv-row mb-10"
@@ -707,9 +681,16 @@ const CreateWalkinEnquiry = ({ show, handleClose }: Props) => {
                         value={formData.academic_year}
                         onChange={handleChange}
                       >
-                        <option value="academic_year">{formData.academic_year ? formData.academic_year : "Selecr Session" }</option>
+                        <option value="academic_year">
+                          {formData.academic_year
+                            ? formData.academic_year
+                            : "Selecr Session"}
+                        </option>
                         {sessions.map((value) => (
-                          <option key={value.id}  value={`${value.id}:${value.session}`}>
+                          <option
+                            key={value.id}
+                            value={`${value.id}:${value.session}`}
+                          >
                             {value.session}
                           </option>
                         ))}
@@ -746,15 +727,13 @@ const CreateWalkinEnquiry = ({ show, handleClose }: Props) => {
                       <input
                         type="tel"
                         className="form-control"
-                        id="father_contact_number"
-                        name="father_contact_number"
+                        id="father_phone"
+                        name="father_phone"
                         placeholder=""
-                        value={formData.father_contact_number}
+                        value={formData.father_phone}
                         onChange={handleChange}
                       />
-                      <label htmlFor="father_contact_number">
-                        Father contact no
-                      </label>
+                      <label htmlFor="father_phone">Father contact no</label>
                     </div>
                   </div>
                   <div
@@ -791,13 +770,13 @@ const CreateWalkinEnquiry = ({ show, handleClose }: Props) => {
                       <input
                         type="tel"
                         className="form-control"
-                        id="mother_contact_number"
-                        name="mother_contact_number"
+                        id="mother_phone"
+                        name="mother_phone"
                         placeholder=""
-                        value={formData.mother_contact_number}
+                        value={formData.mother_phone}
                         onChange={handleChange}
                       />
-                      <label htmlFor="mother_contact_number">
+                      <label htmlFor="mother_phone">
                         Mother contact number
                       </label>
                     </div>

@@ -68,6 +68,7 @@ const CreateEnquiryAction = ({ show, handleClose, enqId }: Props) => {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
+        
 
         // Ensure data is an array and check for valid first element
         const follow_up_date = data?.[0]?.follow_up_date
@@ -75,9 +76,9 @@ const CreateEnquiryAction = ({ show, handleClose, enqId }: Props) => {
           : "";
 
         setEnqdata({
-          name: data[0]?.name || "",
+          name: data[0]?.student_name || "",
           /* @ts-ignore */
-          father_contact_number: data[0]?.father_contact_number || "",
+          father_contact_number: data[0]?.father_phone || "",
           father_name: data[0]?.father_name || "",
           follow_up_date: follow_up_date || "",
           status: data[0]?.status || "",
@@ -203,7 +204,9 @@ const CreateEnquiryAction = ({ show, handleClose, enqId }: Props) => {
                       {enqdata?.name}
                     </span>
                   </span>
-                  <span
+                  {enqdata?.father_name && (
+                    <>
+                    <span
                     style={{
                       fontFamily: "Manrope",
                       fontSize: "14px",
@@ -242,6 +245,9 @@ const CreateEnquiryAction = ({ show, handleClose, enqId }: Props) => {
                       enqdata?.father_phone}
                     </span>{" "}
                   </span>
+                    </>
+
+                  )}
                 </div>
               ) : (
                 <p>Loading...</p>

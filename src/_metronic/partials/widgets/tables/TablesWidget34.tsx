@@ -14,6 +14,8 @@ interface DataItem {
   name : string;
 }
 interface FilterData {
+  student_email: string;
+  student_name: string;
   id:number
   enquiry_id:string;
   date: string;
@@ -30,7 +32,7 @@ const TablesWidget34: React.FC = () => {
   const [data, setData] = useState<DataItem[]>([]);
   
   const [filteredData, setFilteredData] = useState<FilterData[]>([]); 
-  const [searchQuery, setSearchQuery] = useState(0); 
+  const [searchQuery, setSearchQuery] = useState(""); 
   const { currentUser } = useAuth();
   const schoolId = currentUser?.school_id;
 
@@ -558,7 +560,7 @@ const TablesWidget34: React.FC = () => {
                         fontFamily:'Manrope'
                       }}
                     >
-                      {item.name}
+                      {item.student_name}
                     </span>
                   </div>
                   <ReactTooltip
@@ -609,13 +611,13 @@ const TablesWidget34: React.FC = () => {
                         fontFamily:'Manrope'
                       }}
                     >
-                      {item.email}
+                      {item.student_email}
                     </span>
                   </div>
                   <ReactTooltip
                     id={`tooltip-${index}`}
                     place="bottom"
-                    content={item.email}
+                    content={item.student_email}
                     opacity={1}
                     style={{
                       zIndex: 999,

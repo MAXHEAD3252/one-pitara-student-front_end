@@ -33,30 +33,30 @@ interface Session {
   // Add other properties if needed
 }
 
-
 interface FormData {
-  enquiry_id:string,
-  name: string,
-    contact: string,
-    address: string,
-    reference_id:string,
-    date: string,
-    description: string,
-    follow_up_date: string,
-    note: string,
-    source_id: string,
-    email: string,
-    status: string,
-    enquiry_type:string,
-    class_id: string,
-    gender: string,
-    date_of_birth: string,
-    current_school: string,
-    academic_year: string,
-    father_name: string,
-    father_contact_number: string,
-    mother_name: string,
-    mother_contact_number: string,
+  student_name: string;
+  student_phone: string;
+  student_address: string;
+  reference_id: number;
+  reference: string;
+  description: string;
+  follow_up_date: Date;
+  note: string;
+  source_id: number;
+  source: string;
+  student_email: string;
+  status: string;
+  enquiry_type: string;
+  class_id: number;
+  class: string;
+  gender: string;
+  date_of_birth: Date;
+  current_school: string;
+  academic_year: string;
+  father_name: string;
+  father_phone: string;
+  mother_name: string;
+  mother_phone: string;
 }
 
 const CreateEditEnquiry = ({ show, handleClose, enqId }: Props) => {
@@ -68,32 +68,34 @@ const CreateEditEnquiry = ({ show, handleClose, enqId }: Props) => {
   const [source, setSource] = useState<Source[]>([]);
   const [reference, setReference] = useState<Reference[]>([]);
   const [classes, setClasses] = useState<Class[]>([]);
-  const [sessions, setSessions] =  useState<Session[]>([]);
+  const [sessions, setSessions] = useState<Session[]>([]);
   const [changedFields, setChangedFields] = useState({});
 
   const [formData, setFormData] = useState<FormData>({
-    enquiry_id:"",
-    name: "",
-    contact: "",
-    address: "",
-    reference_id:"",
-    date: "",
+    enquiry_type: "",
+    student_name: "",
+    student_phone: "",
+    student_address: "",
+    reference_id: 0,
     description: "",
-    follow_up_date: "",
+    follow_up_date: new Date(),
     note: "",
-    source_id: "",
-    email: "",
-    status: "",
-    enquiry_type:"",
-    class_id: "",
-    gender: "",
+    source_id: 0,
+    source: "",
+    student_email: "",
+    class_id: 0,
+    class: "",
+    status: "Active",
+    /* @ts-ignore */
     date_of_birth: "",
+    gender: "",
     current_school: "",
-    academic_year: "",
     father_name: "",
-    father_contact_number: "",
+    father_phone: "",
     mother_name: "",
-    mother_contact_number: "",
+    mother_phone: "",
+    academic_year: "",
+    reference: "",
   });
 
   useEffect(() => {
@@ -209,6 +211,7 @@ const CreateEditEnquiry = ({ show, handleClose, enqId }: Props) => {
         }
 
         const data = await response.json();
+        console.log(data);
 
         // Format dates if they exist
         const followUpDate = data?.[0]?.follow_up_date
@@ -217,30 +220,30 @@ const CreateEditEnquiry = ({ show, handleClose, enqId }: Props) => {
         const dateOfBirth = data?.[0]?.date_of_birth
           ? formatDateToYYYYMMDD(data[0].date_of_birth)
           : "";
-
+        /* @ts-ignore */
         setFormData({
           enquiry_id: data[0]?.enquiry_id || "",
-          name: data[0]?.name || "",
-          contact: data[0]?.contact || "",
+          student_name: data[0]?.student_name || "",
+          student_phone: data[0]?.student_phone || "",
           mother_name: data[0]?.mother_name || "",
-          mother_contact_number: data[0]?.mother_contact_number || "",
+          mother_phone: data[0]?.mother_phone || "",
           description: data[0]?.description || "",
           note: data[0]?.note || "",
-          address: data[0]?.address || "",
+          student_address: data[0]?.student_address || "",
           date: data[0]?.date || "",
-          reference_id: data[0]?.reference_id || "",
+          reference: data[0]?.reference || "",
           status: data[0]?.status || "",
           date_of_birth: dateOfBirth,
-          father_contact_number: data[0]?.father_contact_number || "",
+          father_phone: data[0]?.father_phone || "",
           current_school: data[0]?.current_school || "",
           gender: data[0]?.gender || "",
           academic_year: data[0]?.academic_year || "",
           father_name: data[0]?.father_name || "",
-          email: data[0]?.email || "",
+          student_email: data[0]?.student_email || "",
           class_id: data[0]?.class_id || "",
-          source_id: data[0]?.source_id || "",
+          source: data[0]?.source || "",
           follow_up_date: followUpDate,
-          enquiry_type:data[0]?.enquiry_type
+          enquiry_type: data[0]?.enquiry_type,
         });
       } catch (error) {
         console.error("Error fetching enquiry details:", error);
@@ -267,11 +270,14 @@ const CreateEditEnquiry = ({ show, handleClose, enqId }: Props) => {
   /* @ts-ignore */
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const id = enqId;
+    const enquiry_id = enqId;
+    // console.log(changedFields);
+    // return;
+    
 
     try {
       const response = await fetch(
-        `${DOMAIN}/api/staff/updateEnquiryById/${schoolId}/${id}`,
+        `${DOMAIN}/api/staff/updateEnquiryById/${schoolId}/${enquiry_id}`,
         {
           method: "PUT",
           headers: {
@@ -371,13 +377,13 @@ const CreateEditEnquiry = ({ show, handleClose, enqId }: Props) => {
                   <input
                     type="text"
                     className="form-control"
-                    id="name"
-                    name="name"
+                    id="student_name"
+                    name="student_name"
                     placeholder=""
-                    value={formData.name}
+                    value={formData.student_name}
                     onChange={handleChange}
                   />
-                  <label htmlFor="admission_no">Name</label>
+                  <label htmlFor="admissstudent_nameion_no">Name</label>
                 </div>
                 <div
                   className="form-floating mb-3"
@@ -390,13 +396,13 @@ const CreateEditEnquiry = ({ show, handleClose, enqId }: Props) => {
                   <input
                     type="tel"
                     className="form-control"
-                    id="contact"
-                    name="contact"
+                    id="student_phone"
+                    name="student_phone"
                     placeholder=""
-                    value={formData.contact}
+                    value={formData.student_phone}
                     onChange={handleChange}
                   />
-                  <label htmlFor="contact">Contact no</label>
+                  <label htmlFor="contstudent_phoneact">Contact no</label>
                 </div>
                 <div
                   className="form-floating mb-3"
@@ -409,13 +415,13 @@ const CreateEditEnquiry = ({ show, handleClose, enqId }: Props) => {
                   <input
                     type="text"
                     className="form-control"
-                    id="address"
-                    name="address"
+                    id="student_address"
+                    name="student_address"
                     placeholder=""
-                    value={formData.address}
+                    value={formData.student_address}
                     onChange={handleChange}
                   />
-                  <label htmlFor="address">Address</label>
+                  <label htmlFor="student_address">Address</label>
                 </div>
               </div>
               {/* row end */}
@@ -436,13 +442,13 @@ const CreateEditEnquiry = ({ show, handleClose, enqId }: Props) => {
                   <input
                     type="email"
                     className="form-control"
-                    id="email"
-                    name="email"
+                    id="student_email"
+                    name="student_email"
                     placeholder=""
-                    value={formData.email}
+                    value={formData?.student_email}
                     onChange={handleChange}
                   />
-                  <label htmlFor="admission_no">E-Mail</label>
+                  <label htmlFor="student_email">E-Mail</label>
                 </div>
                 <div
                   className="form-floating mb-3"
@@ -454,28 +460,27 @@ const CreateEditEnquiry = ({ show, handleClose, enqId }: Props) => {
                 >
                   <select
                     className="form-select"
-                    id="reference_id"
-                    name="reference_id"
+                    id="reference"
+                    name="reference"
                     aria-label="Default select example"
-                    value={formData.reference_id}
+                    value={formData.reference}
                     onChange={handleChange}
                   >
-                    {!reference.some(
-                      (value) => value.id === formData.reference_id
-                    ) && (
-                      <option value={formData.reference_id}>
-                        {formData.reference}
-                      </option>
-                    )}
-
+                    <option value="reference">
+                      {formData.reference
+                        ? formData.reference
+                        : "Selecr Reference"}
+                    </option>
                     {reference.map((value) => (
-                      <option key={value.id} value={value.id}>
+                      <option
+                        key={value.id}
+                        value={`${value.id}:${value.reference}`}
+                      >
                         {value.reference}
                       </option>
                     ))}
                   </select>
-
-                  <label htmlFor="reference_id">Select Reference</label>
+                  <label htmlFor="reference">Select Reference</label>
                 </div>
                 <div
                   className="form-floating mb-3"
@@ -487,26 +492,25 @@ const CreateEditEnquiry = ({ show, handleClose, enqId }: Props) => {
                 >
                   <select
                     className="form-select"
-                    id="source_id"
-                    name="source_id"
+                    id="source"
+                    name="source"
                     aria-label="Default select example"
-                    value={formData.source_id}
+                    value={formData.source}
                     onChange={handleChange}
                   >
-                    {!source.some(
-                      (value) => value.id === formData.source_id
-                    ) && (
-                      <option value={formData.source_id}>
-                        {formData.source_id}
-                      </option>
-                    )}{" "}
+                    <option value="">
+                      {formData.source ? formData.source : "Selecr Source"}
+                    </option>
                     {source.map((value) => (
-                      <option key={value.id} value={value.id}>
+                      <option
+                        key={value.id}
+                        value={`${value.id}:${value.source}`}
+                      >
                         {value.source}
                       </option>
                     ))}
                   </select>
-                  <label htmlFor="source_id">Select Source</label>
+                  <label htmlFor="source">Select Source</label>
                 </div>
               </div>
               {/* row end */}
@@ -516,31 +520,6 @@ const CreateEditEnquiry = ({ show, handleClose, enqId }: Props) => {
                 className="fv-row mb-10"
                 style={{ display: "flex", gap: "10px" }}
               >
-                <div
-                  className="form-floating mb-3"
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    width: "100%",
-                  }}
-                >
-                  <select
-                    className="form-select"
-                    id="class_id"
-                    name="class_id"
-                    aria-label="Default select example"
-                    value={formData.class_id}
-                    onChange={handleChange}
-                  >
-                    {classes.map((value) => (
-                      <option key={value.id} value={value.id}>
-                        {value.class}
-                      </option>
-                    ))}
-                  </select>
-
-                  <label htmlFor="class_id">Select Class</label>
-                </div>
                 <div
                   className="form-floating mb-3"
                   style={{
@@ -580,334 +559,41 @@ const CreateEditEnquiry = ({ show, handleClose, enqId }: Props) => {
                   <input
                     type="date"
                     className="form-control"
-                    id="date_of_birth"
-                    name="date_of_birth"
-                    placeholder=""
-                    value={formData.date_of_birth}
-                    onChange={handleChange}
-                  />
-                  <label htmlFor="date_of_birth">Date_of_birth</label>
-                </div>
-              </div>
-              {/* row end */}
-
-              {/* row start */}
-              <div
-                className="fv-row mb-10"
-                style={{ display: "flex", gap: "10px" }}
-              >
-                <div
-                  className="form-floating mb-3"
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    width: "100%",
-                  }}
-                >
-                  <select
-                    className="form-select"
-                    id="gender"
-                    name="gender"
-                    aria-label="Default select example"
-                    value={formData.gender}
-                    onChange={handleChange}
-                  >
-                    <option defaultChecked disabled>
-                      Gender
-                    </option>
-                    <option value="male">Male</option>
-                    <option value="female">Female</option>
-                    {/* {classes.map((value) => (
-                      <option key={value.id} value={value.id}>
-                        {value.reference}
-                      </option>
-                    ))} */}
-                  </select>
-                  <label htmlFor="gender">Select Gender</label>
-                </div>
-                <div
-                  className="form-floating mb-3"
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    width: "100%",
-                  }}
-                >
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="current_school"
-                    name="current_school"
-                    placeholder=""
-                    value={formData.current_school}
-                    onChange={handleChange}
-                  />
-                  <label htmlFor="current_school">Current_school</label>
-                </div>
-                <div
-                  className="form-floating mb-3"
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    width: "100%",
-                  }}
-                >
-                  <select
-                    className="form-select"
-                    id="academic_year"
-                    name="academic_year"
-                    aria-label="Default select example"
-                    value={formData.academic_year}
-                    onChange={handleChange}
-                  >
-                    {!sessions.some(
-                      (value) => value.id === formData.academic_year
-                    ) && (
-                      <option value={formData.academic_year}>
-                        {formData.academic_year}
-                      </option>
-                    )}
-                    {sessions.map((value) => (
-                      <option key={value.id} value={value.id}>
-                        {value.session}
-                      </option>
-                    ))}
-                  </select>
-
-                  <label htmlFor="academic_year">Academic_year</label>
-                </div>
-              </div>
-              {/* row end */}
-
-              {/* row start */}
-              <div
-                className="fv-row mb-10"
-                style={{ display: "flex", gap: "10px" }}
-              >
-                <div
-                  className="form-floating mb-3"
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    width: "100%",
-                  }}
-                >
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="father_name"
-                    name="father_name"
-                    placeholder=""
-                    value={formData.father_name}
-                    onChange={handleChange}
-                  />
-                  <label htmlFor="father_name">Father name</label>
-                </div>
-                <div
-                  className="form-floating mb-3"
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    width: "100%",
-                  }}
-                >
-                  <input
-                    type="tel"
-                    className="form-control"
-                    id="father_contact_number"
-                    name="father_contact_number"
-                    placeholder=""
-                    value={formData.father_contact_number}
-                    onChange={handleChange}
-                  />
-                  <label htmlFor="father_contact_number">
-                    Father contact no
-                  </label>
-                </div>
-                <div
-                  className="form-floating mb-3"
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    width: "100%",
-                  }}
-                >
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="father_occupation"
-                    name="father_occupation"
-                    placeholder=""
-                    value={formData.father_occupation}
-                    onChange={handleChange}
-                  />
-                  <label htmlFor="father_occupation">Father occupation</label>
-                </div>
-              </div>
-              {/* row end */}
-
-              {/* row start */}
-              <div
-                className="fv-row mb-10"
-                style={{ display: "flex", gap: "10px" }}
-              >
-                <div
-                  className="form-floating mb-3"
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    width: "100%",
-                  }}
-                >
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="father_type_of_work"
-                    name="father_type_of_work"
-                    placeholder=""
-                    value={formData.father_type_of_work}
-                    onChange={handleChange}
-                  />
-                  <label htmlFor="father_type_of_work">
-                    Father type of work
-                  </label>
-                </div>
-                <div
-                  className="form-floating mb-3"
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    width: "100%",
-                  }}
-                >
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="father_organization"
-                    name="father_organization"
-                    placeholder=""
-                    value={formData.father_organization}
-                    onChange={handleChange}
-                  />
-                  <label htmlFor="father_organization">
-                    Father organization
-                  </label>
-                </div>
-                <div
-                  className="form-floating mb-3"
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    width: "100%",
-                  }}
-                >
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="mother_name"
-                    name="mother_name"
-                    placeholder=""
-                    value={formData.mother_name}
-                    onChange={handleChange}
-                  />
-                  <label htmlFor="mother_name">Mother name</label>
-                </div>
-              </div>
-              {/* row end */}
-
-              {/* row start */}
-              <div
-                className="fv-row mb-10"
-                style={{ display: "flex", gap: "10px" }}
-              >
-                <div
-                  className="form-floating mb-3"
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    width: "100%",
-                  }}
-                >
-                  <input
-                    type="tel"
-                    className="form-control"
-                    id="mother_contact_number"
-                    name="mother_contact_number"
-                    placeholder=""
-                    value={formData.mother_contact_number}
-                    onChange={handleChange}
-                  />
-                  <label htmlFor="mother_contact_number">
-                    Mother contact number
-                  </label>
-                </div>
-                <div
-                  className="form-floating mb-3"
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    width: "100%",
-                  }}
-                >
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="mother_occupation"
-                    name="mother_occupation"
-                    placeholder=""
-                    value={formData.mother_occupation}
-                    onChange={handleChange}
-                  />
-                  <label htmlFor="mother_occupation">Mother occupation</label>
-                </div>
-                <div
-                  className="form-floating mb-3"
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    width: "100%",
-                  }}
-                >
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="mother_organization"
-                    name="mother_organization"
-                    placeholder=""
-                    value={formData.mother_organization}
-                    onChange={handleChange}
-                  />
-                  <label htmlFor="mother_organization">
-                    Mother organization
-                  </label>
-                </div>
-              </div>
-              {/* row end */}
-
-              {/* row start */}
-              <div
-                className="fv-row mb-10"
-                style={{ display: "flex", gap: "10px" }}
-              >
-                <div
-                  className="form-floating mb-3"
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    width: "100%",
-                  }}
-                >
-                  <input
-                    type="date"
-                    className="form-control"
                     id="follow_up_date"
                     name="follow_up_date"
                     placeholder=""
+                    /* @ts-ignore */
                     value={formData.follow_up_date}
                     onChange={handleChange}
                   />
                   <label htmlFor="follow_up_date">Follow up date</label>
                 </div>
+                <div
+                  className="form-floating mb-3"
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    width: "100%",
+                  }}
+                >
+                  <select
+                    className="form-control"
+                    id="enquiry_type"
+                    name="enquiry_type"
+                    value={formData.enquiry_type}
+                    onChange={handleChange}
+                  >
+                    <option value="general">General</option>
+                    <option value="admission">Admission</option>
+                  </select>
+                  <label htmlFor="enquiry_type">Enquiry Type</label>
+                </div>
+              </div>
+              {/* row end */}
+              <div
+                className="fv-row mb-10"
+                style={{ display: "flex", gap: "10px" }}
+              >
                 <div
                   className="form-floating mb-3"
                   style={{
@@ -947,6 +633,235 @@ const CreateEditEnquiry = ({ show, handleClose, enqId }: Props) => {
                   <label htmlFor="note">Note</label>
                 </div>
               </div>
+              {/* row start */}
+
+              {formData.enquiry_type === "admission" && (
+                <>
+                  <div
+                    className="fv-row mb-10"
+                    style={{ display: "flex", gap: "10px" }}
+                  >
+                    <div
+                      className="form-floating mb-3"
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        width: "100%",
+                      }}
+                    >
+                      <select
+                        className="form-select"
+                        id="class"
+                        name="class"
+                        aria-label="Default select example"
+                        value={formData.class}
+                        onChange={handleChange}
+                      >
+                        <option value="class">
+                          {formData.class ? formData.class : "Selecr Class"}
+                        </option>
+                        {classes.map((value) => (
+                          <option
+                            key={value.id}
+                            value={`${value.id}:${value.class}`}
+                          >
+                            {value.class}
+                          </option>
+                        ))}
+                      </select>
+                      <label htmlFor="Class">Select Class</label>
+                    </div>
+                    <div
+                      className="form-floating mb-3"
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        width: "100%",
+                      }}
+                    >
+                      <input
+                        type="date"
+                        className="form-control"
+                        id="date_of_birth"
+                        name="date_of_birth"
+                        placeholder=""
+                        /* @ts-ignore */
+                        value={formData.date_of_birth}
+                        onChange={handleChange}
+                      />
+                      <label htmlFor="date_of_birth">Date_of_birth</label>
+                    </div>
+                    <div
+                      className="form-floating mb-3"
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        width: "100%",
+                      }}
+                    >
+                      <select
+                        className="form-select"
+                        id="gender"
+                        name="gender"
+                        aria-label="Default select example"
+                        value={formData.gender}
+                        onChange={handleChange}
+                      >
+                        <option defaultChecked disabled>
+                          Gender
+                        </option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        {/* {classes.map((value) => (
+      <option key={value.id} value={value.id}>
+        {value.reference}
+      </option>
+    ))} */}
+                      </select>
+                      <label htmlFor="gender">Select Gender</label>
+                    </div>
+                  </div>
+                  <div
+                    className="fv-row mb-10"
+                    style={{ display: "flex", gap: "10px" }}
+                  >
+                    <div
+                      className="form-floating mb-3"
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        width: "100%",
+                      }}
+                    >
+                      <select
+                        className="form-select"
+                        id="academic_year"
+                        name="academic_year"
+                        aria-label="Default select example"
+                        value={formData.academic_year}
+                        onChange={handleChange}
+                      >
+                        <option value="academic_year">
+                          {formData.academic_year
+                            ? formData.academic_year
+                            : "Selecr Session"}
+                        </option>
+                        {sessions.map((value) => (
+                          <option
+                            key={value.id}
+                            value={`${value.id}:${value.session}`}
+                          >
+                            {value.session}
+                          </option>
+                        ))}
+                      </select>
+                      <label htmlFor="academic_year">Academic_year</label>
+                    </div>
+                    <div
+                      className="form-floating mb-3"
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        width: "100%",
+                      }}
+                    >
+                      <input
+                        type="text"
+                        className="form-control"
+                        id="father_name"
+                        name="father_name"
+                        placeholder=""
+                        value={formData.father_name}
+                        onChange={handleChange}
+                      />
+                      <label htmlFor="father_name">Father name</label>
+                    </div>
+                    <div
+                      className="form-floating mb-3"
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        width: "100%",
+                      }}
+                    >
+                      <input
+                        type="tel"
+                        className="form-control"
+                        id="father_phone"
+                        name="father_phone"
+                        placeholder=""
+                        value={formData.father_phone}
+                        onChange={handleChange}
+                      />
+                      <label htmlFor="father_phone">Father contact no</label>
+                    </div>
+                  </div>
+                  <div
+                    className="fv-row mb-10"
+                    style={{ display: "flex", gap: "10px" }}
+                  >
+                    <div
+                      className="form-floating mb-3"
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        width: "100%",
+                      }}
+                    >
+                      <input
+                        type="text"
+                        className="form-control"
+                        id="mother_name"
+                        name="mother_name"
+                        placeholder=""
+                        value={formData.mother_name}
+                        onChange={handleChange}
+                      />
+                      <label htmlFor="mother_name">Mother name</label>
+                    </div>
+                    <div
+                      className="form-floating mb-3"
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        width: "100%",
+                      }}
+                    >
+                      <input
+                        type="tel"
+                        className="form-control"
+                        id="mother_phone"
+                        name="mother_phone"
+                        placeholder=""
+                        value={formData.mother_phone}
+                        onChange={handleChange}
+                      />
+                      <label htmlFor="mother_phone">
+                        Mother contact number
+                      </label>
+                    </div>
+                    <div
+                      className="form-floating mb-3"
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        width: "100%",
+                      }}
+                    >
+                      <input
+                        type="text"
+                        className="form-control"
+                        id="current_school"
+                        name="current_school"
+                        placeholder=""
+                        value={formData.current_school}
+                        onChange={handleChange}
+                      />
+                      <label htmlFor="current_school">Current_school</label>
+                    </div>
+                  </div>
+                </>
+              )}
               {/* row end */}
 
               <div style={{ display: "flex", justifyContent: "end" }}>
