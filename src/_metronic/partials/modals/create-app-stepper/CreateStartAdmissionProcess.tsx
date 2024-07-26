@@ -59,7 +59,7 @@ interface FormData {
     mother_contact_number: string,
 }
 
-const CreateEditAdmissionEnquiry = ({ show, handleClose, enqId }: Props) => {
+const CreateStartAdmissionProcess = ({ show, handleClose, enqId }: Props) => {
   const { currentUser } = useAuth();
 
   const schoolId = currentUser?.school_id;
@@ -70,6 +70,8 @@ const CreateEditAdmissionEnquiry = ({ show, handleClose, enqId }: Props) => {
   const [classes, setClasses] = useState<Class[]>([]);
   const [sessions, setSessions] =  useState<Session[]>([]);
   const [changedFields, setChangedFields] = useState({});
+
+  const [currentStep, setCurrentStep] = useState(1);
 
   const [formData, setFormData] = useState<FormData>({
     enquiry_id:"",
@@ -293,69 +295,115 @@ const CreateEditAdmissionEnquiry = ({ show, handleClose, enqId }: Props) => {
     }
   };
 
+
+  const nextStep = () => {
+    setCurrentStep((prevStep) => Math.min(prevStep + 1, stepNames.length));
+  };
+
+  const prevStep = () => {
+    setCurrentStep((prevStep) => Math.max(prevStep - 1, 1));
+  };
+
+  const stepNames = [
+    'Admission Form',
+    'Review Status',
+    'Completed'
+  ];
+
+  const progress = (currentStep / stepNames.length) * 100;
+
+
   return createPortal(
     <Modal
-      id="kt_modal_create_app"
-      tabIndex={-1}
-      size="lg"
-      aria-hidden="true"
-      dialogClassName="modal-dialog modal-dialog-centered mw-1000px"
-      show={show}
-      onHide={handleClose}
-      // fullscreen={true}
+    id="kt_modal_create_app"
+    tabIndex={-1}
+    size="lg"
+    aria-hidden="true"
+    dialogClassName="modal-dialog modal-dialog-centered mw-1000px"
+    show={show}
+    onHide={handleClose}
+  >
+    <div
+      className="modal-content"
+      style={{ padding: "20px 5px", borderRadius: "17px" }}
     >
       <div
-        className="modal-content"
-        style={{ padding: "20px 5px", borderRadius: "17px" }}
+        className="modal-header border-0"
+        style={{ width: "100%", height: "27px" }}
       >
-        <div
-          className="modal-header border-0"
-          style={{ width: "100%", height: "27px" }}
+        <span
+          className=""
+          id="staticBackdropLabel"
+          style={{
+            justifyContent: "center",
+            textAlign: "center",
+            alignItems: "center",
+            fontSize: "24px",
+            fontWeight: "600",
+            fontFamily: "Manrope",
+          }}
         >
-          <span
-            className=""
-            id="staticBackdropLabel"
-            style={{
-              justifyContent: "center",
-              textAlign: "center",
-              alignItems: "center",
-              fontSize: "24px",
-              fontWeight: "600",
-              fontFamily: "Manrope",
-            }}
+          Start Admission Process
+        </span>
+        <span
+          data-bs-dismiss="modal"
+          onClick={handleClose}
+          aria-label="Close"
+        >
+          <svg
+            width="32"
+            height="32"
+            viewBox="0 0 32 32"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
           >
-            Edit Enquiry
-          </span>
-
-          <span
-            data-bs-dismiss="modal"
-            onClick={handleClose}
-            aria-label="Close"
+            <circle cx="16" cy="16" r="16" fill="#ECECEC" />
+            <path
+              d="M22.8572 9.14294L9.14288 22.8572M9.14288 9.14294L22.8572 22.8572"
+              stroke="#464646"
+              strokeWidth="2"
+              strokeLinecap="square"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </span>
+      </div>
+      <hr />
+      <div className="modal-body" style={{ height:'20px',justifyContent: 'space-around',display: 'flex',
+                  alignItems:'center',
+                  flexDirection:'row', }}>
+      {stepNames.map((step, index) => (
+              <span
+                key={index}
+                style={{
+                  left: `${(index / (stepNames.length - 1)) * 100}%`,
+                  transform: 'translateX(-50%)',
+                  color:'black',
+                  fontSize:'20px',
+                }}
+              >
+                {step}
+              </span>
+            ))}
+            </div>
+      <div className="modal-body" style={{ justifyContent: "center" }}>
+      <div className="progress" style={{ height: '20px',marginBottom:'20px',}}>
+          <div
+            className="progress-bar"
+            role="progressbar"
+            style={{ width: `${progress}%` }}
+            aria-valuenow={currentStep}
+            aria-valuemin={1}
+            aria-valuemax={stepNames.length}
           >
-            <svg
-              width="32"
-              height="32"
-              viewBox="0 0 32 32"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <circle cx="16" cy="16" r="16" fill="#ECECEC" />
-              <path
-                d="M22.8572 9.14294L9.14288 22.8572M9.14288 9.14294L22.8572 22.8572"
-                stroke="#464646"
-                stroke-width="2"
-                stroke-linecap="square"
-                stroke-linejoin="round"
-              />
-            </svg>
-          </span>
+            
+          </div>
         </div>
-        <hr></hr>
 
-        <div className="modal-body" style={{ justifyContent: "center" }}>
-          <form onSubmit={handleSubmit}>
-            <div style={{ marginBottom: "23px" }}>
-              {/* row start */}
+
+        <form onSubmit={handleSubmit}>
+          {currentStep === 1 && (
+            <div style={{ marginBottom: "23px", overflowY:'scroll', height:'500px', }}>
               <div
                 className="fv-row mb-10"
                 style={{ display: "flex", gap: "10px" }}
@@ -377,7 +425,7 @@ const CreateEditAdmissionEnquiry = ({ show, handleClose, enqId }: Props) => {
                     value={formData.name}
                     onChange={handleChange}
                   />
-                  <label htmlFor="admission_no">Name</label>
+                  <label htmlFor="name">Name</label>
                 </div>
                 <div
                   className="form-floating mb-3"
@@ -418,9 +466,6 @@ const CreateEditAdmissionEnquiry = ({ show, handleClose, enqId }: Props) => {
                   <label htmlFor="address">Address</label>
                 </div>
               </div>
-              {/* row end */}
-
-              {/* row start */}
               <div
                 className="fv-row mb-10"
                 style={{ display: "flex", gap: "10px" }}
@@ -509,9 +554,7 @@ const CreateEditAdmissionEnquiry = ({ show, handleClose, enqId }: Props) => {
                   <label htmlFor="source_id">Select Source</label>
                 </div>
               </div>
-              {/* row end */}
 
-              {/* row start */}
               <div
                 className="fv-row mb-10"
                 style={{ display: "flex", gap: "10px" }}
@@ -589,9 +632,10 @@ const CreateEditAdmissionEnquiry = ({ show, handleClose, enqId }: Props) => {
                   <label htmlFor="date_of_birth">Date_of_birth</label>
                 </div>
               </div>
-              {/* row end */}
 
-              {/* row start */}
+
+
+
               <div
                 className="fv-row mb-10"
                 style={{ display: "flex", gap: "10px" }}
@@ -677,9 +721,10 @@ const CreateEditAdmissionEnquiry = ({ show, handleClose, enqId }: Props) => {
                   <label htmlFor="academic_year">Academic_year</label>
                 </div>
               </div>
-              {/* row end */}
 
-              {/* row start */}
+
+
+
               <div
                 className="fv-row mb-10"
                 style={{ display: "flex", gap: "10px" }}
@@ -744,9 +789,8 @@ const CreateEditAdmissionEnquiry = ({ show, handleClose, enqId }: Props) => {
                   <label htmlFor="father_occupation">Father occupation</label>
                 </div>
               </div>
-              {/* row end */}
 
-              {/* row start */}
+
               <div
                 className="fv-row mb-10"
                 style={{ display: "flex", gap: "10px" }}
@@ -813,9 +857,7 @@ const CreateEditAdmissionEnquiry = ({ show, handleClose, enqId }: Props) => {
                   <label htmlFor="mother_name">Mother name</label>
                 </div>
               </div>
-              {/* row end */}
 
-              {/* row start */}
               <div
                 className="fv-row mb-10"
                 style={{ display: "flex", gap: "10px" }}
@@ -882,9 +924,7 @@ const CreateEditAdmissionEnquiry = ({ show, handleClose, enqId }: Props) => {
                   </label>
                 </div>
               </div>
-              {/* row end */}
 
-              {/* row start */}
               <div
                 className="fv-row mb-10"
                 style={{ display: "flex", gap: "10px" }}
@@ -947,14 +987,45 @@ const CreateEditAdmissionEnquiry = ({ show, handleClose, enqId }: Props) => {
                   <label htmlFor="note">Note</label>
                 </div>
               </div>
-              {/* row end */}
 
-              <div style={{ display: "flex", justifyContent: "end" }}>
-                <button className="btn btn-primary" type="submit">
+
+            </div>
+          )}
+            
+              
+
+              
+        
+              {currentStep === 2 && (
+              <div style={{ marginBottom: "23px" }}>
+              {/* row start */}
+              
+              </div>
+              )}
+              {currentStep === 3 && (
+              <div style={{ marginBottom: "23px" }}>
+              {/* row start */}
+              
+              </div>
+            )}
+            {/* Add more steps as needed */}
+
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              {currentStep > 1 && (
+                <button type="button" className="btn btn-secondary" onClick={prevStep}>
+                  Previous
+                </button>
+              )}
+              {currentStep < 3 ? (
+                <button type="button" className="btn btn-primary" onClick={nextStep}>
+                  Next
+                </button>
+              ) : (
+                <button type="submit" className="btn btn-primary">
                   Submit
                 </button>
+              )} 
               </div>
-            </div>
           </form>
         </div>
       </div>
@@ -963,4 +1034,4 @@ const CreateEditAdmissionEnquiry = ({ show, handleClose, enqId }: Props) => {
   );
 };
 
-export { CreateEditAdmissionEnquiry };
+export { CreateStartAdmissionProcess };

@@ -4,7 +4,7 @@ import { Tooltip as ReactTooltip } from "react-tooltip";
 import "../../../../app/pages/StaffPages/FeeDetails/style.css";
 import { CreateWalkinEnquiry } from "../../modals/create-app-stepper/CreateWalkinEnquiry";
 import { CreateAdmissionEnquiryReject } from "../../modals/create-app-stepper/CreateAdmissionEnquiryReject";
-import { CreateEditAdmissionEnquiry } from "../../modals/create-app-stepper/CreateEditAdmissionEnquiry";
+import { CreateStartAdmissionProcess } from "../../modals/create-app-stepper/CreateStartAdmissionProcess";
 import { useAuth } from "../../../../app/modules/auth/core/Auth";
 import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
 
@@ -109,9 +109,6 @@ const TablesWidget57: React.FC = () => {
   
 
 
-
-
-
   const formatDate = (dateString: string | number | Date) => {
     const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
     const date = new Date(dateString);
@@ -193,7 +190,7 @@ const TablesWidget57: React.FC = () => {
                       fontFamily:'Manrope'
                     }}
                   >
-                    Admission Enquiry List
+                    Admission Enquiry list 
                   </span>
                 </div>
                 <div
@@ -745,7 +742,7 @@ const TablesWidget57: React.FC = () => {
           </tbody>
           <CreateWalkinEnquiry show={showModal} handleClose={handleModalClose} />
           <CreateAdmissionEnquiryReject show={showActionModal} handleClose={handleActionModalClose} enqId={enqId}/>
-          <CreateEditAdmissionEnquiry show={showEditModal} handleClose={handleModalEditClose} enqId={enqId}/>
+          <CreateStartAdmissionProcess show={showEditModal} handleClose={handleModalEditClose} enqId={enqId}/>
 
           {/* end::Table body */}
         </table>
