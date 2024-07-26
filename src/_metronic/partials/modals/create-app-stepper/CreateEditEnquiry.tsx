@@ -9,6 +9,7 @@ type Props = {
   show: boolean;
   handleClose: () => void;
   enqId: string | undefined;
+  setRefresh: (refresh: boolean) => void;
   // refresh: (refresh: boolean) => void;
 };
 type Reference = {
@@ -59,7 +60,7 @@ interface FormData {
   mother_phone: string;
 }
 
-const CreateEditEnquiry = ({ show, handleClose, enqId }: Props) => {
+const CreateEditEnquiry = ({ show, handleClose, enqId, setRefresh }: Props) => {
   const { currentUser } = useAuth();
 
   const schoolId = currentUser?.school_id;
@@ -292,7 +293,7 @@ const CreateEditEnquiry = ({ show, handleClose, enqId }: Props) => {
       }
 
       const data = await response.json();
-      console.log("Student info edited successfully:", data);
+      setRefresh(true);
       handleClose();
     } catch (error) {
       console.error("Error editing info:", error);
