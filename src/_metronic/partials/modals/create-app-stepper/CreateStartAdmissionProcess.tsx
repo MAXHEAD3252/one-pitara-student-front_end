@@ -11,6 +11,8 @@ type Props = {
   enqId: string | undefined;
   // refresh: (refresh: boolean) => void;
 };
+
+
 type Reference = {
   id: string;
   reference: string;
@@ -35,10 +37,14 @@ interface Session {
 
 
 interface FormData {
-  enquiry_id:string,
-  name: string,
+    enquiry_id:string,
+    name: string,
     contact: string,
-    address: string,
+    state: string,
+    city : string,
+    pincode : string,
+    religion : string,
+    aadhaar_no : string,
     reference_id:string,
     date: string,
     description: string,
@@ -55,8 +61,21 @@ interface FormData {
     academic_year: string,
     father_name: string,
     father_contact_number: string,
+    father_occupation : string,
+    father_type_of_work : string,
+    father_organization : string,
     mother_name: string,
     mother_contact_number: string,
+    mother_occupation : string,
+    mother_organization : string,
+    bank_name : string,
+    back_account_no :string,
+    ifsc_code : string,
+    gardian_name: string,
+    gardian_contact_number: string,
+    gardian_occupation: string,
+    gardian_relation: string,
+    gardian_address: string
 }
 
 const CreateStartAdmissionProcess = ({ show, handleClose, enqId }: Props) => {
@@ -73,11 +92,25 @@ const CreateStartAdmissionProcess = ({ show, handleClose, enqId }: Props) => {
 
   const [currentStep, setCurrentStep] = useState(1);
 
+  const [reviewStatus, setReviewStatus] = useState(1);
+
+  const [pic_data, set_pic_data] = useState({
+    student_pic : null,
+    father_pic : null,
+    mother_pic : null,
+    gardian_pic : null,
+  });
+
+
   const [formData, setFormData] = useState<FormData>({
     enquiry_id:"",
     name: "",
     contact: "",
-    address: "",
+    state: "",
+    city: "",
+    pincode : "",
+    religion : "",
+    aadhaar_no : "",
     reference_id:"",
     date: "",
     description: "",
@@ -94,9 +127,27 @@ const CreateStartAdmissionProcess = ({ show, handleClose, enqId }: Props) => {
     academic_year: "",
     father_name: "",
     father_contact_number: "",
+    father_occupation : "",
+    father_type_of_work : "",
+    father_organization: "",
     mother_name: "",
     mother_contact_number: "",
+    mother_occupation : "",
+    mother_organization : "",
+    bank_name : "",
+    back_account_no :"",
+    ifsc_code : "",
+    gardian_name: "",
+    gardian_contact_number: "",
+    gardian_occupation: "",
+    gardian_relation: "",
+    gardian_address: ""
   });
+
+
+
+
+
 
   useEffect(() => {
     const fetchClasses = async () => {
@@ -196,6 +247,8 @@ const CreateStartAdmissionProcess = ({ show, handleClose, enqId }: Props) => {
 
   useEffect(() => {
     const fetchById = async () => {
+      console.log(enqId);
+      
       try {
         const response = await fetch(
           `${DOMAIN}/api/staff/getEnquiryById/${schoolId}/${enqId}`,
@@ -211,6 +264,7 @@ const CreateStartAdmissionProcess = ({ show, handleClose, enqId }: Props) => {
         }
 
         const data = await response.json();
+console.log(data);
 
         // Format dates if they exist
         const followUpDate = data?.[0]?.follow_up_date
@@ -221,14 +275,20 @@ const CreateStartAdmissionProcess = ({ show, handleClose, enqId }: Props) => {
           : "";
 
         setFormData({
-          enquiry_id: data[0]?.enquiry_id || "",
+          enquiry_id: data[0]?.enqId || "",
           name: data[0]?.name || "",
           contact: data[0]?.contact || "",
           mother_name: data[0]?.mother_name || "",
           mother_contact_number: data[0]?.mother_contact_number || "",
+          mother_organization: data[0]?.mother_organization || "",
+          mother_occupation: data[0]?.mother_occupation || "",
           description: data[0]?.description || "",
           note: data[0]?.note || "",
-          address: data[0]?.address || "",
+          state: data[0]?.state || "",
+          city: data[0]?.city || "",
+          pincode: data[0]?.pincode || "",
+          religion: data[0]?.religion || "",
+          aadhaar_no: data[0]?.aadhaar_no || "",
           date: data[0]?.date || "",
           reference_id: data[0]?.reference_id || "",
           status: data[0]?.status || "",
@@ -238,11 +298,22 @@ const CreateStartAdmissionProcess = ({ show, handleClose, enqId }: Props) => {
           gender: data[0]?.gender || "",
           academic_year: data[0]?.academic_year || "",
           father_name: data[0]?.father_name || "",
+          father_occupation: data[0]?.father_occupation || "",
+          father_type_of_work: data[0]?.father_type_of_work || "",
+          father_organization: data[0]?.father_organization || "",
           email: data[0]?.email || "",
           class_id: data[0]?.class_id || "",
           source_id: data[0]?.source_id || "",
           follow_up_date: followUpDate,
-          enquiry_type:data[0]?.enquiry_type
+          enquiry_type:data[0]?.enquiry_type,
+          bank_name:data[0]?.bank_name|| "",
+          back_account_no:data[0]?.back_account_no|| "",
+          ifsc_code:data[0]?.ifsc_code|| "",
+          gardian_name:data[0]?.gardian_name|| "",
+          gardian_contact_number:data[0]?.gardian_contact_number|| "",
+          gardian_occupation:data[0]?.gardian_occupation|| "",
+          gardian_relation:data[0]?.gardian_relation|| "",
+          gardian_address:data[0]?.gardian_address|| "",
         });
       } catch (error) {
         console.error("Error fetching enquiry details:", error);
@@ -266,34 +337,62 @@ const CreateStartAdmissionProcess = ({ show, handleClose, enqId }: Props) => {
       [name]: value,
     }));
   };
+
+  
   /* @ts-ignore */
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const id = enqId;
-
+    console.log(formData);
+    
+    const formDataToSend = new FormData();
+  
+    // Append form data fields
+    Object.keys(formData).forEach((key) => {
+      formDataToSend.append(key, formData[key]);
+    });
+  
+    // Append picture data fields
+    Object.keys(pic_data).forEach((key) => {
+      formDataToSend.append(key, pic_data[key]);
+    });
+  
     try {
-      const response = await fetch(
-        `${DOMAIN}/api/staff/updateEnquiryById/${schoolId}/${id}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(changedFields), // Send only updated fields
+      const response = await fetch('your_backend_endpoint', {
+        method: 'POST',
+        body: formDataToSend,
+        headers: {
+          'Authorization': 'Bearer your_token' // If you need authorization header
         }
-      );
-
+      });
+  
       if (!response.ok) {
-        throw new Error("Failed to edit info");
+        throw new Error('Network response was not ok');
       }
-
-      const data = await response.json();
-      console.log("Student info edited successfully:", data);
-      handleClose();
+  
+      const result = await response.json();
+      console.log(result);
+  
+      // Handle success
     } catch (error) {
-      console.error("Error editing info:", error);
+      console.error('There was a problem with the fetch operation:', error);
+      // Handle error
     }
   };
+  
+
+  /* @ts-ignore */
+  const handleMaterialChange = (key, event) => {
+    const file = event.target.files[0];
+    set_pic_data((prevState) => ({
+      ...prevState,
+      [key]: file,
+    }));
+  };
+  
+  
+
+  console.log(formData)
+  console.log(pic_data)
 
 
   const nextStep = () => {
@@ -304,10 +403,11 @@ const CreateStartAdmissionProcess = ({ show, handleClose, enqId }: Props) => {
     setCurrentStep((prevStep) => Math.max(prevStep - 1, 1));
   };
 
+
   const stepNames = [
     'Admission Form',
     'Review Status',
-    'Completed'
+    'Fees'
   ];
 
   const progress = (currentStep / stepNames.length) * 100;
@@ -401,9 +501,27 @@ const CreateStartAdmissionProcess = ({ show, handleClose, enqId }: Props) => {
         </div>
 
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={()=>handleSubmit(e)}>
           {currentStep === 1 && (
             <div style={{ marginBottom: "23px", overflowY:'scroll', height:'500px', }}>
+              
+              <div className="head" style={{display:'flex',justifyContent:'space-around',alignItems:'center',marginBottom:'20px',}}>
+          <span
+          className=""
+          id="staticBackdropLabel"
+          style={{
+            justifyContent: "center",
+            textAlign: "center",
+            alignItems: "center",
+            fontSize: "20px",
+            fontWeight: "600",
+            fontFamily: "Manrope",
+          }}
+        >
+          Student Information 
+        </span>
+        </div>
+        <hr style={{marginBottom:'30px',}}/>
               <div
                 className="fv-row mb-10"
                 style={{ display: "flex", gap: "10px" }}
@@ -446,30 +564,8 @@ const CreateStartAdmissionProcess = ({ show, handleClose, enqId }: Props) => {
                   />
                   <label htmlFor="contact">Contact no</label>
                 </div>
-                <div
-                  className="form-floating mb-3"
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    width: "100%",
-                  }}
-                >
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="address"
-                    name="address"
-                    placeholder=""
-                    value={formData.address}
-                    onChange={handleChange}
-                  />
-                  <label htmlFor="address">Address</label>
-                </div>
-              </div>
-              <div
-                className="fv-row mb-10"
-                style={{ display: "flex", gap: "10px" }}
-              >
+
+
                 <div
                   className="form-floating mb-3"
                   style={{
@@ -489,77 +585,14 @@ const CreateStartAdmissionProcess = ({ show, handleClose, enqId }: Props) => {
                   />
                   <label htmlFor="admission_no">E-Mail</label>
                 </div>
-                <div
-                  className="form-floating mb-3"
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    width: "100%",
-                  }}
-                >
-                  <select
-                    className="form-select"
-                    id="reference_id"
-                    name="reference_id"
-                    aria-label="Default select example"
-                    value={formData.reference_id}
-                    onChange={handleChange}
-                  >
-                    {!reference.some(
-                      (value) => value.id === formData.reference_id
-                    ) && (
-                      <option value={formData.reference_id}>
-                        {formData.reference}
-                      </option>
-                    )}
-
-                    {reference.map((value) => (
-                      <option key={value.id} value={value.id}>
-                        {value.reference}
-                      </option>
-                    ))}
-                  </select>
-
-                  <label htmlFor="reference_id">Select Reference</label>
-                </div>
-                <div
-                  className="form-floating mb-3"
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    width: "100%",
-                  }}
-                >
-                  <select
-                    className="form-select"
-                    id="source_id"
-                    name="source_id"
-                    aria-label="Default select example"
-                    value={formData.source_id}
-                    onChange={handleChange}
-                  >
-                    {!source.some(
-                      (value) => value.id === formData.source_id
-                    ) && (
-                      <option value={formData.source_id}>
-                        {formData.source_id}
-                      </option>
-                    )}{" "}
-                    {source.map((value) => (
-                      <option key={value.id} value={value.id}>
-                        {value.source}
-                      </option>
-                    ))}
-                  </select>
-                  <label htmlFor="source_id">Select Source</label>
-                </div>
+                
               </div>
-
+ 
               <div
                 className="fv-row mb-10"
                 style={{ display: "flex", gap: "10px" }}
               >
-                <div
+                  <div
                   className="form-floating mb-3"
                   style={{
                     display: "flex",
@@ -567,51 +600,65 @@ const CreateStartAdmissionProcess = ({ show, handleClose, enqId }: Props) => {
                     width: "100%",
                   }}
                 >
-                  <select
-                    className="form-select"
-                    id="class_id"
-                    name="class_id"
-                    aria-label="Default select example"
-                    value={formData.class_id}
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="state"
+                    name="state"
+                    placeholder=""
+                    value={formData.state}
                     onChange={handleChange}
-                  >
-                    {classes.map((value) => (
-                      <option key={value.id} value={value.id}>
-                        {value.class}
-                      </option>
-                    ))}
-                  </select>
+                  />
+                  <label htmlFor="state">State</label>
+                </div>
+                  <div
+                  className="form-floating mb-3"
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    width: "100%",
+                  }}
+                >
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="city"
+                    name="city"
+                    placeholder=""
+                    value={formData.city}
+                    onChange={handleChange}
+                  />
+                  <label htmlFor="city">City</label>
+                </div>
+                  <div
+                  className="form-floating mb-3"
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    width: "100%",
+                  }}
+                >
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="pincode"
+                    name="pincode"
+                    placeholder=""
+                    value={formData.pincode}
+                    onChange={handleChange}
+                  />
+                  <label htmlFor="pincode">Pincode</label>
+                </div>
 
-                  <label htmlFor="class_id">Select Class</label>
-                </div>
-                <div
-                  className="form-floating mb-3"
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    width: "100%",
-                  }}
-                >
-                  <select
-                    className="form-select"
-                    id="status"
-                    name="status"
-                    aria-label="Default select example"
-                    value={formData.status}
-                    onChange={handleChange}
-                  >
-                    <option value="active">Active</option>
-                    <option value="dead">Dead</option>
-                    <option value="lost">Lost</option>
-                    <option value="won">Won</option>
-                    {/* {classes.map((value) => (
-                      <option key={value.id} value={value.id}>
-                        {value.reference}
-                      </option>
-                    ))} */}
-                  </select>
-                  <label htmlFor="Status">Status</label>
-                </div>
+              </div>
+              
+              <div
+                className="fv-row mb-10"
+                style={{ display: "flex", gap: "10px" }}
+              >
+                
+                
+
                 <div
                   className="form-floating mb-3"
                   style={{
@@ -621,25 +668,17 @@ const CreateStartAdmissionProcess = ({ show, handleClose, enqId }: Props) => {
                   }}
                 >
                   <input
-                    type="date"
+                    type="text"
                     className="form-control"
-                    id="date_of_birth"
-                    name="date_of_birth"
+                    id="religion"
+                    name="religion"
                     placeholder=""
-                    value={formData.date_of_birth}
+                    value={formData.religion}
                     onChange={handleChange}
                   />
-                  <label htmlFor="date_of_birth">Date_of_birth</label>
+                  <label htmlFor="religion">Religion</label>
                 </div>
-              </div>
 
-
-
-
-              <div
-                className="fv-row mb-10"
-                style={{ display: "flex", gap: "10px" }}
-              >
                 <div
                   className="form-floating mb-3"
                   style={{
@@ -688,7 +727,98 @@ const CreateStartAdmissionProcess = ({ show, handleClose, enqId }: Props) => {
                   />
                   <label htmlFor="current_school">Current_school</label>
                 </div>
-                <div
+
+              </div>
+
+              <div
+                className="fv-row mb-10"
+                style={{ display: "flex", gap: "10px" }}
+              >
+
+                  
+              
+
+            <div
+                  className="form-floating mb-3"
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    width: "100%",
+                  }}
+                >
+                  <input
+                    type="date"
+                    className="form-control"
+                    id="date_of_birth"
+                    name="date_of_birth"
+                    placeholder=""
+                    value={formData.date_of_birth}
+                    onChange={handleChange}
+                  />
+                  <label htmlFor="date_of_birth">Date_of_birth</label>
+                </div>
+                
+
+
+            <div
+                  className="form-floating mb-3"
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    width: "100%",
+                  }}
+                >
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="aadhaar_no"
+                    name="aadhaar_no"
+                    placeholder=""
+                    value={formData.aadhaar_no}
+                    onChange={handleChange}
+                  />
+                  <label htmlFor="aadhaar_no">
+                    Aadhaar No
+                  </label>
+                </div>
+
+
+              </div>
+
+
+
+
+              <div
+                className="fv-row mb-10"
+                style={{ display: "flex", gap: "10px" }}
+              >
+                <div style={{ marginBottom: "23px", width: "50%" }}>
+              <label
+                htmlFor="student_image"
+                className="form-label"
+                style={{
+                  fontSize: "12px",
+                  color: "#434343",
+                  fontWeight: "500",
+                }}
+              >
+                Upload Student Image 
+              </label>
+              <input
+                type="file"
+                className="form-control"
+                id="student_image"
+                placeholder="Upload Student Image"
+                onChange={(e) => handleMaterialChange("Student_pic", e)}
+                style={{
+                  border: "1px solid #ECEDF1",
+                  borderRadius: "8px",
+                  padding: "10px",
+                }}
+              />
+            </div>
+
+            <div
                   className="form-floating mb-3"
                   style={{
                     display: "flex",
@@ -720,10 +850,128 @@ const CreateStartAdmissionProcess = ({ show, handleClose, enqId }: Props) => {
 
                   <label htmlFor="academic_year">Academic_year</label>
                 </div>
+
+
+              </div>
+              <div
+                className="fv-row mb-10"
+                style={{ display: "flex", gap: "10px" }}
+              >
+                
+                
+
+                <div
+                  className="form-floating mb-3"
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    width: "100%",
+                  }}
+                >
+                  <select
+                    className="form-select"
+                    id="reference_id"
+                    name="reference_id"
+                    aria-label="Default select example"
+                    value={formData.reference_id}
+                    onChange={handleChange}
+                  >
+                    {!reference.some(
+                      (value) => value.id === formData.reference_id
+                    ) && (
+                      <option value={formData.reference_id}>
+                        {formData.reference_id}
+                      </option>
+                    )}
+
+                    {reference.map((value) => (
+                      <option key={value.id} value={value.id}>
+                        {value.reference}
+                      </option>
+                    ))}
+                  </select>
+
+                  <label htmlFor="reference_id">Select Reference</label>
+                </div>
+                <div
+                  className="form-floating mb-3"
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    width: "100%",
+                  }}
+                >
+                  <select
+                    className="form-select"
+                    id="source_id"
+                    name="source_id"
+                    aria-label="Default select example"
+                    value={formData.source_id}
+                    onChange={handleChange}
+                  >
+                    {!source.some(
+                      (value) => value.id === formData.source_id
+                    ) && (
+                      <option value={formData.source_id}>
+                        {formData.source_id}
+                      </option>
+                    )}{" "}
+                    {source.map((value) => (
+                      <option key={value.id} value={value.id}>
+                        {value.source}
+                      </option>
+                    ))}
+                  </select>
+                  <label htmlFor="source_id">Select Source</label>
+                </div>
+                <div
+                  className="form-floating mb-3"
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    width: "100%",
+                  }}
+                >
+                  <select
+                    className="form-select"
+                    id="class_id"
+                    name="class_id"
+                    aria-label="Default select example"
+                    value={formData.class_id}
+                    onChange={handleChange}
+                  >
+                    {classes.map((value) => (
+                      <option key={value.id} value={value.id}>
+                        {value.class}
+                      </option>
+                    ))}
+                  </select>
+
+                  <label htmlFor="class_id">Select Class</label>
               </div>
 
 
 
+              </div>
+
+
+              <div className="head" style={{display:'flex',justifyContent:'space-around',alignItems:'center',marginBottom:'20px',}}>
+          <span
+          className=""
+          id="staticBackdropLabel"
+          style={{
+            justifyContent: "center",
+            textAlign: "center",
+            alignItems: "center",
+            fontSize: "20px",
+            fontWeight: "600",
+            fontFamily: "Manrope",
+          }}
+        >
+          Family Information 
+        </span>
+        </div>
+        <hr style={{marginBottom:'30px',}}/>
 
               <div
                 className="fv-row mb-10"
@@ -929,25 +1177,79 @@ const CreateStartAdmissionProcess = ({ show, handleClose, enqId }: Props) => {
                 className="fv-row mb-10"
                 style={{ display: "flex", gap: "10px" }}
               >
-                <div
-                  className="form-floating mb-3"
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    width: "100%",
-                  }}
-                >
-                  <input
-                    type="date"
-                    className="form-control"
-                    id="follow_up_date"
-                    name="follow_up_date"
-                    placeholder=""
-                    value={formData.follow_up_date}
-                    onChange={handleChange}
-                  />
-                  <label htmlFor="follow_up_date">Follow up date</label>
-                </div>
+                
+                <div style={{ marginBottom: "23px", width: "50%" }}>
+              <label
+                htmlFor="student_image"
+                className="form-label"
+                style={{
+                  fontSize: "12px",
+                  color: "#434343",
+                  fontWeight: "500",
+                }}
+              >
+                Upload Father Image 
+              </label>
+              <input
+                type="file"
+                className="form-control"
+                id="father_image"
+                onChange={(e) => handleMaterialChange("father_pic", e)}
+                style={{
+                  border: "1px solid #ECEDF1",
+                  borderRadius: "8px",
+                  padding: "10px",
+                }}
+              />
+            </div>
+                <div style={{ marginBottom: "23px", width: "50%" }}>
+              <label
+                htmlFor="mother_image"
+                className="form-label"
+                style={{
+                  fontSize: "12px",
+                  color: "#434343",
+                  fontWeight: "500",
+                }}
+              >
+                Upload Mother Image 
+              </label>
+              <input
+                type="file"
+                className="form-control"
+                id="student_image"
+                onChange={(e) => handleMaterialChange("mother_pic", e)}
+                style={{
+                  border: "1px solid #ECEDF1",
+                  borderRadius: "8px",
+                  padding: "10px",
+                }}
+              />
+            </div>
+              </div>
+              <div className="head" style={{display:'flex',justifyContent:'space-around',alignItems:'center',marginBottom:'20px',}}>
+          <span
+          className=""
+          id="staticBackdropLabel"
+          style={{
+            justifyContent: "center",
+            textAlign: "center",
+            alignItems: "center",
+            fontSize: "20px",
+            fontWeight: "600",
+            fontFamily: "Manrope",
+          }}
+        >
+          Bank Information 
+        </span>
+        </div>
+        <hr style={{marginBottom:'30px',}}/>
+              <div
+                className="fv-row mb-10"
+                style={{ display: "flex", gap: "10px" }}
+              >
+                
+
                 <div
                   className="form-floating mb-3"
                   style={{
@@ -959,14 +1261,17 @@ const CreateStartAdmissionProcess = ({ show, handleClose, enqId }: Props) => {
                   <input
                     type="text"
                     className="form-control"
-                    id="description"
-                    name="description"
+                    id="back_account_no"
+                    name="back_account_no"
                     placeholder=""
-                    value={formData.description}
+                    value={formData.back_account_no}
                     onChange={handleChange}
                   />
-                  <label htmlFor="description">Description</label>
+                  <label htmlFor="back_account_no">
+                    Bank Account No
+                  </label>
                 </div>
+
                 <div
                   className="form-floating mb-3"
                   style={{
@@ -978,16 +1283,210 @@ const CreateStartAdmissionProcess = ({ show, handleClose, enqId }: Props) => {
                   <input
                     type="text"
                     className="form-control"
-                    id="note"
-                    name="note"
+                    id="bank_name"
+                    name="bank_name"
                     placeholder=""
-                    value={formData.note}
+                    value={formData.bank_name}
                     onChange={handleChange}
                   />
-                  <label htmlFor="note">Note</label>
+                  <label htmlFor="bank_name">
+                     Bank Name
+                  </label>
                 </div>
+
               </div>
 
+              <div
+                className="fv-row mb-10"
+                style={{ display: "flex", gap: "10px" }}
+              >
+
+                  <div
+                  className="form-floating mb-3"
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    width: "100%",
+                  }}
+                >
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="ifsc_code"
+                    name="ifsc_code"
+                    placeholder=""
+                    value={formData.ifsc_code}
+                    onChange={handleChange}
+                  />
+                  <label htmlFor="ifsc_code">
+                     IFSC Code
+                  </label>
+                </div>
+
+                
+
+              </div>
+              <div className="head" style={{display:'flex',justifyContent:'space-around',alignItems:'center',marginBottom:'20px',}}>
+          <span
+          className=""
+          id="staticBackdropLabel"
+          style={{
+            justifyContent: "center",
+            textAlign: "center",
+            alignItems: "center",
+            fontSize: "20px",
+            fontWeight: "600",
+            fontFamily: "Manrope",
+          }}
+        >
+          Gardian Information 
+        </span>
+        </div>
+        <hr style={{marginBottom:'30px',}}/>
+
+              <div
+                className="fv-row mb-10"
+                style={{ display: "flex", gap: "10px" }}
+              >
+
+                  <div
+                  className="form-floating mb-3"
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    width: "100%",
+                  }}
+                >
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="gardian_name"
+                    name="gardian_name"
+                    placeholder=""
+                    value={formData.gardian_name}
+                    onChange={handleChange}
+                  />
+                  <label htmlFor="gardian_name">Gardian Name</label>
+                </div>
+                <div
+                  className="form-floating mb-3"
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    width: "100%",
+                  }}
+                >
+                  <input
+                    type="tel"
+                    className="form-control"
+                    id="gardian_contact_number"
+                    name="gardian_contact_number"
+                    placeholder=""
+                    value={formData.gardian_contact_number}
+                    onChange={handleChange}
+                  />
+                  <label htmlFor="gardian_contact_number">
+                    Gardian contact no
+                  </label>
+                </div>
+
+                <div
+                  className="form-floating mb-3"
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    width: "100%",
+                  }}
+                >
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="gardian_occupation"
+                    name="gardian_occupation"
+                    placeholder=""
+                    value={formData.gardian_occupation}
+                    onChange={handleChange}
+                  />
+                  <label htmlFor="gardian_occupation">Gardian occupation</label>
+                </div>
+                
+              </div>
+              <div
+                className="fv-row mb-10"
+                style={{ display: "flex", gap: "10px" }}
+              >
+                <div
+                  className="form-floating mb-3"
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    width: "100%",
+                  }}
+                >
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="gardian_relation"
+                    name="gardian_relation"
+                    placeholder=""
+                    value={formData.gardian_relation}
+                    onChange={handleChange}
+                  />
+                  <label htmlFor="gardian_relation">Gardian Relation</label>
+                </div>
+                <div
+                  className="form-floating mb-3"
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    width: "100%",
+                  }}
+                >
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="gardian_address"
+                    name="gardian_address"
+                    placeholder=""
+                    value={formData.gardian_address}
+                    onChange={handleChange}
+                  />
+                  <label htmlFor="gardian_address">Gardian Address</label>
+                </div>
+
+
+              </div>
+
+              <div
+                className="fv-row mb-10"
+                style={{ display: "flex", gap: "10px" }}
+              >
+
+              <div style={{ marginBottom: "23px", width: "50%" }}>
+              <label
+                htmlFor="gardian_image"
+                className="form-label"
+                style={{
+                  fontSize: "12px",
+                  color: "#434343",
+                  fontWeight: "500",
+                }}
+              >
+                Upload Gardian Image 
+              </label>
+              <input
+                type="file"
+                className="form-control"
+                id="father_image"
+                onChange={(e) => handleMaterialChange("gardian_pic", e)}
+                style={{
+                  border: "1px solid #ECEDF1",
+                  borderRadius: "8px",
+                  padding: "10px",
+                }}
+              />
+            </div>
+              </div>
 
             </div>
           )}
@@ -997,15 +1496,39 @@ const CreateStartAdmissionProcess = ({ show, handleClose, enqId }: Props) => {
               
         
               {currentStep === 2 && (
-              <div style={{ marginBottom: "23px" }}>
-              {/* row start */}
               
+              <div style={{ marginBottom: "23px",display:'flex',
+                justifyContent:'space-around',
+                alignItems:'center',
+                flexDirection:'column',}}>
+                  {reviewStatus === 0 ? (
+                <div className="review-status" style={{display:'flex',alignItems:'center',flexDirection:'column',}}>
+                  <span className="exclamation-mark" style={{fontSize:'200px',}}>⚠️</span>
+                  <h3 style={{fontSize:'40px',}}>Review Pending</h3>
+                </div>) : (
+                  <div className="review-status" style={{display:'flex',alignItems:'center',flexDirection:'column',}}>
+                  <span className="exclamation-mark" style={{fontSize:'200px',}}>✅</span>
+                  <h3 style={{fontSize:'40px',}}>Completed</h3>
+                </div>
+                )}
               </div>
               )}
+
+
               {currentStep === 3 && (
-              <div style={{ marginBottom: "23px" }}>
-              {/* row start */}
-              
+              <div className="fee">
+                <div style={{ marginBottom: "23px",display:'flex',
+                justifyContent:'space-around',
+                alignItems:'center',
+                flexDirection:'column',}}>
+                  { reviewStatus === 1 ? (
+                  <div className="review-status" style={{display:'flex',alignItems:'center',flexDirection:'column',}}>
+                  <span className="exclamation-mark" style={{fontSize:'200px',}}>⚠️</span>
+                  <h3 style={{fontSize:'40px',}}>Fees Pending</h3>
+                </div>) : (
+                 <></> 
+                )}
+                </div>
               </div>
             )}
             {/* Add more steps as needed */}
@@ -1021,11 +1544,13 @@ const CreateStartAdmissionProcess = ({ show, handleClose, enqId }: Props) => {
                   Next
                 </button>
               ) : (
-                <button type="submit" className="btn btn-primary">
-                  Submit
-                </button>
-              )} 
-              </div>
+                currentStep === 3 && (
+                  <button type="submit" className="btn btn-primary">
+                    Submit
+                  </button>
+                )
+              )}
+            </div>
           </form>
         </div>
       </div>

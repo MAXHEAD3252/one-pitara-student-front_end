@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import "../../../../app/pages/StaffPages/FeeDetails/style.css";
-import { CreateWalkinEnquiry } from "../../modals/create-app-stepper/CreateWalkinEnquiry";
+// import { CreateWalkinEnquiry } from "../../modals/create-app-stepper/CreateWalkinEnquiry";
 import { CreateAdmissionEnquiryReject } from "../../modals/create-app-stepper/CreateAdmissionEnquiryReject";
 import { CreateStartAdmissionProcess } from "../../modals/create-app-stepper/CreateStartAdmissionProcess";
 import { useAuth } from "../../../../app/modules/auth/core/Auth";
@@ -257,63 +257,6 @@ const TablesWidget57: React.FC = () => {
                       onChange={handleSearch}
         value={searchQuery}
                     />
-                  </div>
-                  <div>
-                    <span
-                      className=""
-                      style={{
-                        height: "36px",
-                        border: "1px solid #D9D9D9",
-                        width: "135px",
-                        borderRadius: "8px",
-                        padding: "8px 10px 8px 10px",
-                        gap: "10px",
-                        display: "flex",
-                        alignItems: "center",
-                        color: "#FFF",
-                        cursor: "pointer",
-                      }}
-                      onClick={handleModal}
-                    // 
-                    >
-                      <svg
-                        width="17"
-                        height="16"
-                        viewBox="0 0 17 16"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M7.16672 9.3333C8.27129 9.3333 9.16672 10.2287 9.16672 11.3333C9.16672 12.4379 8.27129 13.3333 7.16672 13.3333C6.06215 13.3333 5.16672 12.4379 5.16672 11.3333C5.16672 10.2287 6.06215 9.3333 7.16672 9.3333Z"
-                          stroke="white"
-                        />
-                        <path
-                          d="M10.5 2.66667C9.39546 2.66667 8.50003 3.5621 8.50003 4.66667C8.50003 5.77124 9.39546 6.66667 10.5 6.66667C11.6046 6.66667 12.5 5.77124 12.5 4.66667C12.5 3.5621 11.6046 2.66667 10.5 2.66667Z"
-                          stroke="white"
-                        />
-                        <path
-                          d="M10.8334 11.3057L15.5 11.3057"
-                          stroke="white"
-                          stroke-linecap="round"
-                        />
-                        <path
-                          d="M6.83337 4.63898L2.16671 4.63898"
-                          stroke="white"
-                          stroke-linecap="round"
-                        />
-                        <path
-                          d="M2.16672 11.3057L3.50005 11.3057"
-                          stroke="white"
-                          stroke-linecap="round"
-                        />
-                        <path
-                          d="M15.5 4.63898L14.1667 4.63898"
-                          stroke="white"
-                          stroke-linecap="round"
-                        />
-                      </svg>
-                      WalkIn Enquiry
-                    </span>
                   </div>
                 </div>
               </caption>
@@ -740,7 +683,7 @@ const TablesWidget57: React.FC = () => {
               </tr>
             ))}
           </tbody>
-          <CreateWalkinEnquiry show={showModal} handleClose={handleModalClose} />
+          {/* <CreateWalkinEnquiry show={showModal} handleClose={handleModalClose} /> */}
           <CreateAdmissionEnquiryReject show={showActionModal} handleClose={handleActionModalClose} enqId={enqId}/>
           <CreateStartAdmissionProcess show={showEditModal} handleClose={handleModalEditClose} enqId={enqId}/>
 
