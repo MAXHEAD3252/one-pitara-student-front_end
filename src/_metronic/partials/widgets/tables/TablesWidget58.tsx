@@ -2,8 +2,6 @@
 import React, { useEffect, useState } from "react";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import "../../../../app/pages/StaffPages/FeeDetails/style.css";
-import { CreateWalkinEnquiry } from "../../modals/create-app-stepper/CreateWalkinEnquiry";
-import { CreateEnquiryAction } from "../../modals/create-app-stepper/CreateEnquiryAction";
 import { CreateEditEnquiry } from "../../modals/create-app-stepper/CreateEditEnquiry";
 import { useAuth } from "../../../../app/modules/auth/core/Auth";
 import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
@@ -28,7 +26,7 @@ interface FilterData {
   // Add other properties as needed
 }
 
-const TablesWidget34: React.FC = () => {
+const TablesWidget58: React.FC = () => {
   const [data, setData] = useState<DataItem[]>([]);
 
   const [filteredData, setFilteredData] = useState<FilterData[]>([]);
@@ -36,26 +34,16 @@ const TablesWidget34: React.FC = () => {
   const { currentUser } = useAuth();
   const schoolId = currentUser?.school_id;
 
-  const [showModal, setShowModal] = useState(false);
-  const [showActionModal, setShowActionModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [enqId, setEnqId] = useState("");
 
   const [referesh, setRefresh] = useState(false);
-  const handleModal = () => {
-    setShowModal(true);
-  };
-  const handleModalClose = () => {
-    setShowModal(false);
-  };
+ 
 
   const handleActionModal = (value: string) => {
     setEnqId(value);
-    setShowActionModal(true);
   };
-  const handleActionModalClose = () => {
-    setShowActionModal(false);
-  };
+
 
   const handleModalEdit = (value: string) => {
     setEnqId(value);
@@ -182,7 +170,7 @@ const TablesWidget34: React.FC = () => {
                       fontFamily: "Manrope",
                     }}
                   >
-                    Enquiry List
+                    Applications Review List
                   </span>
                 </div>
                 <div
@@ -250,63 +238,6 @@ const TablesWidget34: React.FC = () => {
                       value={searchQuery}
                     />
                   </div>
-                  <div>
-                    <span
-                      className=""
-                      style={{
-                        height: "36px",
-                        border: "1px solid #D9D9D9",
-                        width: "135px",
-                        borderRadius: "8px",
-                        padding: "8px 10px 8px 10px",
-                        gap: "10px",
-                        display: "flex",
-                        alignItems: "center",
-                        color: "#FFF",
-                        cursor: "pointer",
-                      }}
-                      onClick={handleModal}
-                      //
-                    >
-                      <svg
-                        width="17"
-                        height="16"
-                        viewBox="0 0 17 16"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M7.16672 9.3333C8.27129 9.3333 9.16672 10.2287 9.16672 11.3333C9.16672 12.4379 8.27129 13.3333 7.16672 13.3333C6.06215 13.3333 5.16672 12.4379 5.16672 11.3333C5.16672 10.2287 6.06215 9.3333 7.16672 9.3333Z"
-                          stroke="white"
-                        />
-                        <path
-                          d="M10.5 2.66667C9.39546 2.66667 8.50003 3.5621 8.50003 4.66667C8.50003 5.77124 9.39546 6.66667 10.5 6.66667C11.6046 6.66667 12.5 5.77124 12.5 4.66667C12.5 3.5621 11.6046 2.66667 10.5 2.66667Z"
-                          stroke="white"
-                        />
-                        <path
-                          d="M10.8334 11.3057L15.5 11.3057"
-                          stroke="white"
-                          stroke-linecap="round"
-                        />
-                        <path
-                          d="M6.83337 4.63898L2.16671 4.63898"
-                          stroke="white"
-                          stroke-linecap="round"
-                        />
-                        <path
-                          d="M2.16672 11.3057L3.50005 11.3057"
-                          stroke="white"
-                          stroke-linecap="round"
-                        />
-                        <path
-                          d="M15.5 4.63898L14.1667 4.63898"
-                          stroke="white"
-                          stroke-linecap="round"
-                        />
-                      </svg>
-                      WalkIn Enquiry
-                    </span>
-                  </div>
                 </div>
               </caption>
             </div>
@@ -338,7 +269,7 @@ const TablesWidget34: React.FC = () => {
                       color: "#FFFFFF",
                     }}
                   >
-                    Date
+                    Appliation Id
                   </span>
                 </div>
               </th>
@@ -353,7 +284,7 @@ const TablesWidget34: React.FC = () => {
                       fontFamily: "Manrope",
                     }}
                   >
-                    Class
+                    Applicant Name
                   </span>
                 </div>
               </th>
@@ -368,7 +299,7 @@ const TablesWidget34: React.FC = () => {
                       fontFamily: "Manrope",
                     }}
                   >
-                    Student Name
+                    Class Applied For
                   </span>
                 </div>
               </th>
@@ -383,7 +314,7 @@ const TablesWidget34: React.FC = () => {
                       fontFamily: "Manrope",
                     }}
                   >
-                    Source
+                    Application Date
                   </span>
                 </div>
               </th>
@@ -398,7 +329,7 @@ const TablesWidget34: React.FC = () => {
                       fontFamily: "Manrope",
                     }}
                   >
-                    Email
+                    Status
                   </span>
                 </div>
               </th>
@@ -413,7 +344,7 @@ const TablesWidget34: React.FC = () => {
                       fontFamily: "Manrope",
                     }}
                   >
-                    FollowUp-Date
+                    Review Date
                   </span>
                 </div>
               </th>
@@ -433,7 +364,7 @@ const TablesWidget34: React.FC = () => {
                       fontFamily: "Manrope",
                     }}
                   >
-                    Enquiry Type
+                    Reviewer
                   </span>
                 </div>
               </th>
@@ -452,7 +383,7 @@ const TablesWidget34: React.FC = () => {
                       fontFamily: "Manrope",
                     }}
                   >
-                    Status
+                    Comments
                   </span>
                 </div>
               </th>
@@ -476,7 +407,7 @@ const TablesWidget34: React.FC = () => {
                       color: "#FFFFFF",
                     }}
                   >
-                    Action
+                    Actions
                   </span>
                 </div>
               </th>
@@ -765,27 +696,13 @@ const TablesWidget34: React.FC = () => {
                       type="button"
                       className="btn"
                       style={{
-                        backgroundColor: "#1F3259",
-                        fontFamily: "Manrope",
-                        fontSize: "12px",
-                        fontWeight: "600",
-                        color: "#FFF",
-                      }}
-                      onClick={() => handleModalEdit(item.enquiry_id)}
-                    >
-                      Edit
-                    </button>
-                    <button
-                      type="button"
-                      className="btn"
-                      style={{
                         border: "1px solid #1F3259",
                         fontFamily: "Manrope",
                         fontSize: "12px",
                         fontWeight: "600",
                         color: "#1F3259",
                       }}
-                      onClick={() => handleActionModal(item.enquiry_id)}
+                      onClick={() => handleModalEdit(item.enquiry_id)}
                     >
                       Action
                     </button>
@@ -794,211 +711,16 @@ const TablesWidget34: React.FC = () => {
               </tr>
             ))}
           </tbody>
-          <CreateWalkinEnquiry
-            show={showModal}
-            handleClose={handleModalClose}
-            setRefresh={setRefresh}
-          />
-          <CreateEnquiryAction
-            show={showActionModal}
-            handleClose={handleActionModalClose}
-            enqId={enqId}
-            setRefresh={setRefresh}
-          />
           <CreateEditEnquiry
             show={showEditModal}
             handleClose={handleModalEditClose}
             enqId={enqId}
             setRefresh={setRefresh}
           />
-
-          {/* end::Table body */}
         </table>
-
-        {/* modal */}
-
-        {/* <div
-          className="modal fade"
-          id="staticBackdrop"
-          data-bs-backdrop="static"
-          data-bs-keyboard="false"
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-expect-error
-          tabIndex="-1"
-          aria-labelledby="staticBackdropLabel"
-          aria-hidden="true"
-        >
-          <div
-            className="modal-dialog "
-            style={{
-              display: "flex",
-              width: "505px",
-              height: "521px",
-              padding: "0px",
-              // borderRadius:'18px'
-            }}
-          >
-            <div
-              className="modal-content"
-              style={{ padding: "23px 5px", borderRadius: "17px" }}
-            >
-              <div
-                className="modal-header border-0"
-                style={{ width: "100%", height: "17px" }}
-              >
-                <span
-                  className=""
-                  id="staticBackdropLabel"
-                  style={{
-                    fontSize: "24px",
-                    fontWeight: "600",
-                    fontFamily: "Manrope",
-                  }}
-                >
-                  Filters
-                </span>
-                <span data-bs-dismiss="modal" aria-label="Close">
-                  <svg
-                    width="32"
-                    height="32"
-                    viewBox="0 0 32 32"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <circle cx="16" cy="16" r="16" fill="#ECECEC" />
-                    <path
-                      d="M22.8572 9.14294L9.14288 22.8572M9.14288 9.14294L22.8572 22.8572"
-                      stroke="#464646"
-                      stroke-width="2"
-                      stroke-linecap="square"
-                      stroke-linejoin="round"
-                    />
-                  </svg>
-                </span>
-              </div>
-              <div className="modal-body">
-                <div className="mb-3">
-                  <label
-                    htmlFor="exampleFormControlInput1"
-                    className="form-label"
-                    style={{
-                      fontSize: "12px",
-                      color: "#434343",
-                      fontWeight: "500",
-                    }}
-                  >
-                    By Payment Status
-                  </label>
-                  <div
-                    style={{
-                      display: "flex",
-                      padding: "13px 12px",
-                      gap: "12px",
-                      border: "1px solid #ECEDF1",
-                      borderRadius: "8px",
-                    }}
-                  >
-                    <div
-                      className="form-check"
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "8px",
-                      }}
-                    >
-                      <input
-                        className="form-check-input"
-                        type="radio"
-                        name="gridRadios"
-                        id="gridRadios1"
-                        value="option1"
-                        defaultChecked
-                        style={{ width: "15px", height: "15px" }}
-                      />
-                      <label className="form-check-label" htmlFor="gridRadios1">
-                        None
-                      </label>
-                    </div>
-                    <div
-                      className="form-check"
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "8px",
-                      }}
-                    >
-                      <input
-                        className="form-check-input"
-                        type="radio"
-                        name="gridRadios"
-                        id="gridRadios1"
-                        value="option1"
-                        defaultChecked
-                        style={{ width: "15px", height: "15px" }}
-                      />
-                      <label className="form-check-label" htmlFor="gridRadios1">
-                        Percentage
-                      </label>
-                    </div>
-                    <div
-                      className="form-check"
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "8px",
-                      }}
-                    >
-                      <input
-                        className="form-check-input"
-                        type="radio"
-                        name="gridRadios"
-                        id="gridRadios1"
-                        value="option1"
-                        defaultChecked
-                        style={{ width: "15px", height: "15px" }}
-                      />
-                      <label className="form-check-label" htmlFor="gridRadios1">
-                        Fixed Amount
-                      </label>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="modal-footer border-0">
-                <button
-                  type="button"
-                  className="btn btn-secondary"
-                  data-bs-dismiss="modal"
-                  style={{
-                    width: "118px",
-                    height: "36px",
-                    padding: "8px 10px",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    gap: "10px",
-                    flexShrink: "0",
-                    backgroundColor: "rgba(39, 59, 99, 0.76)",
-                  }}
-                >
-                  <span
-                    style={{
-                      color: "#FFF",
-                      fontFamily: "Manrope",
-                      fontSize: "12px",
-                      fontWeight: "500",
-                    }}
-                  >
-                    Confirm
-                  </span>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div> */}
       </div>
-      {/* end::Table */}
     </div>
   );
 };
 
-export { TablesWidget34 };
+export { TablesWidget58 };

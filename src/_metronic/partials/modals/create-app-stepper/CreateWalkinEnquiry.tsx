@@ -7,6 +7,7 @@ import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
 type Props = {
   show: boolean;
   handleClose: () => void;
+  setRefresh: (refresh: boolean) => void;
 };
 
 interface Reference {
@@ -56,7 +57,7 @@ interface FormData {
 
 const modalsRoot = document.getElementById("root-modals") || document.body;
 
-const CreateWalkinEnquiry = ({ show, handleClose }: Props) => {
+const CreateWalkinEnquiry = ({ show, handleClose ,setRefresh}: Props) => {
   const { currentUser } = useAuth();
 
   const schoolId = currentUser?.school_id;
@@ -237,7 +238,7 @@ const CreateWalkinEnquiry = ({ show, handleClose }: Props) => {
       const data = await response.json();
       console.log("Student created successfully:", data);
       handleClose();
-      // refresh(true);
+      setRefresh(true);
     } catch (error) {
       console.error("Error creating Enquiry:", error);
     }

@@ -8,11 +8,12 @@ type Props = {
   show: boolean;
   handleClose: () => void;
   enqId: string | undefined;
+  setRefresh: (refresh: boolean) => void;
 };
 
 const modalsRoot = document.getElementById("root-modals") || document.body;
 
-const CreateEnquiryAction = ({ show, handleClose, enqId }: Props) => {
+const CreateEnquiryAction = ({ show, handleClose, enqId,setRefresh }: Props) => {
   const { currentUser } = useAuth();
   const schoolId = currentUser?.school_id;
   const [enqdata, setEnqdata] = useState({
@@ -113,6 +114,7 @@ const CreateEnquiryAction = ({ show, handleClose, enqId }: Props) => {
       const data = await response.json();
       console.log("Follow-up updated successfully:", data);
       handleClose();
+      setRefresh(true);
     } catch (error) {
 
       console.error("Error updating follow-up:", error);

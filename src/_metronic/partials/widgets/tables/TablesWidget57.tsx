@@ -8,10 +8,9 @@ import { CreateStartAdmissionProcess } from "../../modals/create-app-stepper/Cre
 import { useAuth } from "../../../../app/modules/auth/core/Auth";
 import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
 
-
 interface DataItem {
-  status : string;
-  name : string;
+  status: string;
+  name: string;
 }
 interface FilterData {
   gender: string;
@@ -21,8 +20,8 @@ interface FilterData {
   student_email: string;
   student_name: string;
   created_at: string | number | Date;
-  id:number
-  enquiry_id:string;
+  id: number;
+  enquiry_id: string;
   date: string;
   class: string;
   name: string;
@@ -35,18 +34,18 @@ interface FilterData {
 
 const TablesWidget57: React.FC = () => {
   const [data, setData] = useState<DataItem[]>([]);
-  
-  const [filteredData, setFilteredData] = useState<FilterData[]>([]); 
+
+  const [filteredData, setFilteredData] = useState<FilterData[]>([]);
   console.log(filteredData);
-  
-  const [searchQuery, setSearchQuery] = useState(0); 
+
+  const [searchQuery, setSearchQuery] = useState(0);
   const { currentUser } = useAuth();
   const schoolId = currentUser?.school_id;
 
   const [showModal, setShowModal] = useState(false);
   const [showActionModal, setShowActionModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
-  const [enqId, setEnqId] = useState('');
+  const [enqId, setEnqId] = useState("");
 
   const handleModal = () => {
     setShowModal(true);
@@ -55,24 +54,22 @@ const TablesWidget57: React.FC = () => {
     setShowModal(false);
   };
 
-  const handleActionModal = (value:string) => {
-    setEnqId(value)
+  const handleActionModal = (value: string) => {
+    setEnqId(value);
     setShowActionModal(true);
   };
   const handleActionModalClose = () => {
     setShowActionModal(false);
   };
 
-  
-  const handleModalEdit=(value:string)=>{
-    setEnqId(value)
-    setShowEditModal(true)
-      }
+  const handleModalEdit = (value: string) => {
+    setEnqId(value);
+    setShowEditModal(true);
+  };
 
-      const handleModalEditClose=()=>{
-        setShowEditModal(false)
-          }
-
+  const handleModalEditClose = () => {
+    setShowEditModal(false);
+  };
 
   useEffect(() => {
     const fetchEnquiries = async () => {
@@ -85,7 +82,7 @@ const TablesWidget57: React.FC = () => {
         }
         const responseData = await response.json();
         setData(responseData);
-        
+
         setFilteredData(responseData);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -95,27 +92,25 @@ const TablesWidget57: React.FC = () => {
     fetchEnquiries();
   }, [schoolId]);
 
-  const handleSearch = (e:any) => {
+  const handleSearch = (e: any) => {
     const query = e.target.value.toLowerCase();
-    setSearchQuery(query);    
-  
-    const filtered = data.filter(item => 
-      item.status.toLowerCase().includes(query) ||
-      item.name.toLowerCase().includes(query)
+    setSearchQuery(query);
+
+    const filtered = data.filter(
+      (item) =>
+        item.status.toLowerCase().includes(query) ||
+        item.name.toLowerCase().includes(query)
     );
-   /* @ts-ignore */
+    /* @ts-ignore */
     setFilteredData(filtered);
   };
-  
-
 
   const formatDate = (dateString: string | number | Date) => {
-    const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
+    const options = { year: "numeric", month: "2-digit", day: "2-digit" };
     const date = new Date(dateString);
-     /* @ts-ignore */
-    return date.toLocaleDateString('en-GB', options);
+    /* @ts-ignore */
+    return date.toLocaleDateString("en-GB", options);
   };
-
 
   return (
     <div
@@ -187,10 +182,10 @@ const TablesWidget57: React.FC = () => {
                       color: "#FFF",
                       fontSize: "16px",
                       fontWeight: "700",
-                      fontFamily:'Manrope'
+                      fontFamily: "Manrope",
                     }}
                   >
-                    Admission Enquiry list 
+                    Admission Enquiry list
                   </span>
                 </div>
                 <div
@@ -255,7 +250,7 @@ const TablesWidget57: React.FC = () => {
                       aria-label="Search"
                       aria-describedby="addon-wrapping"
                       onChange={handleSearch}
-        value={searchQuery}
+                      value={searchQuery}
                     />
                   </div>
                 </div>
@@ -301,7 +296,7 @@ const TablesWidget57: React.FC = () => {
                       fontWeight: "600",
                       lineHeight: "18px",
                       color: "#FFFFFF",
-                      fontFamily:'Manrope'
+                      fontFamily: "Manrope",
                     }}
                   >
                     Student Name
@@ -316,7 +311,7 @@ const TablesWidget57: React.FC = () => {
                       fontWeight: "600",
                       lineHeight: "18px",
                       color: "#FFFFFF",
-                      fontFamily:'Manrope'
+                      fontFamily: "Manrope",
                     }}
                   >
                     Gender
@@ -331,7 +326,7 @@ const TablesWidget57: React.FC = () => {
                       fontWeight: "600",
                       lineHeight: "18px",
                       color: "#FFFFFF",
-                      fontFamily:'Manrope'
+                      fontFamily: "Manrope",
                     }}
                   >
                     Date Of Birth
@@ -346,7 +341,7 @@ const TablesWidget57: React.FC = () => {
                       fontWeight: "600",
                       lineHeight: "18px",
                       color: "#FFFFFF",
-                      fontFamily:'Manrope'
+                      fontFamily: "Manrope",
                     }}
                   >
                     Email
@@ -361,7 +356,7 @@ const TablesWidget57: React.FC = () => {
                       fontWeight: "600",
                       lineHeight: "18px",
                       color: "#FFFFFF",
-                      fontFamily:'Manrope'
+                      fontFamily: "Manrope",
                     }}
                   >
                     FollowUp-Date
@@ -381,7 +376,7 @@ const TablesWidget57: React.FC = () => {
                       fontWeight: "600",
                       lineHeight: "18px",
                       color: "#FFFFFF",
-                      fontFamily:'Manrope'
+                      fontFamily: "Manrope",
                     }}
                   >
                     Status
@@ -397,7 +392,7 @@ const TablesWidget57: React.FC = () => {
                     // border:'1px solid',
                     display: "flex",
                     justifyContent: "end",
-                    fontFamily:'Manrope'
+                    fontFamily: "Manrope",
                   }}
                 >
                   <span
@@ -427,7 +422,8 @@ const TablesWidget57: React.FC = () => {
             }}
           >
             {filteredData.map((item, index) => (
-            <tr key={index}
+              <tr
+                key={index}
                 style={{
                   height: "61px",
                   gap: "40px",
@@ -456,11 +452,11 @@ const TablesWidget57: React.FC = () => {
                         fontWeight: "600",
                         lineHeight: "18px",
                         color: "#000000",
-                        fontFamily:'Manrope'
+                        fontFamily: "Manrope",
                         // border:'1px solid'
                       }}
                     >
-                       {formatDate(item.created_at)}
+                      {formatDate(item.created_at)}
                     </span>
                   </div>
                 </td>
@@ -479,7 +475,7 @@ const TablesWidget57: React.FC = () => {
                         fontWeight: "500",
                         lineHeight: "18px",
                         color: "#1F1F1F",
-                        fontFamily:'Manrope'
+                        fontFamily: "Manrope",
                       }}
                     >
                       {item.student_name}
@@ -504,7 +500,7 @@ const TablesWidget57: React.FC = () => {
                         fontWeight: "500",
                         lineHeight: "18px",
                         color: "#1F1F1F",
-                        fontFamily:'Manrope'
+                        fontFamily: "Manrope",
                       }}
                     >
                       {item.gender}
@@ -535,7 +531,7 @@ const TablesWidget57: React.FC = () => {
                         overflow: "hidden",
                         fontSize: "14px",
                         fontWeight: "500",
-                        fontFamily:'Manrope'
+                        fontFamily: "Manrope",
                       }}
                     >
                       {formatDate(item.date_of_birth)}
@@ -555,7 +551,7 @@ const TablesWidget57: React.FC = () => {
                         overflow: "hidden",
                         fontSize: "14px",
                         fontWeight: "500",
-                        fontFamily:'Manrope'
+                        fontFamily: "Manrope",
                       }}
                     >
                       {item.student_email}
@@ -571,7 +567,7 @@ const TablesWidget57: React.FC = () => {
                       backgroundColor: "#FFF",
                       boxShadow: "0px 0px 10px 4px #00000026",
                       color: "#000",
-                      fontFamily:'Manrope'
+                      fontFamily: "Manrope",
                     }}
                   />
                 </td>
@@ -595,11 +591,11 @@ const TablesWidget57: React.FC = () => {
                         fontWeight: "500",
                         lineHeight: "18px",
                         color: "#000",
-                        fontFamily:'Manrope'
+                        fontFamily: "Manrope",
                         // backgroundColor: "#FFE7E1",
                       }}
                     >
-                     {item.student_phone}
+                      {item.student_phone}
                     </span>
                   </div>
                 </td>
@@ -620,12 +616,22 @@ const TablesWidget57: React.FC = () => {
                         textAlign: "center",
                         borderRadius: "5px",
                         padding: "5px",
-                        marginTop:"-8px",
+                        marginTop: "-8px",
                         fontWeight: "500",
                         lineHeight: "18px",
-                        fontFamily:'Manrope',
-                        color: item.status === 'active' ? "#4BCD60" : item.status === 'lost' ? "#000000" : "#ED5578",
-                        backgroundColor: item.status === 'active' ? "#E7FFEA" : item.status === 'lost' ? "#FF8B20" : "#FFE7E1",
+                        fontFamily: "Manrope",
+                        color:
+                          item.status === "active"
+                            ? "#4BCD60"
+                            : item.status === "lost"
+                            ? "#000000"
+                            : "#ED5578",
+                        backgroundColor:
+                          item.status === "active"
+                            ? "#E7FFEA"
+                            : item.status === "lost"
+                            ? "#FF8B20"
+                            : "#FFE7E1",
                       }}
                     >
                       {item.status}
@@ -644,40 +650,34 @@ const TablesWidget57: React.FC = () => {
                       // border:'1px solid'
                     }}
                   >
-                 <button
-                        type="button"
-                        className="btn"
-                        style={
-                          {
-                            backgroundColor: "#1F3259",
-                            fontFamily:'Manrope',
-                            fontSize:'12px',
-                            fontWeight:'600',
-                            color:'#FFF'
-                          }
-                          
-                        }
-                        onClick={()=>handleModalEdit(item.enquiry_id)}
-                        
-                      >
-                        start Admission Process
-                      </button>
-                      <button
-                        type="button"
-                        className="btn"
-                        style={
-                          {
-                            border:'1px solid #1F3259',
-                            fontFamily:'Manrope',
-                            fontSize:'12px',
-                            fontWeight:'600',
-                            color:'#1F3259'
-                          }
-                        }
-                        onClick={()=>handleActionModal(item.enquiry_id)}
-                      >
-                        Reject
-                      </button>
+                    <button
+                      type="button"
+                      className="btn"
+                      style={{
+                        backgroundColor: "#1F3259",
+                        fontFamily: "Manrope",
+                        fontSize: "12px",
+                        fontWeight: "600",
+                        color: "#FFF",
+                      }}
+                      onClick={() => handleModalEdit(item.enquiry_id)}
+                    >
+                      start Admission Process
+                    </button>
+                    <button
+                      type="button"
+                      className="btn"
+                      style={{
+                        border: "1px solid #1F3259",
+                        fontFamily: "Manrope",
+                        fontSize: "12px",
+                        fontWeight: "600",
+                        color: "#1F3259",
+                      }}
+                      onClick={() => handleActionModal(item.enquiry_id)}
+                    >
+                      Reject
+                    </button>
                   </div>
                 </td>
               </tr>
@@ -692,7 +692,6 @@ const TablesWidget57: React.FC = () => {
 
         {/* modal */}
 
-       
         {/* <div
           className="modal fade"
           id="staticBackdrop"
@@ -878,4 +877,3 @@ const TablesWidget57: React.FC = () => {
 };
 
 export { TablesWidget57 };
-
