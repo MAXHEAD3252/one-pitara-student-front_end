@@ -36,25 +36,28 @@ const TablesWidget57: React.FC = () => {
   const [data, setData] = useState<DataItem[]>([]);
 
   const [filteredData, setFilteredData] = useState<FilterData[]>([]);
-  console.log(filteredData);
 
   const [searchQuery, setSearchQuery] = useState(0);
   const { currentUser } = useAuth();
   const schoolId = currentUser?.school_id;
 
-  const [showModal, setShowModal] = useState(false);
+  // const [showModal, setShowModal] = useState(false);
   const [showActionModal, setShowActionModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [enqId, setEnqId] = useState("");
+  const [status, setStatus] = useState("");
+  
 
-  const handleModal = () => {
-    setShowModal(true);
-  };
-  const handleModalClose = () => {
-    setShowModal(false);
-  };
+  // const handleModal = () => {
+  //   setShowModal(true);
+  // };
+  // const handleModalClose = () => {
+  //   setShowModal(false);
+  // };
 
   const handleActionModal = (value: string) => {
+    console.log(value);
+    
     setEnqId(value);
     setShowActionModal(true);
   };
@@ -62,8 +65,9 @@ const TablesWidget57: React.FC = () => {
     setShowActionModal(false);
   };
 
-  const handleModalEdit = (value: string) => {
-    setEnqId(value);
+  const handleModalEdit = (value1: string, value2:string) => {
+    setEnqId(value1);
+    setStatus(value2)
     setShowEditModal(true);
   };
 
@@ -660,7 +664,7 @@ const TablesWidget57: React.FC = () => {
                         fontWeight: "600",
                         color: "#FFF",
                       }}
-                      onClick={() => handleModalEdit(item.enquiry_id)}
+                      onClick={() => handleModalEdit(item.enquiry_id,item.status)}
                     >
                       start Admission Process
                     </button>
@@ -685,7 +689,7 @@ const TablesWidget57: React.FC = () => {
           </tbody>
           {/* <CreateWalkinEnquiry show={showModal} handleClose={handleModalClose} /> */}
           <CreateAdmissionEnquiryReject show={showActionModal} handleClose={handleActionModalClose} enqId={enqId}/>
-          <CreateStartAdmissionProcess show={showEditModal} handleClose={handleModalEditClose} enqId={enqId}/>
+          <CreateStartAdmissionProcess show={showEditModal} handleClose={handleModalEditClose} enqId={enqId} status={status}/>
 
           {/* end::Table body */}
         </table>

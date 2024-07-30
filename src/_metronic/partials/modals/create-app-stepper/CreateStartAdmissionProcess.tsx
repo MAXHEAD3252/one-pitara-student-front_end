@@ -11,6 +11,7 @@ type Props = {
   show: boolean;
   handleClose: () => void;
   enqId: string | undefined;
+  status: string | undefined;
   // refresh: (refresh: boolean) => void;
 };
 
@@ -37,7 +38,6 @@ interface Session {
 }
 
 interface Data {
-  enquiry_id: string;
   name: string;
   contact: string;
   state: string;
@@ -45,15 +45,7 @@ interface Data {
   pincode: string;
   religion: string;
   aadhaar_no: string;
-  reference_id: string;
-  date: string;
-  description: string;
-  follow_up_date: string;
-  note: string;
-  source_id: string;
   email: string;
-  status: string;
-  enquiry_type: string;
   class_id: string;
   gender: string;
   date_of_birth: string;
@@ -78,31 +70,35 @@ interface Data {
   gardian_address: string;
 }
 
-const CreateStartAdmissionProcess = ({ show, handleClose, enqId }: Props) => {
+const CreateStartAdmissionProcess = ({
+  show,
+  handleClose,
+  enqId,
+  status,
+}: Props) => {
   const { currentUser } = useAuth();
-
   const schoolId = currentUser?.school_id;
-
-  // const [data, setData] = useState({});
   const [source, setSource] = useState<Source[]>([]);
   const [reference, setReference] = useState<Reference[]>([]);
   const [classes, setClasses] = useState<Class[]>([]);
   const [sessions, setSessions] = useState<Session[]>([]);
-  // const [changedFields, setChangedFields] = useState({});
-
   const stepNames = ["Admission Form", "Review Status", "Fees"];
+  const statusStepMap = {
+    pending: 1,
+    form_submitted: 2,
+    review_done: 3,
+    admission_done: 4
+  };
+  
   const [currentStep, setCurrentStep] = useState(1);
   const [reviewStatus, setReviewStatus] = useState(1);
-
   const [pic_data, set_pic_data] = useState({
     student_pic: null,
     father_pic: null,
     mother_pic: null,
     gardian_pic: null,
   });
-
   const [data, setData] = useState<Data>({
-    enquiry_id: "",
     name: "",
     contact: "",
     state: "",
@@ -110,15 +106,7 @@ const CreateStartAdmissionProcess = ({ show, handleClose, enqId }: Props) => {
     pincode: "",
     religion: "",
     aadhaar_no: "",
-    reference_id: "",
-    date: "",
-    description: "",
-    follow_up_date: "",
-    note: "",
-    source_id: "",
     email: "",
-    status: "",
-    enquiry_type: "",
     class_id: "",
     gender: "",
     date_of_birth: "",
@@ -142,6 +130,11 @@ const CreateStartAdmissionProcess = ({ show, handleClose, enqId }: Props) => {
     gardian_relation: "",
     gardian_address: "",
   });
+  
+  const [formSubmitted, setFormSubmitted] = useState(false);
+  console.log(formSubmitted);
+  
+  const [submissionStatus, setSubmissionStatus] = useState("");
 
   useEffect(() => {
     const fetchClasses = async () => {
@@ -166,7 +159,6 @@ const CreateStartAdmissionProcess = ({ show, handleClose, enqId }: Props) => {
     const fetchSource = async () => {
       const schoolId = currentUser?.school_id;
       if (!schoolId) return;
-
       try {
         const response = await fetch(
           `${DOMAIN}/api/staff/get-source?schoolId=${schoolId}`
@@ -269,23 +261,17 @@ const CreateStartAdmissionProcess = ({ show, handleClose, enqId }: Props) => {
           : "";
 
         setData({
-          enquiry_id: data[0]?.enqId || "",
           name: data[0]?.student_name || "",
           contact: data[0]?.student_phone || "",
           mother_name: data[0]?.mother_name || "",
           mother_contact_number: data[0]?.mother_phone || "",
           mother_organization: data[0]?.mother_organization || "",
           mother_occupation: data[0]?.mother_occupation || "",
-          description: data[0]?.description || "",
-          note: data[0]?.note || "",
           state: data[0]?.state || "",
           city: data[0]?.city || "",
           pincode: data[0]?.pincode || "",
           religion: data[0]?.religion || "",
           aadhaar_no: data[0]?.aadhaar_no || "",
-          date: data[0]?.date || "",
-          reference_id: data[0]?.reference_id || "",
-          status: data[0]?.status || "",
           date_of_birth: dateOfBirth,
           father_contact_number: data[0]?.father_phone || "",
           current_school: data[0]?.current_school || "",
@@ -297,9 +283,6 @@ const CreateStartAdmissionProcess = ({ show, handleClose, enqId }: Props) => {
           father_organization: data[0]?.father_organization || "",
           email: data[0]?.student_email || "",
           class_id: data[0]?.class_id || "",
-          source_id: data[0]?.source_id || "",
-          follow_up_date: followUpDate,
-          enquiry_type: data[0]?.enquiry_type,
           bank_name: data[0]?.bank_name || "",
           back_account_no: data[0]?.back_account_no || "",
           ifsc_code: data[0]?.ifsc_code || "",
@@ -319,11 +302,10 @@ const CreateStartAdmissionProcess = ({ show, handleClose, enqId }: Props) => {
 
   /* @ts-ignore */
   const handleChange = (key, value, type) => {
-  
     if (type === "file") {
       set_pic_data((prevPicData) => ({
         ...prevPicData,
-        [key]:  value.target.files[0],
+        [key]: value.target.files[0],
       }));
     } else {
       setData((prevFormData) => ({
@@ -332,15 +314,14 @@ const CreateStartAdmissionProcess = ({ show, handleClose, enqId }: Props) => {
       }));
     }
   };
-  
 
   /* @ts-ignore */
   const handleSubmit = async (e) => {
     e.preventDefault(); // Prevent the default form submission behavior
-
+    const enquiry_id = enqId;
     const formData = new FormData();
     // Append data state
-    formData.append("enquiry_id", data.enquiry_id);
+    formData.append("enquiry_id", enquiry_id);
     formData.append("name", data.name);
     formData.append("contact", data.contact);
     formData.append("state", data.state);
@@ -348,15 +329,7 @@ const CreateStartAdmissionProcess = ({ show, handleClose, enqId }: Props) => {
     formData.append("pincode", data.pincode);
     formData.append("religion", data.religion);
     formData.append("aadhaar_no", data.aadhaar_no);
-    formData.append("reference_id", data.reference_id);
-    formData.append("date", data.date);
-    formData.append("description", data.description);
-    formData.append("follow_up_date", data.follow_up_date);
-    formData.append("note", data.note);
-    formData.append("source_id", data.source_id);
     formData.append("email", data.email);
-    formData.append("status", data.status);
-    formData.append("enquiry_type", data.enquiry_type);
     formData.append("class_id", data.class_id);
     formData.append("gender", data.gender);
     formData.append("date_of_birth", data.date_of_birth);
@@ -379,7 +352,7 @@ const CreateStartAdmissionProcess = ({ show, handleClose, enqId }: Props) => {
     formData.append("gardian_occupation", data.gardian_occupation);
     formData.append("gardian_relation", data.gardian_relation);
     formData.append("gardian_address", data.gardian_address);
-
+    
     // Append pic_data state
     if (pic_data.student_pic)
       formData.append("student_pic", pic_data.student_pic);
@@ -387,9 +360,8 @@ const CreateStartAdmissionProcess = ({ show, handleClose, enqId }: Props) => {
     if (pic_data.mother_pic) formData.append("mother_pic", pic_data.mother_pic);
     if (pic_data.gardian_pic)
       formData.append("gardian_pic", pic_data.gardian_pic);
-
-    console.log(formData);
-    try {
+    formData.append("school_id", schoolId);
+    // try {
       const response = await axios.post(
         `${DOMAIN}/api/staff/upload-application`,
         formData,
@@ -399,15 +371,20 @@ const CreateStartAdmissionProcess = ({ show, handleClose, enqId }: Props) => {
           },
         }
       );
-
-      console.log("Data submitted successfully!", response.data);
-    } catch (error) {
-      console.error("Error submitting data:", error);
-    }
+      console.log(response);
+      
+      setFormSubmitted(true);
+      setSubmissionStatus("Form submitted successfully and under review.");
+    // } catch (error) {
+    //   console.log('hi');
+    //   setSubmissionStatus("Form submission failed. Please try again.");
+    // }
   };
 
-  // const [formSubmitted, setFormSubmitted] = useState(false);
-  // const [apiFetchStatus, setApiFetchStatus] = useState(false);
+
+  useEffect(() => {
+    setCurrentStep(statusStepMap[status] || 1);
+  }, [status]);
 
   /* @ts-ignore */
   const handleNextStep = () => {
@@ -422,11 +399,11 @@ const CreateStartAdmissionProcess = ({ show, handleClose, enqId }: Props) => {
     }
   };
 
-  const handleStepChange = (e: { preventDefault: () => void; }) => {
+  const handleStepChange = (e) => {
     e.preventDefault(); // Prevent default form submission
 
-    if (currentStep === stepNames.length) {
-      handleSubmit(e); // Submit form data when on the last step
+    if (currentStep === 1 || currentStep === stepNames.length) {
+      handleSubmit(e); // Submit form data on the first and last steps
     } else {
       handleNextStep(); // Move to the next step
     }
@@ -435,9 +412,7 @@ const CreateStartAdmissionProcess = ({ show, handleClose, enqId }: Props) => {
   // Adjust progress calculation to start at 5% and end at 100%
   const minProgress = 5; // Starting progress percentage
   const maxProgress = 100; // Maximum progress percentage
-  const progress =
-    minProgress +
-    ((currentStep - 1) / (stepNames.length - 1)) * (maxProgress - minProgress);
+  const progress = minProgress + ((currentStep - 1) / (stepNames.length - 1)) * (maxProgress - minProgress);
 
   return createPortal(
     <Modal
@@ -533,7 +508,7 @@ const CreateStartAdmissionProcess = ({ show, handleClose, enqId }: Props) => {
           </div>
 
           <form onSubmit={handleStepChange}>
-            {currentStep === 1 && (
+            {currentStep === 1 && status === 'isPending' &&(
               <div
                 style={{
                   marginBottom: "23px",
@@ -585,7 +560,9 @@ const CreateStartAdmissionProcess = ({ show, handleClose, enqId }: Props) => {
                       name="name"
                       placeholder=""
                       value={data.name}
-                      onChange={(e)=>handleChange('name', e.target.value,'text')}
+                      onChange={(e) =>
+                        handleChange("name", e.target.value, "text")
+                      }
                     />
                     <label htmlFor="name">Name</label>
                   </div>
@@ -604,7 +581,9 @@ const CreateStartAdmissionProcess = ({ show, handleClose, enqId }: Props) => {
                       name="contact"
                       placeholder=""
                       value={data.contact}
-                      onChange={(e)=>handleChange('contact', e.target.value,'text')}
+                      onChange={(e) =>
+                        handleChange("contact", e.target.value, "text")
+                      }
                     />
                     <label htmlFor="contact">Contact no</label>
                   </div>
@@ -624,7 +603,9 @@ const CreateStartAdmissionProcess = ({ show, handleClose, enqId }: Props) => {
                       name="email"
                       placeholder=""
                       value={data.email}
-                      onChange={(e)=>handleChange('email', e.target.value,'text')}
+                      onChange={(e) =>
+                        handleChange("email", e.target.value, "text")
+                      }
                     />
                     <label htmlFor="admission_no">E-Mail</label>
                   </div>
@@ -649,7 +630,9 @@ const CreateStartAdmissionProcess = ({ show, handleClose, enqId }: Props) => {
                       name="state"
                       placeholder=""
                       value={data.state}
-                      onChange={(e)=>handleChange('state', e.target.value,'text')}
+                      onChange={(e) =>
+                        handleChange("state", e.target.value, "text")
+                      }
                     />
                     <label htmlFor="state">State</label>
                   </div>
@@ -668,7 +651,9 @@ const CreateStartAdmissionProcess = ({ show, handleClose, enqId }: Props) => {
                       name="city"
                       placeholder=""
                       value={data.city}
-                      onChange={(e)=>handleChange('city', e.target.value,'text')}
+                      onChange={(e) =>
+                        handleChange("city", e.target.value, "text")
+                      }
                     />
                     <label htmlFor="city">City</label>
                   </div>
@@ -687,7 +672,9 @@ const CreateStartAdmissionProcess = ({ show, handleClose, enqId }: Props) => {
                       name="pincode"
                       placeholder=""
                       value={data.pincode}
-                      onChange={(e)=>handleChange('pincode', e.target.value,'text')}
+                      onChange={(e) =>
+                        handleChange("pincode", e.target.value, "text")
+                      }
                     />
                     <label htmlFor="pincode">Pincode</label>
                   </div>
@@ -712,7 +699,9 @@ const CreateStartAdmissionProcess = ({ show, handleClose, enqId }: Props) => {
                       name="religion"
                       placeholder=""
                       value={data.religion}
-                      onChange={(e)=>handleChange('religion', e.target.value,'text')}
+                      onChange={(e) =>
+                        handleChange("religion", e.target.value, "text")
+                      }
                     />
                     <label htmlFor="religion">Religion</label>
                   </div>
@@ -731,7 +720,9 @@ const CreateStartAdmissionProcess = ({ show, handleClose, enqId }: Props) => {
                       name="gender"
                       aria-label="Default select example"
                       value={data.gender}
-                      onChange={(e)=>handleChange('gender', e.target.value,'text')}
+                      onChange={(e) =>
+                        handleChange("gender", e.target.value, "text")
+                      }
                     >
                       <option defaultChecked disabled>
                         Gender
@@ -761,7 +752,9 @@ const CreateStartAdmissionProcess = ({ show, handleClose, enqId }: Props) => {
                       name="current_school"
                       placeholder=""
                       value={data.current_school}
-                      onChange={(e)=>handleChange('current_school', e.target.value,'text')}
+                      onChange={(e) =>
+                        handleChange("current_school", e.target.value, "text")
+                      }
                     />
                     <label htmlFor="current_school">Current_school</label>
                   </div>
@@ -786,7 +779,9 @@ const CreateStartAdmissionProcess = ({ show, handleClose, enqId }: Props) => {
                       name="date_of_birth"
                       placeholder=""
                       value={data.date_of_birth}
-                      onChange={(e)=>handleChange('date_of_birth', e.target.value,'text')}
+                      onChange={(e) =>
+                        handleChange("date_of_birth", e.target.value, "text")
+                      }
                     />
                     <label htmlFor="date_of_birth">Date_of_birth</label>
                   </div>
@@ -806,7 +801,9 @@ const CreateStartAdmissionProcess = ({ show, handleClose, enqId }: Props) => {
                       name="aadhaar_no"
                       placeholder=""
                       value={data.aadhaar_no}
-                      onChange={(e)=>handleChange('aadhar_no', e.target.value,'text')}
+                      onChange={(e) =>
+                        handleChange("aadhar_no", e.target.value, "text")
+                      }
                     />
                     <label htmlFor="aadhaar_no">Aadhaar No</label>
                   </div>
@@ -833,7 +830,7 @@ const CreateStartAdmissionProcess = ({ show, handleClose, enqId }: Props) => {
                       className="form-control"
                       id="student_pic"
                       placeholder="Upload Student Image"
-                      onChange={(e)=>handleChange('student_pic', e,'file')}
+                      onChange={(e) => handleChange("student_pic", e, "file")}
                       style={{
                         border: "1px solid #ECEDF1",
                         borderRadius: "8px",
@@ -856,7 +853,9 @@ const CreateStartAdmissionProcess = ({ show, handleClose, enqId }: Props) => {
                       name="academic_year"
                       aria-label="Default select example"
                       value={data.academic_year}
-                      onChange={(e)=>handleChange('academic_year', e.target.value,'text')}
+                      onChange={(e) =>
+                        handleChange("academic_year", e.target.value, "text")
+                      }
                     >
                       {!sessions.some(
                         (value) => value.id === data.academic_year
@@ -893,7 +892,9 @@ const CreateStartAdmissionProcess = ({ show, handleClose, enqId }: Props) => {
                       name="reference_id"
                       aria-label="Default select example"
                       value={data.reference_id}
-                      onChange={(e)=>handleChange('reference_id', e.target.value,'text')}
+                      onChange={(e) =>
+                        handleChange("reference_id", e.target.value, "text")
+                      }
                     >
                       {!reference.some(
                         (value) => value.id === data.reference_id
@@ -926,7 +927,9 @@ const CreateStartAdmissionProcess = ({ show, handleClose, enqId }: Props) => {
                       name="source_id"
                       aria-label="Default select example"
                       value={data.source_id}
-                      onChange={(e)=>handleChange('source_id', e.target.value,'text')}
+                      onChange={(e) =>
+                        handleChange("source_id", e.target.value, "text")
+                      }
                     >
                       {!source.some((value) => value.id === data.source_id) && (
                         <option value={data.source_id}>{data.source_id}</option>
@@ -953,7 +956,9 @@ const CreateStartAdmissionProcess = ({ show, handleClose, enqId }: Props) => {
                       name="class_id"
                       aria-label="Default select example"
                       value={data.class_id}
-                      onChange={(e)=>handleChange('class_id', e.target.value,'text')}
+                      onChange={(e) =>
+                        handleChange("class_id", e.target.value, "text")
+                      }
                     >
                       {classes.map((value) => (
                         <option key={value.id} value={value.id}>
@@ -1011,7 +1016,9 @@ const CreateStartAdmissionProcess = ({ show, handleClose, enqId }: Props) => {
                       name="father_name"
                       placeholder=""
                       value={data.father_name}
-                      onChange={(e)=>handleChange('father_name', e.target.value,'text')}
+                      onChange={(e) =>
+                        handleChange("father_name", e.target.value, "text")
+                      }
                     />
                     <label htmlFor="father_name">Father name</label>
                   </div>
@@ -1030,7 +1037,13 @@ const CreateStartAdmissionProcess = ({ show, handleClose, enqId }: Props) => {
                       name="father_contact_number"
                       placeholder=""
                       value={data.father_contact_number}
-                      onChange={(e)=>handleChange('father_contact_number', e.target.value,'text')}
+                      onChange={(e) =>
+                        handleChange(
+                          "father_contact_number",
+                          e.target.value,
+                          "text"
+                        )
+                      }
                     />
                     <label htmlFor="father_contact_number">
                       Father contact no
@@ -1051,7 +1064,13 @@ const CreateStartAdmissionProcess = ({ show, handleClose, enqId }: Props) => {
                       name="father_occupation"
                       placeholder=""
                       value={data.father_occupation}
-                      onChange={(e)=>handleChange('father_occupation', e.target.value,'text')}
+                      onChange={(e) =>
+                        handleChange(
+                          "father_occupation",
+                          e.target.value,
+                          "text"
+                        )
+                      }
                     />
                     <label htmlFor="father_occupation">Father occupation</label>
                   </div>
@@ -1076,8 +1095,13 @@ const CreateStartAdmissionProcess = ({ show, handleClose, enqId }: Props) => {
                       name="father_type_of_work"
                       placeholder=""
                       value={data.father_type_of_work}
-                      onChange={(e)=>handleChange('father_type_of_work', e.target.value,'text')}
-
+                      onChange={(e) =>
+                        handleChange(
+                          "father_type_of_work",
+                          e.target.value,
+                          "text"
+                        )
+                      }
                     />
                     <label htmlFor="father_type_of_work">
                       Father type of work
@@ -1098,7 +1122,13 @@ const CreateStartAdmissionProcess = ({ show, handleClose, enqId }: Props) => {
                       name="father_organization"
                       placeholder=""
                       value={data.father_organization}
-                      onChange={(e)=>handleChange('father_organization', e.target.value,'text')}
+                      onChange={(e) =>
+                        handleChange(
+                          "father_organization",
+                          e.target.value,
+                          "text"
+                        )
+                      }
                     />
                     <label htmlFor="father_organization">
                       Father organization
@@ -1119,7 +1149,9 @@ const CreateStartAdmissionProcess = ({ show, handleClose, enqId }: Props) => {
                       name="mother_name"
                       placeholder=""
                       value={data.mother_name}
-                      onChange={(e)=>handleChange('mother_name', e.target.value,'text')}
+                      onChange={(e) =>
+                        handleChange("mother_name", e.target.value, "text")
+                      }
                     />
                     <label htmlFor="mother_name">Mother name</label>
                   </div>
@@ -1144,7 +1176,13 @@ const CreateStartAdmissionProcess = ({ show, handleClose, enqId }: Props) => {
                       name="mother_contact_number"
                       placeholder=""
                       value={data.mother_contact_number}
-                      onChange={(e)=>handleChange('mother_contact_number', e.target.value,'text')}
+                      onChange={(e) =>
+                        handleChange(
+                          "mother_contact_number",
+                          e.target.value,
+                          "text"
+                        )
+                      }
                     />
                     <label htmlFor="mother_contact_number">
                       Mother contact number
@@ -1165,7 +1203,13 @@ const CreateStartAdmissionProcess = ({ show, handleClose, enqId }: Props) => {
                       name="mother_occupation"
                       placeholder=""
                       value={data.mother_occupation}
-                      onChange={(e)=>handleChange('mother_occupation', e.target.value,'text')}
+                      onChange={(e) =>
+                        handleChange(
+                          "mother_occupation",
+                          e.target.value,
+                          "text"
+                        )
+                      }
                     />
                     <label htmlFor="mother_occupation">Mother occupation</label>
                   </div>
@@ -1184,7 +1228,13 @@ const CreateStartAdmissionProcess = ({ show, handleClose, enqId }: Props) => {
                       name="mother_organization"
                       placeholder=""
                       value={data.mother_organization}
-                      onChange={(e)=>handleChange('mother_organization', e.target.value,'text')}
+                      onChange={(e) =>
+                        handleChange(
+                          "mother_organization",
+                          e.target.value,
+                          "text"
+                        )
+                      }
                     />
                     <label htmlFor="mother_organization">
                       Mother organization
@@ -1212,7 +1262,7 @@ const CreateStartAdmissionProcess = ({ show, handleClose, enqId }: Props) => {
                       type="file"
                       className="form-control"
                       id="father_image"
-                      onChange={(e)=>handleChange('father_pic', e,'file')}
+                      onChange={(e) => handleChange("father_pic", e, "file")}
                       style={{
                         border: "1px solid #ECEDF1",
                         borderRadius: "8px",
@@ -1236,7 +1286,7 @@ const CreateStartAdmissionProcess = ({ show, handleClose, enqId }: Props) => {
                       type="file"
                       className="form-control"
                       id="student_image"
-                      onChange={(e)=>handleChange('mother_pic', e,'file')}
+                      onChange={(e) => handleChange("mother_pic", e, "file")}
                       style={{
                         border: "1px solid #ECEDF1",
                         borderRadius: "8px",
@@ -1289,7 +1339,9 @@ const CreateStartAdmissionProcess = ({ show, handleClose, enqId }: Props) => {
                       name="back_account_no"
                       placeholder=""
                       value={data.back_account_no}
-                      onChange={(e)=>handleChange('back_account_no', e.target.value,'text')}
+                      onChange={(e) =>
+                        handleChange("back_account_no", e.target.value, "text")
+                      }
                     />
                     <label htmlFor="back_account_no">Bank Account No</label>
                   </div>
@@ -1309,7 +1361,9 @@ const CreateStartAdmissionProcess = ({ show, handleClose, enqId }: Props) => {
                       name="bank_name"
                       placeholder=""
                       value={data.bank_name}
-                      onChange={(e)=>handleChange('bank_name', e.target.value,'text')}
+                      onChange={(e) =>
+                        handleChange("bank_name", e.target.value, "text")
+                      }
                     />
                     <label htmlFor="bank_name">Bank Name</label>
                   </div>
@@ -1334,7 +1388,9 @@ const CreateStartAdmissionProcess = ({ show, handleClose, enqId }: Props) => {
                       name="ifsc_code"
                       placeholder=""
                       value={data.ifsc_code}
-                      onChange={(e)=>handleChange('ifsc_code', e.target.value,'text')}
+                      onChange={(e) =>
+                        handleChange("ifsc_code", e.target.value, "text")
+                      }
                     />
                     <label htmlFor="ifsc_code">IFSC Code</label>
                   </div>
@@ -1384,7 +1440,9 @@ const CreateStartAdmissionProcess = ({ show, handleClose, enqId }: Props) => {
                       name="gardian_name"
                       placeholder=""
                       value={data.gardian_name}
-                      onChange={(e)=>handleChange('gardian_name', e.target.value,'text')}
+                      onChange={(e) =>
+                        handleChange("gardian_name", e.target.value, "text")
+                      }
                     />
                     <label htmlFor="gardian_name">Gardian Name</label>
                   </div>
@@ -1403,7 +1461,13 @@ const CreateStartAdmissionProcess = ({ show, handleClose, enqId }: Props) => {
                       name="gardian_contact_number"
                       placeholder=""
                       value={data.gardian_contact_number}
-                      onChange={(e)=>handleChange('gardian_contact_number', e.target.value,'text')}
+                      onChange={(e) =>
+                        handleChange(
+                          "gardian_contact_number",
+                          e.target.value,
+                          "text"
+                        )
+                      }
                     />
                     <label htmlFor="gardian_contact_number">
                       Gardian contact no
@@ -1425,7 +1489,13 @@ const CreateStartAdmissionProcess = ({ show, handleClose, enqId }: Props) => {
                       name="gardian_occupation"
                       placeholder=""
                       value={data.gardian_occupation}
-                      onChange={(e)=>handleChange('gardian_occupation', e.target.value,'text')}
+                      onChange={(e) =>
+                        handleChange(
+                          "gardian_occupation",
+                          e.target.value,
+                          "text"
+                        )
+                      }
                     />
                     <label htmlFor="gardian_occupation">
                       Gardian occupation
@@ -1451,7 +1521,9 @@ const CreateStartAdmissionProcess = ({ show, handleClose, enqId }: Props) => {
                       name="gardian_relation"
                       placeholder=""
                       value={data.gardian_relation}
-                      onChange={(e)=>handleChange('gardian_relation', e.target.value,'text')}
+                      onChange={(e) =>
+                        handleChange("gardian_relation", e.target.value, "text")
+                      }
                     />
                     <label htmlFor="gardian_relation">Gardian Relation</label>
                   </div>
@@ -1470,7 +1542,9 @@ const CreateStartAdmissionProcess = ({ show, handleClose, enqId }: Props) => {
                       name="gardian_address"
                       placeholder=""
                       value={data.gardian_address}
-                      onChange={(e)=>handleChange('gardian_address', e.target.value,'text')}
+                      onChange={(e) =>
+                        handleChange("gardian_address", e.target.value, "text")
+                      }
                     />
                     <label htmlFor="gardian_address">Gardian Address</label>
                   </div>
@@ -1496,7 +1570,7 @@ const CreateStartAdmissionProcess = ({ show, handleClose, enqId }: Props) => {
                       type="file"
                       className="form-control"
                       id="father_image"
-                      onChange={(e)=>handleChange('gardian_pic', e,'file')}
+                      onChange={(e) => handleChange("gardian_pic", e, "file")}
                       style={{
                         border: "1px solid #ECEDF1",
                         borderRadius: "8px",
@@ -1508,7 +1582,7 @@ const CreateStartAdmissionProcess = ({ show, handleClose, enqId }: Props) => {
               </div>
             )}
 
-            {currentStep === 2 && (
+            {currentStep === 2 && status === '1' && (
               <div
                 style={{
                   marginBottom: "23px",
@@ -1556,7 +1630,7 @@ const CreateStartAdmissionProcess = ({ show, handleClose, enqId }: Props) => {
               </div>
             )}
 
-            {currentStep === 3 && (
+            {currentStep === 3 && status === '2' && (
               <div className="fee">
                 <div
                   style={{
@@ -1590,8 +1664,40 @@ const CreateStartAdmissionProcess = ({ show, handleClose, enqId }: Props) => {
                 </div>
               </div>
             )}
+            {currentStep === 4 && status === '3' && (
+              <div className="fee">
+                <div
+                  style={{
+                    marginBottom: "23px",
+                    display: "flex",
+                    justifyContent: "space-around",
+                    alignItems: "center",
+                    flexDirection: "column",
+                  }}
+                >
+                    <div
+                      className="review-status"
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        flexDirection: "column",
+                      }}
+                    >
+                      <span
+                        className="exclamation-mark"
+                        style={{ fontSize: "200px" }}
+                      >
+                        ⚠️
+                      </span>
+                      <h3 style={{ fontSize: "40px" }}>Admission Completed</h3>
+                    </div>
+                 
+                </div>
+              </div>
+            )}
             {/* Add more steps as needed */}
 
+            {currentStep > 1 && <p>{formSubmitted && submissionStatus}</p>}
             <div style={{ display: "flex", justifyContent: "space-between" }}>
               {currentStep > 1 && (
                 <button
@@ -1606,18 +1712,26 @@ const CreateStartAdmissionProcess = ({ show, handleClose, enqId }: Props) => {
                 <button
                   type="button"
                   className="btn btn-primary"
-                  onClick={handleNextStep}
+                  onClick={handleStepChange}
+                  disabled={currentStep === 1 && formSubmitted}
                 >
                   Next
                 </button>
               ) : (
-                currentStep === stepNames.length && (
-                  <button type="submit" className="btn btn-primary">
-                    Submit
-                  </button>
-                )
+                <button type="submit" className="btn btn-primary">
+                  Confirm Submission
+                </button>
               )}
             </div>
+            {/* <div style={{ width: "100%", height: "10px", background: "#ccc" }}>
+              <div
+                style={{
+                  width: `${progress}%`,
+                  height: "100%",
+                  background: "green",
+                }}
+              />
+            </div> */}
           </form>
         </div>
       </div>
