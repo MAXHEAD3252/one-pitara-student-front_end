@@ -389,8 +389,6 @@ const CreateStartAdmissionProcess = ({ show, handleClose, enqId }: Props) => {
       formData.append("gardian_pic", pic_data.gardian_pic);
 
     console.log(formData);
-    return;
-    
     try {
       const response = await axios.post(
         `${DOMAIN}/api/staff/upload-application`,
