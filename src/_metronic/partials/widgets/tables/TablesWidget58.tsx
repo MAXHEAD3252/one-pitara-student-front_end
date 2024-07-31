@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import "../../../../app/pages/StaffPages/FeeDetails/style.css";
-import { CreateEditEnquiry } from "../../modals/create-app-stepper/CreateEditEnquiry";
+import { ReviewApplication } from "../../modals/create-app-stepper/ReviewApplication";
 import { useAuth } from "../../../../app/modules/auth/core/Auth";
 import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
 
@@ -677,7 +677,7 @@ const TablesWidget58: React.FC = () => {
                 <td>
                   <div
                     style={{
-                      width: "150px",
+                      width: "140px",
                       display: "flex",
                       justifyContent: "space-around ",
                       flexDirection: "row",
@@ -698,14 +698,14 @@ const TablesWidget58: React.FC = () => {
                       }}
                       onClick={() => handleModalEdit(item.enquiry_id)}
                     >
-                      Action
+                      Review Application
                     </button>
                   </div>
                 </td>
               </tr>
             ))}
           </tbody>
-          <CreateEditEnquiry
+          <ReviewApplication
             show={showEditModal}
             handleClose={handleModalEditClose}
             enqId={enqId}
