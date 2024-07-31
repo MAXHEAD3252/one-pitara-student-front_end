@@ -26,35 +26,34 @@ const CreateAdmissionEnquiryReject = ({ show, handleClose, enqId }: Props) => {
     }));
   };
 
-  
   const handleConfirm = () => {
     setIsConfirmed(true); // Set confirmation state to true
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const enquiry_id = enqId
     try {
-      // const response = await fetch(
-      //   `${DOMAIN}/api/staff/update-followup/${schoolId}/${enqId}`,
-      //   {
-      //     method: "PUT",
-      //     headers: {
-      //       "Content-Type": "application/json",
-      //     },
-      //     body: JSON.stringify(formData),
-      //   }
-      // );
+      const response = await fetch(
+        `${DOMAIN}/api/staff/application-reject/${schoolId}/${enquiry_id}`,
+        {
+          method: "POST", // Assuming you want to use POST instead of PUT for sending the reject reason
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        }
+      );
 
-      // if (!response.ok) {
-      //   throw new Error(`HTTP error! status: ${response.status}`);
-      // }
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
 
-      // const data = await response.json();
-      // console.log("Follow-up updated successfully:", data);
-      console.log(formData)
+      const data = await response.json();
+      console.log("Reject reason sent successfully:", data);
       handleClose();
     } catch (error) {
-      console.error("Error updating follow-up:", error);
+      console.error("Error sending reject reason:", error);
     }
   };
 
