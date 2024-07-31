@@ -540,7 +540,6 @@ const CreateEditEnquiry = ({ show, handleClose, enqId, setRefresh }: Props) => {
                     <option value="active">Active</option>
                     <option value="dead">Dead</option>
                     <option value="lost">Lost</option>
-                    <option value="won">Won</option>
                     {/* {classes.map((value) => (
                       <option key={value.id} value={value.id}>
                         {value.reference}

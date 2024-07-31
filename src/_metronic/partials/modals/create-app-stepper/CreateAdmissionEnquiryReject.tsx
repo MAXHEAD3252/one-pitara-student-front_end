@@ -8,11 +8,12 @@ type Props = {
   show: boolean;
   handleClose: () => void;
   enqId: string | undefined;
+  setRefresh: (refresh: boolean) => void;
 };
 
 const modalsRoot = document.getElementById("root-modals") || document.body;
 
-const CreateAdmissionEnquiryReject = ({ show, handleClose, enqId }: Props) => {
+const CreateAdmissionEnquiryReject = ({ show, handleClose, enqId ,setRefresh}: Props) => {
   const { currentUser } = useAuth();
   const schoolId = currentUser?.school_id;
   const [formData, setFormData] = useState({ reject_reason: "" });
@@ -51,6 +52,7 @@ const CreateAdmissionEnquiryReject = ({ show, handleClose, enqId }: Props) => {
 
       const data = await response.json();
       console.log("Reject reason sent successfully:", data);
+      setRefresh(true);
       handleClose();
     } catch (error) {
       console.error("Error sending reject reason:", error);

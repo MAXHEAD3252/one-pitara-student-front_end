@@ -5,6 +5,7 @@ import "../../../../app/pages/StaffPages/FeeDetails/style.css";
 import { ReviewApplication } from "../../modals/create-app-stepper/ReviewApplication";
 import { useAuth } from "../../../../app/modules/auth/core/Auth";
 import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
+import { CreateAdmissionEnquiryReject } from "../../modals/create-app-stepper/CreateAdmissionEnquiryReject";
 
 interface DataItem {
   status: string;
@@ -23,6 +24,9 @@ interface FilterData {
   follow_up_date: string;
   status: string;
   enquiry_type: string;
+  updated_at : string;
+  student_phone : string;
+
   // Add other properties as needed
 }
 
@@ -32,20 +36,29 @@ const TablesWidget58: React.FC = () => {
   const [filteredData, setFilteredData] = useState<FilterData[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const { currentUser } = useAuth();
-  console.log(currentUser);
   
   const schoolId = currentUser?.school_id;
 
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showActionModal, setShowActionModal] = useState(false);
   const [enqId, setEnqId] = useState("");
 
   const [referesh, setRefresh] = useState(false);
  
 
+  // const handleActionModal = (value: string) => {
+  //   setEnqId(value);
+  // };
+
+
+  
   const handleActionModal = (value: string) => {
     setEnqId(value);
+    setShowActionModal(true);
   };
-
+  const handleActionModalClose = () => {
+    setShowActionModal(false);
+  };
 
   const handleModalEdit = (value: string) => {
     setEnqId(value);
@@ -291,7 +304,7 @@ const TablesWidget58: React.FC = () => {
                 </div>
               </th>
               <th>
-                <div style={{ width: "230px" }}>
+                <div style={{ width: "150px" }}>
                   <span
                     style={{
                       fontSize: "13px",
@@ -321,7 +334,7 @@ const TablesWidget58: React.FC = () => {
                 </div>
               </th>
               <th>
-                <div style={{ width: "260px" }}>
+                <div style={{ width: "170px" }}>
                   <span
                     style={{
                       fontSize: "13px",
@@ -331,12 +344,12 @@ const TablesWidget58: React.FC = () => {
                       fontFamily: "Manrope",
                     }}
                   >
-                    Status
+                    Student Email
                   </span>
                 </div>
               </th>
               <th>
-                <div style={{ width: "130px" }}>
+                <div style={{ width: "150px" }}>
                   <span
                     style={{
                       fontSize: "13px",
@@ -346,7 +359,7 @@ const TablesWidget58: React.FC = () => {
                       fontFamily: "Manrope",
                     }}
                   >
-                    Review Date
+                    Student Contact
                   </span>
                 </div>
               </th>
@@ -373,7 +386,7 @@ const TablesWidget58: React.FC = () => {
               <th>
                 <div
                   style={{
-                    width: "90px",
+                    width: "120px",
                   }}
                 >
                   <span
@@ -385,7 +398,7 @@ const TablesWidget58: React.FC = () => {
                       fontFamily: "Manrope",
                     }}
                   >
-                    Comments
+                    Status
                   </span>
                 </div>
               </th>
@@ -493,7 +506,7 @@ const TablesWidget58: React.FC = () => {
                   <div
                     className="overflow-hidden whitespace-nowrap"
                     style={{
-                      width: "230px",
+                      width: "150px",
                       // paddingLeft:'5px',
                       display: "flex",
                       justifyContent: "start",
@@ -548,7 +561,7 @@ const TablesWidget58: React.FC = () => {
                 <td>
                   <div
                     className=" flex justify-start flex-col overflow-hidden whitespace-nowrap text-ellipsis"
-                    style={{ width: "250px" }}
+                    style={{ width: "170px" }}
                   >
                     <span
                       data-tooltip-id={`tooltip-${index}`}
@@ -564,19 +577,7 @@ const TablesWidget58: React.FC = () => {
                       {item.student_email}
                     </span>
                   </div>
-                  <ReactTooltip
-                    id={`tooltip-${index}`}
-                    place="bottom"
-                    content={item.student_email}
-                    opacity={1}
-                    style={{
-                      zIndex: 999,
-                      backgroundColor: "#FFF",
-                      boxShadow: "0px 0px 10px 4px #00000026",
-                      color: "#000",
-                      fontFamily: "Manrope",
-                    }}
-                  />
+                  
                 </td>
 
                 <td>
@@ -700,6 +701,20 @@ const TablesWidget58: React.FC = () => {
                     >
                       Review Application
                     </button>
+                    <button
+                      type="button"
+                      className="btn"
+                      style={{
+                        border: "1px solid #1F3259",
+                        fontFamily: "Manrope",
+                        fontSize: "12px",
+                        fontWeight: "600",
+                        color: "#1F3259",
+                      }}
+                      onClick={() => handleActionModal(item.enquiry_id)}
+                    >
+                      Reject
+                    </button>
                   </div>
                 </td>
               </tr>
@@ -711,6 +726,7 @@ const TablesWidget58: React.FC = () => {
             enqId={enqId}
             setRefresh={setRefresh}
           />
+          <CreateAdmissionEnquiryReject show={showActionModal} handleClose={handleActionModalClose} enqId={enqId} setRefresh={setRefresh}/>
         </table>
       </div>
     </div>

@@ -45,7 +45,7 @@ const TablesWidget57: React.FC = () => {
   const [showActionModal, setShowActionModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [enqId, setEnqId] = useState("");
-
+  const [referesh, setRefresh] = useState(false);
   
 
   // const handleModal = () => {
@@ -93,7 +93,8 @@ const TablesWidget57: React.FC = () => {
     };
 
     fetchEnquiries();
-  }, [schoolId]);
+    setRefresh(false);
+  }, [schoolId,referesh]);
 
   const handleSearch = (e: any) => {
     const query = e.target.value.toLowerCase();
@@ -690,7 +691,7 @@ const TablesWidget57: React.FC = () => {
             ))}
           </tbody>
           {/* <CreateWalkinEnquiry show={showModal} handleClose={handleModalClose} /> */}
-          <CreateAdmissionEnquiryReject show={showActionModal} handleClose={handleActionModalClose} enqId={enqId}/>
+          <CreateAdmissionEnquiryReject show={showActionModal} handleClose={handleActionModalClose} enqId={enqId} setRefresh={setRefresh}/>
           <CreateStartAdmissionProcess show={showEditModal} handleClose={handleModalEditClose} enqId={enqId} />
 
           {/* end::Table body */}

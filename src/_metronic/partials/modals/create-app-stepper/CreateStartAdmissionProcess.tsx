@@ -1563,6 +1563,7 @@ const CreateStartAdmissionProcess = ({
               </div>
             </div>
           )}
+
           {status === "isCompleted" && (
             <div className="fee">
               <div
@@ -1593,6 +1594,7 @@ const CreateStartAdmissionProcess = ({
               </div>
             </div>
           )}
+
           {status === "isRejected" && (
             <div className="fee">
               <div
@@ -1618,11 +1620,12 @@ const CreateStartAdmissionProcess = ({
                   >
                     ⚠️
                   </span>
-                  <h3 style={{ fontSize: "40px" }}>Admission Completed</h3>
+                  <h3 style={{ fontSize: "40px" }}>Admission Rejected</h3>9
                 </div>
               </div>
             </div>
           )}
+          
         </div>
       </div>
     </Modal>,
