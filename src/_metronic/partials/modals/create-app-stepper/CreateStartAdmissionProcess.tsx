@@ -11,7 +11,6 @@ type Props = {
   show: boolean;
   handleClose: () => void;
   enqId: string | undefined;
-  status: string | undefined;
   // refresh: (refresh: boolean) => void;
 };
 
@@ -70,28 +69,22 @@ interface Data {
   gardian_address: string;
 }
 
+
+
 const CreateStartAdmissionProcess = ({
   show,
   handleClose,
   enqId,
-  status,
 }: Props) => {
+
   const { currentUser } = useAuth();
   const schoolId = currentUser?.school_id;
   const [source, setSource] = useState<Source[]>([]);
   const [reference, setReference] = useState<Reference[]>([]);
   const [classes, setClasses] = useState<Class[]>([]);
   const [sessions, setSessions] = useState<Session[]>([]);
-  const stepNames = ["Admission Form", "Review Status", "Fees"];
-  const statusStepMap = {
-    pending: 1,
-    form_submitted: 2,
-    review_done: 3,
-    admission_done: 4
-  };
-  
-  const [currentStep, setCurrentStep] = useState(1);
   const [reviewStatus, setReviewStatus] = useState(1);
+  const [status, setStatus] = useState("");
   const [pic_data, set_pic_data] = useState({
     student_pic: null,
     father_pic: null,
@@ -130,10 +123,9 @@ const CreateStartAdmissionProcess = ({
     gardian_relation: "",
     gardian_address: "",
   });
-  
+
   const [formSubmitted, setFormSubmitted] = useState(false);
-  console.log(formSubmitted);
-  
+
   const [submissionStatus, setSubmissionStatus] = useState("");
 
   useEffect(() => {
@@ -237,7 +229,7 @@ const CreateStartAdmissionProcess = ({
 
       try {
         const response = await fetch(
-          `${DOMAIN}/api/staff/getEnquiryById/${schoolId}/${enquiry_id}`,
+          `${DOMAIN}/api/staff/getadmissionenquirybyid/${schoolId}/${enquiry_id}`,
           {
             method: "GET",
             headers: {
@@ -300,6 +292,24 @@ const CreateStartAdmissionProcess = ({
     fetchById();
   }, [schoolId, enqId]);
 
+  useEffect(() => {
+    const fetchStatus = async () => {
+      const enquiry_id = enqId;
+      try {
+        const response = await fetch(`${DOMAIN}/api/staff/getaddmissionstatusById/${schoolId}/${enquiry_id}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch status');
+        }
+        const data = await response.json();
+        setStatus(data[0].status);
+      } catch (error) {
+        console.error('Error fetching status:', error);
+        return null;
+      }
+    };
+    fetchStatus();
+  }, [schoolId, enqId, formSubmitted]);
+  
   /* @ts-ignore */
   const handleChange = (key, value, type) => {
     if (type === "file") {
@@ -317,10 +327,11 @@ const CreateStartAdmissionProcess = ({
 
   /* @ts-ignore */
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Prevent the default form submission behavior
+    e.preventDefault();
     const enquiry_id = enqId;
     const formData = new FormData();
-    // Append data state
+
+      /* @ts-ignore */
     formData.append("enquiry_id", enquiry_id);
     formData.append("name", data.name);
     formData.append("contact", data.contact);
@@ -352,67 +363,42 @@ const CreateStartAdmissionProcess = ({
     formData.append("gardian_occupation", data.gardian_occupation);
     formData.append("gardian_relation", data.gardian_relation);
     formData.append("gardian_address", data.gardian_address);
-    
-    // Append pic_data state
     if (pic_data.student_pic)
       formData.append("student_pic", pic_data.student_pic);
     if (pic_data.father_pic) formData.append("father_pic", pic_data.father_pic);
     if (pic_data.mother_pic) formData.append("mother_pic", pic_data.mother_pic);
     if (pic_data.gardian_pic)
       formData.append("gardian_pic", pic_data.gardian_pic);
+        /* @ts-ignore */
     formData.append("school_id", schoolId);
-    // try {
+
+    try {
       const response = await axios.post(
         `${DOMAIN}/api/staff/upload-application`,
         formData,
         {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
+          headers: { "Content-Type": "multipart/form-data" },
         }
       );
-      console.log(response);
-      
-      setFormSubmitted(true);
-      setSubmissionStatus("Form submitted successfully and under review.");
-    // } catch (error) {
-    //   console.log('hi');
-    //   setSubmissionStatus("Form submission failed. Please try again.");
-    // }
-  };
 
-
-  useEffect(() => {
-    setCurrentStep(statusStepMap[status] || 1);
-  }, [status]);
-
-  /* @ts-ignore */
-  const handleNextStep = () => {
-    if (currentStep < stepNames.length) {
-      setCurrentStep((prevStep) => Math.min(prevStep + 1, stepNames.length));
+      if (response.status === 200) {
+        setFormSubmitted(true);
+        setSubmissionStatus("Form submitted successfully and under review.");
+      } else {
+        setFormSubmitted(false);
+        setSubmissionStatus(
+          `Submission failed: ${response.data.error || "Unknown error"}`
+        );
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      setFormSubmitted(false);
+      setSubmissionStatus(
+            /* @ts-ignore */
+        `Submission failed: ${error.message || "Unknown error"}`
+      );
     }
   };
-
-  const handlePrevStep = () => {
-    if (currentStep > 1) {
-      setCurrentStep((prevStep) => Math.max(prevStep - 1, 1));
-    }
-  };
-
-  const handleStepChange = (e) => {
-    e.preventDefault(); // Prevent default form submission
-
-    if (currentStep === 1 || currentStep === stepNames.length) {
-      handleSubmit(e); // Submit form data on the first and last steps
-    } else {
-      handleNextStep(); // Move to the next step
-    }
-  };
-
-  // Adjust progress calculation to start at 5% and end at 100%
-  const minProgress = 5; // Starting progress percentage
-  const maxProgress = 100; // Maximum progress percentage
-  const progress = minProgress + ((currentStep - 1) / (stepNames.length - 1)) * (maxProgress - minProgress);
 
   return createPortal(
     <Modal
@@ -478,37 +464,26 @@ const CreateStartAdmissionProcess = ({
             display: "flex",
             alignItems: "center",
             flexDirection: "row",
+            fontSize:'16px',
+            fontFamily:'Manrope'
           }}
         >
-          {stepNames.map((step, index) => (
-            <span
-              key={index}
-              style={{
-                color: currentStep === index + 1 ? "black" : "gray",
-                fontSize: "20px",
-              }}
-            >
-              {step}
-            </span>
-          ))}
+          {status === "isPending"
+            ? "Application Form"
+            : status === "isSubmited"
+            ? "Application Review"
+            : status === "isReviewed"
+            ? "Review Completed"
+            : status === "isRejected"
+            ? "Application Rejected"
+            : status === "isCompleted"
+            ? "Application Completed"
+            : "Unknown Status"}
         </div>
-        <div className="modal-body" style={{ justifyContent: "center" }}>
-          <div
-            className="progress"
-            style={{ height: "20px", marginBottom: "20px" }}
-          >
-            <div
-              className="progress-bar"
-              role="progressbar"
-              style={{ width: `${progress}%` }}
-              aria-valuenow={currentStep}
-              aria-valuemin={1}
-              aria-valuemax={stepNames.length}
-            ></div>
-          </div>
 
-          <form onSubmit={handleStepChange}>
-            {currentStep === 1 && status === 'isPending' &&(
+        <div className="modal-body" style={{ justifyContent: "center" }}>
+          {status === "isPending" && (
+            <form onSubmit={handleSubmit}>
               <div
                 style={{
                   marginBottom: "23px",
@@ -802,10 +777,10 @@ const CreateStartAdmissionProcess = ({
                       placeholder=""
                       value={data.aadhaar_no}
                       onChange={(e) =>
-                        handleChange("aadhar_no", e.target.value, "text")
+                        handleChange("aadhaar_no", e.target.value, "text")
                       }
                     />
-                    <label htmlFor="aadhaar_no">Aadhaar No</label>
+                    <label htmlFor="aadhaar_no">aadhaar_no</label>
                   </div>
                 </div>
 
@@ -878,70 +853,6 @@ const CreateStartAdmissionProcess = ({
                   className="fv-row mb-10"
                   style={{ display: "flex", gap: "10px" }}
                 >
-                  <div
-                    className="form-floating mb-3"
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      width: "100%",
-                    }}
-                  >
-                    <select
-                      className="form-select"
-                      id="reference_id"
-                      name="reference_id"
-                      aria-label="Default select example"
-                      value={data.reference_id}
-                      onChange={(e) =>
-                        handleChange("reference_id", e.target.value, "text")
-                      }
-                    >
-                      {!reference.some(
-                        (value) => value.id === data.reference_id
-                      ) && (
-                        <option value={data.reference_id}>
-                          {data.reference_id}
-                        </option>
-                      )}
-
-                      {reference.map((value) => (
-                        <option key={value.id} value={value.id}>
-                          {value.reference}
-                        </option>
-                      ))}
-                    </select>
-
-                    <label htmlFor="reference_id">Select Reference</label>
-                  </div>
-                  <div
-                    className="form-floating mb-3"
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      width: "100%",
-                    }}
-                  >
-                    <select
-                      className="form-select"
-                      id="source_id"
-                      name="source_id"
-                      aria-label="Default select example"
-                      value={data.source_id}
-                      onChange={(e) =>
-                        handleChange("source_id", e.target.value, "text")
-                      }
-                    >
-                      {!source.some((value) => value.id === data.source_id) && (
-                        <option value={data.source_id}>{data.source_id}</option>
-                      )}{" "}
-                      {source.map((value) => (
-                        <option key={value.id} value={value.id}>
-                          {value.source}
-                        </option>
-                      ))}
-                    </select>
-                    <label htmlFor="source_id">Select Source</label>
-                  </div>
                   <div
                     className="form-floating mb-3"
                     style={{
@@ -1580,9 +1491,64 @@ const CreateStartAdmissionProcess = ({
                   </div>
                 </div>
               </div>
-            )}
+              <div>
+                <button type="submit" className="btn btn-primary">
+                  submit
+                </button>
+              </div>
+            </form>
+          )}
 
-            {currentStep === 2 && status === '1' && (
+          {status === "isSubmitted" && (
+            <div
+              style={{
+                marginBottom: "23px",
+                display: "flex",
+                justifyContent: "space-around",
+                alignItems: "center",
+                flexDirection: "column",
+              }}
+            >
+              {reviewStatus === 0 ? (
+                <div
+                  className="review-status"
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    flexDirection: "column",
+                  }}
+                >
+                  <span
+                    className="exclamation-mark"
+                    style={{ fontSize: "200px" }}
+                  >
+                    ⚠️
+                  </span>
+                  <h3 style={{ fontSize: "40px" }}>Review Pending</h3>
+                </div>
+              ) : (
+                <div
+                  className="review-status"
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    flexDirection: "column",
+                  }}
+                >
+                  <span
+                    className="exclamation-mark"
+                    style={{ fontSize: "200px" }}
+                  >
+                    ✅
+                  </span>
+                  <h3 style={{ fontSize: "40px" }}>Completed</h3>
+                </div>
+              )}
+            </div>
+          )}
+
+          {status === "isReviewed" && (
+            <div className="fee">
               <div
                 style={{
                   marginBottom: "23px",
@@ -1592,7 +1558,7 @@ const CreateStartAdmissionProcess = ({
                   flexDirection: "column",
                 }}
               >
-                {reviewStatus === 0 ? (
+                {reviewStatus === 1 ? (
                   <div
                     className="review-status"
                     style={{
@@ -1607,132 +1573,74 @@ const CreateStartAdmissionProcess = ({
                     >
                       ⚠️
                     </span>
-                    <h3 style={{ fontSize: "40px" }}>Review Pending</h3>
+                    <h3 style={{ fontSize: "40px" }}>Fees Pending</h3>
                   </div>
                 ) : (
-                  <div
-                    className="review-status"
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      flexDirection: "column",
-                    }}
-                  >
-                    <span
-                      className="exclamation-mark"
-                      style={{ fontSize: "200px" }}
-                    >
-                      ✅
-                    </span>
-                    <h3 style={{ fontSize: "40px" }}>Completed</h3>
-                  </div>
+                  <></>
                 )}
               </div>
-            )}
-
-            {currentStep === 3 && status === '2' && (
-              <div className="fee">
-                <div
-                  style={{
-                    marginBottom: "23px",
-                    display: "flex",
-                    justifyContent: "space-around",
-                    alignItems: "center",
-                    flexDirection: "column",
-                  }}
-                >
-                  {reviewStatus === 1 ? (
-                    <div
-                      className="review-status"
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        flexDirection: "column",
-                      }}
-                    >
-                      <span
-                        className="exclamation-mark"
-                        style={{ fontSize: "200px" }}
-                      >
-                        ⚠️
-                      </span>
-                      <h3 style={{ fontSize: "40px" }}>Fees Pending</h3>
-                    </div>
-                  ) : (
-                    <></>
-                  )}
-                </div>
-              </div>
-            )}
-            {currentStep === 4 && status === '3' && (
-              <div className="fee">
-                <div
-                  style={{
-                    marginBottom: "23px",
-                    display: "flex",
-                    justifyContent: "space-around",
-                    alignItems: "center",
-                    flexDirection: "column",
-                  }}
-                >
-                    <div
-                      className="review-status"
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        flexDirection: "column",
-                      }}
-                    >
-                      <span
-                        className="exclamation-mark"
-                        style={{ fontSize: "200px" }}
-                      >
-                        ⚠️
-                      </span>
-                      <h3 style={{ fontSize: "40px" }}>Admission Completed</h3>
-                    </div>
-                 
-                </div>
-              </div>
-            )}
-            {/* Add more steps as needed */}
-
-            {currentStep > 1 && <p>{formSubmitted && submissionStatus}</p>}
-            <div style={{ display: "flex", justifyContent: "space-between" }}>
-              {currentStep > 1 && (
-                <button
-                  type="button"
-                  className="btn btn-secondary"
-                  onClick={handlePrevStep}
-                >
-                  Previous
-                </button>
-              )}
-              {currentStep < stepNames.length ? (
-                <button
-                  type="button"
-                  className="btn btn-primary"
-                  onClick={handleStepChange}
-                  disabled={currentStep === 1 && formSubmitted}
-                >
-                  Next
-                </button>
-              ) : (
-                <button type="submit" className="btn btn-primary">
-                  Confirm Submission
-                </button>
-              )}
             </div>
-            {/* <div style={{ width: "100%", height: "10px", background: "#ccc" }}>
+          )}
+          {status === "isCompleted" && (
+            <div className="fee">
               <div
                 style={{
-                  width: `${progress}%`,
-                  height: "100%",
-                  background: "green",
+                  marginBottom: "23px",
+                  display: "flex",
+                  justifyContent: "space-around",
+                  alignItems: "center",
+                  flexDirection: "column",
                 }}
-              />
-            </div> */}
-          </form>
+              >
+                <div
+                  className="review-status"
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    flexDirection: "column",
+                  }}
+                >
+                  <span
+                    className="exclamation-mark"
+                    style={{ fontSize: "200px" }}
+                  >
+                    ⚠️
+                  </span>
+                  <h3 style={{ fontSize: "40px" }}>Admission Completed</h3>
+                </div>
+              </div>
+            </div>
+          )}
+          {status === "isRejected" && (
+            <div className="fee">
+              <div
+                style={{
+                  marginBottom: "23px",
+                  display: "flex",
+                  justifyContent: "space-around",
+                  alignItems: "center",
+                  flexDirection: "column",
+                }}
+              >
+                <div
+                  className="review-status"
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    flexDirection: "column",
+                  }}
+                >
+                  <span
+                    className="exclamation-mark"
+                    style={{ fontSize: "200px" }}
+                  >
+                    ⚠️
+                  </span>
+                  <h3 style={{ fontSize: "40px" }}>Admission Completed</h3>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </Modal>,

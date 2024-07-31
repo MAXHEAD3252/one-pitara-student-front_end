@@ -45,7 +45,7 @@ const TablesWidget57: React.FC = () => {
   const [showActionModal, setShowActionModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [enqId, setEnqId] = useState("");
-  const [status, setStatus] = useState("");
+
   
 
   // const handleModal = () => {
@@ -65,9 +65,8 @@ const TablesWidget57: React.FC = () => {
     setShowActionModal(false);
   };
 
-  const handleModalEdit = (value1: string, value2:string) => {
+  const handleModalEdit = (value1: string) => {
     setEnqId(value1);
-    setStatus(value2)
     setShowEditModal(true);
   };
 
@@ -664,7 +663,7 @@ const TablesWidget57: React.FC = () => {
                         fontWeight: "600",
                         color: "#FFF",
                       }}
-                      onClick={() => handleModalEdit(item.enquiry_id,item.status)}
+                      onClick={() => handleModalEdit(item.enquiry_id)}
                     >
                       start Admission Process
                     </button>
@@ -689,7 +688,7 @@ const TablesWidget57: React.FC = () => {
           </tbody>
           {/* <CreateWalkinEnquiry show={showModal} handleClose={handleModalClose} /> */}
           <CreateAdmissionEnquiryReject show={showActionModal} handleClose={handleActionModalClose} enqId={enqId}/>
-          <CreateStartAdmissionProcess show={showEditModal} handleClose={handleModalEditClose} enqId={enqId} status={status}/>
+          <CreateStartAdmissionProcess show={showEditModal} handleClose={handleModalEditClose} enqId={enqId} />
 
           {/* end::Table body */}
         </table>
