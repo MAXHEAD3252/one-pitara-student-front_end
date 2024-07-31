@@ -32,6 +32,8 @@ const TablesWidget58: React.FC = () => {
   const [filteredData, setFilteredData] = useState<FilterData[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const { currentUser } = useAuth();
+  console.log(currentUser);
+  
   const schoolId = currentUser?.school_id;
 
   const [showEditModal, setShowEditModal] = useState(false);
@@ -58,7 +60,7 @@ const TablesWidget58: React.FC = () => {
     const fetchEnquiries = async () => {
       try {
         const response = await fetch(
-          `${DOMAIN}/api/staff/getEnquiryList/${schoolId}`
+          `${DOMAIN}/api/staff/get-reviewlist/${schoolId}`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch data");
@@ -460,7 +462,8 @@ const TablesWidget58: React.FC = () => {
                         // border:'1px solid'
                       }}
                     >
-                      {formatDate(item.date)}
+                      {item.id}
+                      {/* {formatDate(item.date)} */}
                     </span>
                   </div>
                 </td>
@@ -482,7 +485,7 @@ const TablesWidget58: React.FC = () => {
                         fontFamily: "Manrope",
                       }}
                     >
-                      {item.class}
+                      {item.student_name}
                     </span>
                   </div>
                 </td>
@@ -507,7 +510,7 @@ const TablesWidget58: React.FC = () => {
                         fontFamily: "Manrope",
                       }}
                     >
-                      {item.student_name}
+                      {item.class}
                     </span>
                   </div>
                   <ReactTooltip
@@ -538,7 +541,7 @@ const TablesWidget58: React.FC = () => {
                         fontFamily: "Manrope",
                       }}
                     >
-                      {item.source}
+                      {formatDate(item.updated_at)}
                     </span>
                   </div>
                 </td>
@@ -599,7 +602,8 @@ const TablesWidget58: React.FC = () => {
                         // backgroundColor: "#FFE7E1",
                       }}
                     >
-                      {formatDate(item.follow_up_date)}
+                      {item.student_phone}
+                      {/* {formatDate(item.follow_up_date)} */}
                     </span>
                   </div>
                 </td>
@@ -625,20 +629,10 @@ const TablesWidget58: React.FC = () => {
                         lineHeight: "18px",
                         fontFamily: "Manrope",
                         color:
-                          item.status === "general"
-                            ? "#4BCD60"
-                            : item.status === "admission"
-                            ? "#000000"
-                            : "#ED5578",
-                        backgroundColor:
-                          item.status === "general"
-                            ? "#E7FFEA"
-                            : item.status === "admission"
-                            ? "#FF8B20"
-                            : "#FFE7E1",
+                             "#4BCD60"
                       }}
                     >
-                      {item.enquiry_type}
+                      {currentUser?.name + "" + currentUser?.surname}
                     </span>
                   </div>
                 </td>
@@ -654,7 +648,7 @@ const TablesWidget58: React.FC = () => {
                     <span
                       style={{
                         fontSize: "14px",
-                        width: "50px",
+                        width: "100%",
                         textAlign: "center",
                         borderRadius: "5px",
                         padding: "5px",
