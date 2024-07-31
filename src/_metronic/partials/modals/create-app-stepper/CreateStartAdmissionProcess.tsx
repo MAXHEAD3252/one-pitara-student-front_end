@@ -430,7 +430,7 @@ const CreateStartAdmissionProcess = ({
               fontFamily: "Manrope",
             }}
           >
-            Start Admission Process
+           Admission Process  
           </span>
           <span
             data-bs-dismiss="modal"
@@ -1499,7 +1499,7 @@ const CreateStartAdmissionProcess = ({
             </form>
           )}
 
-          {status === "isSubmitted" && (
+          {status === "isSubmited" && (
             <div
               style={{
                 marginBottom: "23px",
@@ -1509,8 +1509,7 @@ const CreateStartAdmissionProcess = ({
                 flexDirection: "column",
               }}
             >
-              {reviewStatus === 0 ? (
-                <div
+              <div
                   className="review-status"
                   style={{
                     display: "flex",
@@ -1526,24 +1525,7 @@ const CreateStartAdmissionProcess = ({
                   </span>
                   <h3 style={{ fontSize: "40px" }}>Review Pending</h3>
                 </div>
-              ) : (
-                <div
-                  className="review-status"
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    flexDirection: "column",
-                  }}
-                >
-                  <span
-                    className="exclamation-mark"
-                    style={{ fontSize: "200px" }}
-                  >
-                    ✅
-                  </span>
-                  <h3 style={{ fontSize: "40px" }}>Completed</h3>
-                </div>
-              )}
+             
             </div>
           )}
 

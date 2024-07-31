@@ -115,6 +115,9 @@ const TablesWidget57: React.FC = () => {
     return date.toLocaleDateString("en-GB", options);
   };
 
+
+
+
   return (
     <div
       className="col-xxl-12"
@@ -665,7 +668,7 @@ const TablesWidget57: React.FC = () => {
                       }}
                       onClick={() => handleModalEdit(item.enquiry_id)}
                     >
-                      start Admission Process
+                      {item.status === 'isPending' ? "start Admission Process": "Show Application"}
                     </button>
                     <button
                       type="button"
