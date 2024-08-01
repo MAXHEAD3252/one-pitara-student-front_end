@@ -79,6 +79,8 @@ import { EmployeeManagement } from "../pages/StaffPages/HumanResource/EmployeeMa
 import { EnquiryManagement } from "../pages/StaffPages/FrontOffice/EnquiryManagment";
 import { AdmissionEnquiry } from "../pages/StaffPages/AdmissionsAndEnrollment/AdmissionEnquiry";
 import { ApplicationReview } from "../pages/StaffPages/AdmissionsAndEnrollment/ApplicationReview";
+import { AdmissionFees } from "../pages/StaffPages/FeeDetails/AdmissionFees";
+import { FeeType } from "../pages/StaffPages/FeeDetails/FeeType";
 // import {CourseContent} from "../pages/StudentPages/CourseContent";
 
 export const routesConfig = {
@@ -500,6 +502,16 @@ export const routesConfig = {
       path: "/applicaiton-review",
       component: ApplicationReview,
       sidebarName: "Application Review",
+    },
+    {
+      path: "/admission-fees",
+      component: AdmissionFees,
+      sidebarName: "Admission Fees",
+    },
+    {
+      path: "/fee-type",
+      component: FeeType,
+      sidebarName: "FeeType",
     },
     {
       path: "/expense-management",
