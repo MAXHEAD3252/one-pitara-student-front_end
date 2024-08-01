@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
 // import { Tooltip as ReactTooltip } from "react-tooltip";
 import "../../../../app/pages/StaffPages/FeeDetails/style.css";
 // import { CreateWalkinEnquiry } from "../../modals/create-app-stepper/CreateWalkinEnquiry";
@@ -15,10 +15,9 @@ interface CurrentUser {
 interface DataItem {
     id: number;
     name: string;
-    feecode: string;
   }
 
-const TablesWidget60 = () => {
+const TablesWidget61 = () => {
     const [data, setData] = useState<DataItem[]>([]);
   const { currentUser } = useAuth();
 
@@ -26,31 +25,29 @@ const TablesWidget60 = () => {
 
   const [formData, setFormData] = useState({
     name: '',
-    feeCode: '',
     description: '',
   });
 
   
 
   useEffect(() => {
-    const fetchEnquiries = async () => {
+    const fetchFeeGroups = async () => {
       try {
         const response = await fetch(
-          `${DOMAIN}/api/staff/getfeetype/${schoolId}`
+          `${DOMAIN}/api/staff/getfeegroup/${schoolId}`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch data");
         }
         const responseData = await response.json();
         console.log(responseData);
-
         setData(responseData);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
 
-    fetchEnquiries();
+    fetchFeeGroups();
     // setRefresh(false);
   }, [schoolId]);
 
@@ -68,7 +65,9 @@ const TablesWidget60 = () => {
 //   };
 
 
-const handleInputChange = (e) => {
+
+//     /* @ts-ignore */
+const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
   const { name, value } = e.target;
   setFormData((prevData) => ({
     ...prevData,
@@ -77,11 +76,11 @@ const handleInputChange = (e) => {
 };
 
 
-const handleSubmit = async (e) => {
+const handleSubmit = async (e: FormEvent) => {
   e.preventDefault();
   try {
     const response = await fetch(
-      `${DOMAIN}/api/staff/add-feetype/${schoolId}`,
+      `${DOMAIN}/api/staff/add-feegroup/${schoolId}`,
       {
         method: 'POST',
         headers: {
@@ -174,7 +173,7 @@ const handleSubmit = async (e) => {
                         fontFamily: "Manrope",
                       }}
                     >
-                      Fees Type List
+                      Fees Group List
                     </span>
                   </div>
                   <div
@@ -270,28 +269,16 @@ const handleSubmit = async (e) => {
                         color: "#FFFFFF",
                       }}
                     >
-                      Fee Type
+                      Fee Group
                     </span>
                   </div>
                 </th>
-                <th>
-                  <div style={{ width: "70px" }}>
-                    <span
-                      style={{
-                        fontSize: "13px",
-                        fontWeight: "600",
-                        lineHeight: "18px",
-                        color: "#FFFFFF",
-                      }}
-                    >
-                      Fee Code
-                    </span>
-                  </div>
-                </th>
+            
                 <th>
                   <div
                     style={{
                       width: "60px",
+                      marginRight:'50px',
                       // textAlign:'left'
                       // border:'1px solid',
                       display: "flex",
@@ -357,29 +344,7 @@ const handleSubmit = async (e) => {
                           fontFamily: "Manrope",
                         }}
                       >
-                        {item.type}
-                      </span>
-                    </div>
-                  </td>
-                  <td>
-                    <div
-                      style={{
-                        width: "55px",
-                        display: "flex",
-                        justifyContent: "center",
-                        flexDirection: "column",
-                      }}
-                    >
-                      <span
-                        style={{
-                          fontSize: "14px",
-                          fontWeight: "500",
-                          lineHeight: "18px",
-                          color: "#1F1F1F",
-                          fontFamily: "Manrope",
-                        }}
-                      >
-                        {item.code}
+                        {item.name}
                       </span>
                     </div>
                   </td>
@@ -449,7 +414,7 @@ const handleSubmit = async (e) => {
           overflowX: "hidden",
           minHeight: "100%",
           marginBottom: "20px",
-          height: "480px",
+          height: "400px",
           display: "flex",
           flexDirection: "column",
           fontFamily: "Manrope",
@@ -476,7 +441,7 @@ const handleSubmit = async (e) => {
               color: "white",
             }}
           >
-            Add Fees Type :
+            Add Fee Group :
           </span>
         </div>
         <div
@@ -527,43 +492,7 @@ const handleSubmit = async (e) => {
             />
             </div>
           </div>
-          <div style={{ marginBottom: "23px", width: "100%" }}>
-            <label
-              htmlFor="materialtitle"
-              className="form-label"
-              style={{
-                fontSize: "12px",
-                color: "#434343",
-                fontWeight: "500",
-              }}
-            >
-              Fees Code
-            </label>
-
-            <div id="materialtitle">
-            <input
-              className=""
-              style={{
-                height: '46px',
-                width: '100%',
-                paddingLeft: '10px',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                backgroundColor: 'transparent',
-                border: '1px solid #ECEDF1',
-                borderRadius: '8px',
-              }}
-              onChange={handleInputChange}
-              type="text"
-              name="feeCode"
-              value={formData.feeCode}
-              placeholder="Enter Fee Code"
-              aria-expanded="false"
-              required
-            />
-            </div>
-          </div>
+          
           <div style={{ marginBottom: "23px", width: "100%" }}>
             <label
               htmlFor="materialtitle"
@@ -644,4 +573,4 @@ const handleSubmit = async (e) => {
   );
 };
 
-export { TablesWidget60 };
+export { TablesWidget61 };

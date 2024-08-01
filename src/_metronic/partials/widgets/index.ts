@@ -115,6 +115,8 @@ export * from './tables/TablesWidget56'
 export * from './tables/TablesWidget57'
 export * from './tables/TablesWidget58'
 export * from './tables/TablesWidget59'
+export * from './tables/TablesWidget60'
+export * from './tables/TablesWidget61'
 
 // engage
 export * from './engage/EngageWidget1'
