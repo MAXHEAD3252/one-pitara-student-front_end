@@ -5,6 +5,8 @@ import "../../../../app/pages/StaffPages/FeeDetails/style.css";
 import { useAuth } from "../../../../app/modules/auth/index.ts";
 import { EditFessMasterModal } from "../../modals/create-app-stepper/EditFessMasterModal.tsx";
 import { DOMAIN } from "../../../../app/routing/ApiEndpoints.tsx";
+import { AddFeesMasterModal } from "../../modals/create-app-stepper/AddFeesMasterModal.tsx";
+import { useNavigate } from "react-router-dom";
 
 // Define interfaces
 interface FeeItem {
@@ -21,11 +23,22 @@ interface GroupedData {
 
 const TablesWidget14: React.FC = () => {
   const [feeData, setFeeData] = useState<GroupedData[]>([]);
+  console.log(feeData);
+  
   const { currentUser } = useAuth();
   const schoolId = currentUser?.school_id;
   const [showModal, setShowModal] = useState<boolean>(false);
+  const [showCreateModal, setShowCreateModal] = useState<boolean>(false);
   const [feeId, setFeeId] = useState<number | null>(null);
 
+  const navigate = useNavigate();
+
+  const handleClick = ({value}:any) => {
+    alert('hi')
+    navigate(`/fee-master/assign-${value}`);
+  };
+
+  
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -84,9 +97,15 @@ const TablesWidget14: React.FC = () => {
     setFeeId(id);
     setShowModal(true);
   }
+  function handleOpenCreateModal() {
+    setShowCreateModal(true);
+  }
 
   function handleCloseModal(): void {
     setShowModal(false);
+  }
+  function handleCloseCreateModal(): void {
+    setShowCreateModal(false);
   }
 
   return (
@@ -241,7 +260,7 @@ const TablesWidget14: React.FC = () => {
                     flexDirection: "row",
                     cursor: "pointer",
                   }}
-                  // onClick={handlePrimaryButtonClick}
+                  onClick={() => handleOpenCreateModal()}
                   data-bs-toggle="modal"
                   data-bs-target="#staticBackdrop"
                 >
@@ -513,10 +532,11 @@ const TablesWidget14: React.FC = () => {
                       gap: "6px",
                       alignItems: "center",
                     }}
+                    onClick={() => handleClick(group.id)}
                   >
                     <div
                       style={{
-                        width: "90px",
+                        width: "50px",
                         height: "29px",
                         borderRadius: "6px",
                         padding: "0px 6px 0px 6px",
@@ -525,6 +545,7 @@ const TablesWidget14: React.FC = () => {
                         display: "flex",
                         alignItems: "center",
                       }}
+                      
                     >
                       <span
                         style={{
@@ -534,7 +555,7 @@ const TablesWidget14: React.FC = () => {
                           color: "#000000",
                         }}
                       >
-                        Tag?
+                        Assign
                       </span>
                     </div>
                     <div
@@ -596,415 +617,11 @@ const TablesWidget14: React.FC = () => {
           onHide={handleCloseModal}
           feeId={feeId}
         />
-        <div
-          className="modal fade"
-          id="staticBackdrop"
-          data-bs-backdrop="static"
-          data-bs-keyboard="false"
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-expect-error
-          tabIndex="-1"
-          aria-labelledby="staticBackdropLabel"
-          aria-hidden="true"
-        >
-          <div
-            className="modal-dialog "
-            style={{
-              display: "flex",
-              width: "540px",
-              height: "709px",
-              padding: "0px",
-              // borderRadius:'18px'
-            }}
-          >
-            <div
-              className="modal-content"
-              style={{ padding: "23px 5px", borderRadius: "17px" }}
-            >
-              <div
-                className="modal-header border-0"
-                style={{ width: "100%", height: "17px" }}
-              >
-                <span
-                  className=""
-                  id="staticBackdropLabel"
-                  style={{
-                    fontSize: "24px",
-                    fontWeight: "600",
-                    fontFamily: "Manrope",
-                  }}
-                >
-                  Add Fees Master : 2023-24
-                </span>
-                <span data-bs-dismiss="modal" aria-label="Close">
-                  <svg
-                    width="32"
-                    height="32"
-                    viewBox="0 0 32 32"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <circle cx="16" cy="16" r="16" fill="#ECECEC" />
-                    <path
-                      d="M22.8572 9.14294L9.14288 22.8572M9.14288 9.14294L22.8572 22.8572"
-                      stroke="#464646"
-                      stroke-width="2"
-                      stroke-linecap="square"
-                      stroke-linejoin="round"
-                    />
-                  </svg>
-                </span>
-              </div>
-              <div className="modal-body">
-                <div style={{ marginBottom: "23px" }}>
-                  <label
-                    htmlFor="exampleFormControlInput1"
-                    className="form-label"
-                    style={{
-                      fontSize: "12px",
-                      color: "#434343",
-                      fontWeight: "500",
-                    }}
-                  >
-                    Fees Group
-                  </label>
-
-                  <div className="dropdown" id="exampleFormControlInput1">
-                    <button
-                      className="btn btn-secondary dropdown-toggle"
-                      style={{
-                        width: "100%",
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        backgroundColor: "transparent",
-                        border: "1px solid #ECEDF1",
-                        borderRadius: "8px",
-                      }}
-                      type="button"
-                      data-bs-toggle="dropdown"
-                      aria-expanded="false"
-                    >
-                      Select Group
-                    </button>
-                    <ul className="dropdown-menu" style={{ width: "100%" }}>
-                      <li>
-                        <a className="dropdown-item" href="#">
-                          Action
-                        </a>
-                      </li>
-                      <li>
-                        <a className="dropdown-item" href="#">
-                          Another action
-                        </a>
-                      </li>
-                      <li>
-                        <a className="dropdown-item" href="#">
-                          Something else here
-                        </a>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-                <div style={{ marginBottom: "23px" }}>
-                  <label
-                    htmlFor="exampleFormControlInput1"
-                    className="form-label"
-                    style={{
-                      fontSize: "12px",
-                      color: "#434343",
-                      fontWeight: "500",
-                    }}
-                  >
-                    Fees Type
-                  </label>
-
-                  <div className="dropdown" id="exampleFormControlInput1">
-                    <button
-                      className="btn btn-secondary dropdown-toggle"
-                      style={{
-                        width: "100%",
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        backgroundColor: "transparent",
-                        border: "1px solid #ECEDF1",
-                        borderRadius: "8px",
-                      }}
-                      type="button"
-                      data-bs-toggle="dropdown"
-                      aria-expanded="false"
-                    >
-                      Select Type
-                    </button>
-                    <ul className="dropdown-menu" style={{ width: "100%" }}>
-                      <li>
-                        <a className="dropdown-item" href="#">
-                          Action
-                        </a>
-                      </li>
-                      <li>
-                        <a className="dropdown-item" href="#">
-                          Another action
-                        </a>
-                      </li>
-                      <li>
-                        <a className="dropdown-item" href="#">
-                          Something else here
-                        </a>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-                <div style={{ marginBottom: "23px" }}>
-                  <label
-                    htmlFor="exampleFormControlInput1"
-                    className="form-label"
-                    style={{
-                      fontSize: "12px",
-                      color: "#434343",
-                      fontWeight: "500",
-                    }}
-                  >
-                    Due Type
-                  </label>
-
-                  <div className="dropdown" id="exampleFormControlInput1">
-                    <button
-                      className="btn btn-secondary dropdown-toggle"
-                      style={{
-                        width: "100%",
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        backgroundColor: "transparent",
-                        border: "1px solid #ECEDF1",
-                        borderRadius: "8px",
-                      }}
-                      type="button"
-                      data-bs-toggle="dropdown"
-                      aria-expanded="false"
-                    >
-                      Select Due Type
-                    </button>
-                    <ul className="dropdown-menu" style={{ width: "100%" }}>
-                      <li>
-                        <a className="dropdown-item" href="#">
-                          Action
-                        </a>
-                      </li>
-                      <li>
-                        <a className="dropdown-item" href="#">
-                          Another action
-                        </a>
-                      </li>
-                      <li>
-                        <a className="dropdown-item" href="#">
-                          Something else here
-                        </a>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-                <div className="mb-3">
-                  <label
-                    htmlFor="exampleFormControlInput1"
-                    className="form-label"
-                    style={{
-                      fontSize: "12px",
-                      color: "#434343",
-                      fontWeight: "500",
-                    }}
-                  >
-                    Due Amount
-                  </label>
-                  <input
-                    type="email"
-                    className="form-control"
-                    id="exampleFormControlInput1"
-                    placeholder="Enter Amount"
-                    style={{ border: "1px solid #ECEDF1" }}
-                  />
-                </div>
-                <div className="mb-3">
-                  <label
-                    htmlFor="exampleFormControlInput1"
-                    className="form-label"
-                    style={{
-                      fontSize: "12px",
-                      color: "#434343",
-                      fontWeight: "500",
-                    }}
-                  >
-                    Due Type
-                  </label>
-                  <div
-                    style={{
-                      display: "flex",
-                      padding: "13px 12px",
-                      gap: "12px",
-                      border: "1px solid #ECEDF1",
-                      borderRadius: "8px",
-                    }}
-                  >
-                    <div
-                      className="form-check"
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "8px",
-                      }}
-                    >
-                      <input
-                        className="form-check-input"
-                        type="radio"
-                        name="gridRadios"
-                        id="gridRadios1"
-                        value="option1"
-                        defaultChecked
-                        style={{ width: "15px", height: "15px" }}
-                      />
-                      <label className="form-check-label" htmlFor="gridRadios1">
-                        None
-                      </label>
-                    </div>
-                    <div
-                      className="form-check"
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "8px",
-                      }}
-                    >
-                      <input
-                        className="form-check-input"
-                        type="radio"
-                        name="gridRadios"
-                        id="gridRadios1"
-                        value="option1"
-                        defaultChecked
-                        style={{ width: "15px", height: "15px" }}
-                      />
-                      <label className="form-check-label" htmlFor="gridRadios1">
-                        Percentage
-                      </label>
-                    </div>
-                    <div
-                      className="form-check"
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "8px",
-                      }}
-                    >
-                      <input
-                        className="form-check-input"
-                        type="radio"
-                        name="gridRadios"
-                        id="gridRadios1"
-                        value="option1"
-                        defaultChecked
-                        style={{ width: "15px", height: "15px" }}
-                      />
-                      <label className="form-check-label" htmlFor="gridRadios1">
-                        Fixed Amount
-                      </label>
-                    </div>
-                  </div>
-                </div>
-                <div
-                  style={{
-                    width: "100%",
-                    display: "flex",
-                    flexDirection: "row",
-                    gap: "23px",
-                  }}
-                >
-                  <div className="" style={{ width: "50%" }}>
-                    <label
-                      htmlFor="exampleFormControlInput1"
-                      className="form-label"
-                      style={{
-                        fontSize: "12px",
-                        color: "#434343",
-                        fontWeight: "500",
-                      }}
-                    >
-                      Percentage
-                    </label>
-                    <input
-                      type="email"
-                      className="form-control"
-                      id="exampleFormControlInput1"
-                      placeholder="Enter Percentage"
-                      style={{ border: "1px solid #ECEDF1" }}
-                    />
-                  </div>
-                  <div className="" style={{ width: "50%" }}>
-                    <label
-                      htmlFor="exampleFormControlInput1"
-                      className="form-label"
-                      style={{
-                        fontSize: "12px",
-                        color: "#434343",
-                        fontWeight: "500",
-                      }}
-                    >
-                      Fine Amount
-                    </label>
-                    <input
-                      type="email"
-                      className="form-control"
-                      id="exampleFormControlInput1"
-                      placeholder="Enter Fine Amount"
-                      style={{ border: "1px solid #ECEDF1" }}
-                    />
-                  </div>
-                </div>
-              </div>
-              <div
-                className="modal-footer border-0"
-                style={
-                  {
-                    // width: "100%",
-                    // height: "30px",
-                    // display: "flex",
-                    // justifyContent: "end",
-                    // padding: "0px 24px 21px 24px",
-                    // border: "1px solid",
-                  }
-                }
-              >
-                <button
-                  type="button"
-                  className="btn btn-secondary"
-                  data-bs-dismiss="modal"
-                  style={{
-                    width: "118px",
-                    height: "36px",
-                    padding: "8px 10px",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    gap: "10px",
-                    flexShrink: "0",
-                    backgroundColor: "rgba(39, 59, 99, 0.76)",
-                  }}
-                >
-                  <span
-                    style={{
-                      color: "#FFF",
-                      fontFamily: "Manrope",
-                      fontSize: "12px",
-                      fontWeight: "500",
-                    }}
-                  >
-                    Save
-                  </span>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+        <AddFeesMasterModal
+          show={showCreateModal}
+          onHide={handleCloseCreateModal}
+        />
+      
       </div>
     </div>
   );
