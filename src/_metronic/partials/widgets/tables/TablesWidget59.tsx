@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import "../../../../app/pages/StaffPages/FeeDetails/style.css";
-import { ReviewApplication } from "../../modals/create-app-stepper/ReviewApplication";
+import { CreateCollectFees} from "../../modals/create-app-stepper/CreateCollectFees"; 
 import { useAuth } from "../../../../app/modules/auth/core/Auth";
 import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
 import { CreateAdmissionEnquiryReject } from "../../modals/create-app-stepper/CreateAdmissionEnquiryReject";
@@ -169,7 +169,7 @@ const TablesWidget59: React.FC = () => {
                   flexDirection: "row",
                   justifyContent: "space-between",
                   // tableLayout: "fixed",
-                  // borderCollapse: "collapse",
+                  // borderCollapse: "collapse",  
 
                   // border:'1px solid'
                   width: "98%",
@@ -699,7 +699,7 @@ const TablesWidget59: React.FC = () => {
                       }}
                       onClick={() => handleModalEdit(item.enquiry_id)}
                     >
-                      Review Application
+                      Collect Fees
                     </button>
                     <button
                       type="button"
@@ -720,7 +720,7 @@ const TablesWidget59: React.FC = () => {
               </tr>
             ))}
           </tbody>
-          <ReviewApplication
+          <CreateCollectFees
             show={showEditModal}
             handleClose={handleModalEditClose}
             enqId={enqId}

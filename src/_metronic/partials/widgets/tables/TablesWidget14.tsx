@@ -1,12 +1,10 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from "react";
 import "../../../../app/pages/StaffPages/FeeDetails/style.css";
-//  backgroundColor: "#F5F5F5",
 import { useAuth } from "../../../../app/modules/auth/index.ts";
 import { EditFessMasterModal } from "../../modals/create-app-stepper/EditFessMasterModal.tsx";
 import { DOMAIN } from "../../../../app/routing/ApiEndpoints.tsx";
 import { AddFeesMasterModal } from "../../modals/create-app-stepper/AddFeesMasterModal.tsx";
-import { useNavigate } from "react-router-dom";
+import AssignFeesMaster from "../../modals/create-app-stepper/AssignFeesMaster.tsx";
 
 // Define interfaces
 interface FeeItem {
@@ -16,29 +14,81 @@ interface FeeItem {
 }
 
 interface GroupedData {
- 
-    name: string;
-    fees: FeeItem[];
+  name: string;
+  class_id: string;
+  fees: FeeItem[];
 }
 
 const TablesWidget14: React.FC = () => {
   const [feeData, setFeeData] = useState<GroupedData[]>([]);
-  console.log(feeData);
-  
   const { currentUser } = useAuth();
   const schoolId = currentUser?.school_id;
-  const [showModal, setShowModal] = useState<boolean>(false);
+  const [showEditModal, setShowEditModal] = useState<boolean>(false);
+  const [data, setData] = useState<any[]>([]); // Changed type to any[]
+  const [showAssignModal, setShowAssignModal] = useState<boolean>(false);
   const [showCreateModal, setShowCreateModal] = useState<boolean>(false);
+  const [selectedFeeDetails, setSelectedFeeDetails] = useState<any[]>([]);
+  // const [selectedFeeGroupId, setSelectedFeeGroupId] = useState<number>(0);
   const [feeId, setFeeId] = useState<number | null>(null);
+  const [classId, setClassId] = useState<string | null>(null);
 
-  const navigate = useNavigate();
 
-  const handleClick = ({value}:any) => {
-    alert('hi')
-    navigate(`/fee-master/assign-${value}`);
+  const handleShowEditModal = (id: number) => {
+    setFeeId(id);
+    setShowEditModal(true);
   };
 
-  
+  const handleShowAssignModal = (classId: string) => {
+    // Find the group with the matching classId
+    const selectedGroup = feeData.find(group => group.class_id === classId);
+    if (selectedGroup) {
+      // Extract fee group ID from the selected group
+      const feeGroupId = selectedGroup.fee_group_id; // Assuming fee_group_id is directly on selectedGroup
+
+      // Collect fee details including fee_id and fee_name
+      const feeDetails = selectedGroup.fees.map(fee => ({
+        
+        fee_id: fee.fee_id,       // Use the correct property name here
+        fee_name: fee.fee_type,   // Use the correct property name here
+        fee_group_id: feeGroupId,
+        fee_amount: fee.fee_amount // Set fee_group_id to the extracted value
+      }));
+
+      console.log(feeDetails);
+
+      // Extract fee IDs from fee details
+      // const feeIds = feeDetails.map(fee => fee.fee_id);
+
+      // Update state
+      // setSelectedFeeGroupId(feeGroupId); // Store fee group ID
+      setClassId(classId);
+      setSelectedFeeDetails(feeDetails);        // Store fee IDs as an array
+      setShowAssignModal(true);
+    } else {
+      console.error(`No group found with classId: ${classId}`);
+    }
+  };
+
+  const handleShowCreateModal = () => {
+    setShowCreateModal(true);
+  };
+
+  // Handlers to hide modals
+  const handleCloseEditModal = () => {
+    setShowEditModal(false);
+    setFeeId(null);
+  };
+
+  const handleCloseAssignModal = () => {
+    setShowAssignModal(false);
+    setClassId(null);
+    setSelectedFeeDetails([]); // Initialize to empty array instead of null
+  };
+
+  const handleCloseCreateModal = () => {
+    setShowCreateModal(false);
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -49,42 +99,38 @@ const TablesWidget14: React.FC = () => {
           throw new Error("Failed to fetch data");
         }
         const data = await response.json();
+        setData(data);
 
         // Grouping fee data by fee_group_id
-        const groupedData: GroupedData = data.reduce(
-          (acc: GroupedData, item: any) => {
-            const {
-              fee_group_id,
-              fee_group_name,
+        const groupedData: GroupedData[] = Object.values(data.reduce((acc: any, item: any) => {
+          const {
+            fee_group_id,
+            fee_group_name,
+            fee_type,
+            fee_amount,
+            fee_id,
+            class_id,
+          } = item;
+
+          if (!acc[class_id]) {
+            acc[class_id] = {
+              name: fee_group_name,
+              class_id: class_id,
+              fees: [{ fee_type, fee_amount, fee_id }],
+              fee_group_id  // Added this to group by fee_group_id
+            };
+          } else {
+            acc[class_id].fees.push({
               fee_type,
               fee_amount,
               fee_id,
-            } = item;
- /* @ts-ignore */
-            if (!acc[fee_group_id]) {
-               /* @ts-ignore */
-              acc[fee_group_id] = {
-                name: fee_group_name,
-                 /* @ts-ignore */
-                fees: [{ type: fee_type, amount: fee_amount, fid: fee_id }],
-              };
-            } else {
-               /* @ts-ignore */
-              acc[fee_group_id].fees.push({
-                 /* @ts-ignore */
-                type: fee_type,
-                amount: fee_amount,
-                fid: fee_id,
-              });
-            }
+            });
+          }
 
-            return acc;
-          },
-          {}
-        );
+          return acc;
+        }, {}));
 
-        /* @ts-ignore */
-        setFeeData(Object.values(groupedData));
+        setFeeData(groupedData);
       } catch (error) {
         console.error("Error fetching fee data:", error);
       }
@@ -92,21 +138,6 @@ const TablesWidget14: React.FC = () => {
 
     fetchData();
   }, [schoolId]);
-
-  function handleOpenModal(id: number): void {
-    setFeeId(id);
-    setShowModal(true);
-  }
-  function handleOpenCreateModal() {
-    setShowCreateModal(true);
-  }
-
-  function handleCloseModal(): void {
-    setShowModal(false);
-  }
-  function handleCloseCreateModal(): void {
-    setShowCreateModal(false);
-  }
 
   return (
     <div
@@ -260,7 +291,7 @@ const TablesWidget14: React.FC = () => {
                     flexDirection: "row",
                     cursor: "pointer",
                   }}
-                  onClick={() => handleOpenCreateModal()}
+                  onClick={() => handleShowCreateModal()}
                   data-bs-toggle="modal"
                   data-bs-target="#staticBackdrop"
                 >
@@ -414,7 +445,6 @@ const TablesWidget14: React.FC = () => {
                         fontFamily: "Manrope",
                       }}
                     >
-                      
                       {group.name}
                     </span>
                   </div>
@@ -458,15 +488,15 @@ const TablesWidget14: React.FC = () => {
                           <span className="text-gray-900">
                             {
                               /* @ts-ignore */
-                              `${fee.type} RS${fee.amount}`
+                              `${fee.fee_type} RS${fee.fee_amount}`
                             }
                           </span>
                           <div>
                             <button
                               //  onClick={() => handleOpenModal(fee.fid)} // Replace fee.id with the actual id
-                                                    /* @ts-ignore */
+                              /* @ts-ignore */
 
-                              onClick={() => handleOpenModal(fee.fid)} // Replace fee.id with the actual id
+                              onClick={() => handleShowEditModal(fee.fid)} // Replace fee.id with the actual id
                               style={{
                                 background: "none",
                                 border: "none",
@@ -532,7 +562,6 @@ const TablesWidget14: React.FC = () => {
                       gap: "6px",
                       alignItems: "center",
                     }}
-                    onClick={() => handleClick(group.id)}
                   >
                     <div
                       style={{
@@ -545,7 +574,7 @@ const TablesWidget14: React.FC = () => {
                         display: "flex",
                         alignItems: "center",
                       }}
-                      
+                      onClick={() => handleShowAssignModal(group.class_id, group.id)}
                     >
                       <span
                         style={{
@@ -613,15 +642,21 @@ const TablesWidget14: React.FC = () => {
           </tbody>
         </table>
         <EditFessMasterModal
-          show={showModal}
-          onHide={handleCloseModal}
+          show={showEditModal}
+          onHide={handleCloseEditModal}
           feeId={feeId}
         />
         <AddFeesMasterModal
           show={showCreateModal}
           onHide={handleCloseCreateModal}
         />
-      
+        <AssignFeesMaster
+          show={showAssignModal}
+          onHide={handleCloseAssignModal}
+          schoolId={schoolId}
+          classId={classId}
+          feeDetails={selectedFeeDetails}
+        />
       </div>
     </div>
   );
