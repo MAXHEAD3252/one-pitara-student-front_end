@@ -6,11 +6,13 @@ import { DOMAIN } from "../../../../app/routing/ApiEndpoints.tsx";
 import { AddFeesMasterModal } from "../../modals/create-app-stepper/AddFeesMasterModal.tsx";
 import AssignFeesMaster from "../../modals/create-app-stepper/AssignFeesMaster.tsx";
 
+
 // Define interfaces
 interface FeeItem {
   fee_type: string;
   fee_amount: number;
   fee_id: number;
+  fee_group_session_id:number;
 }
 
 interface GroupedData {
@@ -39,21 +41,27 @@ const TablesWidget14: React.FC = () => {
   };
 
   const handleShowAssignModal = (classId: string) => {
+    
     // Find the group with the matching classId
     const selectedGroup = feeData.find(group => group.class_id === classId);
     if (selectedGroup) {
+      console.log(selectedGroup);
+      
       // Extract fee group ID from the selected group
       const feeGroupId = selectedGroup.fee_group_id; // Assuming fee_group_id is directly on selectedGroup
-
+      const feeGroupSessionId = selectedGroup.fee_group_session_id; // Assuming fee_group_id is directly on selectedGroup
+      
       // Collect fee details including fee_id and fee_name
       const feeDetails = selectedGroup.fees.map(fee => ({
         
         fee_id: fee.fee_id,       // Use the correct property name here
         fee_name: fee.fee_type,   // Use the correct property name here
         fee_group_id: feeGroupId,
-        fee_amount: fee.fee_amount // Set fee_group_id to the extracted value
+        fee_amount: fee.fee_amount,
+        fee_group_session_id: feeGroupSessionId // Set fee_group_id to the extracted value
       }));
 
+      // console.log(feeData);
       console.log(feeDetails);
 
       // Extract fee IDs from fee details
@@ -105,6 +113,7 @@ const TablesWidget14: React.FC = () => {
         const groupedData: GroupedData[] = Object.values(data.reduce((acc: any, item: any) => {
           const {
             fee_group_id,
+            fee_group_session_id,
             fee_group_name,
             fee_type,
             fee_amount,
@@ -117,7 +126,8 @@ const TablesWidget14: React.FC = () => {
               name: fee_group_name,
               class_id: class_id,
               fees: [{ fee_type, fee_amount, fee_id }],
-              fee_group_id  // Added this to group by fee_group_id
+              fee_group_id,
+              fee_group_session_id  // Added this to group by fee_group_id
             };
           } else {
             acc[class_id].fees.push({
