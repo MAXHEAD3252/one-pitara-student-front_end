@@ -39,12 +39,14 @@ const TablesWidget59: React.FC = () => {
   
   const schoolId = currentUser?.school_id;
 
-  const [showEditModal, setShowEditModal] = useState(false);
+  const [showEditModal, setShowCollectFeeModal] = useState(false);
   const [showActionModal, setShowActionModal] = useState(false);
-  const [enqId, setEnqId] = useState("");
-
+  const [getClass, setClass] = useState("");
+  const [getSession, setSession] = useState("");
+  
   const [referesh, setRefresh] = useState(false);
- 
+  
+  const [admissionEnqId, setAdmissionEnqId] = useState("");
 
   // const handleActionModal = (value: string) => {
   //   setEnqId(value);
@@ -53,34 +55,35 @@ const TablesWidget59: React.FC = () => {
 
   
   const handleActionModal = (value: string) => {
-    setEnqId(value);
+    setClass(value);
+    setSession(value);
     setShowActionModal(true);
   };
   const handleActionModalClose = () => {
     setShowActionModal(false);
   };
 
-  const handleModalEdit = (value: string) => {
-    setEnqId(value);
-    setShowEditModal(true);
+  const handleModalCollectFees = (class_id: string,session_id: string,admission_enquiry_id: string) => {
+    setClass(class_id);
+    setSession(session_id);
+    setAdmissionEnqId(admission_enquiry_id);
+    setShowCollectFeeModal(true);
   };
 
-  const handleModalEditClose = () => {
-    setShowEditModal(false);
+  const handleModalCollectFeesClose = () => {
+    setShowCollectFeeModal(false);
   };
 
   useEffect(() => {
     const fetchEnquiries = async () => {
       try {
         const response = await fetch(
-          `${DOMAIN}/api/staff/get-reviewlist/${schoolId}`
+          `${DOMAIN}/api/staff/get-admissionfees/${schoolId}`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch data");
         }
         const responseData = await response.json();
-        console.log(responseData);
-
         setData(responseData);
         setFilteredData(responseData);
       } catch (error) {
@@ -697,7 +700,7 @@ const TablesWidget59: React.FC = () => {
                         fontWeight: "600",
                         color: "#1F3259",
                       }}
-                      onClick={() => handleModalEdit(item.enquiry_id)}
+                      onClick={() => handleModalCollectFees(item.class_id,item.academic_id,item.admission_enquiry_id)}
                     >
                       Collect Fees
                     </button>
@@ -722,11 +725,13 @@ const TablesWidget59: React.FC = () => {
           </tbody>
           <CreateCollectFees
             show={showEditModal}
-            handleClose={handleModalEditClose}
-            enqId={enqId}
+            handleClose={handleModalCollectFeesClose}
+            class_id={getClass}
+            session_id={getSession}
+            admission_enquiry_id = {admissionEnqId}
             setRefresh={setRefresh}
           />
-          <CreateAdmissionEnquiryReject show={showActionModal} handleClose={handleActionModalClose} enqId={enqId} setRefresh={setRefresh}/>
+          <CreateAdmissionEnquiryReject show={showActionModal} handleClose={handleActionModalClose} setRefresh={setRefresh}/>
         </table>
       </div>
     </div>

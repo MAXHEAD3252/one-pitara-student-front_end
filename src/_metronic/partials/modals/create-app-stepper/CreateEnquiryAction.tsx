@@ -90,6 +90,9 @@ const CreateEnquiryAction = ({ show, handleClose, enqId,setRefresh }: Props) => 
     };
     fetchEnquiryById();
   }, [schoolId, enqId]);
+
+  
+  console.log(formData)
 /* @ts-ignore */
   const handleSubmit = async (e) => {
     e.preventDefault();

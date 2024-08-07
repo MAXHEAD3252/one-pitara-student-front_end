@@ -7,13 +7,12 @@ import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
 type Props = {
   show: boolean;
   handleClose: () => void;
-  enqId: string | undefined;
   setRefresh: (refresh: boolean) => void;
 };
 
 const modalsRoot = document.getElementById("root-modals") || document.body;
 
-const CreateAdmissionEnquiryReject = ({ show, handleClose, enqId ,setRefresh}: Props) => {
+const CreateAdmissionEnquiryReject = ({ show, handleClose, setRefresh}: Props) => {
   const { currentUser } = useAuth();
   const schoolId = currentUser?.school_id;
   const [formData, setFormData] = useState({ reject_reason: "" });
