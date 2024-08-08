@@ -82,6 +82,7 @@ import { ApplicationReview } from "../pages/StaffPages/AdmissionsAndEnrollment/A
 import { AdmissionFees } from "../pages/StaffPages/FeeDetails/AdmissionFees";
 import { FeeType } from "../pages/StaffPages/FeeDetails/FeeType";
 import { FeeGroup } from "../pages/StaffPages/FeeDetails/FeeGroup";
+import { CollectFees } from "../pages/StaffPages/FeeDetails/CollectFees";
 // import {CourseContent} from "../pages/StudentPages/CourseContent";
 
 export const routesConfig = {
@@ -523,6 +524,11 @@ export const routesConfig = {
       path: "/fee-master",
       component: ViewFeeMaster,
       sidebarName: "Fee Master",
+    },
+    {
+      path: "/fee-collect",
+      component: CollectFees,
+      sidebarName: "Fee Collect",
     },
     {
       path: "/fee-master/assign-master",

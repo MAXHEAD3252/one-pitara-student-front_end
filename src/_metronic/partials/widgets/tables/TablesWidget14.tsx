@@ -5,6 +5,7 @@ import { EditFessMasterModal } from "../../modals/create-app-stepper/EditFessMas
 import { DOMAIN } from "../../../../app/routing/ApiEndpoints.tsx";
 import { AddFeesMasterModal } from "../../modals/create-app-stepper/AddFeesMasterModal.tsx";
 import AssignFeesMaster from "../../modals/create-app-stepper/AssignFeesMaster.tsx";
+import { DeleteFeeMasterModal } from "../../modals/create-app-stepper/DeleteFeeMasterModal.tsx";
 
 // Define interfaces
 interface FeeItem {
@@ -25,6 +26,7 @@ const TablesWidget14: React.FC = () => {
   const { currentUser } = useAuth();
   const schoolId = currentUser?.school_id;
   const [showEditModal, setShowEditModal] = useState<boolean>(false);
+  const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
   const [data, setData] = useState<any[]>([]); // Changed type to any[]
   const [showAssignModal, setShowAssignModal] = useState<boolean>(false);
   const [showCreateModal, setShowCreateModal] = useState<boolean>(false);
@@ -35,8 +37,17 @@ const TablesWidget14: React.FC = () => {
 
   const handleShowEditModal = (id: number) => {
     setFeeId(id);
+    console.log(id)
     setShowEditModal(true);
   };
+
+
+  const handleShowDeleteModal = (id: number) => {
+    setFeeId(id);
+    setShowDeleteModal(true);
+  };
+
+console.log(feeData)
 
   const handleShowAssignModal = (classId: string) => {
     // Find the group with the matching classId
@@ -77,9 +88,16 @@ const TablesWidget14: React.FC = () => {
     setShowCreateModal(true);
   };
 
+console.log(feeData)
+
+
   // Handlers to hide modals
   const handleCloseEditModal = () => {
     setShowEditModal(false);
+    setFeeId(null);
+  };
+  const handleCloseDeleteModal = () => {
+    setShowDeleteModal(false);
     setFeeId(null);
   };
 
@@ -88,6 +106,8 @@ const TablesWidget14: React.FC = () => {
     setClassId(null);
     setSelectedFeeDetails([]); // Initialize to empty array instead of null
   };
+
+
 
   const handleCloseCreateModal = () => {
     setShowCreateModal(false);
@@ -365,7 +385,7 @@ const TablesWidget14: React.FC = () => {
             >
               <th>
                 <div
-                  style={{ flex: "1", maxWidth: "355px", minWidth: "235px" }}
+                  style={{ flex: "1", maxWidth: "365px", minWidth: "370px" }}
                 >
                   <span
                     style={{
@@ -384,7 +404,7 @@ const TablesWidget14: React.FC = () => {
               </th>
               <th>
                 <div
-                  style={{ flex: "1", maxWidth: "680px", minWidth: "500px" }}
+                  style={{ flex: "1", maxWidth: "700px", minWidth: "520px" }}
                 >
                   <span
                     style={{
@@ -508,7 +528,7 @@ const TablesWidget14: React.FC = () => {
                               //  onClick={() => handleOpenModal(fee.fid)} // Replace fee.id with the actual id
                               /* @ts-ignore */
 
-                              onClick={() => handleShowEditModal(fee.fid)} // Replace fee.id with the actual id
+                              onClick={() => handleShowEditModal(fee.fee_id)} // Replace fee.id with the actual id
                               style={{
                                 background: "none",
                                 border: "none",
@@ -542,7 +562,9 @@ const TablesWidget14: React.FC = () => {
                             </button>
                           </div>
                         </div>
-                        <div>
+                        <div
+                      onClick={() =>handleShowDeleteModal(fee.fee_id)}
+                        >
                           <svg
                             width="14"
                             height="14"
@@ -577,33 +599,57 @@ const TablesWidget14: React.FC = () => {
                   >
                     <div
                       style={{
-                        width: "50px",
-                        height: "29px",
+                        width: "35px",
+                        height: "40px",
                         borderRadius: "6px",
-                        padding: "0px 6px 0px 6px",
+                        padding: "10px 6px 10px 6px",
                         gap: "10px",
-                        backgroundColor: "#F5F5F5",
+                        backgroundColor: "#1C335C",
                         display: "flex",
                         alignItems: "center",
+                        justifyContent: "center",
+                        cursor: "pointer",
                       }}
                       onClick={() =>
-                        handleShowAssignModal(group.class_id, group.id)
+                        handleShowAssignModal(group.class_id)
                       }
                     >
-                      <span
-                        style={{
-                          fontSize: "12px",
-                          fontWeight: "400",
-                          lineHeight: "18px",
-                          color: "#000000",
-                        }}
+                      <svg
+                        width="20"
+                        height="20"
+                        viewBox="0 0 20 20"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
                       >
-                        Assign
-                      </span>
+                        <path
+                          d="M10 2C11.1046 2 12 2.89543 12 4C12 5.10457 11.1046 6 10 6C8.89543 6 8 5.10457 8 4C8 2.89543 8.89543 2 10 2Z"
+                          stroke="#FFFFFF"
+                          stroke-width="1.5"
+                          stroke-linecap="round"
+                        />
+                        <path
+                          d="M10 7C12.7614 7 15 9.23858 15 12V13H5V12C5 9.23858 7.23858 7 10 7Z"
+                          stroke="#FFFFFF"
+                          stroke-width="1.5"
+                          stroke-linecap="round"
+                        />
+                        <path
+                          d="M17 10V14"
+                          stroke="#FFFFFF"
+                          stroke-width="1.5"
+                          stroke-linecap="round"
+                        />
+                        <path
+                          d="M19 12H15"
+                          stroke="#FFFFFF"
+                          stroke-width="1.5"
+                          stroke-linecap="round"
+                        />
+                      </svg>
                     </div>
                     <div
                       style={{
-                        width: "32px",
+                        width: "35px",
                         height: "40px",
                         borderRadius: "6px",
                         padding: "10px 6px 10px 6px",
@@ -660,6 +706,13 @@ const TablesWidget14: React.FC = () => {
           onHide={handleCloseEditModal}
           feeId={feeId}
         />
+
+        <DeleteFeeMasterModal
+          show={showDeleteModal}
+          onHide={handleCloseDeleteModal}
+          feeId={feeId}
+        />
+
         <AddFeesMasterModal
           show={showCreateModal}
           onHide={handleCloseCreateModal}

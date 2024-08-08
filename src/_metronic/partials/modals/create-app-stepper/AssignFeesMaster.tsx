@@ -149,7 +149,7 @@ const AssignFeesMaster: React.FC<AssignFeesMasterProps> = ({
               fontFamily: "Manrope",
             }}
           >
-            Edit Fees Master : 2023-24
+            Assign Fees Master : 2023-24
           </span>
           <span data-bs-dismiss="modal" onClick={onHide} aria-label="Close">
             <svg
@@ -180,6 +180,7 @@ const AssignFeesMaster: React.FC<AssignFeesMasterProps> = ({
                     <th>Student Name</th>
                     <th>
                       <input
+                        style={{marginRight:'8px',}}
                         type="checkbox"
                         checked={selectAll}
                         onChange={handleSelectAll}
