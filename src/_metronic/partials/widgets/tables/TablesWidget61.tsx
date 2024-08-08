@@ -12,23 +12,97 @@ import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
 interface CurrentUser {
   school_id: string;
 }
+
 interface DataItem {
-    id: number;
-    name: string;
-  }
+  id: number;
+  fee_group_name: string;
+}
+
+interface Class {
+  class_id: number;
+  id: number;
+  name: string;
+  class: string;
+}
+
+interface Section {
+  id: number;
+  section: string;
+}
+
+interface ClassData {
+  id: number;
+  className: string;
+}
 
 const TablesWidget61 = () => {
-    const [data, setData] = useState<DataItem[]>([]);
+  const [data, setData] = useState<DataItem[]>([]);
   const { currentUser } = useAuth();
+  const [referesh, setReferesh] = useState(false);
 
-  const schoolId = (currentUser as unknown as CurrentUser)?.school_id;
+  const schoolId = (currentUser as CurrentUser)?.school_id;
 
   const [formData, setFormData] = useState({
-    name: '',
-    description: '',
+    name: "",
+    description: "",
+    class_id: 0,
+    section_id: "",
+    session_id: "19",
   });
 
-  
+  const [getClass, setClass] = useState<Class[]>([]);
+  const [getSection, setSection] = useState<Section[]>([]);
+  console.log(getSection);
+
+  const [selectedClass, setSelectedClass] = useState<ClassData>({
+    id: 0,
+    className: "",
+  });
+  const [selectedSections, setSelectedSections] = useState<Section[]>([]);
+  const [isAllSectionsSelected, setIsAllSectionsSelected] = useState(false);
+
+  console.log(selectedSections);
+
+  useEffect(() => {
+    const fetchClasses = async () => {
+      try {
+        const response = await fetch(
+          `${DOMAIN}/api/staff/get-onlyclasses/${schoolId}`
+        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch data");
+        }
+        const responseData = await response.json();
+        setClass(responseData);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchClasses();
+  }, [schoolId]);
+
+  useEffect(() => {
+    const fetchSections = async () => {
+      try {
+        const class_id = selectedClass.id;
+        const response = await fetch(
+          `${DOMAIN}/api/staff/get-classwise-section/${class_id}/${schoolId}`
+        );
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const data = await response.json();
+        setSection(data);
+      } catch (error) {
+        console.error("Error fetching sections:", error);
+      }
+    };
+
+    if (selectedClass.id) {
+      fetchSections();
+    }
+  }, [selectedClass.id, schoolId]);
 
   useEffect(() => {
     const fetchFeeGroups = async () => {
@@ -37,69 +111,82 @@ const TablesWidget61 = () => {
           `${DOMAIN}/api/staff/getfeegroup/${schoolId}`
         );
         if (!response.ok) {
-          throw new Error("Failed to fetch data");
+          throw new Error("Failed to fetch fee groups");
         }
         const responseData = await response.json();
-        console.log(responseData);
         setData(responseData);
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.error("Error fetching fee groups:", error);
       }
     };
 
     fetchFeeGroups();
-    // setRefresh(false);
-  }, [schoolId]);
+    setReferesh(false);
+  }, [schoolId, referesh]);
 
-//   const handleSearch = (e: any) => {
-//     const query = e.target.value.toLowerCase();
-//     setSearchQuery(query);
+  const handleClassSelected = ({ id, className }: ClassData) => {
+    setSelectedClass({ id, className });
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      class_id: id,
+    }));
+  };
 
-//     const filtered = data.filter(
-//       (item) =>
-//         item.status.toLowerCase().includes(query) ||
-//         item.name.toLowerCase().includes(query)
-//     );
-//     /* @ts-ignore */
-//     setFilteredData(filtered);
-//   };
-
-
-
-//     /* @ts-ignore */
-const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-  const { name, value } = e.target;
-  setFormData((prevData) => ({
-    ...prevData,
-    [name]: value,
-  }));
-};
-
-
-const handleSubmit = async (e: FormEvent) => {
-  e.preventDefault();
-  try {
-    const response = await fetch(
-      `${DOMAIN}/api/staff/add-feegroup/${schoolId}`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      }
-    );
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+  const handleSelectAllSections = () => {
+    if (isAllSectionsSelected) {
+      setSelectedSections([]); // Deselect all sections
+    } else {
+      setSelectedSections(getSection); // Select all sections
     }
-    const data = await response.json();
-    console.log('Response:', data);
-  } catch (error) {
-    console.error('Error:', error);
-  }
-};
+    setIsAllSectionsSelected(!isAllSectionsSelected);
+  };
+  
+  const handleSectionSelected = (section) => {
+    if (isSelectedSection(section)) {
+      setSelectedSections(selectedSections.filter(s => s.id !== section.id));
+    } else {
+      setSelectedSections([...selectedSections, section]);
+    }
+  };
+  
+  const isSelectedSection = (section) => {
+    return selectedSections.some(s => s.id === section.id);
+  };
+  
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
 
-
+    try {
+      const response = await fetch(
+        `${DOMAIN}/api/staff/add-feegroup/${schoolId}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            ...formData,
+            section_id: selectedSections.map((s) => s.id).join(","),
+          }),
+        }
+      );
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      setReferesh(true);
+      console.log("Response:", data);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
   return (
     <div className="d-flex" style={{ gap: "10px" }}>
       <div
@@ -273,12 +360,12 @@ const handleSubmit = async (e: FormEvent) => {
                     </span>
                   </div>
                 </th>
-            
+
                 <th>
                   <div
                     style={{
                       width: "60px",
-                      marginRight:'50px',
+                      marginRight: "50px",
                       // textAlign:'left'
                       // border:'1px solid',
                       display: "flex",
@@ -344,7 +431,7 @@ const handleSubmit = async (e: FormEvent) => {
                           fontFamily: "Manrope",
                         }}
                       >
-                        {item.name}
+                        {item.fee_group_name}
                       </span>
                     </div>
                   </td>
@@ -407,168 +494,217 @@ const handleSubmit = async (e: FormEvent) => {
         </div>
       </div>
       <div
-        className="col-xxl-4"
-        style={{
-          borderRadius: "16px",
-          border: "1px solid #5D637A",
-          overflowX: "hidden",
-          minHeight: "100%",
-          marginBottom: "20px",
-          height: "400px",
-          display: "flex",
-          flexDirection: "column",
-          fontFamily: "Manrope",
-          maxWidth: "100%",
-          overflow: "hidden",
-        }}
-      >
-        <div
+  className="col-xxl-4"
+  style={{
+    borderRadius: "16px",
+    border: "1px solid #5D637A",
+    overflowX: "hidden",
+    minHeight: "100%",
+    marginBottom: "20px",
+    height: "500px",
+    display: "flex",
+    flexDirection: "column",
+    fontFamily: "Manrope",
+    maxWidth: "100%",
+    overflow: "hidden",
+  }}
+>
+  <div
+    style={{
+      padding: "20px",
+      backgroundColor: "#1C335C",
+      height: "80px",
+      display: "flex",
+      alignItems: "center",
+    }}
+  >
+    <span
+      className=""
+      id="staticBackdropLabel"
+      style={{
+        fontSize: "18px",
+        fontWeight: "600",
+        fontFamily: "Manrope",
+        color: "white",
+      }}
+    >
+      Add Fee Group :
+    </span>
+  </div>
+  <div>
+    <form
+      onSubmit={handleSubmit}
+      style={{
+        display: "flex",
+        alignItems: "center",
+        padding: "20px",
+        flexDirection: "column",
+        marginTop: "10px",
+      }}
+    >
+      <div style={{ marginBottom: "23px", width: "100%" }}>
+        <label
+          htmlFor="name"
+          className="form-label"
           style={{
-            padding: "20px",
-            backgroundColor: "#1C335C",
-            height: "80px",
-            display: "flex",
-            alignItems: "center",
+            fontSize: "12px",
+            color: "#434343",
+            fontWeight: "500",
           }}
         >
-          <span
+          Name
+        </label>
+
+        <div id="name">
+          <input
             className=""
-            id="staticBackdropLabel"
             style={{
-              fontSize: "18px",
-              fontWeight: "600",
-              fontFamily: "Manrope",
-              color: "white",
-            }}
-          >
-            Add Fee Group :
-          </span>
-        </div>
-        <div
-          
-        >
-          <form onSubmit={handleSubmit} style={{
-            display: "flex",
-            alignItems: "center",
-            padding: "20px",
-            flexDirection: "column",
-            marginTop: "10px",
-          }}>
-          <div style={{ marginBottom: "23px", width: "100%" }}>
-            <label
-              htmlFor="name"
-              className="form-label"
-              style={{
-                fontSize: "12px",
-                color: "#434343",
-                fontWeight: "500",
-              }}
-            >
-              Name
-            </label>
-
-            <div id="name">
-            <input
-              className=""
-              style={{
-                height: '46px',
-                width: '100%',
-                paddingLeft: '10px',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                backgroundColor: 'transparent',
-                border: '1px solid #ECEDF1',
-                borderRadius: '8px',
-                
-              }}
-              onChange={handleInputChange}
-              type="text"
-              name="name"
-              value={formData.name}
-              placeholder="Enter Name"
-              aria-expanded="false"
-              required
-            />
-            </div>
-          </div>
-          
-          <div style={{ marginBottom: "23px", width: "100%" }}>
-            <label
-              htmlFor="materialtitle"
-              className="form-label"
-              style={{
-                fontSize: "12px",
-                color: "#434343",
-                fontWeight: "500",
-              }}
-            >
-              Description
-            </label>
-
-            <div id="materialtitle">
-            <input
-              className=""
-              style={{
-                height: '46px',
-                width: '100%',
-                paddingLeft: '10px',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                backgroundColor: 'transparent',
-                border: '1px solid #ECEDF1',
-                borderRadius: '8px',
-              }}
-              onChange={handleInputChange}
-              type="text"
-              name="description"
-              value={formData.description}
-              placeholder="Enter Description"
-              aria-expanded="false"
-              required
-            />
-            </div>
-          </div>
-        
-
-          <div
-            style={{
+              height: "46px",
               width: "100%",
-              justifyContent: "right",
+              paddingLeft: "10px",
               display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              backgroundColor: "transparent",
+              border: "1px solid #ECEDF1",
+              borderRadius: "8px",
             }}
-          >
-            <button
-              type="submit"
-              className="btn btn-secondary"
-              data-bs-dismiss="modal"
-              style={{
-                width: "118px",
-                height: "36px",
-                padding: "8px 10px",
-                justifyContent: "center",
-                alignItems: "center",
-                gap: "10px",
-                flexShrink: "0",
-                backgroundColor: "rgba(39, 59, 99, 0.76)",
-              }}
-            >
-              <span
-                style={{
-                  color: "#FFF",
-                  fontFamily: "Manrope",
-                  fontSize: "12px",
-                  fontWeight: "500",
-                }}
-              >
-                Add
-              </span>
-            </button>
-          </div>
-          </form>
+            onChange={handleInputChange}
+            type="text"
+            name="name"
+            value={formData.name}
+            placeholder="Enter Name"
+            aria-expanded="false"
+            required
+          />
         </div>
       </div>
+      <div style={{ marginBottom: "23px", width: "100%" }}>
+        <div className="dropdown" id="selectClass">
+          <button
+            className="btn btn-secondary dropdown-toggle"
+            style={{
+              width: "100%",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              backgroundColor: "transparent",
+              border: "1px solid #ECEDF1",
+              borderRadius: "8px",
+            }}
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            {selectedClass.className
+              ? selectedClass.className
+              : "Select Class"}
+          </button>
+          <ul
+            className="dropdown-menu"
+            style={{
+              width: "100%",
+              maxHeight: "150px",
+              overflowY: "scroll",
+            }}
+          >
+            {getClass.map((item) => (
+              <li key={item.class_id}>
+                <button
+                  className="dropdown-item"
+                  onClick={() =>
+                    handleClassSelected({
+                      id: item.class_id,
+                      className: item.class,
+                    })
+                  }
+                >
+                  {item.class}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+      <div style={{ marginBottom: "23px", width: "100%" }}>
+        <div className="dropdown" id="selectSection">
+          <button
+            className="btn btn-secondary dropdown-toggle"
+            style={{
+              width: "100%",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              backgroundColor: "transparent",
+              border: "1px solid #ECEDF1",
+              borderRadius: "8px",
+            }}
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            {selectedSections.length
+              ? selectedSections
+                  .map((section) => section.section)
+                  .join(", ")
+              : "Select Section"}
+          </button>
+          <ul
+            className="dropdown-menu"
+            style={{
+              width: "100%",
+              maxHeight: "150px",
+              overflowY: "scroll",
+            }}
+          >
+            <li>
+              <button
+                className="dropdown-item"
+                onClick={handleSelectAllSections}
+              >
+                <input
+                  type="checkbox"
+                  checked={isAllSectionsSelected}
+                  readOnly
+                  style={{ marginRight: "8px" }}
+                />
+                Select All
+              </button>
+            </li>
+            {getSection.map((section) => (
+              <li key={section.id}>
+                <button
+                  className="dropdown-item"
+                  onClick={() => handleSectionSelected(section)}
+                >
+                  <input
+                    type="checkbox"
+                    checked={isSelectedSection(section)}
+                    readOnly
+                    style={{ marginRight: "8px" }}
+                  />
+                  {section.section}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+      <button
+        type="submit"
+        className="btn btn-primary"
+        style={{
+          borderRadius: "8px",
+          width: "100%",
+          padding: "10px",
+          fontSize: "16px",
+          fontWeight: "600",
+        }}
+      >
+        Add Fee Group
+      </button>
+    </form>
+  </div>
+</div>
+
     </div>
   );
 };

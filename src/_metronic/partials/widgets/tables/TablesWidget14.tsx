@@ -6,13 +6,12 @@ import { DOMAIN } from "../../../../app/routing/ApiEndpoints.tsx";
 import { AddFeesMasterModal } from "../../modals/create-app-stepper/AddFeesMasterModal.tsx";
 import AssignFeesMaster from "../../modals/create-app-stepper/AssignFeesMaster.tsx";
 
-
 // Define interfaces
 interface FeeItem {
   fee_type: string;
   fee_amount: number;
   fee_id: number;
-  fee_group_session_id:number;
+  fee_group_session_id: number;
 }
 
 interface GroupedData {
@@ -34,31 +33,28 @@ const TablesWidget14: React.FC = () => {
   const [feeId, setFeeId] = useState<number | null>(null);
   const [classId, setClassId] = useState<string | null>(null);
 
-
   const handleShowEditModal = (id: number) => {
     setFeeId(id);
     setShowEditModal(true);
   };
 
   const handleShowAssignModal = (classId: string) => {
-    
     // Find the group with the matching classId
-    const selectedGroup = feeData.find(group => group.class_id === classId);
+    const selectedGroup = feeData.find((group) => group.class_id === classId);
     if (selectedGroup) {
       console.log(selectedGroup);
-      
+
       // Extract fee group ID from the selected group
       const feeGroupId = selectedGroup.fee_group_id; // Assuming fee_group_id is directly on selectedGroup
       const feeGroupSessionId = selectedGroup.fee_group_session_id; // Assuming fee_group_id is directly on selectedGroup
-      
+
       // Collect fee details including fee_id and fee_name
-      const feeDetails = selectedGroup.fees.map(fee => ({
-        
-        fee_id: fee.fee_id,       // Use the correct property name here
-        fee_name: fee.fee_type,   // Use the correct property name here
+      const feeDetails = selectedGroup.fees.map((fee) => ({
+        fee_id: fee.fee_id, // Use the correct property name here
+        fee_name: fee.fee_type, // Use the correct property name here
         fee_group_id: feeGroupId,
         fee_amount: fee.fee_amount,
-        fee_group_session_id: feeGroupSessionId // Set fee_group_id to the extracted value
+        fee_group_session_id: feeGroupSessionId, // Set fee_group_id to the extracted value
       }));
 
       // console.log(feeData);
@@ -70,7 +66,7 @@ const TablesWidget14: React.FC = () => {
       // Update state
       // setSelectedFeeGroupId(feeGroupId); // Store fee group ID
       setClassId(classId);
-      setSelectedFeeDetails(feeDetails);        // Store fee IDs as an array
+      setSelectedFeeDetails(feeDetails); // Store fee IDs as an array
       setShowAssignModal(true);
     } else {
       console.error(`No group found with classId: ${classId}`);
@@ -110,36 +106,42 @@ const TablesWidget14: React.FC = () => {
         setData(data);
 
         // Grouping fee data by fee_group_id
-        const groupedData: GroupedData[] = Object.values(data.reduce((acc: any, item: any) => {
-          const {
-            fee_group_id,
-            fee_group_session_id,
-            fee_group_name,
-            fee_type,
-            fee_amount,
-            fee_id,
-            class_id,
-          } = item;
-
-          if (!acc[class_id]) {
-            acc[class_id] = {
-              name: fee_group_name,
-              class_id: class_id,
-              fees: [{ fee_type, fee_amount, fee_id }],
+        const groupedData: GroupedData[] = Object.values(
+          data.reduce((acc: any, item: any) => {
+            const {
               fee_group_id,
-              fee_group_session_id  // Added this to group by fee_group_id
-            };
-          } else {
-            acc[class_id].fees.push({
+              fee_group_session_id,
+              fee_group_name,
               fee_type,
               fee_amount,
               fee_id,
-            });
-          }
+              class_id,
+            } = item;
 
-          return acc;
-        }, {}));
+            // Create a unique key combining class_id and fee_group_id
+            const key = `${class_id}-${fee_group_id}`;
 
+            if (!acc[key]) {
+              acc[key] = {
+                name: fee_group_name,
+                class_id: class_id,
+                fee_group_id: fee_group_id,
+                fee_group_session_id: fee_group_session_id,
+                fees: [{ fee_type, fee_amount, fee_id }],
+              };
+            } else {
+              acc[key].fees.push({
+                fee_type,
+                fee_amount,
+                fee_id,
+              });
+            }
+
+            return acc;
+          }, {})
+        );
+
+        // Convert the accumulated data to an array for use
         setFeeData(groupedData);
       } catch (error) {
         console.error("Error fetching fee data:", error);
@@ -170,7 +172,7 @@ const TablesWidget14: React.FC = () => {
         <table
           style={{
             top: "223px",
-            height: "612px",
+            height: "812px",
             maxHeight: "100%",
             borderCollapse: "collapse",
             // tableLayout: "fixed",
@@ -584,7 +586,9 @@ const TablesWidget14: React.FC = () => {
                         display: "flex",
                         alignItems: "center",
                       }}
-                      onClick={() => handleShowAssignModal(group.class_id, group.id)}
+                      onClick={() =>
+                        handleShowAssignModal(group.class_id, group.id)
+                      }
                     >
                       <span
                         style={{
