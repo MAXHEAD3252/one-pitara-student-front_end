@@ -115,6 +115,7 @@ const TablesWidget59: React.FC = () => {
     return date.toLocaleDateString("en-GB", options);
   };
 
+  console.log(data)
   return (
     <div
       className="col-xxl-12"
