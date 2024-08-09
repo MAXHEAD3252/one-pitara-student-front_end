@@ -383,7 +383,7 @@ const CreateCollectFees = ({
                                   <input
                                     id={`adjustment-${groupName}-${index}`}
                                     type="number"
-                                    value={item.adjustment}
+                                    value={''}
                                     onChange={(e) =>
                                       handleAdjustmentChange(
                                         groupName,

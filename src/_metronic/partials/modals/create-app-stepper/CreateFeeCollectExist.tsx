@@ -1,57 +1,96 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useEffect, useState } from "react";
-import { Tooltip as ReactTooltip } from "react-tooltip";
-import "../../../../app/pages/StaffPages/FeeDetails/style.css";
-// import { CreateWalkinEnquiry } from "../../modals/create-app-stepper/CreateWalkinEnquiry";
-import { CreateFeeCollectExist } from "../../modals/create-app-stepper/CreateFeeCollectExist";
-import { CreateStartAdmissionProcess } from "../../modals/create-app-stepper/CreateStartAdmissionProcess";
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
+import { Modal, Button } from "react-bootstrap";
 import { useAuth } from "../../../../app/modules/auth/core/Auth";
 import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
+import React from "react";
+import { CreateCollectFees } from "./CreateCollectFees";
+
+type Props = {
+  show: boolean;
+  handleClose: () => void;
+  feeGroup_id: string | undefined;
+  setRefresh: (refresh: boolean) => void;
+};
+
+// interface FeeType {
+//   fee_type_id: number;
+//   fee_type_name: string;
+//   amount: string;
+//   due_date: string;
+// }
+
+// interface FeeGroup {
+//   fee_group_id: number;
+//   fee_group_name: string;
+//   fee_session_group_id:string;
+//   fees: FeeType[];
+// }
+
+// interface ApplicationData {
+//   fee_group_id: number;
+//   fee_type_id: number;
+//   fee_session_group_id:string;
+//   fee_group_name: string;
+//   fee_type_name: string;
+//   amount: string;
+//   due_date: string;
+//   adjustment: string;
+//   is_active: string;
+//   checked: boolean;
+// }
+
+
+
 
 interface DataItem {
-  status: string;
-  name: string;
-}
-interface FilterData {
+    status: string;
+    name: string;
+  }
 
-}
+  interface FilterData {
+    student_email: string;
+    student_name: string;
+    id: number;
+    enquiry_id: string;
+    date: string;
+    class: string;
+    name: string;
+    source: string;
+    email: string;
+    follow_up_date: string;
+    status: string;
+    enquiry_type: string;
+    updated_at : string;
+    student_phone : string;
+  
+  }
 
-const TablesWidget62: React.FC = () => {
-  const [data, setData] = useState<DataItem[]>([]);
 
-  const [filteredData, setFilteredData] = useState<FilterData[]>([]);
+const modalsRoot = document.getElementById("root-modals") || document.body;
 
-  const [searchQuery, setSearchQuery] = useState(0);
+const CreateFeeCollectExist = ({
+  show,
+  handleClose,
+  feeGroup_id,
+  setRefresh,
+}: Props) => {
+
   const { currentUser } = useAuth();
   const schoolId = currentUser?.school_id;
-
-  // const [showModal, setShowModal] = useState(false);
+  const [data, setData] = useState<DataItem[]>([]);
+  const [filteredData, setFilteredData] = useState<FilterData[]>([]);
   const [showActionModal, setShowActionModal] = useState(false);
-  const [feeGroup_id, setFeeGroup_id] = useState("");
-  const [referesh, setRefresh] = useState(false);
-  
-
-  // const handleModal = () => {
-  //   setShowModal(true);
-  // };
-  // const handleModalClose = () => {
-  //   setShowModal(false);
-  // };
-
-  const handleActionModal = (value: string) => {
-    setFeeGroup_id(value);
-    setShowActionModal(true);
-  };
-  const handleActionModalClose = () => {
-    setShowActionModal(false);
-  };
 
 
-  useEffect(() => {
+  const fee_group_id = feeGroup_id;
+
+useEffect(() => {
+    console.log(fee_group_id)
     const fetchEnquiries = async () => {
       try {
         const response = await fetch(
-          `${DOMAIN}/api/staff/get-collectfee/${schoolId}`
+          `${DOMAIN}/api/staff/get-studentcollectfee/${schoolId}/${fee_group_id}`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch data");
@@ -67,49 +106,90 @@ const TablesWidget62: React.FC = () => {
 
     fetchEnquiries();
     setRefresh(false);
-  }, [schoolId,referesh]);
+  }, [schoolId,feeGroup_id]);
 
-  const handleSearch = (e: any) => {
-    const query = e.target.value.toLowerCase();
-    setSearchQuery(query);
 
-    const filtered = data.filter(
-      (item) =>
-        item.status.toLowerCase().includes(query) ||
-        item.name.toLowerCase().includes(query)
-    );
-    /* @ts-ignore */
-    setFilteredData(filtered);
+// console.log(filteredData)
+  
+  const handleClick = async () => {
+   
+
   };
 
-  const formatDate = (dateString: string | number | Date) => {
-    const options = { year: "numeric", month: "2-digit", day: "2-digit" };
+
+
+  const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    /* @ts-ignore */
-    return date.toLocaleDateString("en-GB", options);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+  const handleActionModal = (value: string) => {
+    setShowActionModal(true);
+  };
+  const handleActionModalClose = () => {
+    setShowActionModal(false);
   };
 
-
-
-
-  return (
-    <div
-      className="col-xxl-12"
-      style={{
-        borderRadius: "16px",
-        border: "1px solid #5D637A",
-        overflowX: "hidden",
-        minHeight: "100%",
-        marginBottom: "20px",
-        height: "770px",
-        display: "flex",
-        flexDirection: "column",
-        fontFamily: "Manrope",
-        maxWidth: "100%",
-        overflow: "hidden",
-      }}
+  return createPortal(
+    <Modal
+      id="kt_modal_create_app"
+      tabIndex={-1}
+      size="lg"
+      aria-hidden="true"
+      dialogClassName="modal-dialog modal-dialog-centered mw-1000px"
+      show={show}
+      onHide={handleClose}
     >
-      <div style={{ width: "auto", height: "100%", overflow: "hidden" }}>
+      <div
+        className="modal-content"
+        style={{ padding: "20px 5px", borderRadius: "17px" }}
+      >
+        <div
+          className="modal-header border-0"
+          style={{ width: "100%", height: "27px" }}
+        >
+          <span
+            className=""
+            id="staticBackdropLabel"
+            style={{
+              justifyContent: "center",
+              textAlign: "center",
+              alignItems: "center",
+              fontSize: "24px",
+              fontWeight: "600",
+              fontFamily: "Manrope",
+            }}
+          >
+            Collect Fees
+          </span>
+          <span
+            data-bs-dismiss="modal"
+            onClick={handleClose}
+            aria-label="Close"
+          >
+            <svg
+              width="32"
+              height="32"
+              viewBox="0 0 32 32"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <circle cx="16" cy="16" r="16" fill="#ECECEC" />
+              <path
+                d="M22.8572 9.14294L9.14288 22.8572M9.14288 9.14294L22.8572 22.8572"
+                stroke="#464646"
+                strokeWidth="2"
+                strokeLinecap="square"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </span>
+        </div>
+        <hr />
+        <div className="modal-body" style={{ padding: "20px" }}>
+          <div style={{ width: "auto", height: "100%", overflow: "hidden" }}>
         <table
           //   className="col-xxl-12"
           style={{
@@ -149,7 +229,7 @@ const TablesWidget62: React.FC = () => {
                   flexDirection: "row",
                   justifyContent: "space-between",
                   // tableLayout: "fixed",
-                  // borderCollapse: "collapse",
+                  // borderCollapse: "collapse",  
 
                   // border:'1px solid'
                   width: "98%",
@@ -165,7 +245,7 @@ const TablesWidget62: React.FC = () => {
                       fontFamily: "Manrope",
                     }}
                   >
-                    Fee Collect
+                    Admission Fees
                   </span>
                 </div>
                 <div
@@ -229,8 +309,8 @@ const TablesWidget62: React.FC = () => {
                       placeholder="Search ...."
                       aria-label="Search"
                       aria-describedby="addon-wrapping"
-                      onChange={handleSearch}
-                      value={searchQuery}
+                    //   onChange={handleSearch}
+                    //   value={searchQuery}
                     />
                   </div>
                 </div>
@@ -255,7 +335,7 @@ const TablesWidget62: React.FC = () => {
               }}
             >
               <th>
-                <div style={{ width: "500px" }}>
+                <div style={{ width: "150px" }}>
                   <span
                     style={{
                       fontSize: "13px",
@@ -264,12 +344,32 @@ const TablesWidget62: React.FC = () => {
                       color: "#FFFFFF",
                     }}
                   >
-                    Class
+                    Appliation Id
                   </span>
                 </div>
               </th>
               <th>
-                <div style={{ width: "700px" }}>
+                <div style={{ width: "270px" }}>
+                  <span
+                    style={{
+                      fontSize: "13px",
+                      fontWeight: "600",
+                      lineHeight: "18px",
+                      color: "#FFFFFF",
+                    }}
+                  >
+                    Student Name
+                  </span>
+                </div>
+              </th>
+              
+        
+              <th>
+                <div
+                  style={{
+                    width: "120px",
+                  }}
+                >
                   <span
                     style={{
                       fontSize: "13px",
@@ -279,16 +379,15 @@ const TablesWidget62: React.FC = () => {
                       fontFamily: "Manrope",
                     }}
                   >
-                    Fee Group
+                    Status
                   </span>
                 </div>
               </th>
-              
 
               <th>
                 <div
                   style={{
-                    width: "200px",
+                    width: "80px",
                     // textAlign:'left'
                     // border:'1px solid',
                     display: "flex",
@@ -304,7 +403,7 @@ const TablesWidget62: React.FC = () => {
                       color: "#FFFFFF",
                     }}
                   >
-                    Action
+                    Actions
                   </span>
                 </div>
               </th>
@@ -340,7 +439,7 @@ const TablesWidget62: React.FC = () => {
                 <td>
                   <div
                     style={{
-                      width: "400px",
+                      width: "100px",
                       display: "flex",
                       justifyContent: "start",
                       flexDirection: "column",
@@ -357,14 +456,15 @@ const TablesWidget62: React.FC = () => {
                         // border:'1px solid'
                       }}
                     >
-                      {item.class}
+                      {item.id}
+                      {/* {formatDate(item.date)} */}
                     </span>
                   </div>
                 </td>
                 <td>
                   <div
                     style={{
-                      width: "890px",
+                      width: "280px",
                       display: "flex",
                       justifyContent: "start",
                       flexDirection: "column",
@@ -379,7 +479,7 @@ const TablesWidget62: React.FC = () => {
                         fontFamily: "Manrope",
                       }}
                     >
-                      {item.fee_group_name}
+                      {item.student_name}
                     </span>
                   </div>
                 </td>
@@ -387,7 +487,45 @@ const TablesWidget62: React.FC = () => {
                 <td>
                   <div
                     style={{
-                      width: "200px",
+                      width: "120px",
+                      display: "flex",
+                      justifyContent: "start",
+                      flexDirection: "column",
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontSize: "14px",
+                        width: "100%",
+                        textAlign: "center",
+                        borderRadius: "5px",
+                        padding: "5px",
+                        marginTop: "-8px",
+                        fontWeight: "500",
+                        lineHeight: "18px",
+                        fontFamily: "Manrope",
+                        color:
+                          item.status === "active"
+                            ? "#4BCD60"
+                            : item.status === "lost"
+                            ? "#000000"
+                            : "#ED5578",
+                        backgroundColor:
+                          item.status === "active"
+                            ? "#E7FFEA"
+                            : item.status === "lost"
+                            ? "#FF8B20"
+                            : "#FFE7E1",
+                      }}
+                    >
+                      {item.status}
+                    </span>
+                  </div>
+                </td>
+                <td>
+                  <div
+                    style={{
+                      width: "140px",
                       display: "flex",
                       justifyContent: "space-around ",
                       flexDirection: "row",
@@ -400,29 +538,34 @@ const TablesWidget62: React.FC = () => {
                       type="button"
                       className="btn"
                       style={{
-                        backgroundColor: "#1F3259",
+                        border: "1px solid #1F3259",
                         fontFamily: "Manrope",
                         fontSize: "12px",
                         fontWeight: "600",
-                        color: "#FFF",
+                        color: "#1F3259",
                       }}
-                      onClick={() => handleActionModal(item.fee_group_id)}
+                      onClick={() => handleActionModal(fee_group_id)}
                     >
-                      Collect
+                      Collect Fees
                     </button>
-                    
                   </div>
                 </td>
               </tr>
             ))}
           </tbody>
-          {/* <CreateWalkinEnquiry show={showModal} handleClose={handleModalClose} /> */}
-          <CreateFeeCollectExist show={showActionModal} handleClose={handleActionModalClose} feeGroup_id={feeGroup_id} setRefresh={setRefresh}/>
-          {/* <CreateStartAdmissionProcess show={showEditModal} handleClose={handleModalEditClose} feeGroup_id={feeGroup_id} /> */}
+          <CreateCollectFees
+            show={showActionModal}
+            handleClose={handleActionModalClose}
+            feeGroup_id={feeGroup_id}
+            setRefresh={setRefresh}
+          /> 
         </table>
       </div>
-    </div>
+        </div>
+      </div>
+    </Modal>,
+    modalsRoot
   );
 };
 
-export { TablesWidget62 };
+export { CreateFeeCollectExist };
