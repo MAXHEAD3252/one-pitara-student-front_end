@@ -9,6 +9,7 @@ interface AssignFeesMasterProps {
   show: boolean;
   onHide: () => void;
   classId: string | null;
+  groupName: string | null;
   schoolId: string | undefined;
   feeDetails: FeeDetail[];
 }
@@ -32,6 +33,7 @@ const AssignFeesMaster: React.FC<AssignFeesMasterProps> = ({
   show,
   onHide,
   classId,
+  groupName,
   schoolId,
   feeDetails
 }) => {
@@ -41,7 +43,10 @@ const AssignFeesMaster: React.FC<AssignFeesMasterProps> = ({
   const [selectAll, setSelectAll] = useState(false);
   const { currentUser } = useAuth();
   const userId = currentUser?.id;
+
+
 console.log(feeDetails);
+console.log(groupName);
 
 
   useEffect(() => {
@@ -111,7 +116,7 @@ console.log(feeDetails);
         schoolId
       }))
     );
-    
+
     try {
       await fetch(`${DOMAIN}/api/staff/add-studentfeesmaster`, {
         method: 'POST',
@@ -177,6 +182,44 @@ console.log(feeDetails);
         </div>
         <div className="modal-body" style={{ overflow: 'auto' }}>
           <form>
+            <span style={{fontSize:'12px',}}> <strong>Group Name: </strong> {groupName}</span>
+            <br/>
+            <strong>Fee Type: </strong>
+
+              {feeDetails.map((fee, idx) => (
+                
+                      <div
+                        key={idx}
+                        style={{
+                          height: "30px",
+                          width: "fit-content",
+                          display: "inline-flex",
+                          flexDirection: "row",
+                          padding: "0px 6px",
+                          gap: "0px",
+                          alignItems: "center",
+                        }}
+                      >
+                        <div
+                          style={{
+                            width: "fit-content",
+                            height: "36px",
+                            display: "flex",
+                            flexDirection: "row",
+                            gap: "10px",
+                            padding: "10px 6px 10px 6px",
+                            alignItems: "center",
+                            textAlign: "start",
+                          }}
+                        >
+                          <span className="text-gray-900" style={{marginRight:'2px',}}>
+                            {
+                              /* @ts-ignore */
+                              ` ${fee.fee_name},`
+                            }
+                          </span>
+                          </div>
+                          </div>))}
             <div className="table-container">
               <table className="table table-striped">
                 <thead>

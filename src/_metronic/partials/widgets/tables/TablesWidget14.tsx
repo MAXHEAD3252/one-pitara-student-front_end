@@ -38,6 +38,7 @@ const TablesWidget14: React.FC = () => {
   // const [selectedFeeGroupId, setSelectedFeeGroupId] = useState<number>(0);
   const [feeId, setFeeId] = useState<number | null>(null);
   const [classId, setClassId] = useState<string | null>(null);
+  const [groupName, setSetGroupName] = useState<string | null>(null);
 
   
 
@@ -53,16 +54,17 @@ const TablesWidget14: React.FC = () => {
   };
 
 
-  const handleShowAssignModal = (classId: string) => {
+  const handleShowAssignModal = (name: string,classId: string) => {
     // Find the group with the matching classId
-    const selectedGroup = feeData.find((group) => group.class_id === classId);
-    
+    const selectedGroup = feeData.find((group) => group.name === name);
+    console.log(selectedGroup)
     if (selectedGroup) {
 
       // Extract fee group ID from the selected group
       const feeGroupId = selectedGroup.fee_group_id; // Assuming fee_group_id is directly on selectedGroup
       const feeGroupSessionId = selectedGroup.fee_group_session_id; // Assuming fee_group_id is directly on selectedGroup
       const fee_group_type_id = selectedGroup.fee_group_type_id; // Assuming fee_group_id is directly on selectedGroup
+      const fee_group_name = selectedGroup.name; // Assuming fee_group_id is directly on selectedGroup
 
       // Collect fee details including fee_id and fee_name
       const feeDetails = selectedGroup.fees.map((fee) => ({
@@ -74,14 +76,13 @@ const TablesWidget14: React.FC = () => {
         fee_group_type_id: fee_group_type_id, 
       }));
 
-     
-
       // Extract fee IDs from fee details
       // const feeIds = feeDetails.map(fee => fee.fee_id);
 
       // Update state
       // setSelectedFeeGroupId(feeGroupId); // Store fee group ID
       setClassId(classId);
+      setSetGroupName(fee_group_name)
       setSelectedFeeDetails(feeDetails); // Store fee IDs as an array
       setShowAssignModal(true);
     } else {
@@ -620,7 +621,7 @@ const TablesWidget14: React.FC = () => {
                         cursor: "pointer",
                       }}
                       onClick={() =>
-                        handleShowAssignModal(group.class_id)
+                        handleShowAssignModal(group.name,group.class_id)
                       }
                     >
                       <svg
@@ -731,6 +732,7 @@ const TablesWidget14: React.FC = () => {
           onHide={handleCloseAssignModal}
           schoolId={schoolId}
           classId={classId}
+          groupName={groupName}
           feeDetails={selectedFeeDetails}
         />
       </div>
