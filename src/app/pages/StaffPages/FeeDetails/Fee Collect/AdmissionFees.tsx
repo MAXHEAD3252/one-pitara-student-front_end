@@ -1,12 +1,11 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+// /* eslint-disable @typescript-eslint/no-unused-vars */
 import { FC, SetStateAction, useState } from "react";
 import { useIntl } from "react-intl";
-import { PageTitle } from "../../../../_metronic/layout/core";
-import { Content } from "../../../../_metronic/layout/components/content";
-import { ToolbarFeeMaster } from "../../../../_metronic/layout/components/toolbar/toolbars";
-import { HeaderWrapper } from "../../../../_metronic/layout/components/header_staff";
-import { TablesWidget58 } from "../../../../_metronic/partials/widgets/tables/TablesWidget58";
-import { TablesWidget59 } from "../../../../_metronic/partials/widgets/tables/TablesWidget59";
+import { PageTitle } from "../../../../../_metronic/layout/core";
+import { Content } from "../../../../../_metronic/layout/components/content";
+import { ToolbarFeeMaster } from "../../../../../_metronic/layout/components/toolbar/toolbars";
+import { HeaderWrapper } from "../../../../../_metronic/layout/components/header_staff";
+import { TablesWidget59 } from "../../../../../_metronic/partials/widgets/tables/TablesWidget59";
 
 const AdmissionFeesPage: FC = () => {
   const [displayComponent, setDisplayComponent] = useState("chart");

@@ -1,25 +1,28 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from "react";
-import { Tooltip as ReactTooltip } from "react-tooltip";
 import "../../../../app/pages/StaffPages/FeeDetails/style.css";
 // import { CreateWalkinEnquiry } from "../../modals/create-app-stepper/CreateWalkinEnquiry";
 import { CreateFeeCollectExist } from "../../modals/create-app-stepper/CreateFeeCollectExist";
 import { CreateStartAdmissionProcess } from "../../modals/create-app-stepper/CreateStartAdmissionProcess";
 import { useAuth } from "../../../../app/modules/auth/core/Auth";
 import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
+import { useNavigate } from "react-router-dom";
 
 interface DataItem {
   status: string;
   name: string;
 }
 interface FilterData {
-
+ id:string;
+ class :string;
 }
 
 const TablesWidget62: React.FC = () => {
   const [data, setData] = useState<DataItem[]>([]);
+  const Navigate = useNavigate();
 
   const [filteredData, setFilteredData] = useState<FilterData[]>([]);
+  
 
   const [searchQuery, setSearchQuery] = useState(0);
   const { currentUser } = useAuth();
@@ -28,6 +31,7 @@ const TablesWidget62: React.FC = () => {
   // const [showModal, setShowModal] = useState(false);
   const [showActionModal, setShowActionModal] = useState(false);
   const [feeGroup_id, setFeeGroup_id] = useState("");
+  const [class_id, setClass_id] = useState('');
   const [referesh, setRefresh] = useState(false);
   
 
@@ -38,10 +42,11 @@ const TablesWidget62: React.FC = () => {
   //   setShowModal(false);
   // };
 
-  const handleActionModal = (value: string) => {
-    setFeeGroup_id(value);
-    setShowActionModal(true);
-  };
+  const handleActionModal = (classId: string) => {
+    setClass_id(classId);
+    Navigate(`/fee-collect/assigned-students?classId=${classId}`);
+};
+
   const handleActionModalClose = () => {
     setShowActionModal(false);
   };
@@ -51,13 +56,12 @@ const TablesWidget62: React.FC = () => {
     const fetchEnquiries = async () => {
       try {
         const response = await fetch(
-          `${DOMAIN}/api/staff/get-collectfee/${schoolId}`
+          `${DOMAIN}/api/staff/get-feeclasses/${schoolId}`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch data");
         }
         const responseData = await response.json();
-        console.log(responseData)
         setData(responseData);
         setFilteredData(responseData);
       } catch (error) {
@@ -77,7 +81,7 @@ const TablesWidget62: React.FC = () => {
       (item) =>
         item.status.toLowerCase().includes(query) ||
         item.name.toLowerCase().includes(query)
-    );
+    );q
     /* @ts-ignore */
     setFilteredData(filtered);
   };
@@ -243,11 +247,12 @@ const TablesWidget62: React.FC = () => {
                 display: "flex",
                 paddingTop: "10px",
                 paddingLeft: "55px",
-                // paddingBottom:'10px',
+                paddingRight:'50px',
                 // position: "sticky",
                 // top: 0,
                 width: "auto",
                 // border:'1px solid white',
+                justifyContent:'space-between',
                 overflowY: "auto",
                 overflowX: "hidden",
                 backgroundColor: "#1C335C",
@@ -268,7 +273,7 @@ const TablesWidget62: React.FC = () => {
                   </span>
                 </div>
               </th>
-              <th>
+              {/* <th>
                 <div style={{ width: "700px" }}>
                   <span
                     style={{
@@ -282,7 +287,7 @@ const TablesWidget62: React.FC = () => {
                     Fee Group
                   </span>
                 </div>
-              </th>
+              </th> */}
               
 
               <th>
@@ -329,12 +334,13 @@ const TablesWidget62: React.FC = () => {
                   height: "61px",
                   gap: "40px",
                   paddingLeft: "55px",
-                  paddingRight: "55px",
+                  paddingRight: "0px",
                   paddingTop: "16px",
-                  width: "100%",
+                  width: "100%",          
                   display: "flex",
                   backgroundColor: index % 2 === 0 ? "#F5F5F5" : "#FFF",
                   // border:'1px solid'
+                  justifyContent:'space-between'
                 }}
               >
                 <td>
@@ -361,7 +367,7 @@ const TablesWidget62: React.FC = () => {
                     </span>
                   </div>
                 </td>
-                <td>
+                {/* <td>
                   <div
                     style={{
                       width: "890px",
@@ -382,7 +388,7 @@ const TablesWidget62: React.FC = () => {
                       {item.fee_group_name}
                     </span>
                   </div>
-                </td>
+                </td> */}
                 
                 <td>
                   <div
@@ -406,7 +412,7 @@ const TablesWidget62: React.FC = () => {
                         fontWeight: "600",
                         color: "#FFF",
                       }}
-                      onClick={() => handleActionModal(item.fee_group_id)}
+                      onClick={() => handleActionModal(item.id)}
                     >
                       Collect
                     </button>
@@ -417,7 +423,7 @@ const TablesWidget62: React.FC = () => {
             ))}
           </tbody>
           {/* <CreateWalkinEnquiry show={showModal} handleClose={handleModalClose} /> */}
-          <CreateFeeCollectExist show={showActionModal} handleClose={handleActionModalClose} feeGroup_id={feeGroup_id} setRefresh={setRefresh}/>
+          {/* <CreateFeeCollectExist show={showActionModal} handleClose={handleActionModalClose} feeGroup_id={feeGroup_id} class_id={class_id} setRefresh={setRefresh}/> */}
           {/* <CreateStartAdmissionProcess show={showEditModal} handleClose={handleModalEditClose} feeGroup_id={feeGroup_id} /> */}
         </table>
       </div>

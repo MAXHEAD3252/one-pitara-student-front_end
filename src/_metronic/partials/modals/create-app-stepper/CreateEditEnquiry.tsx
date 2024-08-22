@@ -272,9 +272,6 @@ const CreateEditEnquiry = ({ show, handleClose, enqId, setRefresh }: Props) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const enquiry_id = enqId;
-    // console.log(changedFields);
-    // return;
-    
 
     try {
       const response = await fetch(
@@ -651,25 +648,25 @@ const CreateEditEnquiry = ({ show, handleClose, enqId, setRefresh }: Props) => {
                     >
                       <select
                         className="form-select"
-                        id="class"
-                        name="class"
+                        id="class_id"
+                        name="class_id"
                         aria-label="Default select example"
                         value={formData.class}
                         onChange={handleChange}
                       >
-                        <option value="class">
+                        <option value="class_id">
                           {formData.class ? formData.class : "Selecr Class"}
                         </option>
                         {classes.map((value) => (
                           <option
                             key={value.id}
-                            value={`${value.id}:${value.class}`}
+                            value={`${value.id}`}
                           >
                             {value.class}
                           </option>
                         ))}
                       </select>
-                      <label htmlFor="Class">Select Class</label>
+                      <label htmlFor="class_id">Select Class</label>
                     </div>
                     <div
                       className="form-floating mb-3"
@@ -749,7 +746,7 @@ const CreateEditEnquiry = ({ show, handleClose, enqId, setRefresh }: Props) => {
                         {sessions.map((value) => (
                           <option
                             key={value.id}
-                            value={`${value.id}:${value.session}`}
+                            value={`${value.session}`}
                           >
                             {value.session}
                           </option>

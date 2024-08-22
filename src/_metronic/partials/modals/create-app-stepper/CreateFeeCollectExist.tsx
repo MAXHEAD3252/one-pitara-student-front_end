@@ -10,6 +10,7 @@ type Props = {
   show: boolean;
   handleClose: () => void;
   feeGroup_id: string | undefined;
+  class_id: string | undefined;
   setRefresh: (refresh: boolean) => void;
 };
 
@@ -73,6 +74,7 @@ const CreateFeeCollectExist = ({
   show,
   handleClose,
   feeGroup_id,
+  class_id,
   setRefresh,
 }: Props) => {
 
@@ -90,7 +92,7 @@ useEffect(() => {
     const fetchEnquiries = async () => {
       try {
         const response = await fetch(
-          `${DOMAIN}/api/staff/get-studentcollectfee/${schoolId}/${fee_group_id}`
+          `${DOMAIN}/api/staff/get-studentcollectfee/${schoolId}/${class_id}`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch data");
@@ -109,7 +111,7 @@ useEffect(() => {
   }, [schoolId,feeGroup_id]);
 
 
-// console.log(filteredData)
+// console.log(filteredData) 
   
   const handleClick = async () => {
    
@@ -322,7 +324,7 @@ useEffect(() => {
                 gap: "40px",
                 display: "flex",
                 paddingTop: "10px",
-                paddingLeft: "55px",
+                paddingLeft: "25px",
                 // paddingBottom:'10px',
                 // position: "sticky",
                 // top: 0,
@@ -335,7 +337,7 @@ useEffect(() => {
               }}
             >
               <th>
-                <div style={{ width: "150px" }}>
+                <div style={{ width: "100px" }}>
                   <span
                     style={{
                       fontSize: "13px",
@@ -367,7 +369,7 @@ useEffect(() => {
               <th>
                 <div
                   style={{
-                    width: "120px",
+                    width: "260px",
                   }}
                 >
                   <span
@@ -427,7 +429,7 @@ useEffect(() => {
                 style={{
                   height: "61px",
                   gap: "40px",
-                  paddingLeft: "55px",
+                  paddingLeft: "25px",
                   paddingRight: "55px",
                   paddingTop: "16px",
                   width: "100%",
@@ -464,7 +466,7 @@ useEffect(() => {
                 <td>
                   <div
                     style={{
-                      width: "280px",
+                      width: "230px",
                       display: "flex",
                       justifyContent: "start",
                       flexDirection: "column",
@@ -548,6 +550,20 @@ useEffect(() => {
                     >
                       Collect Fees
                     </button>
+                    <button
+                      type="button"
+                      className="btn"
+                      style={{
+                        border: "1px solid #1F3259",
+                        fontFamily: "Manrope",
+                        fontSize: "12px",
+                        fontWeight: "600",
+                        color: "#1F3259",
+                      }}
+                      // onClick={() => handleActionModal(fee_group_id)}
+                    >
+                      Send Payment Link
+                    </button>
                   </div>
                 </td>
               </tr>
@@ -556,6 +572,9 @@ useEffect(() => {
           <CreateCollectFees
             show={showActionModal}
             handleClose={handleActionModalClose}
+            // student_id={student_id}
+            // session_id={session_id}
+            // school_id={school_id}
             feeGroup_id={feeGroup_id}
             setRefresh={setRefresh}
           /> 

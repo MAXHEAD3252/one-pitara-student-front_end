@@ -3,6 +3,7 @@ import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
 import { Modal } from "react-bootstrap";
 import './AssignFeesMaster.css'; // Ensure you import the CSS file
 import { useAuth } from "../../../../app/modules/auth/core/Auth";
+import Feedback from "react-bootstrap/esm/Feedback";
 
 interface AssignFeesMasterProps {
   show: boolean;
@@ -12,6 +13,8 @@ interface AssignFeesMasterProps {
   feeDetails: FeeDetail[];
 }
 interface FeeDetail {
+  fee_type_id: any;
+  fee_group_type_id: any;
   fee_id: number;
   fee_name: string;
   fee_group_id: number;
@@ -32,11 +35,13 @@ const AssignFeesMaster: React.FC<AssignFeesMasterProps> = ({
   schoolId,
   feeDetails
 }) => {
+  
   const [students, setStudents] = useState<Student[]>([]);
   const [checkedStudents, setCheckedStudents] = useState<{ [key: string]: { checked: boolean, session_id: string | null } }>({});
   const [selectAll, setSelectAll] = useState(false);
   const { currentUser } = useAuth();
   const userId = currentUser?.id;
+console.log(feeDetails);
 
 
   useEffect(() => {
@@ -97,16 +102,16 @@ const AssignFeesMaster: React.FC<AssignFeesMasterProps> = ({
         studentId,
         studentSessionId,
         feeGroupId: feeDetail.fee_group_id,
-        feeTypeId: feeDetail.fee_id,
+        feeTypeId: feeDetail.fee_type_id,
         fee_group_session_id:feeDetail.fee_group_session_id,
+        fee_group_type_id:feeDetail.fee_group_type_id,
         amount: feeDetail.fee_amount,
         userId: userId,
         session_id:studentSessionId,
         schoolId
       }))
     );
-
-
+    
     try {
       await fetch(`${DOMAIN}/api/staff/add-studentfeesmaster`, {
         method: 'POST',

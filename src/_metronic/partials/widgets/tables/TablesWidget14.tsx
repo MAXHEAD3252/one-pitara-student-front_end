@@ -9,13 +9,17 @@ import { DeleteFeeMasterModal } from "../../modals/create-app-stepper/DeleteFeeM
 
 // Define interfaces
 interface FeeItem {
+  feetype_id: any;
   fee_type: string;
   fee_amount: number;
-  fee_id: number;
+  fee_group_type_id: number;
   fee_group_session_id: number;
 }
 
 interface GroupedData {
+  fee_group_type_id: any;
+  fee_group_session_id: any;
+  fee_group_id: any;
   name: string;
   class_id: string;
   fees: FeeItem[];
@@ -35,9 +39,10 @@ const TablesWidget14: React.FC = () => {
   const [feeId, setFeeId] = useState<number | null>(null);
   const [classId, setClassId] = useState<string | null>(null);
 
+  
+
   const handleShowEditModal = (id: number) => {
     setFeeId(id);
-    console.log(id)
     setShowEditModal(true);
   };
 
@@ -47,29 +52,29 @@ const TablesWidget14: React.FC = () => {
     setShowDeleteModal(true);
   };
 
-console.log(feeData)
 
   const handleShowAssignModal = (classId: string) => {
     // Find the group with the matching classId
     const selectedGroup = feeData.find((group) => group.class_id === classId);
+    
     if (selectedGroup) {
-      console.log(selectedGroup);
 
       // Extract fee group ID from the selected group
       const feeGroupId = selectedGroup.fee_group_id; // Assuming fee_group_id is directly on selectedGroup
       const feeGroupSessionId = selectedGroup.fee_group_session_id; // Assuming fee_group_id is directly on selectedGroup
+      const fee_group_type_id = selectedGroup.fee_group_type_id; // Assuming fee_group_id is directly on selectedGroup
 
       // Collect fee details including fee_id and fee_name
       const feeDetails = selectedGroup.fees.map((fee) => ({
-        fee_id: fee.fee_id, // Use the correct property name here
+        fee_type_id: fee.feetype_id, // Use the correct property name here
         fee_name: fee.fee_type, // Use the correct property name here
         fee_group_id: feeGroupId,
         fee_amount: fee.fee_amount,
         fee_group_session_id: feeGroupSessionId, // Set fee_group_id to the extracted value
+        fee_group_type_id: fee_group_type_id, 
       }));
 
-      // console.log(feeData);
-      console.log(feeDetails);
+     
 
       // Extract fee IDs from fee details
       // const feeIds = feeDetails.map(fee => fee.fee_id);
@@ -88,7 +93,6 @@ console.log(feeData)
     setShowCreateModal(true);
   };
 
-console.log(feeData)
 
 
   // Handlers to hide modals
@@ -102,9 +106,9 @@ console.log(feeData)
   };
 
   const handleCloseAssignModal = () => {
-    setShowAssignModal(false);
-    setClassId(null);
     setSelectedFeeDetails([]); // Initialize to empty array instead of null
+    setClassId(null);
+    setShowAssignModal(false);
   };
 
 
@@ -124,6 +128,8 @@ console.log(feeData)
         }
         const data = await response.json();
         setData(data);
+        console.log(data);
+        
 
         // Grouping fee data by fee_group_id
         const groupedData: GroupedData[] = Object.values(
@@ -134,8 +140,9 @@ console.log(feeData)
               fee_group_name,
               fee_type,
               fee_amount,
-              fee_id,
+              feetype_id,
               class_id,
+              fee_group_type_id
             } = item;
 
             // Create a unique key combining class_id and fee_group_id
@@ -147,13 +154,15 @@ console.log(feeData)
                 class_id: class_id,
                 fee_group_id: fee_group_id,
                 fee_group_session_id: fee_group_session_id,
-                fees: [{ fee_type, fee_amount, fee_id }],
+                fee_group_type_id : fee_group_type_id, 
+                fees: [{ fee_type, fee_amount, feetype_id
+                }],
               };
             } else {
               acc[key].fees.push({
                 fee_type,
                 fee_amount,
-                fee_id,
+                feetype_id,
               });
             }
 
@@ -528,7 +537,7 @@ console.log(feeData)
                               //  onClick={() => handleOpenModal(fee.fid)} // Replace fee.id with the actual id
                               /* @ts-ignore */
 
-                              onClick={() => handleShowEditModal(fee.fee_id)} // Replace fee.id with the actual id
+                              onClick={() => handleShowEditModal(fee.fee_group_type_id)} // Replace fee.id with the actual id
                               style={{
                                 background: "none",
                                 border: "none",
@@ -563,7 +572,7 @@ console.log(feeData)
                           </div>
                         </div>
                         <div
-                      onClick={() =>handleShowDeleteModal(fee.fee_id)}
+                      onClick={() =>handleShowDeleteModal(fee.fee_group_type_id)}
                         >
                           <svg
                             width="14"

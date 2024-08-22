@@ -79,10 +79,11 @@ import { EmployeeManagement } from "../pages/StaffPages/HumanResource/EmployeeMa
 import { EnquiryManagement } from "../pages/StaffPages/FrontOffice/EnquiryManagment";
 import { AdmissionEnquiry } from "../pages/StaffPages/AdmissionsAndEnrollment/AdmissionEnquiry";
 import { ApplicationReview } from "../pages/StaffPages/AdmissionsAndEnrollment/ApplicationReview";
-import { AdmissionFees } from "../pages/StaffPages/FeeDetails/AdmissionFees";
+import { AdmissionFees } from "../pages/StaffPages/FeeDetails/Fee Collect/AdmissionFees";
 import { FeeType } from "../pages/StaffPages/FeeDetails/FeeType";
 import { FeeGroup } from "../pages/StaffPages/FeeDetails/FeeGroup";
-import { CollectFees } from "../pages/StaffPages/FeeDetails/CollectFees";
+import { CollectFees } from "../pages/StaffPages/FeeDetails/Fee Collect/CollectFees";
+import { AssignedStudent } from "../pages/StaffPages/FeeDetails/Fee Collect/AssignedStudent";
 // import {CourseContent} from "../pages/StudentPages/CourseContent";
 
 export const routesConfig = {
@@ -529,6 +530,10 @@ export const routesConfig = {
       path: "/fee-collect",
       component: CollectFees,
       sidebarName: "Fee Collect",
+    },
+    {
+      path: "/fee-collect/assigned-students",
+      component: AssignedStudent,
     },
     {
       path: "/fee-master/assign-master",
