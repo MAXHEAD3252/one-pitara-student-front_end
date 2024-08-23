@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 // import { Tooltip as ReactTooltip } from "react-tooltip";
 import "../../../../app/pages/StaffPages/FeeDetails/style.css";
 // import { CreateWalkinEnquiry } from "../../modals/create-app-stepper/CreateWalkinEnquiry";
-// import { CreateEnquiryAction } from "../../modals/create-app-stepper/CreateEnquiryAction";
-// import { CreateEditEnquiry } from "../../modals/create-app-stepper/CreateEditEnquiry";
+import { DeleteFeeTypeModal } from "../../modals/create-app-stepper/DeleteFeeTypeModal";
+import { CreateEditFeeType } from "../../modals/create-app-stepper/CreateEditFeeType";
 import { useAuth } from "../../../../app/modules/auth/core/Auth";
 // import { UploadsFilter } from "../../modals/create-app-stepper/UploadsFilter";
 // import { AddClasses } from "../../modals/create-app-stepper/AddClasses";
@@ -20,8 +20,13 @@ interface DataItem {
 
 const TablesWidget60 = () => {
     const [data, setData] = useState<DataItem[]>([]);
+  const [showEditModal, setShowEditModal] = useState<boolean>(false);
+  const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
+  const [referesh, setReferesh] = useState(false);
   const { currentUser } = useAuth();
-
+  const [fee_type_id, setfee_type_id] = useState<number | null>(null);
+  const [fee_type_name, setfee_type_name] = useState<string>('');
+  const [fee_type_code, setfee_type_code] = useState<string>('');
   const schoolId = (currentUser as unknown as CurrentUser)?.school_id;
 
   const [formData, setFormData] = useState({
@@ -30,7 +35,34 @@ const TablesWidget60 = () => {
     description: '',
   });
 
-  
+
+  const handleShowEditModal = (fee_type_id: number,name : string, feecode : string) => {
+    setfee_type_id(fee_type_id);
+    setfee_type_name(name)
+    setfee_type_code(feecode)
+    setShowEditModal(true);
+  };
+
+  const handleShowDeleteModal = (fee_type_id: number) =>{
+    setfee_type_id(fee_type_id)
+    setShowDeleteModal(true);
+  }
+
+
+  const handleCloseDeleteModal = () => {
+    setShowDeleteModal(false);
+    setfee_type_id(null);
+  };
+
+
+  const handleCloseEditModal = () => {
+    setShowEditModal(false);
+    setfee_type_id(null);
+    setfee_type_name('')
+    setfee_type_code('')
+  };
+
+
 
   useEffect(() => {
     const fetchEnquiries = async () => {
@@ -43,7 +75,6 @@ const TablesWidget60 = () => {
         }
         const responseData = await response.json();
         console.log(responseData);
-
         setData(responseData);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -51,8 +82,9 @@ const TablesWidget60 = () => {
     };
 
     fetchEnquiries();
-    // setRefresh(false);
-  }, [schoolId]);
+    setReferesh(false);
+
+  }, [schoolId,referesh]);
 
 //   const handleSearch = (e: any) => {
 //     const query = e.target.value.toLowerCase();
@@ -94,6 +126,7 @@ const handleSubmit = async (e) => {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
     const data = await response.json();
+    setReferesh(true);
     console.log('Response:', data);
   } catch (error) {
     console.error('Error:', error);
@@ -404,7 +437,7 @@ const handleSubmit = async (e) => {
                           fontWeight: "600",
                           color: "#FFF",
                         }}
-                        // onClick={() => handleModalEdit(item.id)}
+                        onClick={() => handleShowEditModal(item.id,item.type,item.code)}
                       >
                         Edit
                       </button>
@@ -418,7 +451,7 @@ const handleSubmit = async (e) => {
                           fontWeight: "600",
                           color: "#1F3259",
                         }}
-                        // onClick={() => handleActionModal(item.id)}
+                        onClick={() => handleShowDeleteModal(item.id)}
                       >
                         Delete
                       </button>
@@ -441,6 +474,9 @@ const handleSubmit = async (e) => {
           </table>
         </div>
       </div>
+
+
+      
       <div
         className="col-xxl-4"
         style={{
@@ -639,6 +675,20 @@ const handleSubmit = async (e) => {
           </div>
           </form>
         </div>
+        <CreateEditFeeType
+          show={showEditModal}
+          handleClose={handleCloseEditModal}
+          fee_type_id={fee_type_id}
+          fee_type_name = {fee_type_name}
+          fee_type_code = {fee_type_code}
+          setReferesh = {setReferesh}
+        />
+        <DeleteFeeTypeModal
+          show={showDeleteModal}
+          onHide={handleCloseDeleteModal}
+          fee_type_id={fee_type_id}
+          setReferesh = {setReferesh}
+        />
       </div>
     </div>
   );

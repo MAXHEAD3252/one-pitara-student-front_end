@@ -366,7 +366,7 @@ const TablesWidget57: React.FC = () => {
                       fontFamily: "Manrope",
                     }}
                   >
-                    FollowUp-Date
+                    Student Phone
                   </span>
                 </div>
               </th>
@@ -582,7 +582,7 @@ const TablesWidget57: React.FC = () => {
                 <td>
                   <div
                     style={{
-                      width: "140px",
+                      width: "120px",
                       display: "flex",
                       justifyContent: "start",
                       flexDirection: "column",
@@ -619,7 +619,7 @@ const TablesWidget57: React.FC = () => {
                     <span
                       style={{
                         fontSize: "14px",
-                        width: "50px",
+                        width: "100px",
                         textAlign: "center",
                         borderRadius: "5px",
                         padding: "5px",
@@ -628,17 +628,23 @@ const TablesWidget57: React.FC = () => {
                         lineHeight: "18px",
                         fontFamily: "Manrope",
                         color:
-                          item.status === "active"
-                            ? "#4BCD60"
-                            : item.status === "lost"
-                            ? "#000000"
-                            : "#ED5578",
+                          item.status === "isReviewed"
+                            ? "black"
+                            : item.status === "isCompleted"
+                            ? "black"
+                            : item.status === "isRejected"
+                            ? "black"
+                            : "black",
                         backgroundColor:
-                          item.status === "active"
-                            ? "#E7FFEA"
-                            : item.status === "lost"
-                            ? "#FF8B20"
-                            : "#FFE7E1",
+                          item.status === "isReviewed"
+                            ? "#ffeb9c"
+                            : item.status === "isCompleted"
+                            ? "#d8ff9c"
+                            : item.status === "isRejected"
+                            ? "#fc7865 "
+                            : item.status === "isSubmitted"
+                            ? "#65e8fc"
+                            : "#d1fc65 ",
                       }}
                     >
                       {item.status}

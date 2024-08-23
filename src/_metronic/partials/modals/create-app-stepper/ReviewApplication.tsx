@@ -82,6 +82,7 @@ const handleAccept = async (schoolId: string, enquiryId: string) => {
     const result = await response.json();
     console.log("Application accepted successfully:", result);
     handleClose(); // Close the modal after a successful accept
+    setRefresh(true);
   } catch (error) {
     console.error("Error accepting application:", error);
   } finally {

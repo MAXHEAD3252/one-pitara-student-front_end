@@ -42,14 +42,14 @@ const TablesWidget14: React.FC = () => {
 
   
 
-  const handleShowEditModal = (id: number) => {
-    setFeeId(id);
+  const handleShowEditModal = (fee_group_type_id: number) => {
+    setFeeId(fee_group_type_id);
     setShowEditModal(true);
   };
 
 
-  const handleShowDeleteModal = (id: number) => {
-    setFeeId(id);
+  const handleShowDeleteModal = (fee_group_type_id: number) => {
+    setFeeId(fee_group_type_id);
     setShowDeleteModal(true);
   };
 
@@ -57,7 +57,6 @@ const TablesWidget14: React.FC = () => {
   const handleShowAssignModal = (name: string,classId: string) => {
     // Find the group with the matching classId
     const selectedGroup = feeData.find((group) => group.name === name);
-    console.log(selectedGroup)
     if (selectedGroup) {
 
       // Extract fee group ID from the selected group
@@ -170,7 +169,6 @@ const TablesWidget14: React.FC = () => {
             return acc;
           }, {})
         );
-
         // Convert the accumulated data to an array for use
         setFeeData(groupedData);
       } catch (error) {
@@ -180,6 +178,8 @@ const TablesWidget14: React.FC = () => {
 
     fetchData();
   }, [schoolId]);
+
+
 
   return (
     <div
@@ -538,7 +538,7 @@ const TablesWidget14: React.FC = () => {
                               //  onClick={() => handleOpenModal(fee.fid)} // Replace fee.id with the actual id
                               /* @ts-ignore */
 
-                              onClick={() => handleShowEditModal(fee.fee_group_type_id)} // Replace fee.id with the actual id
+                              onClick={() => handleShowEditModal(group.fee_group_type_id)} // Replace fee.id with the actual id
                               style={{
                                 background: "none",
                                 border: "none",
@@ -573,7 +573,7 @@ const TablesWidget14: React.FC = () => {
                           </div>
                         </div>
                         <div
-                      onClick={() =>handleShowDeleteModal(fee.fee_group_type_id)}
+                      onClick={() =>handleShowDeleteModal(group.fee_group_type_id)}
                         >
                           <svg
                             width="14"

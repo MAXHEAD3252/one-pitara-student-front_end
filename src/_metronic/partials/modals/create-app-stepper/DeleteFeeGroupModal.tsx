@@ -1,31 +1,26 @@
-import { useState } from "react";
-import { createPortal } from "react-dom";
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import React, { useEffect, useState } from "react";
 import { Modal } from "react-bootstrap";
-import { useAuth } from "../../../../app/modules/auth/core/Auth";
-import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
+import { useAuth } from "../../../../app/modules/auth/index.ts";
+import { DOMAIN } from "../../../../app/routing/ApiEndpoints.tsx";
 
 type Props = {
   show: boolean;
-  handleClose: () => void;
-  setRefresh: (refresh: boolean) => void;
-  enqId: string;
+  onHide: () => void;
+  fee_group_id: number | null;
+  setReferesh : any;
 };
 
-const modalsRoot = document.getElementById("root-modals") || document.body;
 
-const CreateAdmissionEnquiryReject = ({ show, handleClose, setRefresh,enqId}: Props) => {
+
+
+const DeleteFeeGroupModal = ({ show, onHide, fee_group_id,setReferesh, }: Props) => {
+  // const [FeeDetails, setFeesDetails] = useState([]);
   const { currentUser } = useAuth();
   const schoolId = currentUser?.school_id;
-  const [formData, setFormData] = useState({ reject_reason: "" });
+  
   const [isConfirmed, setIsConfirmed] = useState(false); // State to track confirmation
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
+  
 
   const handleConfirm = () => {
     setIsConfirmed(true); // Set confirmation state to true
@@ -33,41 +28,39 @@ const CreateAdmissionEnquiryReject = ({ show, handleClose, setRefresh,enqId}: Pr
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const enquiry_id = enqId
+
     try {
       const response = await fetch(
-        `${DOMAIN}/api/staff/application-reject/${schoolId}/${enquiry_id}`,
+        `${DOMAIN}/api/staff/delete-feegroup/${fee_group_id}/${schoolId}`,
         {
-          method: "POST", // Assuming you want to use POST instead of PUT for sending the reject reason
+          method: "POST",
           headers: {
             "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formData),
+          }
         }
       );
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-
       const data = await response.json();
-      console.log("Reject reason sent successfully:", data);
-      setRefresh(true);
-      handleClose();
+      setReferesh(true);
+      onHide();
+      console.log("Deleted Successfully:", data);
     } catch (error) {
-      console.error("Error sending reject reason:", error);
+      console.error("Error in Delete:", error);
     }
   };
 
-  return createPortal(
+  return(
     <Modal
       id="kt_modal_create_app"
       tabIndex={-1}
-      size="lg"
+      size='sm'
       aria-hidden="true"
-      dialogClassName="modal-dialog modal-dialog-centered mw-1000px"
+      dialogClassName="modal-dialog modal-dialog-centered mw-500px"
       show={show}
-      onHide={handleClose}
+      onHide={onHide}
     >
       <div
         className="modal-content"
@@ -89,11 +82,11 @@ const CreateAdmissionEnquiryReject = ({ show, handleClose, setRefresh,enqId}: Pr
               fontFamily: "Manrope",
             }}
           >
-            Enquiry Reject
+            Delete Entry
           </span>
           <span
             data-bs-dismiss="modal"
-            onClick={handleClose}
+            onClick={onHide}
             aria-label="Close"
           >
             <svg
@@ -118,45 +111,33 @@ const CreateAdmissionEnquiryReject = ({ show, handleClose, setRefresh,enqId}: Pr
         <div className="modal-body" style={{ justifyContent: "center" }}>
           {!isConfirmed ? (
             <div style={{ textAlign: "center" }}>
-              <p>Are you sure you want to reject this enquiry?</p>
+              <p>Are you sure you want to Delete this Entry?</p>
               <button className="btn btn-danger" onClick={handleConfirm}>
                 Confirm
               </button>
             </div>
           ) : (
             <form onSubmit={handleSubmit}>
-              <div style={{ marginBottom: "23px" }}>
-                <div className="fv-row mb-10" style={{ display: "flex", gap: "10px" }}>
-                  <div
-                    className="form-floating mb-3"
-                    style={{ display: "flex", flexDirection: "column", width: "100%" }}
-                  >
-                    <input
-                      type="text"
-                      className="form-control"
-                      id="reject_reason"
-                      name="reject_reason"
-                      placeholder="Reject Reason"
-                      value={formData.reject_reason}
-                      onChange={handleChange}
-                      required
-                    />
-                    <label htmlFor="reject_reason">Reject Reason</label>
-                  </div>
-                </div>
-                <div style={{ display: "flex", justifyContent: "end" }}>
+              <div style={{ marginBottom: "23px" , display:'flex', justifyContent:'center',alignItems:'center',}}>
+
+                <div style={{ display: "flex", justifyContent: "end" , marginRight:'5px',}}>
                   <button className="btn btn-danger" type="submit">
-                    Reject
+                    Delete
                   </button>
                 </div>
+                <div style={{ display: "flex", justifyContent: "end", marginLeft:'5px', }}>
+                  <button className="btn btn-danger" type="button" onClick={()=>onHide()}>
+                    Cancel
+                  </button>
+                </div>
+
               </div>
             </form>
           )}
         </div>
       </div>
-    </Modal>,
-    modalsRoot
+    </Modal>
   );
 };
 
-export { CreateAdmissionEnquiryReject };
+export { DeleteFeeGroupModal };
