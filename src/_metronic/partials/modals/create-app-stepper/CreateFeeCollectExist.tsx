@@ -107,7 +107,7 @@ useEffect(() => {
     };
 
     fetchEnquiries();
-    setRefresh(false);
+    setRefresh(true);
   }, [schoolId,feeGroup_id]);
 
 

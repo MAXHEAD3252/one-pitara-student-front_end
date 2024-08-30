@@ -41,6 +41,14 @@ interface DataItem {
 }
 
 interface FilterData {
+  session_id: string;
+  class_id: string;
+  father_phone: string;
+  mobileno: string;
+  dob : string;
+  father_name: string;
+  admission_no: number;
+  section: string;
   student_email: string;
   student_name: string;
   id: number;
@@ -83,13 +91,14 @@ const TablesWidget63 = ({ class_id }: Props) => {
         console.log(responseData);
         setData(responseData);
         setFilteredData(responseData);
+        setRefresh(true)
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
 
     fetchEnquiries();
-  }, [schoolId]);
+  }, [schoolId,referesh]);
 
   // console.log(filteredData)
 
@@ -184,7 +193,7 @@ const TablesWidget63 = ({ class_id }: Props) => {
                       fontFamily: "Manrope",
                     }}
                   >
-                    Admission Fees
+                    Collect Fees
                   </span>
                 </div>
                 <div
@@ -349,7 +358,7 @@ const TablesWidget63 = ({ class_id }: Props) => {
                 </div>
               </th>
               <th>
-                <div style={{ width: "100px" }}>
+                <div style={{ width: "160px" }}>
                   <span
                     style={{
                       fontSize: "13px",
@@ -363,7 +372,7 @@ const TablesWidget63 = ({ class_id }: Props) => {
                 </div>
               </th>
               <th>
-                <div style={{ width: "340px" }}>
+                <div style={{ width: "280px" }}>
                   <span
                     style={{
                       fontSize: "13px",
@@ -582,7 +591,7 @@ const TablesWidget63 = ({ class_id }: Props) => {
                 <td>
                   <div
                     style={{
-                      width: "270px",
+                      width: "320px",
                       display: "flex",
                       justifyContent: "start",
                       flexDirection: "column",
@@ -629,7 +638,7 @@ const TablesWidget63 = ({ class_id }: Props) => {
                     >
                       Collect Fees
                     </button>
-                    <button
+                    {/* <button
                       type="button"
                       className="btn"
                       style={{
@@ -642,7 +651,7 @@ const TablesWidget63 = ({ class_id }: Props) => {
                       // onClick={() => handleActionModal(fee_group_id)}
                     >
                       Send Payment Link
-                    </button>
+                    </button> */}
                   </div>
                 </td>
               </tr>
