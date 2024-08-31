@@ -665,7 +665,6 @@ const TablesWidget63 = ({ class_id }: Props) => {
             session_id={getSession}
             admission_enquiry_id = {null}
             enqId={null}
-            setRefresh={setRefresh}
             studentId={studentId}
           />
       </div>
