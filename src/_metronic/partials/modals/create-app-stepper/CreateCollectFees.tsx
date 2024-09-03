@@ -1,6 +1,6 @@
 import { ChangeEvent, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import { Modal, Button } from "react-bootstrap";
+import { Modal, Button, Placeholder } from "react-bootstrap";
 import { useAuth } from "../../../../app/modules/auth/core/Auth";
 import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
 import React from "react";
@@ -37,7 +37,6 @@ interface FeeGroup {
 
 interface OfflineFormData {
   paymentMode: string;
-  amount: string;
   paymentDate: string;
   checkNo?: string;
   accountHolderName?: string;
@@ -46,7 +45,6 @@ interface OfflineFormData {
   bankName?: string;
   transactionRef?: string;
   transferDate?: string;
-  adjustment?: string,
 }
 
 interface ApplicationData {
@@ -96,7 +94,6 @@ const CreateCollectFees = ({
 
   const [offlineFormData, setOfflineFormData] = useState<OfflineFormData>({
     paymentMode: "",
-    amount: "",
     paymentDate: "",
     checkNo: "",
     accountHolderName: "",
@@ -105,7 +102,6 @@ const CreateCollectFees = ({
     bankName: "",
     transactionRef: "",
     transferDate: "",
-    adjustment: "",
   });
 
   const handleChange = (
@@ -186,6 +182,7 @@ const CreateCollectFees = ({
         })
       );
 
+      
       const grouped = formattedData.reduce((acc, item) => {
         if (!acc[item.fee_group_name]) {
           acc[item.fee_group_name] = [];
@@ -211,7 +208,6 @@ const CreateCollectFees = ({
 
         const result: FeeGroup[] = await response.json();
         console.log(result);
-        setSendOffline(result);
         setAllRefresh(false);
         // Format the data based on whether student data is present
         formatData(result, Boolean(studentId));
@@ -367,8 +363,11 @@ const CreateCollectFees = ({
       );
 
       setStudentTransaction(updatedStudentTransaction);
+      setSendOffline(updatedStudentTransaction);
     }
   };
+
+
 
   const offlineFormSubmit = async (e) => {
     e.preventDefault();
@@ -376,6 +375,7 @@ const CreateCollectFees = ({
       ...offlineFormData,
       ...sendOffline,
     };
+
     // Log the form data
     console.log("Offline Form Data:", offlineFormData);
     console.log("Updated Offline Form Data:", updatedOfflineFormData);
@@ -479,15 +479,6 @@ const CreateCollectFees = ({
       return total + (totalAmount - amountPaid);
     }, 0);
   };
-
-  // function calculateTotalPendingAmount(rows) {
-  //   return rows
-  //     .reduce((total, item) => {
-  //       return total + (parseFloat(item.total_amount) - parseFloat(item.amount_paid));
-  //     }, 0)
-  //     .toFixed(2);
-  // }
-  // const totalPendingAmount = calculateTotalPendingAmount(rows);
 
   const handleCloseModal = () => {
     // Clear state variables when the modal is closed
@@ -871,7 +862,8 @@ const CreateCollectFees = ({
                                     "currentlyPaying" // Specify that this is for currently paying
                                   )
                                 }
-                                value={(
+                                value={item.currentlyPaying}
+                                placeholder={(
                                   parseFloat(item.total_amount) -
                                   parseFloat(item.amount_paid)
                                 ).toFixed(2)}
@@ -1095,28 +1087,7 @@ const CreateCollectFees = ({
                     </div>
                   </div>
 
-                  <div className="fv-row mb-10">
-                    <div
-                      className="form-floating mb-3"
-                      style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        width: "100%",
-                      }}
-                    >
-                      <input
-                        type="number"
-                        className="form-control"
-                        id="adjustment"
-                        name="adjustment"
-                        placeholder="Adjustment"
-                        value={offlineFormData.adjustment}
-                        onChange={handleChange}
-                        min="0" // Optional: Prevent negative numbers
-                      />
-                      <label htmlFor="adjustment">Adjustment</label>
-                    </div>
-                  </div>
+                  
 
                   {/* Conditional Fields */}
                   {offlineFormData.paymentMode === "cash" && (
@@ -1124,25 +1095,7 @@ const CreateCollectFees = ({
                       className="fv-row mb-10"
                       style={{ display: "flex", gap: "10px" }}
                     >
-                      <div
-                        className="form-floating mb-3"
-                        style={{
-                          display: "flex",
-                          flexDirection: "column",
-                          width: "100%",
-                        }}
-                      >
-                        <input
-                          type="number"
-                          className="form-control"
-                          id="amount"
-                          name="amount"
-                          placeholder="Amount"
-                          value={offlineFormData.amount}
-                          onChange={handleChange}
-                        />
-                        <label htmlFor="amount">Amount Paid</label>
-                      </div>
+                    
                       <div
                         className="form-floating mb-3"
                         style={{
@@ -1431,25 +1384,7 @@ const CreateCollectFees = ({
                           />
                           <label htmlFor="transferDate">Transfer Date</label>
                         </div>
-                        <div
-                          className="form-floating mb-3"
-                          style={{
-                            flex: "1",
-                            display: "flex",
-                            flexDirection: "column",
-                          }}
-                        >
-                          <input
-                            type="number"
-                            className="form-control"
-                            id="amountPaid"
-                            name="amountPaid"
-                            placeholder="Amount"
-                            value={offlineFormData.amount || ""}
-                            onChange={handleChange}
-                          />
-                          <label htmlFor="amountPaid">Amount</label>
-                        </div>
+      
                       </div>
                     </div>
                   )}
