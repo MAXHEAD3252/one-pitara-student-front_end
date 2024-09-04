@@ -5,6 +5,8 @@ type HeaderViewMenuProps = {
 };
 
 const HeaderViewMenu: FC<HeaderViewMenuProps> = ({ onToggle }) => {
+
+  
   return (
     <div
       className="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg menu-state-primary fw-bold p-4 w-175px"

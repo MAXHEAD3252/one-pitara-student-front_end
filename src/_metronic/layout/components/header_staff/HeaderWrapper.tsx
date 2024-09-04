@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { Link } from 'react-router-dom';
 import clsx from 'clsx';
@@ -6,6 +6,8 @@ import { useLocation } from 'react-router-dom';
 import { LayoutSetup, useLayout } from '../../core';
 import { Header } from './Header';
 import { Navbar } from './Navbar';
+import { useAuth } from '../../../../app/modules/auth/core/Auth';
+import { DOMAIN } from '../../../../app/routing/ApiEndpoints';
 
 interface HeaderWrapperProps {
   // title: string;
@@ -16,6 +18,39 @@ interface HeaderWrapperProps {
 export function HeaderWrapper({ toggleView }: HeaderWrapperProps) {
   const { config, classes } = useLayout();
   const location = useLocation();
+  const { currentUser } = useAuth();
+  const [subscriptionName, setSubscriptionName] = useState(null);
+  const school_id = currentUser?.school_id;
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const schoolId = school_id;
+    const fetchSubscriptionId = async () => {
+        try {
+            const response = await fetch(`${DOMAIN}/api/superadmin/get-subscription-id/${schoolId}`);
+            if (!response.ok) {
+                throw new Error(`Error: ${response.statusText}`);
+            }
+            const data = await response.json();
+            
+            setSubscriptionName(data.result[0]?.subscription_name);
+        } catch (err) {
+            setError(err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    if (schoolId) {
+        fetchSubscriptionId();
+    } else {
+        setLoading(false);
+    }
+}, [school_id]);
+
+
+  
   
   if (config.app?.header?.default?.container === 'fluid') {
     LayoutSetup.classes.headerContainer.push("container-fluid");
@@ -83,6 +118,7 @@ export function HeaderWrapper({ toggleView }: HeaderWrapperProps) {
                 />
               </div>
             )}
+            <div style={{fontFamily:'Manrope', fontSize:'18px', alignContent:'center'}}>Your Current Plan : <span style={{fontWeight:'700'}}>{subscriptionName ? subscriptionName : 'Unlimited Access'}</span></div>
           
        
           <Navbar toggleView={toggleView} />

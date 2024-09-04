@@ -6,7 +6,8 @@ import {
 import { useNavigate } from "react-router-dom";
 
 interface TablesWidget42Props {
-  schoolId: string | undefined;
+  subscriptionId: string | undefined;
+  subscriptionName: string | undefined;
 }
 
 interface SchoolModule {
@@ -16,7 +17,7 @@ interface SchoolModule {
   // Add other fields here
 }
 
-const TablesWidget42: React.FC<TablesWidget42Props> = ({ schoolId }) => {
+const TablesWidget42: React.FC<TablesWidget42Props> = ({ subscriptionId,subscriptionName }) => {
   const [schoolModules, setSchoolModules] = useState<SchoolModule[]>([]);
   const Navigate = useNavigate();
 
@@ -24,7 +25,7 @@ const TablesWidget42: React.FC<TablesWidget42Props> = ({ schoolId }) => {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          `${DOMAIN}/${getSchoolModuleById}/${schoolId}`
+          `${DOMAIN}/${getSchoolModuleById}/${subscriptionId}`
         );
         if (!response.ok) {
           throw new Error("Network response was not ok");
@@ -37,10 +38,10 @@ const TablesWidget42: React.FC<TablesWidget42Props> = ({ schoolId }) => {
     };
 
     fetchData();
-  }, [schoolId]);
+  }, [subscriptionId]);
 
   const handleModules = () => () => {
-    Navigate(`/superadmin/manage/academies/modules?schoolId=${schoolId}`);
+    Navigate(`/superadmin/subscriptions/modules?subscriptionId=${subscriptionId}&restrict=${true}`);
   };
 
   return (
@@ -106,6 +107,42 @@ const TablesWidget42: React.FC<TablesWidget42Props> = ({ schoolId }) => {
                 }}
               >
                 Manage Modules
+              </span>
+            </div>
+            <div style={{ display: "flex" }}>
+              <span
+                style={{
+                  height: "36px",
+                  borderRadius: "8px",
+                  padding: "6px 10px 8px 10px",
+                  gap: "5px",
+                  // backgroundColor: "#FFFFFF",
+                  display: "flex",
+                  flexDirection: "row",
+                  cursor: "pointer",
+                  textAlign:'center'
+                }}
+                data-bs-toggle="modal"
+                data-bs-target="#staticBackdrop"
+                >
+                <div style={{ width: "120px", height: "20px",  borderRadius: "8px"
+
+
+                  ,outline:'1px solid #FFFFFF',
+                }}>
+                  <span
+                    style={{
+                      fontSize: "14px",
+                      fontWeight: "800",
+                      color: "#FFFFFF",
+                      lineHeight: "16.39px",
+                      fontFamily: "Manrope",
+                    }}
+                  >
+                   Plan Type : {subscriptionName ? subscriptionName
+                      : "No Plan Selected"}
+                  </span>
+                </div>
               </span>
             </div>
             <div style={{ display: "flex" }}>
@@ -273,7 +310,7 @@ const TablesWidget42: React.FC<TablesWidget42Props> = ({ schoolId }) => {
               flexDirection: "column",
             }}
           >
-            {schoolId ? (
+            {subscriptionId ? (
               schoolModules?.map((moduleDetail, index) => (
                 <tr
                   key={index}

@@ -7,7 +7,7 @@ import { TablesWidget45 } from "../../../_metronic/partials/widgets";
 import { useLocation } from 'react-router-dom';
 
 
-export const ManageModulesPage = () => {
+export const ManageAssignsPage = () => {
   const location = useLocation();
   const params = new URLSearchParams(location.search);
   const subscriptionId = params.get('subscriptionId');
@@ -33,19 +33,19 @@ export const ManageModulesPage = () => {
   );
 };
 
-const ManageModules = () => {
+const ManageAssigns = () => {
   const intl = useIntl();
 
   return (
     <>
       <PageTitle breadcrumbs={[]}>
-        {intl.formatMessage({ id: "MENU.ManageModules" })}
+        {intl.formatMessage({ id: "MENU.ManageAssigns" })}
       </PageTitle>
 
       <HeaderWrapper toggleView={() => {}} />
-      <ManageModulesPage />
+      <ManageAssignsPage />
     </>
   );
 };
 
-export { ManageModules };
+export { ManageAssigns };

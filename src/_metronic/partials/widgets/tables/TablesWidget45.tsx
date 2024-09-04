@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useAuth } from "../../../../app/modules/auth/core/Auth";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
 
 interface Module {
@@ -19,24 +19,37 @@ interface Category {
 }
 
 interface Props {
-  school_id?: string | null;
+  subscription_id?: string | null;
 }
 
-const TablesWidget45: React.FC<Props> = ({ school_id }) => {
+const TablesWidget45: React.FC<Props> = ({ subscription_id }) => {
   const { auth } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const params = new URLSearchParams(location.search);
+  const restrict = params.get('restrict');
   const [schoolModules, setSchoolModules] = useState<Category[]>([]);
   const [selectedIds, setSelectedIds] = useState<{ [key: string]: boolean }>({});
   const [initialSelectedIds, setInitialSelectedIds] = useState<{ [key: string]: boolean }>({});
 
+  
   const handleClick = () => {
     navigate(-1); // Equivalent to history.goBack()
   };
+  const [isEditingDisabled, setIsEditingDisabled] = useState(false);
+
+  useEffect(() => {
+    if (restrict === 'true') {
+      setIsEditingDisabled(true);
+    }
+  }, [restrict]);
+
+
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`${DOMAIN}/api/superadmin/permission-modules/${school_id}`);
+        const response = await fetch(`${DOMAIN}/api/superadmin/permission-modules/${subscription_id}`);
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
@@ -59,10 +72,10 @@ const TablesWidget45: React.FC<Props> = ({ school_id }) => {
       }
     };
 
-    if (school_id) {
+    if (subscription_id) {
       fetchData();
     }
-  }, [school_id]);
+  }, [subscription_id]);
 
   const handleCheckboxClick = (module_id: number, parentId: number) => {
     const pairId = `${parentId}:${module_id}`;
@@ -82,7 +95,7 @@ const TablesWidget45: React.FC<Props> = ({ school_id }) => {
         .map(([pairId, isChecked]) => {
           const [parentId, moduleId] = pairId.split(":").map(Number);
           return {
-            school_id: school_id,
+            subscription_id: subscription_id,
             super_admin_id: auth?.id,
             parent_id: parentId,
             module_id: moduleId,
@@ -158,7 +171,7 @@ const TablesWidget45: React.FC<Props> = ({ school_id }) => {
             <thead>
               <tr style={{ borderBottom: "1px solid lightgray" }}>
                 <th
-                  className="p-0 w-100px"
+                  className="p-0 w-110px"
                   style={{
                     fontFamily: "Manrope",
                     fontSize: "16px",
@@ -238,7 +251,7 @@ const TablesWidget45: React.FC<Props> = ({ school_id }) => {
                                 onClick={() => handleCheckboxClick(module.module_id, item.id)}
                                                       /* @ts-ignore */
 
-                                disabled={school_id === 0 || !school_id}
+                                disabled={isEditingDisabled || subscription_id === '0' || !subscription_id}
                                 checked={selectedIds[`${item.id}:${module.module_id}`]}
                               />
                               <label className="form-check-label" htmlFor={`flexSwitchCheck-${module.module_id}`}></label>
@@ -260,14 +273,12 @@ const TablesWidget45: React.FC<Props> = ({ school_id }) => {
           >
             <button
               className="btn btn-primary"
-              style={{
+              style={{  
                 display: "flex",
                 justifyContent: "end",
               }}
               onClick={handleSubmit}
-                                    /* @ts-ignore */
-
-              disabled={school_id === 0 || !school_id}
+              disabled={isEditingDisabled || !subscription_id}
             >
               Submit
             </button>

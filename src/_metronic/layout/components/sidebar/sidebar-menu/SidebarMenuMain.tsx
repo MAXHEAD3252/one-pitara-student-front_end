@@ -11,18 +11,50 @@ const SidebarMenuMain = () => {
   const userRoleName = currentUser?.roleName;
   const role_id = currentUser?.roleId;
   const [modulesData, setModulesData] = useState([]);
+  const [subscriptionId, setSubscriptionId] = useState(null);
+  const school_id = currentUser?.school_id;
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+
+  useEffect(() => {
+    const schoolId = school_id;
+    const fetchSubscriptionId = async () => {
+        try {
+            const response = await fetch(`${DOMAIN}/api/superadmin/get-subscription-id/${schoolId}`);
+            if (!response.ok) {
+                throw new Error(`Error: ${response.statusText}`);
+            }
+            const data = await response.json();
+            
+            setSubscriptionId(data.result[0]?.subscription_id);
+        } catch (err) {
+            setError(err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    if (schoolId) {
+        fetchSubscriptionId();
+    } else {
+        setLoading(false);
+    }
+}, [school_id]);
+
 
   
 
   useEffect(() => {
     if (!currentUser) return;
+    
     const fetchData = async () => {
       try {
-        const school_id = currentUser?.school_id;
+        
         let apiUrl;
         switch (userRole) {
           case "admin":
-            apiUrl = `${DOMAIN}/api/superadmin/get-parent-module/${school_id}`;
+            apiUrl = `${DOMAIN}/api/superadmin/get-parent-module/${subscriptionId}`;
             break;
           case "staff":
             apiUrl = `${DOMAIN}/api/staff/get-modules/${school_id}/${role_id}`;
@@ -49,7 +81,7 @@ const SidebarMenuMain = () => {
       }
     };
     fetchData();
-  }, [currentUser]);
+  }, [currentUser,subscriptionId,school_id]);
 
   
   const getPathForModule = (moduleName: string) => {

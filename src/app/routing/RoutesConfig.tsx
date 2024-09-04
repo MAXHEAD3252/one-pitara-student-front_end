@@ -84,6 +84,8 @@ import { FeeType } from "../pages/StaffPages/FeeDetails/FeeType";
 import { FeeGroup } from "../pages/StaffPages/FeeDetails/FeeGroup";
 import { CollectFees } from "../pages/StaffPages/FeeDetails/Fee Collect/CollectFees";
 import { AssignedStudent } from "../pages/StaffPages/FeeDetails/Fee Collect/AssignedStudent";
+import ManageSubscriptions from "../pages/SuperAdminPages/ManageSubscriptions";
+import AssignSubscriptions from "../pages/SuperAdminPages/AssignSubscriptions";
 // import {CourseContent} from "../pages/StudentPages/CourseContent";
 
 export const routesConfig = {
@@ -638,7 +640,7 @@ export const routesConfig = {
       sidebarName: "Schools",
     },
     {
-      path: "/superadmin/manage/academies/modules",
+      path: "/superadmin/subscriptions/modules",
       component: ManageModules,
     },
     {
@@ -648,7 +650,17 @@ export const routesConfig = {
     {
       path: "/superadmin/manage/onboarding-requests",
       component: OnboardingRequest,
-      sidebarName: "Onboarding Request",
+      sidebarName: "Onboarding Schools",
+    },
+    {
+      path: "/superadmin/manage/subscriptions",
+      component: ManageSubscriptions,
+      sidebarName: "Subscriptions",
+    },
+    {
+      path: "/superadmin/manage/assigned-subscriptions",
+      component: AssignSubscriptions,
+      sidebarName: "Assign Subscriptions",
     },
   ],
 
