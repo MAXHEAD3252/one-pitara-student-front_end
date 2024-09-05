@@ -4,6 +4,8 @@ import { useAuth } from "../../../../app/modules/auth/core/Auth";
 import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
 import { useNavigate } from "react-router-dom";
 import { AddClasses } from "../../modals/create-app-stepper/AddClasses";
+import { CreateViewSchool } from "../../modals/create-app-stepper/CreateViewSchool";
+
 
 interface CurrentUser {
   school_id: string;
@@ -18,6 +20,9 @@ const TablesWidget65 = () => {
   const { currentUser } = useAuth();
   const Navigate = useNavigate();
   const schoolId = (currentUser as unknown as CurrentUser)?.school_id;
+  const [showViewSchoolModal, setShowViewSchoolModal] = useState(false);
+  const [refresh, setRefresh] = useState(false);
+  const [sub_id, setSub_id] = useState();
 
   const [formData, setFormData] = useState({
     id: "",
@@ -28,6 +33,15 @@ const TablesWidget65 = () => {
 //     Navigate(`/superadmin/subscriptions/modules?subscriptionId=${selectedItem}`);
 //   };
 
+
+const handleShowModal = (id)=>{
+  setSub_id(id)
+  setShowViewSchoolModal(true);
+}
+
+const handleModalClose = () => {
+  setShowViewSchoolModal(false);
+};
 
   useEffect(() => {
     const fetchEnquiries = async () => {
@@ -46,9 +60,9 @@ const TablesWidget65 = () => {
         console.error("Error fetching data:", error);
       }
     };
-
+    setRefresh(false);
     fetchEnquiries();
-  }, [schoolId]);
+  }, [schoolId,refresh]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -394,17 +408,22 @@ const TablesWidget65 = () => {
                           fontWeight: "600",
                           color: "#FFF",
                         }}
-                        onClick={() => handleModalEdit(item.id)}
+                        onClick={() => handleShowModal(item.id)}
                       >
-                        View Classes
+                        View Schools
                       </button>
                     </div>
                   </td>
                 </tr>
               ))}
             </tbody>
-            
-       <AddClasses show={false} handleClose={function (): void {
+            <CreateViewSchool
+            show = {showViewSchoolModal}
+            handleClose = {handleModalClose}
+            sub_id = {sub_id}
+            setRefresh={setRefresh}
+          />
+           <AddClasses show={false} handleClose={function (): void {
               throw new Error("Function not implemented.");
             } }  />
 
