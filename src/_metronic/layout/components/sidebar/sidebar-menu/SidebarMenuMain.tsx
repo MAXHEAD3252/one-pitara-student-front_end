@@ -113,7 +113,7 @@ const SidebarMenuMain = () => {
   return (
     <>
       <SidebarMenuItem
-        to="/dashboard"
+        to="/"
         icon="media/logos/Frame1360.png"
         title=""
       />

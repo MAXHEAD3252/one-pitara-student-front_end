@@ -3,7 +3,7 @@ import {Route, Routes, useParams} from 'react-router-dom'
 import {ForgotPassword} from './components/ForgotPassword'
 import {StaffLogin} from './components/StaffLogin'
 import {SuperAdminLogin} from './components/SuperAdminLogin'
-import {AuthLayout} from './AuthLayout'
+import AuthLayout from './AuthLayout'
 import { StudentLogin } from './components/StudentLogin'
 import { FC } from 'react'
 

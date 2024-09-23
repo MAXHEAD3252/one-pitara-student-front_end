@@ -1,3 +1,62 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Route, Routes, Navigate } from "react-router-dom";
+import { MasterLayout } from "../../_metronic/layout/MasterLayout";
+import { useAuth } from "../../app/modules/auth/core/Auth";
+import { useEffect, useState } from "react";
+import { routesConfig } from "./RoutesConfig";
+
+interface RouteConfig {
+  path: string;
+  component: React.ComponentType<any>;
+}
+
+interface RoutesConfig {
+  [key: string]: RouteConfig[];
+}
+
+const PrivateRoutes = () => {
+  const { currentUser } = useAuth();
+  const [userRole, setUserRole] = useState<string | null>(null);
+
+  
+  useEffect(() => {
+    const fetchUserRole = async () => {
+      if (currentUser) {
+        const role = currentUser.roleName === "Teacher" ? currentUser.roleName : currentUser.role || null;
+        setUserRole(role);
+      }
+    };
+
+    fetchUserRole();
+  }, [currentUser]);
+
+  const roleRoutes = userRole ? (routesConfig as RoutesConfig)[userRole] || [] : [];
+
+  if (!userRole) {
+    return <div>Loading...</div>; // You can customize the loading state
+  }
+
+  const AuthRedirect = () => <Navigate to="/" />;
+
+  return (
+    <Routes>
+      <Route element={<MasterLayout />}>
+        <Route path="auth/*" element={<AuthRedirect />} />
+        {roleRoutes.map(({ path, component: Component }) => (
+          <Route key={path} path={path} element={<Component />} />
+        ))}
+      </Route>
+    </Routes>
+  );
+};
+
+export default PrivateRoutes;
+
+
+
+
+
+
 // import { lazy, FC, Suspense } from "react";
 // import { Route, Routes, Navigate } from "react-router-dom";
 // import { MasterLayout } from "../../_metronic/layout/MasterLayout";
@@ -56,7 +115,8 @@
 //   const UsersPage = lazy(
 //     () => import("../modules/apps/user-management/UsersPage")
 //   );
-//   const { auth } = useAuth();
+//   const { 
+//  } = useAuth();
 //   const userRole = auth?.role;
 //   // console.log(auth);
 
@@ -246,74 +306,3 @@
 // };
 
 // export { PrivateRoutes };
-import { Route, Routes, Navigate } from "react-router-dom";
-import { MasterLayout } from "../../_metronic/layout/MasterLayout";
-import { useAuth } from "../../app/modules/auth/core/Auth";
-import { useEffect, useState } from "react";
-import { routesConfig } from "./RoutesConfig";
-
-interface RouteConfig {
-  path: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  component: React.ComponentType<any>;
-}
-
-interface RoutesConfig {
-  [key: string]: RouteConfig[];
-}
-
-const PrivateRoutes = () => {
-  const { currentUser } = useAuth();
-  const [userRole, setUserRole] = useState<string | null>(null);
-
-  // useEffect(() => {
-  //   const fetchUserRole = async () => {
-     
-  //       setUserRole(currentUser?.role);
-  //   };
-
-  //   fetchUserRole();
-  // }, [currentUser]);
-
-  
-  // const roleRoutes = routesConfig[userRole] || [];
-  
-  useEffect(() => {
-    const fetchUserRole = async () => {
-      if (currentUser) {
-        if (currentUser.roleName === "Teacher") {
-          setUserRole(currentUser.roleName);
-        } else {
-          setUserRole(currentUser.role || null);
-        }
-      }
-    };
-
-    fetchUserRole();
-  }, [currentUser]);
-
-  const roleRoutes = userRole ? (routesConfig as RoutesConfig)[userRole] || [] : [];
-
-  if (!userRole) {
-    // If user role is not yet fetched, render nothing
-    return null;
-  }
-
-  const AuthRedirect = () => <Navigate to="/" />;
-
-  return (
-    <Routes>
-      <Route element={<MasterLayout />}>
-        <Route path="auth/*" element={<AuthRedirect />} />
-        {roleRoutes.map(({ path, component: Component }) => (
-          <Route key={path} path={path} element={<Component />} />
-        ))}
-      </Route>
-    </Routes>
-  );
-};
-
-export default PrivateRoutes;
-
-
-

@@ -45,10 +45,6 @@ const AssignFeesMaster: React.FC<AssignFeesMasterProps> = ({
   const userId = currentUser?.id;
 
 
-console.log(feeDetails);
-console.log(groupName);
-
-
   useEffect(() => {
     if (classId && schoolId) {
       fetchStudents(classId, schoolId);
@@ -116,6 +112,10 @@ console.log(groupName);
         schoolId
       }))
     );
+
+    // console.log(entries);
+    
+    // return;
 
     try {
       await fetch(`${DOMAIN}/api/staff/add-studentfeesmaster`, {

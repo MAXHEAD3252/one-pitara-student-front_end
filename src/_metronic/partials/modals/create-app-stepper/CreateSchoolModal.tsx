@@ -1,318 +1,472 @@
-import {useEffect, useRef, useState} from 'react'
-import {createPortal} from 'react-dom'
-import {Modal} from 'react-bootstrap'
-import {defaultCreateAppData, ICreateAppData} from './IAppModels'
-import {StepperComponent} from '../../../assets/ts/components'
-import {KTIcon} from '../../../helpers'
-import {Step1} from './steps/Step1'
-import {Step2} from './steps/Step2'
-import {Step3} from './steps/Step3'
+import React, { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
+import { Modal, Button, Form, Row, Col, InputGroup } from 'react-bootstrap';
 import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
-// import {Step4} from './steps/Step4'
-// import {Step5} from './steps/Step5'
+import './CreateSchoolModal.css'; 
 
 type Props = {
-  show: boolean
-  handleClose: () => void
-  refresh:(refresh:boolean) => void;
-}
+  show: boolean;
+  handleClose: () => void;
+  refresh: (refresh: boolean) => void;
+};
 
-const modalsRoot = document.getElementById('root-modals') || document.body
+const modalsRoot = document.getElementById('root-modals') || document.body;
 
-const CreateSchoolModal = ({ show, handleClose,refresh }: Props) => {
-  const stepperRef = useRef<HTMLDivElement | null>(null)
-  const [ stepper, setStepper ] = useState<StepperComponent | null>(null)
-  const [data, setData] = useState<ICreateAppData>(defaultCreateAppData)
-  const [hasError, setHasError] = useState(false)
-  const [formData, setFormData] =  useState<ICreateAppData | null>(null);
-  
+const CreateSchoolModal = ({ show, handleClose, refresh }: Props) => {
+  const [schoolName, setSchoolName] = useState('');
+  const [tagline, setTagline] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [address, setAddress] = useState('');
+  const [state, setState] = useState('');
+  const [country, setCountry] = useState('');
+  const [educationalBoard, setEducationalBoard] = useState('');
+  const [dateFormat, setDateFormat] = useState('dd/mm/yyyy');
+  const [timeFormat, setTimeFormat] = useState('hh:mm');
+  const [currency, setCurrency] = useState('Rs');
+  const [currencySymbol, setCurrencySymbol] = useState('₹');
+  const [bankAccountNo, setBankAccountNo] = useState('');
+  const [ifscCode, setIfscCode] = useState('');
+  const [bankName, setBankName] = useState('');
+  const [subscriptionType, setSubscriptionType] = useState('');
+  const [subscriptionOptions, setSubscriptionOptions] = useState([]);
+  const [schoolLogo, setSchoolLogo] = useState<File | null>(null);
+  const [schoolSmallLogo, setSchoolSmallLogo] = useState<File | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const fetchSchools = async () => {
+  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setSchoolLogo(e.target.files[0]);
+    }
+  };
+
+  const handleSmallLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setSchoolSmallLogo(e.target.files[0]);
+    }
+  };
+
+  const validateForm = () => {
+    if (!schoolName || !email || !phone || !schoolLogo || !schoolSmallLogo) {
+      return false;
+    }
+    return true;
+  };
+
+
+
+   // Fetch subscription options from the backend
+   useEffect(() => {
+    const fetchSubscriptionOptions = async () => {
       try {
-        const Data = formData?.appBasic;
-        const response = await fetch('${DOMAIN}/api/superadmin/create_school', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            Data
-          })
-        });
-  
+        const response = await fetch(`${DOMAIN}/api/superadmin/get-allsubscriptions`);
         if (!response.ok) {
-          throw new Error('Failed to create school');
+          throw new Error('Failed to fetch subscription types');
         }
-  
         const data = await response.json();
-        console.log('School created successfully:', data);
-        handleClose();
-        refresh(true);
+        console.log(data);
         
-        // Handle success response here
+        setSubscriptionOptions(data); // Assuming the response has this structure
       } catch (error) {
-        console.error('Error creating school:', error);
-        // Handle error here
+        console.error('Error fetching subscription types:', error);
       }
     };
-  
+
+    fetchSubscriptionOptions();
+  }, []);
 
 
-  
-  const loadStepper = () => {
-    setStepper(StepperComponent.createInsance(stepperRef.current as HTMLDivElement))
-  }
-  
-  const updateData = (fieldsToUpdate: Partial<ICreateAppData>) => {
-    const updatedData = {...data, ...fieldsToUpdate}
-    setData(updatedData)
-  }
 
-  const checkAppBasic = (): boolean => {
-    if (!data.appBasic) {
-      return false
-    }
-    return true
-  }
-  const handleSumbit = () =>{
-    if(!data){
-      alert('errir')
-    }
-    else{
-      setFormData(data);
-      alert('got ir')
-    }
-  }
 
-  useEffect(()=>{
-    if(formData !== null){
-      fetchSchools();
-    }
-  },[formData])
 
-  const prevStep = () => {
-    if (!stepper) {
-      return
+  const handleSubmit = async () => {
+    if (!validateForm()) {
+      alert('Please fill in all required fields and upload the logos.');
+      return;
     }
 
-    stepper.goPrev()
-  }
+    setIsSubmitting(true);
 
-  const nextStep = () => {
-    setHasError(false)
-    if (!stepper) {
-      return
-    }
+    const formData = new FormData();
+    formData.append('name', schoolName);
+    formData.append('email', email);
+    formData.append('phone', phone);
+    formData.append('address', address);
+    formData.append('state', state);
+    formData.append('country', country);
+    formData.append('educational_board', educationalBoard);
+    formData.append('date_format', dateFormat);
+    formData.append('time_format', timeFormat);
+    formData.append('currency', currency);
+    formData.append('currency_symbol', currencySymbol);
+    formData.append('bank_account_no', bankAccountNo);
+    formData.append('ifsc_code', ifscCode);
+    formData.append('bank_name', bankName);
+    formData.append('school_logo', schoolLogo as Blob);
+    formData.append('school_small_logo', schoolSmallLogo as Blob);
+    formData.append('subscription_type', subscriptionType);
 
-    if (stepper.getCurrentStepIndex() === 1) {
-      if (!checkAppBasic()) {
-        setHasError(true)
-        return
+    try {
+      const response = await fetch(`${DOMAIN}/api/superadmin/create_school`, {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to create school');
       }
-    }
 
-    stepper.goNext()
-  }
+      const result = await response.json();
+      console.log('School created successfully:', result);
+      handleClose();
+      refresh(true);
+    } catch (error) {
+      console.error('Error creating school:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return createPortal(
     <Modal
-      id='kt_modal_create_app'
+      id='kt_modal_create_school'
       tabIndex={-1}
       aria-hidden='true'
       dialogClassName='modal-dialog modal-dialog-centered mw-1000px'
       show={show}
       onHide={handleClose}
-      onEntered={loadStepper}
       backdrop={true}
     >
       <div className='modal-header'>
         <h2>Create School</h2>
-        {/* begin::Close */}
         <div className='btn btn-sm btn-icon btn-active-color-primary' onClick={handleClose}>
-          <KTIcon className='fs-1' iconName='cross' />
+          <i className='fas fa-times'></i>
         </div>
-        {/* end::Close */}
       </div>
 
-      <div className='modal-body py-lg-10 px-lg-10 border'>
-        {/*begin::Stepper */}
-        <div
-          ref={stepperRef}
-          className='stepper stepper-pills stepper-column d-flex flex-column flex-xl-row flex-row-fluid'
-          id='kt_modal_create_app_stepper'
-        >
-          {/* begin::Aside*/}
-          <div className='d-flex justify-content-center justify-content-xl-start flex-row-auto w-100 w-xl-250px'>
-            {/* begin::Nav*/}
-            <div className='stepper-nav ps-lg-10'>
-              {/* begin::Step 1*/}
-              <div className='stepper-item current' data-kt-stepper-element='nav'>
-                {/* begin::Wrapper*/}
-                <div className='stepper-wrapper'>
-                  {/* begin::Icon*/}
-                  <div className='stepper-icon w-40px h-40px'>
-                    <i className='stepper-check fas fa-check'></i>
-                    <span className='stepper-number'>1</span>
-                  </div>
-                  {/* end::Icon*/}
-
-                  {/* begin::Label*/}
-                  <div className='stepper-label'>
-                    <h3 className='stepper-title'>Details</h3>
-
-                    <div className='stepper-desc'>General Info</div>
-                  </div>
-                  {/* end::Label*/}
-                </div>
-                {/* end::Wrapper*/}
-
-                {/* begin::Line*/}
-                <div className='stepper-line h-40px'></div>
-                {/* end::Line*/}
-              </div>
-              {/* end::Step 1*/}
-
-              {/* begin::Step 2*/}
-              <div className='stepper-item' data-kt-stepper-element='nav'>
-                {/* begin::Wrapper*/}
-                <div className='stepper-wrapper'>
-                  {/* begin::Icon*/}
-                  <div className='stepper-icon w-40px h-40px'>
-                    <i className='stepper-check fas fa-check'></i>
-                    <span className='stepper-number'>2</span>
-                  </div>
-                  {/* begin::Icon*/}
-
-                  {/* begin::Label*/}
-                  <div className='stepper-label'>
-                    <h3 className='stepper-title'>Featuers</h3>
-
-                    <div className='stepper-desc'>Featuers Info</div>
-                  </div>
-                  {/* begin::Label*/}
-                </div>
-                {/* end::Wrapper*/}
-
-                {/* begin::Line*/}
-                <div className='stepper-line h-40px'></div>
-                {/* end::Line*/}
-              </div>
-              {/* end::Step 2*/}
-
-              {/* begin::Step 3*/}
-              <div className='stepper-item' data-kt-stepper-element='nav'>
-                {/* begin::Wrapper*/}
-                <div className='stepper-wrapper'>
-                  {/* begin::Icon*/}
-                  <div className='stepper-icon w-40px h-40px'>
-                    <i className='stepper-check fas fa-check'></i>
-                    <span className='stepper-number'>3</span>
-                  </div>
-                  {/* end::Icon*/}
-
-                  {/* begin::Label*/}
-                  <div className='stepper-label'>
-                    <h3 className='stepper-title'>Additional</h3>
-
-                    <div className='stepper-desc'>Additional Info</div>
-                  </div>
-                  {/* end::Label*/}
-                </div>
-                {/* end::Wrapper*/}
-
-                {/* begin::Line*/}
-                <div className='stepper-line h-40px'></div>
-                {/* end::Line*/}
-              </div>
-              {/* end::Step 3*/}
-
-              {/* begin::Step 4*/}
-              {/* <div className='stepper-item' data-kt-stepper-element='nav'>
-                <div className='stepper-wrapper'>
-                  <div className='stepper-icon w-40px h-40px'>
-                    <i className='stepper-check fas fa-check'></i>
-                    <span className='stepper-number'>4</span>
-                  </div>
-
-                  <div className='stepper-label'>
-                    <h3 className='stepper-title'>Other</h3>
-
-                    <div className='stepper-desc'>Others info</div>
-                  </div>
-                </div>
-
-                <div className='stepper-line h-40px'></div>
-              </div> */}
-              {/* end::Step 4*/}
-
-              {/* begin::Step 5*/}
-              {/* <div className='stepper-item' data-kt-stepper-element='nav'>
-                <div className='stepper-wrapper'>
-                  <div className='stepper-icon w-40px h-40px'>
-                    <i className='stepper-check fas fa-check'></i>
-                    <span className='stepper-number'>5</span>
-                  </div>
-
-                  <div className='stepper-label'>
-                    <h3 className='stepper-title'>Review</h3>
-
-                    <div className='stepper-desc'>Review and Submit</div>
-                  </div>
-                </div>
-              </div> */}
-            </div>
+      <div className='modal-body py-lg-10 px-lg-10'>
+        <Form>
+          <Row>
+            <Col md={4}>
+              <Form.Group className='mb-3 custom-input' controlId='formSchoolName'>
+                <Form.Label>School Name *</Form.Label>
+                <InputGroup>
+                  <InputGroup.Text>
+                    <i className='fas fa-school'></i>
+                  </InputGroup.Text>
+                  <Form.Control
+                    type='text'
+                    placeholder='Enter school name'
+                    value={schoolName}
+                    onChange={(e) => setSchoolName(e.target.value)}
+                    required
+                  />
+                </InputGroup>
+                <Form.Text className='text-muted'>This is an input helper text.</Form.Text>
+              </Form.Group>
+            </Col>
+            <Col md={4}>
+              <Form.Group className='mb-3 custom-input' controlId='formTagline'>
+                <Form.Label>Tagline</Form.Label>
+                <InputGroup>
+                  <InputGroup.Text>
+                    <i className='fas fa-pencil-alt'></i>
+                  </InputGroup.Text>
+                  <Form.Control
+                    type='text'
+                    placeholder='Enter school tagline'
+                    value={tagline}
+                    onChange={(e) => setTagline(e.target.value)}
+                  />
+                </InputGroup>
+                <Form.Text className='text-muted'>This is an input helper text.</Form.Text>
+              </Form.Group>
+            </Col>
+            <Col md={4}>
+              <Form.Group className='mb-3 custom-input' controlId='formEmail'>
+                <Form.Label>School Email *</Form.Label>
+                <InputGroup>
+                  <InputGroup.Text>
+                    <i className='fas fa-envelope'></i>
+                  </InputGroup.Text>
+                  <Form.Control
+                    type='email'
+                    placeholder='Enter school email'
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                  />
+                </InputGroup>
+                <Form.Text className='text-muted'>This is an input helper text.</Form.Text>
+              </Form.Group>
+            </Col>
+          </Row>
+          <Row>
+            <Col md={4}>
+              <Form.Group className='mb-3 custom-input' controlId='formPhone'>
+                <Form.Label>School Phone *</Form.Label>
+                <InputGroup>
+                  <InputGroup.Text>
+                    <i className='fas fa-phone'></i>
+                  </InputGroup.Text>
+                  <Form.Control
+                    type='text'
+                    placeholder='Enter school phone'
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    required
+                  />
+                </InputGroup>
+                <Form.Text className='text-muted'>This is an input helper text.</Form.Text>
+              </Form.Group>
+            </Col>
+            <Col md={8}>
+              <Form.Group className='mb-3 custom-input' controlId='formAddress'>
+                <Form.Label>School Address</Form.Label>
+                <InputGroup>
+                  <InputGroup.Text>
+                    <i className='fas fa-map-marker-alt'></i>
+                  </InputGroup.Text>
+                  <Form.Control
+                    type='text'
+                    placeholder='Enter school address'
+                    value={address}
+                    onChange={(e) => setAddress(e.target.value)}
+                  />
+                </InputGroup>
+                <Form.Text className='text-muted'>This is an input helper text.</Form.Text>
+              </Form.Group>
+            </Col>
+          </Row>
+          <Row>
+            <Col md={4}>
+              <Form.Group className='mb-3 custom-input' controlId='formState'>
+                <Form.Label>State</Form.Label>
+                <InputGroup>
+                  <InputGroup.Text>
+                    <i className='fas fa-location-arrow'></i>
+                  </InputGroup.Text>
+                  <Form.Control
+                    type='text'
+                    placeholder='Enter state'
+                    value={state}
+                    onChange={(e) => setState(e.target.value)}
+                  />
+                </InputGroup>
+                <Form.Text className='text-muted'>This is an input helper text.</Form.Text>
+              </Form.Group>
+            </Col>
+            <Col md={4}>
+              <Form.Group className='mb-3 custom-input' controlId='formCountry'>
+                <Form.Label>Country</Form.Label>
+                <InputGroup>
+                  <InputGroup.Text>
+                    <i className='fas fa-globe'></i>
+                  </InputGroup.Text>
+                  <Form.Control
+                    type='text'
+                    placeholder='Enter country'
+                    value={country}
+                    onChange={(e) => setCountry(e.target.value)}
+                  />
+                </InputGroup>
+                <Form.Text className='text-muted'>This is an input helper text.</Form.Text>
+              </Form.Group>
+            </Col>
+            <Col md={4}>
+              <Form.Group className='mb-3 custom-input' controlId='formBoard'>
+                <Form.Label>Educational Board</Form.Label>
+                <InputGroup>
+                  <InputGroup.Text>
+                    <i className='fas fa-computer'></i>
+                  </InputGroup.Text>
+                  <Form.Control
+                    type='text'
+                    placeholder='Enter Education Board'
+                    value={educationalBoard}
+                    onChange={(e) => setEducationalBoard(e.target.value)}
+                  />
+                </InputGroup>
+                <Form.Text className='text-muted'>This is an input helper text.</Form.Text>
+              </Form.Group>
+            </Col>
+            <Col md={4}>
+              <Form.Group className='mb-3 custom-input' controlId='formCountry'>
+                <Form.Label>Date Formate</Form.Label>
+                <InputGroup>
+                  <InputGroup.Text>
+                    <i className='fas fa-calendar'></i>
+                  </InputGroup.Text>
+                  <Form.Control
+                    type='text'
+                    placeholder='Enter Date Formate'
+                    value={dateFormat}
+                    onChange={(e) => setDateFormat(e.target.value)}
+                  />
+                </InputGroup>
+                <Form.Text className='text-muted'>This is an input helper text.</Form.Text>
+              </Form.Group>
+            </Col>
+            <Col md={4}>
+              <Form.Group className='mb-3 custom-input' controlId='formState'>
+                <Form.Label>Time Format</Form.Label>
+                <InputGroup>
+                  <InputGroup.Text>
+                    <i className='fas fa-clock'></i>
+                  </InputGroup.Text>
+                  <Form.Control
+                    type='text' 
+                    placeholder='Enter Time Format'
+                    value={timeFormat}
+                    onChange={(e) => setTimeFormat(e.target.value)}
+                  />
+                </InputGroup>
+                <Form.Text className='text-muted'>This is an input helper text.</Form.Text>
+              </Form.Group>
+            </Col>
+            <Col md={4}>
+              <Form.Group className='mb-3 custom-input' controlId='formCountry'>
+                <Form.Label>Currency</Form.Label>
+                <InputGroup>
+                  <InputGroup.Text>
+                    <i className='fas fa-money-bill'></i>
+                  </InputGroup.Text>
+                  <Form.Control
+                    type='text'
+                    placeholder='Enter Curreny'
+                    value={currency}
+                    onChange={(e) => setCurrency(e.target.value)}
+                  />
+                </InputGroup>
+                <Form.Text className='text-muted'>Enter the Short form of the currency.</Form.Text>
+              </Form.Group>
+            </Col>
+            </Row>
+            <Row>
+            <Col md={4}>
+              <Form.Group className='mb-3 custom-input' controlId='formCountry'>
+                <Form.Label>Currency Symbol</Form.Label>
+                <InputGroup>
+                  <InputGroup.Text>
+                    <i className='fas fa-indian-rupee'></i>
+                  </InputGroup.Text>
+                  <Form.Control
+                    type='text'
+                    placeholder='Enter Curreny Symbol'
+                    value={currencySymbol}
+                    onChange={(e) => setCurrencySymbol(e.target.value)}
+                  />
+                </InputGroup>
+                <Form.Text className='text-muted'>Enter the Short form of the currency.</Form.Text>
+              </Form.Group>
+            </Col>
+            <Col md={4}>
+              <Form.Group className='mb-3 custom-input' controlId='formCountry'>
+                <Form.Label>Bank Account</Form.Label>
+                <InputGroup>
+                  <InputGroup.Text>
+                    <i className='fas fa-bank'></i>
+                  </InputGroup.Text>
+                  <Form.Control
+                    type='text'
+                    placeholder='Enter Bank Account'
+                    value={bankAccountNo}
+                    onChange={(e) => setBankAccountNo(e.target.value)}
+                  />
+                </InputGroup>
+                <Form.Text className='text-muted'>Enter the Short form of the currency.</Form.Text>
+              </Form.Group>
+            </Col>
+            <Col md={4}>
+              <Form.Group className='mb-3 custom-input' controlId='formCountry'>
+                <Form.Label>Ifsc Code</Form.Label>
+                <InputGroup>
+                  <InputGroup.Text>
+                    <i className='fas fa-key'></i>
+                  </InputGroup.Text>
+                  <Form.Control
+                    type='text'
+                    placeholder='Enter IFSC code'
+                    value={ifscCode}
+                    onChange={(e) => setIfscCode(e.target.value)}
+                  />
+                </InputGroup>
+                <Form.Text className='text-muted'>Enter the Short form of the currency.</Form.Text>
+              </Form.Group>
+            </Col>
+            </Row>
+            <Row>
+            <Col md={4}>
+              <Form.Group className='mb-3 custom-input' controlId='formCountry'>
+                <Form.Label>Bank Name</Form.Label>
+                <InputGroup>
+                  <InputGroup.Text>
+                    <i className='fas fa-building'></i>
+                  </InputGroup.Text>
+                  <Form.Control
+                    type='text'
+                    placeholder='Enter Bank name'
+                    value={bankName}
+                    onChange={(e) => setBankName(e.target.value)}
+                  />
+                </InputGroup>
+                <Form.Text className='text-muted'>Enter the Short form of the currency.</Form.Text>
+              </Form.Group>
+            </Col>
+            <Col md={8}>
+              <Form.Group className='mb-3' controlId='formSubscriptionType'>
+                <Form.Label>Subscription Type *</Form.Label>
+                <Form.Select
+                  value={subscriptionType}
+                  onChange={(e) => setSubscriptionType(e.target.value)}
+                  required
+                >
+                  <option value=''>Select Subscription Type</option>
+                  {subscriptionOptions.map((option) => (
+                    <option key={option.id} value={option.id}>
+                      {option.name}
+                    </option>
+                  ))}
+                </Form.Select>
+                <Form.Text className='text-muted'>Choose the type of subscription for the school.</Form.Text>
+              </Form.Group>
+            </Col>
+          </Row>
+          <Row>
+            <Col md={6}>
+              <Form.Group className='mb-3 custom-input' controlId='formSchoolLogo'>
+                <Form.Label>School Logo *</Form.Label>
+                <InputGroup>
+                  <InputGroup.Text>
+                    <i className='fas fa-upload'></i>
+                  </InputGroup.Text>
+                  <Form.Control type='file' onChange={handleLogoUpload} required />
+                </InputGroup>
+                {schoolLogo && <p className='mt-2'>Selected file: {schoolLogo.name}</p>}
+              </Form.Group>
+            </Col>
+            <Col md={6}>
+              <Form.Group className='mb-3 custom-input' controlId='formSchoolSmallLogo'>
+                <Form.Label>School Small Logo *</Form.Label>
+                <InputGroup>
+                  <InputGroup.Text>
+                    <i className='fas fa-upload'></i>
+                  </InputGroup.Text>
+                  <Form.Control type='file' onChange={handleSmallLogoUpload} required />
+                </InputGroup>
+                {schoolSmallLogo && <p className='mt-2'>Selected file: {schoolSmallLogo.name}</p>}
+              </Form.Group>
+            </Col>
+          </Row>
+          <div className='d-flex justify-content-end'>
+            <Button variant='secondary' onClick={handleClose} className='me-2'>
+              Cancel
+            </Button>
+            <Button variant='primary' onClick={handleSubmit} disabled={isSubmitting}>
+              {isSubmitting ? 'Submitting...' : 'Submit'}
+            </Button>
           </div>
-          {/* begin::Aside*/}
-
-          {/*begin::Content */}
-          <div className='flex-row-fluid py-lg-5 px-lg-15'>
-            {/*begin::Form */}
-              <form noValidate id='kt_modal_create_app_form'>
-                <Step1 data={data} updateData={updateData} hasError={hasError} />
-                <Step2 data={data} updateData={updateData} hasError={hasError} />
-                <Step3 data={data} updateData={updateData} hasError={hasError} />
-                {/* <Step4 data={data} updateData={updateData} hasError={hasError} />
-                <Step5 data={data} updateData={updateData} hasError={hasError} /> */}
-
-                {/*begin::Actions */}
-                <div className='d-flex flex-stack pt-10'>
-                  <div className='me-2'>
-                    <button
-                      type='button'
-                      className='btn btn-lg btn-light-primary me-3'
-                      data-kt-stepper-action='previous'
-                      onClick={prevStep}
-                    >
-                      <KTIcon iconName='arrow-left' className='fs-3 me-1' /> Previous
-                    </button>
-                  </div>
-                  <div>
-                    <button
-                      type='button'
-                      className='btn btn-lg btn-primary'
-                      data-kt-stepper-action='submit'
-                      onClick={() => handleSumbit()}
-                    >
-                      Submit <KTIcon iconName='arrow-right' className='fs-3 ms-2 me-0' />
-                    </button>
-
-                    <button
-                      type='button'
-                      className='btn btn-lg btn-primary'
-                      data-kt-stepper-action='next'
-                      onClick={nextStep}
-                    >
-                      Next Step <KTIcon iconName='arrow-right' className='fs-3 ms-1 me-0' />
-                    </button>
-                  </div>
-                </div>
-                {/*end::Actions */}
-              </form>
-            {/*end::Form */}
-          </div>
-          {/*end::Content */}
-        </div>
-        {/* end::Stepper */}
+        </Form>
       </div>
     </Modal>,
     modalsRoot

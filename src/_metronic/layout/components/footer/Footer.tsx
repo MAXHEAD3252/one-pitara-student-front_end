@@ -17,7 +17,7 @@ const Footer = () => {
           target='_blank'
           className='text-gray-800 text-hover-primary'
         >
-          Dexpert Systems
+          Dexpert Systems | Created With Passion
         </a>
       </div>
 

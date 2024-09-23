@@ -3,11 +3,8 @@ import {useEffect} from 'react'
 import {ILayout, useLayout} from '../../core'
 import {MenuInner} from './header-menus'
 
-interface HeaderProps {
-  title: string ; // Update the type to accept string or JSX.Element[]
-}
 
-const Header: React.FC<HeaderProps> = ({title}) => {
+const Header = () => {
   const {config} = useLayout()
   useEffect(() => {
     updateDOM(config)
@@ -28,11 +25,11 @@ const Header: React.FC<HeaderProps> = ({title}) => {
     '
       id='kt_app_header_menu'
       data-kt-menu='true'
-      style={{fontFamily:"Manrope",}}
+      style={{fontFamily:"Manrope"}}
       
     >
       
-      <MenuInner title={title}/>
+      <MenuInner />
     </div>
   )
 }

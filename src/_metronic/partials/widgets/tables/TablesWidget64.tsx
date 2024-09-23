@@ -3,6 +3,7 @@ import "../../../../app/pages/StaffPages/FeeDetails/style.css";
 import { useAuth } from "../../../../app/modules/auth/core/Auth";
 import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
 import { useNavigate } from "react-router-dom";
+import {DeleteConfirmationModal} from "../../modals/create-app-stepper/DeleteConfirmationModal";
 
 interface CurrentUser {
   school_id: string;
@@ -14,6 +15,7 @@ interface DataItem {
 
 const TablesWidget64 = () => {
   const [data, setData] = useState<DataItem[]>([]);
+  
   const { currentUser } = useAuth();
   const Navigate = useNavigate();
   const schoolId = (currentUser as unknown as CurrentUser)?.school_id;
@@ -22,6 +24,20 @@ const TablesWidget64 = () => {
     id: "",
     name: "",
   });
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [refresh, setRefresh] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [selectedSubscription, setSelectedSubscription] = useState<DataItem | null>(null);
+
+  const handleShowDeleteModal = (subscription: DataItem) => {
+    setSelectedSubscription(subscription);
+    setShowModal(true);
+  };
+
+  const handleCloseDeleteModal = () => {
+    setSelectedSubscription(null);
+    setShowModal(false);
+  };
 
   const handleModules = (selectedItem:number) => () => {
     Navigate(`/superadmin/subscriptions/modules?subscriptionId=${selectedItem}`);
@@ -38,16 +54,74 @@ const TablesWidget64 = () => {
           throw new Error("Failed to fetch data");
         }
         const responseData = await response.json();
-        console.log(responseData);
-
         setData(responseData);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
 
+    setRefresh(false);
     fetchEnquiries();
-  }, [schoolId]);
+  }, [schoolId,refresh]);
+
+
+  const handleSave = (e) => {
+    e.preventDefault();
+    if (isEditMode) {
+      // Call the update subscription API
+      updateSubscription(formData);
+    } else {
+      // Call the create subscription API
+      createSubscription(formData);
+    }
+    resetForm();
+  };
+
+
+  const createSubscription = async (data) => {
+    try {
+      // Replace with your backend API call
+      const response = await fetch(`${DOMAIN}/api/superadmin/create-subscription`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+      if (response.ok) {
+        console.log("Subscription created successfully");
+setRefresh(true);
+        // Refresh the data list or update UI accordingly
+      } else {
+        console.error("Failed to create subscription");
+      }
+    } catch (error) {
+      console.error("Error creating subscription:", error);
+    }
+  };
+  
+  const updateSubscription = async (data) => {
+    try {
+      // Replace with your backend API call
+      const response = await fetch(`${DOMAIN}/api/superadmin/update-subscription/${data.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+      if (response.ok) {
+        console.log("Subscription updated successfully");
+        setRefresh(true);
+        // Refresh the data list or update UI accordingly
+      } else {
+        console.error("Failed to update subscription");
+      }
+    } catch (error) {
+      console.error("Error updating subscription:", error);
+    }
+  };
+
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -57,44 +131,57 @@ const TablesWidget64 = () => {
     }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await fetch(
-        `${DOMAIN}/api/staff/add-feetype/${schoolId}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formData),
-        }
-      );
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const data = await response.json();
-      console.log("Response:", data);
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
-
   const handleModalEdit = (subscriptionId) => {
-    const selectedSubscription = data.find(
-      (item) => item.id === subscriptionId
-    );
+  const selectedSubscription = data.find(
+    (item) => item.id === subscriptionId
+  );
 
-    if (selectedSubscription) {
-      setFormData({
-        id: selectedSubscription.id.toString(),
-        name: selectedSubscription.name,
-        // Populate other fields as necessary
-      });
+  if (selectedSubscription) {
+    setFormData({
+      id: selectedSubscription.id.toString(),
+      name: selectedSubscription.name,
+    });
+    setIsEditMode(true); // Set to edit mode
+  } else {
+    console.error("Subscription not found");
+  }
+};
+
+const resetForm = () => {
+  setFormData({
+    id: "",
+    name: "",
+  });
+  setIsEditMode(false); // Reset to create mode
+};
+
+
+
+const handleDelete = async () => {
+  if (!selectedSubscription) return;
+
+  try {
+    const response = await fetch(`${DOMAIN}/api/superadmin/delete-subscription/${selectedSubscription.id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    if (response.ok) {
+      console.log("Subscription deleted successfully");
+      setRefresh(true);
+      handleCloseDeleteModal();
     } else {
-      console.error("Subscription not found");
+      console.error("Failed to delete subscription");
     }
-  };
+  } catch (error) {
+    console.error("Error deleting subscription:", error);
+  }
+};
+
+
+
+
 
   return (
     <div className="d-flex" style={{ gap: "10px" }}>
@@ -421,7 +508,7 @@ const TablesWidget64 = () => {
                           fontWeight: "600",
                           color: "#1F3259",
                         }}
-                        // onClick={() => handleActionModal(item.id)}
+                        onClick={() => handleShowDeleteModal(item)}
                       >
                         Delete
                       </button>
@@ -430,20 +517,23 @@ const TablesWidget64 = () => {
                 </tr>
               ))}
             </tbody>
-            
-            {/* 
-          <UploadsFilter
-            show={showModal}
-            handleClose={handleModalClose}
-            filterData={applyfilters}
-          /> */}
-            {/* <CreateEnquiryAction show={showActionModal} handleClose={handleActionModalClose} enqId={enqId}/> */}
-            {/* <AddClasses show={showModal} handleClose={handleModalClose} /> */}
-
-            {/* end::Table body */}
           </table>
         </div>
       </div>
+
+
+      <DeleteConfirmationModal
+        show={showModal}
+        handleClose={handleCloseDeleteModal}
+        handleDelete={handleDelete}
+        title="Confirm Deletion"
+        description={`Are you sure you want to delete the subscription "${selectedSubscription?.name}"? This will also delete all entries assigned to this subscription. This action cannot be undone.`}
+        confirmButtonText="Delete"
+        cancelButtonText="Cancel"
+      />
+
+
+
       <div
         className="col-xxl-4"
         style={{
@@ -484,7 +574,7 @@ const TablesWidget64 = () => {
         </div>
         <div>
           <form
-            onSubmit={handleSubmit}
+            onSubmit={handleSave}
             style={{
               display: "flex",
               alignItems: "center",
@@ -537,6 +627,34 @@ const TablesWidget64 = () => {
                 display: "flex",
               }}
             >
+              {isEditMode && (
+      <button
+        type="button"
+        onClick={resetForm}
+        className="btn btn-secondary"
+        style={{
+          width: "118px",
+          height: "36px",
+          padding: "8px 10px",
+          justifyContent: "center",
+          alignItems: "center",
+          gap: "10px",
+          flexShrink: "0",
+          backgroundColor: "#ECEDF1",
+          color: "#000",
+        }}
+      >
+        <span
+          style={{
+            fontFamily: "Manrope",
+            fontSize: "12px",
+            fontWeight: "500",
+          }}
+        >
+          Cancel
+        </span>
+      </button>
+    )}
               <button
                 type="submit"
                 className="btn btn-secondary"
@@ -560,7 +678,7 @@ const TablesWidget64 = () => {
                     fontWeight: "500",
                   }}
                 >
-                  Save
+                   {isEditMode ? "Update" : "Save"}
                 </span>
               </button>
             </div>

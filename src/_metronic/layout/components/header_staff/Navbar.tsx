@@ -11,9 +11,10 @@ import { useAuth } from "../../../../app/modules/auth/core/Auth";
 
 const itemClass = "ms-1 ms-md-4";
 
-type Props = {
-  toggleView: (isChecked: string) => void;
-};
+
+  type Props = {
+    toggleView?: (isChecked: string) => void; // Make toggleView optional
+  };
 
 const Navbar = ({ toggleView = () => {} }: Props) => {
   const { currentUser } = useAuth();
@@ -55,9 +56,9 @@ const Navbar = ({ toggleView = () => {} }: Props) => {
   }, []);
 
   return (
-    <div className="app-navbar flex-shrink-0">
+    <div className="app-navbar flex-shrink-0" style={{width:'180px', justifyContent:'end'}}>
       {userRole === "staff" || userRole === "admin" ? (
-        pathParts.toString() === "dashboard" ||
+        pathParts.toString() === "" ||
         pathParts.toString() === "user-roles" ? (
           <>
             <div className={clsx("app-navbar-item", itemClass)}>
@@ -70,12 +71,12 @@ const Navbar = ({ toggleView = () => {} }: Props) => {
                 data-kt-menu-attach="parent"
                 data-kt-menu-placement="bottom-end"
                 style={{
-                  background: "#F3F3F3",
+                  // background: "#F3F3F3",
                   width: "64px",
                   gap: "10px",
                   padding: "8px 10px 8px 10px",
                   borderRadius: "8px",
-                  // border: isClicked ? "1px solid #000000" : "none",
+                  border: "1px solid #1C274C",
                 }}
                 onClick={handleButtonClick}
               >
@@ -123,8 +124,8 @@ const Navbar = ({ toggleView = () => {} }: Props) => {
             </div>
           </>
         ) : (
-          <>
-            <div className={clsx("app-navbar-item", itemClass)}>
+          <div style={{display:'flex'}}>
+            <div className={clsx("app-navbar-item", itemClass)} style={{width:'140px', justifyContent:'center'}} >
               <div
                 ref={buttonRef}
                 className={clsx(
@@ -134,7 +135,8 @@ const Navbar = ({ toggleView = () => {} }: Props) => {
                 data-kt-menu-attach="parent"
                 data-kt-menu-placement="bottom-end"
                 style={{
-                  background: "#F3F3F3",
+                  background: "transparent",
+                  // border:'1px solid #1F3259',
                   width: "132x`px",
                   gap: "10px",
                   padding: "8px 10px 8px 10px",
@@ -142,7 +144,7 @@ const Navbar = ({ toggleView = () => {} }: Props) => {
                   display: "flex",
                   justifyContent: "space-between",
                   alignItems: "center",
-                  // border: isClicked ? "1px solid #000000" : "none",
+                  border: "1px solid #1C274C",
                 }}
                 // onClick={handleToggle}
               >
@@ -213,17 +215,18 @@ const Navbar = ({ toggleView = () => {} }: Props) => {
               </div>
               <HeaderViewMenu onToggle={handleToggle} />
             </div>
+            <div style={{display:'flex', padding:'0px', width:'150px', justifyContent:'center'}}>
             <div className={clsx("app-navbar-item", itemClass)}>
               <div
                 ref={buttonRef}
                 className={clsx(
-                  "cursor-pointer symbol d-flex flex-row h-36px  btn btn-active-light"
+                  "cursor-pointer symbol d-flex flex-row h-32px  btn btn-active-light"
                 )}
                 data-kt-menu-trigger="{default: 'click'}"
                 data-kt-menu-attach="parent"
-                data-kt-menu-placement="bottom-end"
+                // data-kt-menu-placement="bottom-end"
                 style={{
-                  background: "#F3F3F3",
+                  border: "1px solid #1C274C",
                   width: "64px",
                   gap: "10px",
                   padding: "8px 10px 8px 10px",
@@ -234,8 +237,8 @@ const Navbar = ({ toggleView = () => {} }: Props) => {
               >
                 <div>
                   <svg
-                    width="24"
-                    height="24"
+                    width="22"
+                    height="22"
                     viewBox="0 0 24 24"
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg"
@@ -312,7 +315,7 @@ const Navbar = ({ toggleView = () => {} }: Props) => {
                 data-kt-menu-attach="parent"
                 data-kt-menu-placement="bottom-end"
                 style={{
-                  background: "#F3F3F3",
+                  border: "1px solid #1C274C",
                   width: "64px",
                   gap: "10px",
                   padding: "8px 10px 8px 10px",
@@ -363,6 +366,7 @@ const Navbar = ({ toggleView = () => {} }: Props) => {
               </div>
               <HeaderSettings />
             </div>
+            </div>
             {config.app?.header?.default?.menu?.display && (
               <div
                 className="app-navbar-item d-lg-none ms-2 me-n3"
@@ -374,7 +378,7 @@ const Navbar = ({ toggleView = () => {} }: Props) => {
                 ></div>
               </div>
             )}
-          </>
+          </div>
         )
       ) : (
         <>

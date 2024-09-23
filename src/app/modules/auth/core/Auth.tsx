@@ -9,9 +9,18 @@ import {
   SetStateAction,
 } from "react";
 import { LayoutSplashScreen } from "../../../../_metronic/layout/core";
-import { AdminModel, AuthModel, SuperAdminModel, StudentModel } from "./_models";
+import {
+  AdminModel,
+  AuthModel,
+  SuperAdminModel,
+  StudentModel,
+} from "./_models";
 import * as authHelper from "./AuthHelpers";
-import { getAdminByToken, getStudentByToken, getSuperAdminByToken } from "./_requests";
+import {
+  getAdminByToken,
+  getStudentByToken,
+  getSuperAdminByToken,
+} from "./_requests";
 import { WithChildren } from "../../../../_metronic/helpers";
 // import { ArcElement } from "chart.js";
 
@@ -61,7 +70,7 @@ const AuthProvider: FC<WithChildren> = ({ children }) => {
   return (
     <AuthContext.Provider
       value={{ auth, saveAuth, currentUser, setCurrentUser, logout }}
-      >
+    >
       {children}
     </AuthContext.Provider>
   );
@@ -69,17 +78,16 @@ const AuthProvider: FC<WithChildren> = ({ children }) => {
 
 const AuthInit: FC<WithChildren> = ({ children }) => {
   const { auth, currentUser, logout, setCurrentUser } = useAuth();
-  
 
   const [showSplashScreen, setShowSplashScreen] = useState(true);
 
   useEffect(() => {
     const requestStaff = async (id: string) => {
       try {
-          const { data } = await getAdminByToken(id);
-          if (data) {
-            setCurrentUser(data?.data?.[0]);
-          }
+        const { data } = await getAdminByToken(id);
+        if (data) {
+          setCurrentUser(data?.data?.[0]);
+        }
       } catch (error) {
         console.error(error);
         if (currentUser) {
@@ -109,9 +117,9 @@ const AuthInit: FC<WithChildren> = ({ children }) => {
     const requestAdmin = async (id: string) => {
       try {
         const { data } = await getAdminByToken(id);
-          if (data) {
-            setCurrentUser(data?.data?.[0]);
-          }
+        if (data) {
+          setCurrentUser(data?.data?.[0]);
+        }
       } catch (error) {
         console.error(error);
         if (currentUser) {
@@ -124,9 +132,9 @@ const AuthInit: FC<WithChildren> = ({ children }) => {
     const requestSuperAdmin = async (username: string) => {
       try {
         const { data } = await getSuperAdminByToken(username);
-          if (data) {
-            setCurrentUser(data);
-          }
+        if (data) {
+          setCurrentUser(data);
+        }
       } catch (error) {
         console.error(error);
         if (currentUser) {
@@ -137,20 +145,16 @@ const AuthInit: FC<WithChildren> = ({ children }) => {
       }
     };
 
-    
     if (auth && auth.user_id && auth.role) {
-       /* @ts-ignore */
+      /* @ts-ignore */
       requestStudent(auth.user_id, auth.role);
-    } else if (auth && auth.id && auth.role ==='staff') {
+    } else if (auth && auth.id && auth.role === "staff") {
       requestStaff(auth.id);
-    } 
-    else if (auth && auth.id && auth.role === 'admin') {
+    } else if (auth && auth.id && auth.role === "admin") {
       requestAdmin(auth.id);
-    }
-    else if (auth && auth.username && auth.role === 'superadmin') {
+    } else if (auth && auth.username && auth.role === "superadmin") {
       requestSuperAdmin(auth.username);
-    }
-    else {
+    } else {
       logout();
       setShowSplashScreen(false);
     }

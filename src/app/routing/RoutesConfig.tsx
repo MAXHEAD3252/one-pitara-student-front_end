@@ -8,7 +8,6 @@ import { FeeDetails } from "../pages/StaffPages/FeeDetails/FeeDetails";
 import { LeadGeneration } from "../pages/StaffPages/LeadGeneration/LeadGeneration";
 import { ViewFeeMaster } from "../pages/StaffPages/FeeDetails/ViewFeeMaster";
 import { Income } from "../pages/StaffPages/IncomeExpenseDash/Income";
-import { DashboardStudent } from "../pages/dashboard/DashboardStudent";
 // import UserAdminPage from "../modules/user-userRoles/UserAdminPage";
 // import { StuTimeTable } from "../pages/StudentPages/StuClassSchedule/StuTimeTable";
 // import { StuFees } from "../pages/StudentPages/StuFees";
@@ -31,7 +30,6 @@ import { DashboardStudent } from "../pages/dashboard/DashboardStudent";
 // import StuExamSchedule from "../pages/StudentPages/StuExamSchedule";
 import { EnquiryReport } from "../pages/StaffPages/AnalyticsAndReporting/EnquiryReport";
 import { Admissions } from "../pages/StaffPages/Admission/Admissions";
-import { DashboardDexpert } from "../pages/dashboard/DexpertDashboard";
 // import { ManageAdmins } from "../pages/SuperAdminPages/ManageAdmins";
 import { ManageSchools } from "../pages/SuperAdminPages/ManageSchools";
 import { ManageModules } from "../pages/SuperAdminPages/ManageModules";
@@ -290,12 +288,12 @@ export const routesConfig = {
     },
   ],
   student: [
-    { path: "/", component: DashboardStudent, sidebarName: "Dashboard" },
-    {
-      path: "/dashboard",
-      component: DashboardStudent,
-      sidebarName: "Dashboard",
-    },
+    { path: "/", component: DashboardWrapper, sidebarName: "Dashboard" },
+    // {
+    //   path: "/dashboard",
+    //   component: DashboardStudent,
+    //   sidebarName: "Dashboard",
+    // },
     {
       path: "/assignments",
       component: Assignments,
@@ -321,11 +319,11 @@ export const routesConfig = {
   ],
   staff: [
     { path: "/", component: DashboardWrapper, sidebarName: "Dashboard" },
-    {
-      path: "/dashboard",
-      component: DashboardWrapper,
-      sidebarName: "Dashboard",
-    },
+    // {
+    //   path: "/dashboard",
+    //   component: DashboardWrapper,
+    //   sidebarName: "Dashboard",
+    // },
     // {
     //   path: "/enquiry-details",
     //   component: EnquiryDetails,
@@ -363,11 +361,11 @@ export const routesConfig = {
       component: DashboardWrapper,
       sidebarName: "Dashboard",
     },
-    {
-      path: "/dashboard",
-      component: DashboardWrapper,
-      sidebarName: "Dashboard",
-    },
+    // {
+    //   path: "/dashboard",
+    //   component: DashboardWrapper,
+    //   sidebarName: "Dashboard",
+    // },
     {
       path: "/enquiry-management",
       component: EnquiryManagement,
@@ -623,19 +621,19 @@ export const routesConfig = {
     },
   ],
   superadmin: [
-    { path: "/", component: DashboardDexpert, sidebarName: "Dashboard" },
-    {
-      path: "/dashboard",
-      component: DashboardDexpert,
-      sidebarName: "Dashboard",
-    },
+    { path: "/", component: DashboardWrapper, sidebarName: "Dashboard" },
+    // { 
+    //   path: "/Dashboard",
+    //   component: DashboardWrapper,
+    //   sidebarName: "Dashboard",
+    // },
 
     {
       path: "/superadmin/school-profile/:schoolId",
       component: SchoolProfile,
     },
     {
-      path: "/superadmin/manage/academies",
+      path: "/superadmin/manage/schools",
       component: ManageSchools,
       sidebarName: "Schools",
     },
@@ -644,7 +642,7 @@ export const routesConfig = {
       component: ManageModules,
     },
     {
-      path: "/superadmin/manage/academies/roles",
+      path: "/superadmin/manage/schools/roles",
       component: ManageRoles,
     },
     {

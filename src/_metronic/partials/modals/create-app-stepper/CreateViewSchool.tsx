@@ -1,305 +1,163 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
+import { Modal, Button, Form } from "react-bootstrap";
 import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
-import { Modal } from "react-bootstrap";
-import { useAuth } from "../../../../app/modules/auth/core/Auth";
+
+interface Subscription {
+  id: number;
+  name: string;
+}
 
 interface AssignFeesMasterProps {
   show: boolean;
   handleClose: () => void;
-  sub_id: number | undefined;
+  school_id: number | undefined;
   setRefresh: (refresh: boolean) => void;
+  previousSubscription: string | undefined; // New prop for previous subscription name
+  previousSubscriptionId: number | undefined; // New prop for previous subscription ID
 }
 
 const CreateViewSchool: React.FC<AssignFeesMasterProps> = ({
   show,
   handleClose,
-  sub_id,
+  school_id,
   setRefresh,
+  previousSubscription,
+  previousSubscriptionId,
 }) => {
-  const { currentUser } = useAuth();
-  const userId = currentUser?.id;
-  const [data, setData] = useState([]);
-  const [subscriptionStatus, setSubscriptionStatus] = useState({});
-  const [activationStatus, setActivationStatus] = useState({});
+  const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
+  const [selectedSubscription, setSelectedSubscription] = useState<number | undefined>(previousSubscriptionId);
+  const [showConfirmationModal, setShowConfirmationModal] = useState(false); // For confirmation modal
 
-  // Fetch schools data and initialize toggle states
-  const fetchSchools = async () => {
+  useEffect(() => {
+    fetchSubscriptions();
+  }, []);
+
+  useEffect(() => {
+    // Set the selected subscription to the previous one when the modal opens
+    if (previousSubscriptionId !== undefined) {
+      setSelectedSubscription(previousSubscriptionId);
+    }
+  }, [previousSubscriptionId]);
+
+  const fetchSubscriptions = async () => {
     try {
-      const response = await fetch(
-        `${DOMAIN}/api/superadmin/get-subscriptionwise-school`
-      );
+      // Fetch all available subscriptions
+      const response = await fetch(`${DOMAIN}/api/superadmin/get-allsubscriptions`);
       if (!response.ok) {
         throw new Error("Failed to fetch data");
       }
       const responseData = await response.json();
-      console.log(responseData);
-      setData(responseData);
-
-      const initialSubscriptionStatus = {};
-      const initialActivationStatus = {};
-      responseData.forEach((school) => {
-        initialSubscriptionStatus[school.school_id] =
-          school.subscription_id === sub_id;
-        initialActivationStatus[school.school_id] = school.Is_active === 1;
-      });
-      setSubscriptionStatus(initialSubscriptionStatus);
-      setActivationStatus(initialActivationStatus);
+      setSubscriptions(responseData);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
 
-  useEffect(() => {
-    fetchSchools();
-  }, [sub_id]);
-
-  const handleSubscriptionToggle = (school_id) => {
-    setSubscriptionStatus((prevStatus) => ({
-      ...prevStatus,
-      [school_id]: !prevStatus[school_id],
-    }));
+  const handleSave = () => {
+    // Open confirmation modal before saving
+    setShowConfirmationModal(true);
   };
 
-  const handleActivationToggle = (school_id) => {
-    setActivationStatus((prevStatus) => ({
-      ...prevStatus,
-      [school_id]: !prevStatus[school_id],
-    }));
-  };
-
-  const handleSubmit = async () => {
-    const updatedData = data
-      .filter((school) => {
-        const initialSubscriptionStatus =
-          school.subscription_id === sub_id ? 1 : 0;
-        const initialActivationStatus = school.Is_active === 1 ? 1 : 0;
-
-        const currentSubscriptionStatus = subscriptionStatus[school.school_id]
-          ? 1
-          : 0;
-        const currentActivationStatus = activationStatus[school.school_id]
-          ? 1
-          : 0;
-
-        return (
-          initialSubscriptionStatus !== currentSubscriptionStatus ||
-          initialActivationStatus !== currentActivationStatus
-        );
-      })
-      .map((school) => ({
-        school_id: school.school_id,
-        subscription_status: subscriptionStatus[school.school_id] ? 1 : 0,
-        activation_status: activationStatus[school.school_id] ? 1 : 0,
-      }));
-
-    if (updatedData.length === 0) {
-      console.log("No changes detected, nothing to update.");
-      return;
-    }
-
-    console.log(updatedData);
+  const confirmSave = async () => {
     try {
       const response = await fetch(
-        `${DOMAIN}/api/superadmin/update-schools-subscription`,
+        `${DOMAIN}/api/superadmin/update-subscription-for-school`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(updatedData),
+          body: JSON.stringify({
+            school_id: school_id,
+            subscription_id: selectedSubscription,
+          }),
         }
       );
 
       if (!response.ok) {
-        throw new Error("Failed to update schools");
+        throw new Error("Failed to update subscription");
       }
-      console.log("Schools updated successfully");
-
-      // Refresh data after successful update
-      fetchSchools();
+      console.log("Subscription updated successfully");
       handleClose();
       setRefresh(true);
+      setShowConfirmationModal(false); // Close confirmation modal
     } catch (error) {
-      console.error("Error updating schools:", error);
+      console.error("Error updating subscription:", error);
     }
   };
 
   return (
-    <Modal
-      id="kt_modal_create_app"
-      tabIndex={-1}
-      aria-hidden="true"
-      dialogClassName="modal-dialog modal-dialog-centered mw-1000px"
-      show={show}
-      handleClose={handleClose}
-      backdrop="static"
-    >
-      <div
-        className="modal-content"
-        style={{ padding: "23px 5px", borderRadius: "17px" }}
-      >
-        <div
-          className="modal-header border-0"
-          style={{ width: "100%", height: "17px" }}
-        >
-          <span
-            className=""
-            id="staticBackdropLabel"
-            style={{
-              fontSize: "24px",
-              fontWeight: "600",
-              fontFamily: "Manrope",
-            }}
-          >
-            View Schools and Subscriptions
-          </span>
-          <span
-            data-bs-dismiss="modal"
-            onClick={handleClose}
-            aria-label="Close"
-          >
-            <svg
-              width="32"
-              height="32"
-              viewBox="0 0 32 32"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <circle cx="16" cy="16" r="16" fill="#ECECEC" />
-              <path
-                d="M22.8572 9.14294L9.14288 22.8572M9.14288 9.14294L22.8572 22.8572"
-                stroke="#464646"
-                strokeWidth="2"
-                strokeLinecap="square"
-                strokeLinejoin="round"
+    <>
+      <Modal centered show={show} onHide={handleClose} backdrop="static">
+        <Modal.Header closeButton>
+          <Modal.Title>Manage Subscriptions</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form>
+            <Form.Group controlId="formCurrentSubscription">
+              <Form.Label>Current Subscription</Form.Label>
+              <Form.Control
+                type="text"
+                readOnly
+                value={previousSubscription || "No Subscription"}
               />
-            </svg>
-          </span>
-        </div>
-        <div className="modal-body" style={{ overflow: "auto" }}>
-          <div
-            style={{
-              backgroundColor: "#F2F6FF",
-              borderRadius: "16px",
-              padding: "24px",
-            }}
-          >
-            <div className="table-responsive" style={{ maxHeight: "600px" }}>
-              <table className="table align-middle gs-3 gy-5">
-                <thead>
-                  <tr style={{ borderBottom: "2px solid lightgray" }}>
-                    <th
-                      className="p-0 w-180px"
-                      style={{
-                        fontFamily: "Manrope",
-                        fontSize: "16px",
-                        fontWeight: "500",
-                      }}
-                    >
-                      School Name
-                    </th>
-                    <th
-                      className="p-0 min-w-200px"
-                      style={{
-                        fontFamily: "Manrope",
-                        fontSize: "16px",
-                        fontWeight: "500",
-                      }}
-                    >
-                      Subscription
-                    </th>
-                    <th
-                      className="p-0 min-w-50px "
-                      style={{
-                        fontFamily: "Manrope",
-                        fontSize: "16px",
-                        fontWeight: "500",
-                      }}
-                    >
-                      Subscribe
-                    </th>
-                    <th
-                      className="p-0 min-w-50px "
-                      style={{
-                        fontFamily: "Manrope",
-                        fontSize: "16px",
-                        fontWeight: "500",
-                      }}
-                    >
-                      Activate
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {data.map((school) => (
-                    <tr key={school.school_id}>
-                      <td>{school.name}</td>
-                      <td>
-                        {school.subscription_id === sub_id
-                          ? `Subscribed`
-                          : `Not Subscribed`}
-                      </td>
-                      <td>
-                        <div className="form-check form-switch">
-                          <input
-                            className="form-check-input"
-                            type="checkbox"
-                            id={`toggle-${school.school_id}`}
-                            checked={subscriptionStatus[school.school_id]}
-                            onChange={() =>
-                              handleSubscriptionToggle(school.school_id)
-                            }
-                          />
-                          <label
-                            className="form-check-label"
-                            htmlFor={`subscription-toggle-${school.school_id}`}
-                          ></label>
-                        </div>
-                      </td>
-                      <td>
-                        <div className="form-check form-switch">
-                          <input
-                            className="form-check-input"
-                            type="checkbox"
-                            id={`toggle-${school.school_id}`}
-                            checked={activationStatus[school.school_id]}
-                            onChange={() =>
-                              handleActivationToggle(school.school_id)
-                            }
-                          />
-                          <label
-                            className="form-check-label"
-                            htmlFor={`activation-toggle-${school.school_id}`}
-                          ></label>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-              <div
-                className="d-flex justify-content-end"
-                style={{
-                  paddingRight: "30px",
-                }}
+            </Form.Group>
+            <Form.Group controlId="formSelectSubscription" className="mt-3">
+              <Form.Label>Select New Subscription</Form.Label>
+              <Form.Control
+                as="select"
+                value={selectedSubscription}
+                onChange={(e) => setSelectedSubscription(Number(e.target.value))}
               >
-                <button
-                  className="btn btn-primary"
-                  style={{
-                    display: "flex",
-                    justifyContent: "end",
-                  }}
-                  onClick={handleSubmit}
-                  //   disabled={school_id === 0 || !school_id}
-                >
-                  Submit
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </Modal>
+                {subscriptions.map((sub) => (
+                  <option key={sub.id} value={sub.id}>
+                    {sub.name}
+                  </option>
+                ))}
+              </Form.Control>
+            </Form.Group>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Cancel
+          </Button>
+          <Button
+            variant="primary"
+            onClick={handleSave}
+            disabled={selectedSubscription === previousSubscriptionId} // Disable save if no change
+          >
+            Save
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      {/* Confirmation Modal */}
+      <Modal
+        centered
+        show={showConfirmationModal}
+        onHide={() => setShowConfirmationModal(false)}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Confirm Change</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          Are you sure you want to change the subscription to{" "}
+          {subscriptions.find((sub) => sub.id === selectedSubscription)?.name}?
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            variant="secondary"
+            onClick={() => setShowConfirmationModal(false)}
+          >
+            Cancel
+          </Button>
+          <Button variant="danger" onClick={confirmSave}>
+            Confirm
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    </>
   );
 };
 

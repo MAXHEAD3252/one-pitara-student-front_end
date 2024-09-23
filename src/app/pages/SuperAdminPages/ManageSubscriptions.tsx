@@ -7,7 +7,7 @@ const ManageSubscriptions = () => {
   
   return (
     <div className="bg-white">
-      <HeaderWrapper toggleView={() => {}} />
+      {/* <HeaderWrapper toggleView={() => {}} /> */}
       <Content>
       <div className="col-xxl-12"
               style={{

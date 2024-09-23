@@ -3,8 +3,6 @@
 import { useIntl } from "react-intl";
 import { PageTitle } from "../../../_metronic/layout/core";
 import { Content } from "../../../_metronic/layout/components/content";
-import { HeaderWrapper } from "../../../_metronic/layout/components/header_staff";
-// import { useEffect, useState } from "react";
 import { CardsWidget5, TablesWidget44 } from "../../../_metronic/partials/widgets";
 import { useParams } from "react-router-dom";
 import { TablesWidget42 } from "../../../_metronic/partials/widgets/tables/TablesWidget42";
@@ -66,7 +64,6 @@ export const SchoolProfilePage = () => {
  
   return (
     <div className="bg-white">
-      <HeaderWrapper toggleView={() => {}} />
 
       <Content>
         <div className="row g-5 g-xl-7 mb-md-5 mb-xl-10">
@@ -105,7 +102,7 @@ const SchoolProfile = () => {
         {intl.formatMessage({ id: "MENU.HOMEWORK" })}
       </PageTitle>
 
-      <HeaderWrapper toggleView={() => {}} />
+      {/* <HeaderWrapper toggleView={() => {}} /> */}
       <SchoolProfilePage />
     </>
   );

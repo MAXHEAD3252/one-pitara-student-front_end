@@ -7,14 +7,8 @@ import { LayoutSetup, useLayout } from '../../core';
 import { Header } from './Header';
 import { Navbar } from './Navbar';
 
-interface HeaderWrapperProps {
-  title: string;
-//   toggleView: ((value: string) => void); // Adjust the type of toggleView
-}
-
-
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function HeaderWrapper({ title }: HeaderWrapperProps) {
+export function HeaderWrapper() {
   const { config, classes } = useLayout();
   const location = useLocation();
 
@@ -54,7 +48,7 @@ export function HeaderWrapper({ title }: HeaderWrapperProps) {
           id='kt_app_header_wrapper'
           className='d-flex align-items-stretch justify-content-between flex-lg-grow-1'
         >
-          {config.app.header.default?.content === 'menu' &&
+          {/* {config.app.header.default?.content === 'menu' &&
             config.app.header.default.menu?.display && (
               <div
                 className='app-header-menu app-header-mobile-drawer align-items-stretch'
@@ -77,7 +71,7 @@ export function HeaderWrapper({ title }: HeaderWrapperProps) {
                 title={breadcrumbs}  
                 />
               </div>
-            )}
+            )} */}
           
        
             

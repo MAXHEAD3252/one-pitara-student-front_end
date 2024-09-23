@@ -7,6 +7,7 @@ import {  TablesWidget57,
 import { Content } from "../../../../_metronic/layout/components/content";
 import { ToolbarFeeMaster } from "../../../../_metronic/layout/components/toolbar/toolbars";
 import { HeaderWrapper } from "../../../../_metronic/layout/components/header_staff";
+import { ToolbarCommon } from "../../../../_metronic/layout/components/toolbar/toolbars/ToolbarCommon";
 
 const AdmissionEnquiryPage: FC = () => {
   const [displayComponent, setDisplayComponent] = useState("chart");
@@ -26,6 +27,7 @@ const AdmissionEnquiryPage: FC = () => {
   return (
     <div className="bg-white">
       <HeaderWrapper toggleView={handleToggle} />
+            {/* <ToolbarCommon /> */}
         <div>
         <ToolbarFeeMaster onSelectValue={handleSelectValue} />
           <Content>

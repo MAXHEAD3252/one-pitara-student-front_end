@@ -16,7 +16,7 @@ export const ManageRolesPage = () => {
 
   return (
     <div className="bg-white">
-      <HeaderWrapper toggleView={() => {}} />
+      {/* <HeaderWrapper toggleView={() => {}} /> */}
       <Content>
         
         <div className="row gy-5 gx-xl-8">

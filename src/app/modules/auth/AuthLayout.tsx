@@ -1,8 +1,10 @@
-
-import {useEffect} from 'react'
-import {Outlet} from 'react-router-dom'
+import { useEffect } from 'react'
+import { Link, Outlet, useLocation } from 'react-router-dom'
+import { toAbsoluteUrl } from '../../../_metronic/helpers'
 
 const AuthLayout = () => {
+  const location = useLocation();  // Get the current location
+
   useEffect(() => {
     const root = document.getElementById('root')
     if (root) {
@@ -15,44 +17,44 @@ const AuthLayout = () => {
     }
   }, [])
 
+  console.log(location.pathname);
+  
+  // Determine which background image to show based on the path
+  const backgroundImage = location.pathname === '/auth'
+    ? toAbsoluteUrl('media/misc/authbg-new.jpg')
+    : toAbsoluteUrl('media/misc/authbg.jpg');
+
   return (
     <div className='d-flex flex-column flex-lg-row flex-column-fluid h-100'>
       {/* begin::Body */}
-      <div className='d-flex flex-column flex-lg-row-fluid w-lg-50 p-10 order-2 order-lg-1'>
+      <div 
+  className='d-flex flex-column flex-lg-row-fluid w-lg-50 p-10 order-2 order-lg-1 bgi-size-cover bgi-position-center' 
+  style={{ 
+    backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(${backgroundImage})`,
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+  }}
+>
         {/* begin::Form */}
-        <div className='d-flex flex-center flex-column flex-lg-row-fluid'>
+        <div className='d-flex flex-center flex-column flex-lg-row-fluid' style={{justifyContent:'center'}}>
           {/* begin::Wrapper */}
-          <div className='w-lg-500px p-10'>
-            <Outlet />
-          </div>
+          <div className='w-lg-500px p-10' style={{backgroundColor:'white', borderRadius:'10px'}}>
+  <Outlet />
+</div>
+
           {/* end::Wrapper */}
         </div>
         {/* end::Form */}
-
-        {/* begin::Footer */}
-        <div className='d-flex flex-center flex-wrap px-5'>
-          {/* begin::Links */}
-          <div className='d-flex fw-semibold text-primary fs-base'>
-            <a href='#' className='px-5' target='_blank'>
-              Terms
-            </a>
-
-            <a href='#' className='px-5' target='_blank'>
-              Plans
-            </a>
-
-            <a href='#' className='px-5' target='_blank'>
-              Contact Us
-            </a>
-          </div>
-          {/* end::Links */}
-        </div>
-        {/* end::Footer */}
       </div>
-      {/* end::Body */}
+    </div>
+  )
+}
 
-      {/* begin::Aside */}
-      {/* <div
+export default AuthLayout;
+
+
+
+ {/* <div
         className='d-flex flex-lg-row-fluid w-lg-50 bgi-size-cover bgi-position-center order-1 order-lg-2'
         style={{backgroundImage: `url(${toAbsoluteUrl('media/misc/auth-bg.png')})`}}  
       >
@@ -85,8 +87,3 @@ const AuthLayout = () => {
           </div>
         </div>
       </div> */}
-    </div>
-  )
-}
-
-export {AuthLayout}

@@ -150,18 +150,15 @@ const TablesWidget54 = () => {
       >
         <div style={{ width: "auto", height: "100%", overflow: "hidden" }}>
           <table
-            //   className="col-xxl-12"
             style={{
               top: "223px",
               height: "612px",
               maxHeight: "100%",
               borderCollapse: "collapse",
-              // tableLayout: "fixed",
               overflowX: "hidden",
               overflowY: "auto",
               whiteSpace: "nowrap",
               width: "100%",
-              // border:'8px solid black'
             }}
           >
             <thead

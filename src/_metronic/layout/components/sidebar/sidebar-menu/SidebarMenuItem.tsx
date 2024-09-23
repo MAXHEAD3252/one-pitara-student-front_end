@@ -10,6 +10,7 @@ type Props = {
   title: string
   icon?: string
   hasBullet?: boolean
+  className?: string;
 }
 
 const SidebarMenuItem: FC<Props & WithChildren> = ({
@@ -18,15 +19,16 @@ const SidebarMenuItem: FC<Props & WithChildren> = ({
   title,
   icon,
   hasBullet = false,
+  className,
 }) => {
   const {pathname} = useLocation()
-  const isActive = checkIsActive(pathname, to)
+  const isActive = pathname === to;
   const {config} = useLayout()
   const {app} = config
 
   return (
     <div className='menu-item'>
-      <Link className={clsx('menu-link without-sub', {active: isActive})} to={to}>
+      <Link className={clsx('menu-link without-sub')} to={to}>
         {hasBullet && (
           <span className='menu-bullet'>
             <span className='bullet bullet-dot'></span>

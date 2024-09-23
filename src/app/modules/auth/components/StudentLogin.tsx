@@ -158,9 +158,9 @@ export function StudentLogin() {
       {/* end::Action */}
 
       <div className='text-gray-500 text-center fw-semibold fs-6'>
-        Not a Member yet?{' '}
-        <Link to='/auth/registration' className='link-primary'>
-          Sign up
+        Swtich Logins?{' '}
+        <Link to='/auth' className='link-primary'>
+          School Login
         </Link>
       </div>
     </form>

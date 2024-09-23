@@ -1,9 +1,10 @@
 // import {Link} from 'react-router-dom'
 import clsx from 'clsx'
-import {KTIcon} from '../../../helpers'
+import {KTIcon, toAbsoluteUrl} from '../../../helpers'
 import {useLayout} from '../../core'
 import {MutableRefObject, useEffect, useRef} from 'react'
 import {ToggleComponent} from '../../../assets/ts/components'
+import { Link } from 'react-router-dom'
 
 type PropsType = {
   sidebarRef: MutableRefObject<HTMLDivElement | null>
@@ -95,7 +96,16 @@ const SidebarLogo = (props: PropsType) => {
           <KTIcon iconName='black-left-line' className='fs-3 rotate-180 ms-1' />
         </div>
       )} */}
+
+<Link to='/'>
+      <img
+          alt='Logo'
+          src={toAbsoluteUrl('media/logos/superadmin.png')}
+          className='h-40px app-sidebar-logo-minimize'
+        />
+        </Link>
     </div>
+
   )
 }
 

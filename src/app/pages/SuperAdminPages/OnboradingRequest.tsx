@@ -81,9 +81,6 @@ export const OnboardingRequestPage = () => {
 
   return (
     <div className="bg-white">
-      <HeaderWrapper toggleView={() => {}} />
-
-      {/* <ToolbarDashBoard /> */}
       <Content>
         <div
           className="col-xxl-12"

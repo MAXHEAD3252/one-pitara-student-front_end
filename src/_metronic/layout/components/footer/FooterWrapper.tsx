@@ -9,7 +9,7 @@ const FooterWrapper = () => {
   }
 
   return (
-    <div className='app-footer' id='kt_app_footer'>
+    <div id='kt_app_footer'>
       {config.app.footer.containerClass ? (
         <div
           className={clsx(
@@ -17,6 +17,7 @@ const FooterWrapper = () => {
             config.app.footer.container === 'fixed' ? 'container-xxl' : 'container-fluid',
             config.app.footer.containerClass
           )}
+          style={{textAlign:'center', display:'flex', justifyContent:'center', padding:'0px'}}
         >
           <Footer />
         </div>

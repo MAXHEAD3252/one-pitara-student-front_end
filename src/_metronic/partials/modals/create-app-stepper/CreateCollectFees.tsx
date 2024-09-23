@@ -1,9 +1,11 @@
 import { ChangeEvent, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import { Modal, Button, Placeholder } from "react-bootstrap";
+import { Modal, Button } from "react-bootstrap";
 import { useAuth } from "../../../../app/modules/auth/core/Auth";
 import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
 import React from "react";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 type Props = {
   show: boolean;
@@ -13,6 +15,7 @@ type Props = {
   admission_enquiry_id: string | null;
   enqId: string | null;
   studentId: number | null;
+  studentEmail: string | null;
 };
 
 interface FeeType {
@@ -48,7 +51,7 @@ interface OfflineFormData {
 }
 
 interface ApplicationData {
-  currentlyPaying: string;
+  currentlyPaying: string | null;
   amount_paid: number;
   student_fees_master_id: any;
   fee_group_id: number | null;
@@ -59,7 +62,7 @@ interface ApplicationData {
   amount: string;
   due_date: string | null;
   status: string | null;
-  adjustment: string;
+  adjustment: string | null;
   total_amount: number | null;
   is_active: string;
   is_tagged: boolean;
@@ -81,6 +84,7 @@ const CreateCollectFees = ({
   admission_enquiry_id,
   enqId,
   studentId,
+  studentEmail,
 }: Props) => {
   const [loading, setLoading] = useState(false);
   const { currentUser } = useAuth();
@@ -91,7 +95,16 @@ const CreateCollectFees = ({
   const [offlineButtonText, setOfflineButtonText] = useState("Collect Offline");
   const [disableonlinebutton, setdisableonlinebutton] = useState("active");
   const [allRefresh, setAllRefresh] = useState(false);
+  const [groupedData, setGroupedData] =
+    useState<Map<string, ApplicationData[]>>();
+  const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
+  const [detailedData, setDetailedData] = useState<ApplicationData[]>([]);
 
+  const [selectedId, setSelectedId] = useState(0);
+  const [studentTransaction, setStudentTransaction] = useState([]);
+  const [sendOffline, setSendOffline] = useState([]);
+  const [transactionDetails, setTransactionDetails] = useState([]);
+  const [showTransactionDetails, setShowTransactionDetails] = useState(false);
   const [offlineFormData, setOfflineFormData] = useState<OfflineFormData>({
     paymentMode: "",
     paymentDate: "",
@@ -125,17 +138,6 @@ const CreateCollectFees = ({
       setOfflineButtonText("Close");
     }
   };
-
-  const [groupedData, setGroupedData] =
-    useState<Map<string, ApplicationData[]>>();
-  // const [expandedGroup, setExpandedGroup] = useState<string | null>(null);
-  const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
-  const [detailedData, setDetailedData] = useState<ApplicationData[]>([]);
-  const [selectedId, setSelectedId] = useState(0);
-  const [studentTransaction, setStudentTransaction] = useState([]);
-  const [sendOffline, setSendOffline] = useState([]);
-  const [transactionDetails, setTransactionDetails] = useState([]);
-  const [showTransactionDetails, setShowTransactionDetails] = useState(false);
 
   useEffect(() => {
     const formatData = (result: FeeGroup[], isStudentData: boolean) => {
@@ -182,7 +184,6 @@ const CreateCollectFees = ({
         })
       );
 
-      
       const grouped = formattedData.reduce((acc, item) => {
         if (!acc[item.fee_group_name]) {
           acc[item.fee_group_name] = [];
@@ -221,8 +222,6 @@ const CreateCollectFees = ({
     }
   }, [schoolId, class_id, session_id, studentId, show, DOMAIN, allRefresh]);
 
-  console.log(sendOffline);
-
   const handleGroupClick = (groupName: string) => {
     const groupDetails = groupedData.get(groupName);
 
@@ -232,8 +231,6 @@ const CreateCollectFees = ({
     }
 
     const groupId = groupDetails[0]?.fee_group_id;
-
-    console.log("Group ID:", groupId); // Debug log
 
     if (!groupId) {
       console.error("Invalid group ID:", groupId);
@@ -246,17 +243,17 @@ const CreateCollectFees = ({
     setDetailedData(groupDetails);
 
     // Update `is_tagged` to `true` only for the specific `fee_group_id`
-    setData((prevData) => {
-      const updatedData = prevData.map((item) =>
+    setData((prevData) =>
+      prevData.map((item) =>
         item.fee_group_id === groupId ? { ...item, is_tagged: true } : item
-      );
-      console.log("Updated Data:", updatedData); // Debug log
-      return updatedData;
-    });
+      )
+    );
 
     // If studentId is present, store all data related to the groupId in studentTransaction
     if (studentId) {
       const studentDataForGroup = groupDetails.map((item) => ({
+        student_id: studentId,
+        student_email: studentEmail,
         student_fees_master_id: item.student_fees_master_id,
         feetype_id: item.feetype_id,
         fee_group_id: item.fee_group_id,
@@ -367,18 +364,12 @@ const CreateCollectFees = ({
     }
   };
 
-
-
   const offlineFormSubmit = async (e) => {
     e.preventDefault();
     const updatedOfflineFormData = {
       ...offlineFormData,
       ...sendOffline,
     };
-
-    // Log the form data
-    console.log("Offline Form Data:", offlineFormData);
-    console.log("Updated Offline Form Data:", updatedOfflineFormData);
     try {
       // const response = await fetch(`${DOMAIN}/api/staff/get-studentwisefeegrouptype/${}`, {
       const response = await fetch(
@@ -407,36 +398,48 @@ const CreateCollectFees = ({
   };
 
   const handleSubmit = async () => {
+    setLoading(true); // Optionally show loading state
+  
     try {
+      if (!studentEmail || studentEmail.trim() === "") {
+        toast.error("Error: Student email is not present. Cannot send the transaction.");
+        return; // Exit the function to prevent further execution
+      }
+  
       const url = studentId
         ? `${DOMAIN}/api/staff/store-feetransaction`
         : `${DOMAIN}/api/staff/collectadmissionfees`;
-
-      console.log(studentTransaction);
+  
       const requestBody = studentId
         ? { transactions: studentTransaction }
         : { data: data };
-
+  
       const response = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(requestBody),
       });
-
+  
+      // Check if the response is not OK (status is not 200-299)
       if (!response.ok) {
-        throw new Error("Network response was not ok");
+        // Get the JSON error message from the response body
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Network response was not ok");
       }
-
+  
       const result = await response.json();
-      console.log("Data submitted successfully:", result);
-      setAllRefresh(true);
-      handleClose();
+      toast.success("Data submitted successfully!");
+      setAllRefresh(true); // Optionally refresh the UI
+      handleClose(); // Optionally close the modal or form
     } catch (error) {
-      console.error("Error submitting data:", error);
+      // Display the error message in toast
+      toast.error(`Error: ${error.message}`);
     } finally {
-      setLoading(false);
+      setLoading(false); // Stop loading spinner or state
     }
   };
+  
+  
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -448,7 +451,6 @@ const CreateCollectFees = ({
 
   const calculateTotalAmount = (groupName: string) => {
     const groupItems = data.filter((item) => item.fee_group_name === groupName);
-    console.log(detailedData);
 
     return groupItems.reduce((total, item) => {
       const amountNum = parseFloat(item.amount) || 0;
@@ -514,27 +516,36 @@ const CreateCollectFees = ({
     setShowTransactionDetails(false);
   };
 
+  <style>{`
+    .custom-modal .modal-dialog {
+      max-width: 90%; /* Adjust the modal width according to the content */
+      width: auto; /* Let width adapt to content */
+    }
+    .custom-modal .modal-content {
+      padding: 20px; /* Ensure padding around the content */
+    }
+  `}</style>;
+
   return createPortal(
     <Modal
       id="kt_modal_create_app"
       tabIndex={-1}
       size="xl"
       aria-hidden="true"
-      dialogClassName="modal-dialog modal-dialog-centered mw-1000px"
+      dialogClassName="modal-dialog modal-dialog-centered"
       show={show}
       onHide={handleCloseModal}
-      style={{ width: "85%", height: "100%", alignSelf: "center" }}
     >
       <div
         className="modal-content"
-        style={{ padding: "20px 5px", borderRadius: "17px", width: "1300px" }}
+        style={{ padding: "20px 5px", borderRadius: "17px" }}
       >
         <div
           className="modal-header border-0"
           style={{ width: "100%", height: "27px" }}
         >
           <span
-            className=""
+            className="text-center w-100"
             id="staticBackdropLabel"
             style={{
               justifyContent: "center",
@@ -545,7 +556,13 @@ const CreateCollectFees = ({
               fontFamily: "Manrope",
             }}
           >
-            {selectedGroup ? "Fee Types" : "Collect Fees"}
+            {showTransactionDetails 
+  ? "Transaction Details" 
+  : selectedGroup 
+    ? "Fee Types" 
+    : "Collect Fees"
+}
+
           </span>
           <span
             data-bs-dismiss="modal"
@@ -573,27 +590,47 @@ const CreateCollectFees = ({
         </div>
         <hr />
         <div className="modal-body" style={{ padding: "20px" }}>
-          <div style={{ maxHeight: "400px", overflowY: "auto" }}>
+          <div className="table-responsive" style={{ maxHeight: "400px" }}>
             {selectedGroup ? (
               // Detailed view for fee types
               <>
                 <Button
                   variant="secondary"
-                  onClick={() => handleBackClick(selectedId)}
-                  style={{ marginBottom: "10px" }}
+                  onClick={
+                    showTransactionDetails
+                      ? handleCloseTransactionDetails
+                      : () => handleBackClick(selectedId)
+                  }
+                  style={{
+                    marginBottom: "10px",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "8px",
+                    padding: "8px 16px",
+                    borderRadius: "8px",
+                    color: "black",
+                    border: "none",
+                  }}
                 >
-                  Back to Groups
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    fill="currentColor"
+                    viewBox="0 0 16 16"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M15 8a.5.5 0 0 1-.5.5H3.707l4.147 4.146a.5.5 0 0 1-.708.708l-5-5a.5.5 0 0 1 0-.708l5-5a.5.5 0 0 1 .708.708L3.707 7.5H14.5A.5.5 0 0 1 15 8z"
+                    />
+                  </svg>
                 </Button>
+
                 {showTransactionDetails ? (
                   <>
-                    <div
-                      className="modal-header border-0"
-                      style={{
-                        display: "flex",
-                        justifyContent: "flex-end",
-                        padding: "0 1rem",
-                        alignItems: "center",
-                      }}
+                    {/* <div
+                      className="modal-header border-0 d-flex justify-content-end"
+                      style={{ padding: "0 1rem", alignItems: "center" }}
                     >
                       <span
                         data-bs-dismiss="modal"
@@ -603,7 +640,7 @@ const CreateCollectFees = ({
                           cursor: "pointer",
                           marginTop: "0.5rem",
                           marginRight: "0.5rem",
-                        }} // Adjust margin as needed
+                        }}
                       >
                         <svg
                           width="32"
@@ -622,418 +659,269 @@ const CreateCollectFees = ({
                           />
                         </svg>
                       </span>
-                    </div>
+                    </div> */}
                     <div className="modal-body">
-                      <h5 className="modal-title mb-4">Transaction Details</h5>
-                      <table className="table table-bordered table-hover">
-                        <thead className="table">
-                          <tr>
-                            <th scope="col">Transaction ID</th>
-                            <th scope="col">Transaction Date</th>
-                            <th scope="col">Student Fees Master ID</th>
-                            <th scope="col">Amount</th>
-                            <th scope="col">Payment Method</th>
-                            <th scope="col">Transaction Reference</th>
-                            <th scope="col">Status</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {transactionDetails.map((item, index) => (
-                            <tr key={index}>
-                              <td>{item.transaction_id}</td>
-                              <td>{item.transaction_date}</td>
-                              <td>{item.student_fees_master_id}</td>
-                              <td>{item.amount}</td>
-                              <td>{item.payment_method}</td>
-                              <td>{item.transaction_ref || "N/A"}</td>
-                              <td>{item.status}</td>
+                      {/* <h5 className="modal-title mb-4">Transaction Details</h5> */}
+
+                      <div className="table-responsive">
+                        <table className="table table-bordered table-hover">
+                          <thead
+                            className="thead-dark"
+                            style={{
+                              backgroundColor: "#1C335C",
+                              color: "white",
+                              fontFamily:'Manrope',
+                              fontSize:'14px'
+                            }}
+                          >
+                            <tr>
+                              <th scope="col">Transaction ID</th>
+                              <th scope="col">Transaction Date</th>
+                              <th scope="col">Student Fees Master ID</th>
+                              <th scope="col">Amount</th>
+                              <th scope="col">Payment Method</th>
+                              <th scope="col">Transaction Reference</th>
+                              <th scope="col">Status</th>
                             </tr>
-                          ))}
-                        </tbody>
-                      </table>
+                          </thead>
+                          <tbody>
+                            {transactionDetails.map((item, index) => (
+                              <tr key={index} style={{fontFamily:'Manrope',
+                                fontSize:'14px'}}>
+                                <td>{item.transaction_id}</td>
+                                <td>
+                                  {new Date(
+                                    item.transaction_date
+                                  ).toLocaleDateString()}
+                                </td>
+                                <td>{item.student_fees_master_id}</td>
+                                <td>{`$${Number(item.amount).toFixed(2)}`}</td>{" "}
+                                {/* Conversion to number */}
+                                <td>{item.payment_method}</td>
+                                <td>{item.transaction_ref || "N/A"}</td>
+                                <td>
+                                  <span
+                                  style={{fontFamily:'Manrope',
+                                    fontSize:'14px'}}
+                                    className={`badge ${
+                                      item.status === "Success"
+                                        ? "bg-success"
+                                        : "bg-danger"
+                                    }`}
+                                  >
+                                    {item.status}
+                                  </span>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
                     </div>
                   </>
                 ) : (
-                  <table
-                    style={{
-                      width: "100%",
-                      borderCollapse: "collapse",
-                      fontSize: "14px",
-                      marginBottom: "0",
-                    }}
-                  >
-                    <thead
-                      style={{ backgroundColor: "#1C335C", color: "white" }}
-                    >
-                      <tr>
-                        <th
-                          style={{
-                            padding: "10px",
-                            border: "1px solid #dee2e6",
-                          }}
-                        >
-                          Fee Type
-                        </th>
-                        <th
-                          style={{
-                            padding: "10px",
-                            border: "1px solid #dee2e6",
-                          }}
-                        >
-                          Due Date
-                        </th>
-                        <th
-                          style={{
-                            padding: "10px",
-                            border: "1px solid #dee2e6",
-                          }}
-                        >
-                          Amount
-                        </th>
-                        <th
-                          style={{
-                            padding: "10px",
-                            border: "1px solid #dee2e6",
-                          }}
-                        >
-                          Adjustment
-                        </th>
-                        <th
-                          style={{
-                            padding: "10px",
-                            border: "1px solid #dee2e6",
-                          }}
-                        >
-                          Total Amount
-                        </th>
-                        <th
-                          style={{
-                            padding: "10px",
-                            border: "1px solid #dee2e6",
-                          }}
-                        >
-                          Status
-                        </th>
-                        <th
-                          style={{
-                            padding: "10px",
-                            border: "1px solid #dee2e6",
-                          }}
-                        >
-                          Amount Paid
-                        </th>
-                        <th
-                          style={{
-                            padding: "10px",
-                            border: "1px solid #dee2e6",
-                          }}
-                        >
-                          Pending Amount
-                        </th>
-                        <th
-                          style={{
-                            padding: "10px",
-                            border: "1px solid #dee2e6",
-                          }}
-                        >
-                          currently paying
-                        </th>
-                        <th
-                          style={{
-                            padding: "10px",
-                            border: "1px solid #dee2e6",
-                          }}
-                        >
-                          Transection History
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {detailedData.map((item) => {
-                        const isPaid =
-                          item.status === "paid" ||
-                          disableonlinebutton === "disable";
-
-                        return (
-                          <tr
-                            key={item.feetype_id}
-                            style={{
-                              backgroundColor: isPaid ? "#f5f5f5" : "inherit", // Faded color for paid rows
-                              opacity: isPaid ? 0.5 : 1, // Reduce opacity for paid rows
-                            }}
-                          >
-                            <td
+                  <div className="table-responsive">
+                    <table className="table table-bordered table-hover">
+                      <thead
+                        className="thead-dark"
+                        style={{ backgroundColor: "#1C335C", color: "white",fontFamily:'Manrope',
+                          fontSize:'14px' }}
+                      >
+                        <tr>
+                          <th>Fee Type</th>
+                          <th>Due Date</th>
+                          <th>Amount</th>
+                          <th>Adjustment</th>
+                          <th>Total Amount</th>
+                          <th>Status</th>
+                          <th>Amount Paid</th>
+                          <th>Pending Amount</th>
+                          <th>Currently Paying</th>
+                          <th>Transaction History</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {detailedData.map((item) => {
+                          const isPaid =
+                            item.status === "paid" ||
+                            disableonlinebutton === "disable";
+                          return (
+                            <tr
+                              key={item.feetype_id}
                               style={{
-                                padding: "10px",
-                                border: "1px solid #dee2e6",
+                                backgroundColor: isPaid ? "#f5f5f5" : "inherit",
+                                opacity: isPaid ? 0.5 : 1,fontFamily:'Manrope',
+                              fontSize:'14px'
                               }}
                             >
-                              {item.fee_type_name}
-                            </td>
-                            <td
-                              style={{
-                                padding: "10px",
-                                border: "1px solid #dee2e6",
-                              }}
-                            >
-                              {formatDate(item.due_date)}
-                            </td>
-                            <td
-                              style={{
-                                padding: "10px",
-                                border: "1px solid #dee2e6",
-                              }}
-                            >
-                              {item.amount}
-                            </td>
-                            <td
-                              style={{
-                                padding: "10px",
-                                border: "1px solid #dee2e6",
-                              }}
-                            >
-                              <input
-                                type="number"
-                                disabled={isPaid} // Disable input if the status is paid
-                                value={item.adjustment}
-                                onChange={(e) =>
-                                  handleAdjustmentChange(
-                                    item.fee_group_id,
-                                    item.feetype_id,
-                                    e.target.value,
-                                    "adjustment" // Specify that this is for adjustment
-                                  )
-                                }
-                                style={{ width: "100px" }}
-                              />
-                            </td>
-                            <td
-                              style={{
-                                padding: "10px",
-                                border: "1px solid #dee2e6",
-                              }}
-                            >
-                              {(
-                                parseFloat(item.amount) +
-                                (parseFloat(item.adjustment) || 0)
-                              ).toFixed(2)}
-                            </td>
-                            <td
-                              style={{
-                                padding: "10px",
-                                border: "1px solid #dee2e6",
-                              }}
-                            >
-                              {item.status}
-                            </td>
-                            <td
-                              style={{
-                                padding: "10px",
-                                border: "1px solid #dee2e6",
-                              }}
-                            >
-                              {item.amount_paid}
-                            </td>
-                            <td
-                              style={{
-                                padding: "10px",
-                                border: "1px solid #dee2e6",
-                              }}
-                            >
-                              {(
-                                parseFloat(item.total_amount) -
-                                parseFloat(item.amount_paid)
-                              ).toFixed(2)}
-                            </td>
-                            <td
-                              style={{
-                                padding: "10px",
-                                border: "1px solid #dee2e6",
-                              }}
-                            >
-                              <input
-                                type="number"
-                                disabled={isPaid} // Disable input if the status is paid
-                                onChange={(e) =>
-                                  handleAdjustmentChange(
-                                    item.fee_group_id,
-                                    item.feetype_id,
-                                    e.target.value,
-                                    "currentlyPaying" // Specify that this is for currently paying
-                                  )
-                                }
-                                value={item.currentlyPaying}
-                                placeholder={(
+                              <td>{item.fee_type_name}</td>
+                              <td>{formatDate(item.due_date)}</td>
+                              <td>{item.amount}</td>
+                              <td>
+                                <input
+                                  type="number"
+                                  disabled={isPaid}
+                                  value={item.adjustment}
+                                  onChange={(e) =>
+                                    handleAdjustmentChange(
+                                      item.fee_group_id,
+                                      item.feetype_id,
+                                      e.target.value,
+                                      "adjustment"
+                                    )
+                                  }
+                                  style={{ width: "100px" }}
+                                />
+                              </td>
+                              <td>
+                                {(
+                                  parseFloat(item.amount) +
+                                  (parseFloat(item.adjustment) || 0)
+                                ).toFixed(2)}
+                              </td>
+                              <td>{item.status}</td>
+                              <td>{item.amount_paid}</td>
+                              <td>
+                                {(
                                   parseFloat(item.total_amount) -
                                   parseFloat(item.amount_paid)
                                 ).toFixed(2)}
-                                style={{ width: "100px" }}
-                              />
-                            </td>
-                            <td
-                              style={{
-                                padding: "10px",
-                                border: "1px solid #dee2e6",
-                                display: "flex",
-                                justifyContent: "space-around",
-                                alignItems: "center",
-                              }}
-                            >
-                              <div
-                                style={{
-                                  width: "32px",
-                                  height: "35px",
-                                  borderRadius: "6px",
-                                  padding: "6px 6px 6px 6px",
-                                  gap: "10px",
-                                  // backgroundColor: "#F5F5F5",
-                                  backgroundColor: "#b0efff",
-                                  display: "flex",
-                                  cursor: "pointer",
-                                }}
-                                onClick={() =>
-                                  fetchTransactionDetails(
-                                    item.student_fees_master_id
-                                  )
-                                }
-                              >
-                                <img
-                                  src="/media/svg/files/view.svg"
-                                  style={{ width: "22px", height: "22px" }}
+                              </td>
+                              <td>
+                                <input
+                                  type="number"
+                                  disabled={isPaid}
+                                  onChange={(e) =>
+                                    handleAdjustmentChange(
+                                      item.fee_group_id,
+                                      item.feetype_id,
+                                      e.target.value,
+                                      "currentlyPaying" // Specify that this is for currently paying
+                                    )
+                                  }
+                                  value={item.currentlyPaying}
+                                  placeholder={(
+                                    parseFloat(item.total_amount) -
+                                    parseFloat(item.amount_paid)
+                                  ).toFixed(2)}
+                                  // onBlur={(e) => {
+                                  //   // Check if the input value is empty and set to the placeholder
+                                  //   if (!e.target.value) {
+                                  //     handleAdjustmentChange(
+                                  //       item.fee_group_id,
+                                  //       item.feetype_id,
+                                  //       (
+                                  //         parseFloat(item.total_amount) -
+                                  //         parseFloat(item.amount_paid)
+                                  //       ).toFixed(2),
+                                  //       "currentlyPaying"
+                                  //     );
+                                  //   }
+                                  // }}
+                                  style={{ width: "100px" }}
                                 />
-                              </div>
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
+                              </td>
 
-                    <tfoot>
-                      <tr>
-                        <td
-                          colSpan={2}
-                          style={{
-                            padding: "10px",
-                            border: "1px solid #dee2e6",
-                          }}
-                        >
-                          Total
-                        </td>
-                        <td
-                          style={{
-                            padding: "10px",
-                            border: "1px solid #dee2e6",
-                          }}
-                        >
-                          {calculateTotalAmount(selectedGroup)}
-                        </td>
-                        <td
-                          colSpan={3}
-                          style={{
-                            padding: "10px",
-                            border: "1px solid #dee2e6",
-                          }}
-                        >
-                          Total Paid
-                        </td>
-                        <td
-                          style={{
-                            padding: "10px",
-                            border: "1px solid #dee2e6",
-                          }}
-                        >
-                          {calculateTotalAmountPaid(
-                            selectedGroup,
-                            data
-                          ).toFixed(2)}
-                        </td>
-                        <td
-                          colSpan={2}
-                          style={{
-                            padding: "10px",
-                            border: "1px solid #dee2e6",
-                          }}
-                        >
-                          Total Pending
-                        </td>
-                        <td
-                          style={{
-                            padding: "10px",
-                            border: "1px solid #dee2e6",
-                          }}
-                        >
-                          {calculateTotalPendingAmount(
-                            selectedGroup,
-                            data
-                          ).toFixed(2)}
-                        </td>
-                      </tr>
-                    </tfoot>
-                  </table>
+                              <td className="d-flex justify-content-around align-items-center">
+                                <div
+                                  style={{
+                                    width: "32px",
+                                    height: "35px",
+                                    borderRadius: "6px",
+                                    padding: "6px",
+                                    backgroundColor: "#b0efff",
+                                    display: "flex",
+                                    cursor: "pointer",
+                                  }}
+                                  onClick={() =>
+                                    fetchTransactionDetails(
+                                      item.student_fees_master_id
+                                    )
+                                  }
+                                >
+                                  <img
+                                    src="/media/svg/files/view.svg"
+                                    alt="View"
+                                    style={{ width: "22px", height: "22px" }}
+                                  />
+                                </div>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+
+                      <tfoot>
+                        <tr>
+                          <td colSpan={2}>Total</td>
+                          <td>{calculateTotalAmount(selectedGroup)}</td>
+                          <td colSpan={3}>Total Paid</td>
+                          <td>
+                            {calculateTotalAmountPaid(
+                              selectedGroup,
+                              data
+                            ).toFixed(2)}
+                          </td>
+                          <td colSpan={2}>Total Pending</td>
+                          <td>
+                            {calculateTotalPendingAmount(
+                              selectedGroup,
+                              data
+                            ).toFixed(2)}
+                          </td>
+                        </tr>
+                      </tfoot>
+                    </table>
+                  </div>
                 )}
               </>
             ) : (
               // Initial view of groups
               <table
-                style={{
-                  width: "100%",
-                  borderCollapse: "collapse",
-                  fontSize: "14px",
-                  marginBottom: "0",
-                }}
+                className="table table-striped table-hover"
+                style={{ marginBottom: "0" }}
               >
-                <thead style={{ backgroundColor: "#1C335C", color: "white" }}>
-                  <tr>
-                    <th
-                      style={{ padding: "10px", border: "1px solid #dee2e6" }}
-                    >
-                      Fee Group
-                    </th>
-                    <th
-                      style={{ padding: "10px", border: "1px solid #dee2e6" }}
-                    >
-                      Total Amount
-                    </th>
-                    <th
-                      style={{ padding: "10px", border: "1px solid #dee2e6" }}
-                    >
-                      Action
-                    </th>
+                <thead className="thead-dark">
+                  <tr
+                    style={{
+                      color: "black",
+                      fontFamily: "Manrope",
+                      borderBottom: "1px solid lightGray",
+                      fontFamily:'Manrope',
+                              fontSize:'14px'
+                    }}
+                  >
+                    <th style={{ padding: "10px" }}>Fee Group</th>
+                    <th style={{ padding: "10px" }}>Total Amount</th>
+                    <th style={{ padding: "10px" }}>Action</th>
                   </tr>
                 </thead>
                 <tbody>
                   {groupedData &&
                     Array.from(groupedData.entries()).map(
                       ([groupName, items]) => (
-                        <tr key={groupName}>
+                        <tr key={groupName} style={{fontFamily:'Manrope',
+                          fontSize:'14px'}}>
                           <td
-                            style={{
-                              padding: "10px",
-                              border: "1px solid #dee2e6",
-                            }}
+                            style={{ padding: "10px", fontFamily: "Manrope" }}
                           >
                             {groupName}
                           </td>
                           <td
-                            style={{
-                              padding: "10px",
-                              border: "1px solid #dee2e6",
-                            }}
+                            style={{ padding: "10px", fontFamily: "Manrope" }}
                           >
                             {calculateTotalAmount(groupName)}
                           </td>
                           <td
-                            style={{
-                              padding: "10px",
-                              border: "1px solid #dee2e6",
-                            }}
+                            style={{ padding: "10px", fontFamily: "Manrope" }}
                           >
-                            <Button
-                              variant="primary"
+                            <button
+                              type="button"
+                              className="btn btn-outline-dark"
                               onClick={() => handleGroupClick(groupName)}
                             >
                               Collect
-                            </Button>
+                            </button>
                           </td>
                         </tr>
                       )
@@ -1087,15 +975,12 @@ const CreateCollectFees = ({
                     </div>
                   </div>
 
-                  
-
                   {/* Conditional Fields */}
                   {offlineFormData.paymentMode === "cash" && (
                     <div
                       className="fv-row mb-10"
                       style={{ display: "flex", gap: "10px" }}
                     >
-                    
                       <div
                         className="form-floating mb-3"
                         style={{
@@ -1384,7 +1269,6 @@ const CreateCollectFees = ({
                           />
                           <label htmlFor="transferDate">Transfer Date</label>
                         </div>
-      
                       </div>
                     </div>
                   )}

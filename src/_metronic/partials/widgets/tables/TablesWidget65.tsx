@@ -3,7 +3,6 @@ import "../../../../app/pages/StaffPages/FeeDetails/style.css";
 import { useAuth } from "../../../../app/modules/auth/core/Auth";
 import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
 import { useNavigate } from "react-router-dom";
-import { AddClasses } from "../../modals/create-app-stepper/AddClasses";
 import { CreateViewSchool } from "../../modals/create-app-stepper/CreateViewSchool";
 
 
@@ -16,101 +15,49 @@ interface DataItem {
 }
 
 const TablesWidget65 = () => {
-  const [data, setData] = useState<DataItem[]>([]);
+  const [schools, setSchools] = useState([]);
+  console.log(schools);
+  
   const { currentUser } = useAuth();
-  const Navigate = useNavigate();
-  const schoolId = (currentUser as unknown as CurrentUser)?.school_id;
+  const schoolId = currentUser?.school_id;
   const [showViewSchoolModal, setShowViewSchoolModal] = useState(false);
+  const [selectedSchoolId, setSelectedSchoolId] = useState(null); // Keep track of selected school
   const [refresh, setRefresh] = useState(false);
-  const [sub_id, setSub_id] = useState();
+  const [selectedSchoolDetails, setSelectedSchoolDetails] = useState(null);
 
-  const [formData, setFormData] = useState({
-    id: "",
-    name: "",
-  });
-
-//   const handleModules = (selectedItem:number) => () => {
-//     Navigate(`/superadmin/subscriptions/modules?subscriptionId=${selectedItem}`);
-//   };
-
-
-const handleShowModal = (id)=>{
-  setSub_id(id)
-  setShowViewSchoolModal(true);
-}
-
-const handleModalClose = () => {
-  setShowViewSchoolModal(false);
-};
-
+  // Fetch the schools list
   useEffect(() => {
-    const fetchEnquiries = async () => {
+    const fetchSchools = async () => {
       try {
-        const response = await fetch(
-          `${DOMAIN}/api/superadmin/get-allsubscriptions`
-        );
+        const response = await fetch(`${DOMAIN}/api/superadmin/get-all-schools`);
         if (!response.ok) {
-          throw new Error("Failed to fetch data");
+          throw new Error("Failed to fetch schools");
         }
         const responseData = await response.json();
-        console.log(responseData);
-
-        setData(responseData);
+        setSchools(responseData);
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.error("Error fetching schools:", error);
       }
     };
     setRefresh(false);
-    fetchEnquiries();
-  }, [schoolId,refresh]);
+    fetchSchools();
+  }, [refresh]);
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await fetch(
-        `${DOMAIN}/api/staff/add-feetype/${schoolId}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formData),
-        }
-      );
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const data = await response.json();
-      console.log("Response:", data);
-    } catch (error) {
-      console.error("Error:", error);
+  // Handle modal show for the specific school
+  const handleShowModal = (schoolId) => {
+    const school = schools.find((s) => s.school_id === schoolId);
+    if (school) {
+      setSelectedSchoolDetails(school);
+      setSelectedSchoolId(schoolId);
+      setShowViewSchoolModal(true);
     }
   };
 
-  const handleModalEdit = (subscriptionId) => {
-    const selectedSubscription = data.find(
-      (item) => item.id === subscriptionId
-    );
-
-    if (selectedSubscription) {
-      setFormData({
-        id: selectedSubscription.id.toString(),
-        name: selectedSubscription.name,
-        // Populate other fields as necessary
-      });
-    } else {
-      console.error("Subscription not found");
-    }
+  const handleModalClose = () => {
+    setShowViewSchoolModal(false);
+    setSelectedSchoolId(null);
+    setSelectedSchoolDetails(null);
   };
-
   return (
     <div className="d-flex" style={{ gap: "10px" }}>
       <div
@@ -274,12 +221,12 @@ const handleModalClose = () => {
                         color: "#FFFFFF",
                       }}
                     >
-                      Subscription Type
+                      School Id
                     </span>
                   </div>
                 </th>
                 <th>
-                  <div style={{ width: "200px" }}>
+                  <div style={{ width: "20px" }}>
                     <span
                       style={{
                         fontSize: "13px",
@@ -288,7 +235,49 @@ const handleModalClose = () => {
                         color: "#FFFFFF",
                       }}
                     >
-                      Subscription Code
+                      School Name
+                    </span>
+                  </div>
+                </th>
+                <th>
+                  <div style={{ width: "10px" }}>
+                    <span
+                      style={{
+                        fontSize: "13px",
+                        fontWeight: "600",
+                        lineHeight: "18px",
+                        color: "#FFFFFF",
+                      }}
+                    >
+                      School Email
+                    </span>
+                  </div>
+                </th>
+                <th>
+                  <div style={{ width: "20px" }}>
+                    <span
+                      style={{
+                        fontSize: "13px",
+                        fontWeight: "600",
+                        lineHeight: "18px",
+                        color: "#FFFFFF",
+                      }}
+                    >
+                      Subscription Type
+                    </span>
+                  </div>
+                </th>
+                <th>
+                  <div style={{ width: "20px" }}>
+                    <span
+                      style={{
+                        fontSize: "13px",
+                        fontWeight: "600",
+                        lineHeight: "18px",
+                        color: "#FFFFFF",
+                      }}
+                    >
+                      Is Active
                     </span>
                   </div>
                 </th>
@@ -329,7 +318,7 @@ const handleModalClose = () => {
                 backgroundColor: "#F5F5F5",
               }}
             >
-              {data.map((item, index) => (
+             {schools.map((school, index) => (
                 <tr
                   key={index}
                   style={{
@@ -346,7 +335,7 @@ const handleModalClose = () => {
                   <td>
                     <div
                       style={{
-                        width: "55px",
+                        width: "60px",
                         display: "flex",
                         justifyContent: "center",
                         flexDirection: "column",
@@ -361,14 +350,14 @@ const handleModalClose = () => {
                           fontFamily: "Manrope",
                         }}
                       >
-                        {item.name}
+                        {school.school_id}
                       </span>
                     </div>
                   </td>
                   <td>
                     <div
                       style={{
-                        width: "55px",
+                        width: "80px",
                         display: "flex",
                         justifyContent: "center",
                         flexDirection: "column",
@@ -383,7 +372,73 @@ const handleModalClose = () => {
                           fontFamily: "Manrope",
                         }}
                       >
-                        {item.is_active}
+                        {school.name}
+                      </span>
+                    </div>
+                  </td>
+                  <td>
+                    <div
+                      style={{
+                        width: "120px",
+                        display: "flex",
+                        justifyContent: "center",
+                        flexDirection: "column",
+                      }}
+                    >
+                      <span
+                        style={{
+                          fontSize: "14px",
+                          fontWeight: "500",
+                          lineHeight: "18px",
+                          color: "#1F1F1F",
+                          fontFamily: "Manrope",
+                        }}
+                      >
+                        {school.email}
+                      </span>
+                    </div>
+                  </td>
+                  <td>
+                    <div
+                      style={{
+                        width: "100px",
+                        display: "flex",
+                        justifyContent: "center",
+                        flexDirection: "column",
+                      }}
+                    >
+                      <span
+                        style={{
+                          fontSize: "14px",
+                          fontWeight: "500",
+                          lineHeight: "18px",
+                          color: "#1F1F1F",
+                          fontFamily: "Manrope",
+                        }}
+                      >
+                        {school.sub_type}
+                      </span>
+                    </div>
+                  </td>
+                  <td>
+                    <div
+                      style={{
+                        width: "0px",
+                        display: "flex",
+                        justifyContent: "center",
+                        flexDirection: "column",
+                      }}
+                    >
+                      <span
+                        style={{
+                          fontSize: "14px",
+                          fontWeight: "500",
+                          lineHeight: "18px",
+                          color: "#1F1F1F",
+                          fontFamily: "Manrope",
+                        }}
+                      >
+                        {school.is_active === 1 ? "Active" : "Not Active"}
                       </span>
                     </div>
                   </td>
@@ -408,25 +463,25 @@ const handleModalClose = () => {
                           fontWeight: "600",
                           color: "#FFF",
                         }}
-                        onClick={() => handleShowModal(item.id)}
+                        onClick={() => handleShowModal(school.school_id)}
                       >
-                        View Schools
+                        Change Subscription
                       </button>
                     </div>
                   </td>
                 </tr>
               ))}
             </tbody>
-            <CreateViewSchool
-            show = {showViewSchoolModal}
-            handleClose = {handleModalClose}
-            sub_id = {sub_id}
-            setRefresh={setRefresh}
-          />
-           <AddClasses show={false} handleClose={function (): void {
-              throw new Error("Function not implemented.");
-            } }  />
-
+            {selectedSchoolDetails && (
+        <CreateViewSchool
+          show={showViewSchoolModal}
+          handleClose={handleModalClose}
+          school_id={selectedSchoolId} // Pass selected school ID
+          setRefresh={setRefresh}
+          previousSubscription={selectedSchoolDetails.sub_type} // Pass previous subscription type
+          previousSubscriptionId={selectedSchoolDetails.subscription_id} // Pass previous subscription ID
+        />
+      )}
           </table>
         </div>
       </div>

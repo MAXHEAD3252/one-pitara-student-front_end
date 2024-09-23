@@ -129,13 +129,14 @@ const ToolbarFeeMaster = ({ onSelectValue } : any) => {
       id="kt_app_toolbar"
       className={clsx("app-toolbar", config?.app?.toolbar?.class)}
       style={{
-        height: "35px",
+        height: "65px",
+        // border:'1px solid',
         // width:"1368px",
         alignItems: "center",
         display: "flex",
         justifyContent: "center",
         gap: "160px",
-        top: "88px",
+        // top: "98px",
         marginLeft: "auto",
         marginRight: "auto",
       }}

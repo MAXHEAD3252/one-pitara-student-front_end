@@ -73,6 +73,7 @@ const TablesWidget63 = ({ class_id }: Props) => {
   const [filteredData, setFilteredData] = useState<FilterData[]>([]);
   const [referesh, setRefresh] = useState(false);
   const [studentId, setStudentId] = useState(0);
+  const [studentEmail, setStudentEmail] = useState('');
   const [getClass, setClass] = useState("");
   const [getSession, setSession] = useState("");
   
@@ -111,7 +112,8 @@ const TablesWidget63 = ({ class_id }: Props) => {
     const day = String(date.getDate()).padStart(2, "0");
     return `${year}-${month}-${day}`;
   };
-  const handleActionModal = (id: number, class_id:string, session_id:string) => {
+  const handleActionModal = (id: number, class_id:string, session_id:string,email:string) => {
+    setStudentEmail(email);
     setStudentId(id);
     setClass(class_id);
     setSession(session_id)
@@ -634,7 +636,7 @@ const TablesWidget63 = ({ class_id }: Props) => {
                         fontWeight: "600",
                         color: "#1F3259",
                       }}
-                      onClick={() => handleActionModal(item.id,item.class_id,item.session_id)}
+                      onClick={() => handleActionModal(item.id,item.class_id,item.session_id, item.email)}
                     >
                       Collect Fees
                     </button>
@@ -666,6 +668,7 @@ const TablesWidget63 = ({ class_id }: Props) => {
             admission_enquiry_id = {null}
             enqId={null}
             studentId={studentId}
+            studentEmail={studentEmail}
           />
       </div>
     </div>
