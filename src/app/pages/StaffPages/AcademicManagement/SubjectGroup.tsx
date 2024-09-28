@@ -28,4 +28,4 @@ const SubjectGroup: FC = () => {
   );
 };
 
-export { SubjectGroup };
+export default SubjectGroup;

@@ -130,7 +130,7 @@
 //     };
 
 //     try {
-//       const response = await fetch(`${DOMAIN}/api/staff/add-feegroupfeetype`, {
+//       const response = await fetch(`${DOMAIN}/api/school/add-feegroupfeetype`, {
 //         method: "POST",
 //         headers: {
 //           "Content-Type": "application/json",
@@ -150,7 +150,7 @@
 //     const fetchFeeGroups = async () => {
 //       try {
 //         const response = await fetch(
-//           `${DOMAIN}/api/staff/getfeegroup/${schoolId}`
+//           `${DOMAIN}/api/school/getfeegroup/${schoolId}`
 //         );
 //         if (!response.ok) {
 //           throw new Error("Failed to fetch fee groups");
@@ -169,7 +169,7 @@
 //     const fetchFeeTypes = async () => {
 //       try {
 //         const response = await fetch(
-//           `${DOMAIN}/api/staff/getfeetype/${schoolId}`
+//           `${DOMAIN}/api/school/getfeetype/${schoolId}`
 //         );
 //         if (!response.ok) {
 //           throw new Error("Failed to fetch fee types");
@@ -685,7 +685,7 @@ const AddFeesMasterModal = ({ show, onHide }: Props) => {
     
   
     try {
-      const response = await fetch(`${DOMAIN}/api/staff/add-feegroupfeetype`, {
+      const response = await fetch(`${DOMAIN}/api/school/add-feegroupfeetype`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -722,7 +722,7 @@ const AddFeesMasterModal = ({ show, onHide }: Props) => {
     const fetchFeeGroups = async () => {
       try {
         const response = await fetch(
-          `${DOMAIN}/api/staff/getfeegroup/${schoolId}`
+          `${DOMAIN}/api/school/getfeegroup/${schoolId}`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch fee groups");
@@ -741,7 +741,7 @@ const AddFeesMasterModal = ({ show, onHide }: Props) => {
     const fetchFeeTypes = async () => {
       try {
         const response = await fetch(
-          `${DOMAIN}/api/staff/getfeetype/${schoolId}`
+          `${DOMAIN}/api/school/getfeetype/${schoolId}`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch fee types");

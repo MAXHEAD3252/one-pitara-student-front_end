@@ -26,7 +26,7 @@ const TablesWidget30: React.FC<Props> = ({ refresh, csvData }) => {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          `${DOMAIN}/api/staff/get-staff/${school_id}`
+          `${DOMAIN}/api/school/get-staff/${school_id}`
         );
         if (!response.ok) {
           throw new Error("Network response was not ok");

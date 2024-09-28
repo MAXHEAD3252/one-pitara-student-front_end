@@ -21,422 +21,275 @@ const TablesWidget42: React.FC<TablesWidget42Props> = ({ subscriptionId,subscrip
   const [schoolModules, setSchoolModules] = useState<SchoolModule[]>([]);
   const Navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(
-          `${DOMAIN}/${getSchoolModuleById}/${subscriptionId}`
-        );
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        const data = await response.json();
-        setSchoolModules(data);
-      } catch (error) {
-        console.error("Error fetching school details:", error);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const response = await fetch(
+  //         `${DOMAIN}/${getSchoolModuleById}/${subscriptionId}`
+  //       );
+  //       if (!response.ok) {
+  //         throw new Error("Network response was not ok");
+  //       }
+  //       const data = await response.json();
+  //       setSchoolModules(data);
+  //     } catch (error) {
+  //       console.error("Error fetching school details:", error);
+  //     }
+  //   };
 
-    fetchData();
-  }, [subscriptionId]);
+  //   fetchData();
+  // }, [subscriptionId]);
 
-  const handleModules = () => () => {
-    Navigate(`/superadmin/subscriptions/modules?subscriptionId=${subscriptionId}&restrict=${true}`);
-  };
+  // const handleModules = () => () => {
+  //   Navigate(`/superadmin/subscriptions/modules?subscriptionId=${subscriptionId}&restrict=${true}`);
+  // };
 
   return (
     <div
-      className=""
+    className="card-style"
+    style={{
+      width: "100%",
+      borderRadius: "16px",
+      backgroundColor: "rgb(242, 246, 255)", 
+      boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+      overflow: "hidden",
+      marginTop: "20px",
+      padding: "20px",
+    }}
+  >
+    <div
+      className="card-header"
       style={{
-        width: "100%",
-        height: "600px",
-        borderRadius: "16px",
-        border: "1px solid gray",
-        overflow: "hidden",
+        backgroundColor: "rgb(242, 246, 255)",
+        padding: "16px 20px",
+        borderBottom: "1px solid #E0E4F0",
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+      }}
+    >
+      <span
+        style={{
+          fontSize: "20px",
+          fontWeight: "600",
+          color: "#1C335C",
+          fontFamily: "Manrope",
+        }}
+      >
+        Manage Users
+      </span>
+      <div
+        // onClick={handleAddRoles}
+        style={{
+          display: "flex",
+          alignItems: "center",
+          padding: "8px 12px",
+          backgroundColor: "#1C335C",
+          borderRadius: "8px",
+          cursor: "pointer",
+          transition: "background-color 0.3s",
+        }}
+        onMouseEnter={(e) =>
+          (e.currentTarget.style.backgroundColor = "#16294D")
+        }
+        onMouseLeave={(e) =>
+          (e.currentTarget.style.backgroundColor = "#1C335C")
+        }
+      >
+        <span
+          style={{
+            marginRight: "8px",
+            color: "white",
+            fontSize: "14px",
+            fontWeight: "700",
+            fontFamily: "Manrope",
+          }}
+        >
+          Add User
+        </span>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          width="16px"
+          height="16px"
+          fill="#ffffff"
+        >
+          <path d="M0 0h24v24H0V0z" fill="none" />
+          <path d="M3 17.25V21h3.75l11-11.03-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
+        </svg>
+      </div>
+    </div>
+    <div
+      style={{
+        height: "400px", // Fixed height for the table container
+        overflowY: "auto", // Enable vertical scrolling
+        padding: "16px 0", // Optional: adds some padding around the table
       }}
     >
       <table
-        className=""
+        className="table"
         style={{
-          top: "223px",
-          height: "808px",
-          maxHeight: "100%",
-          borderCollapse: "collapse",
-          // tableLayout: "fixed",
-          overflowX: "hidden",
-          overflowY: "auto",
-          whiteSpace: "nowrap",
           width: "100%",
+          borderCollapse: "collapse",
+          marginTop: "10px",
+          backgroundColor: "#FFFFFF", // White background for the table
+          borderRadius: "12px", // Round corners for the table
+          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.05)", // Light shadow for the table
         }}
       >
-        <thead
-          style={{
-            position: "sticky",
-            top: "0",
-            zIndex: "1",
-            height: "133px",
-            maxHeight: "100%",
-            width: "100%",
-            display: "flex",
-            flexDirection: "column",
-            backgroundColor: "#1C335C",
-            justifyContent: "space-between",
-            gap: "0px",
-            padding: "9px 24px 9px 24px",
-          }}
-        >
-          <caption
+        <thead>
+          <tr
             style={{
-              paddingLeft: "20px",
-              paddingRight: "20px",
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "space-between",
-              marginTop: "24px",
-              padding: "0px",
+              backgroundColor: "rgb(242, 246, 255)", // Header background color
+              borderBottom: "1px solid #E0E4F0",
+              fontFamily: "Manrope",
+              fontWeight: "600",
+              color: "#1C335C",
+              fontSize: "14px",
             }}
           >
-            <div style={{ display: "flex", gap: "10px" }}>
-              <span
+            <th
+              style={{
+                padding: "12px 20px",
+                textAlign: "left",
+              }}
+            >
+              User Name
+            </th>
+            <th
+              style={{
+                padding: "12px 20px",
+                textAlign: "left",
+              }}
+            >
+              User Role
+            </th>
+            <th
+              style={{
+                padding: "12px 20px",
+                textAlign: "left",
+              }}
+            >
+              User Designation
+            </th>
+            <th
+              style={{
+                padding: "12px 20px",
+                textAlign: "left",
+              }}
+            >
+              User Email
+            </th>
+            <th
+              style={{
+                padding: "12px 20px",
+                textAlign: "left",
+              }}
+            >
+              IsActive
+            </th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {schoolModules.length > 0 ? (
+            schoolModules.map((usersDetail, index) => (
+              <tr
+                key={index}
                 style={{
-                  fontSize: "16px",
-                  fontWeight: "700",
-                  lineHeight: "21.86px",
-                  color: "#FFFFFF",
+                  backgroundColor: index % 2 === 0 ? "rgb(242, 246, 255)" : "#FFFFFF",
+                  borderBottom: "1px solid #E0E4F0",
+                  fontFamily: "Manrope",
+                  fontSize: "14px",
+                  color: "#1C335C",
+                }}
+              >
+                <td
+                  style={{
+                    padding: "12px 20px",
+                  }}
+                >
+                  {usersDetail.name + " " + usersDetail.surname}
+                </td>
+                <td
+                  style={{
+                    padding: "12px 20px",
+                  }}
+                >
+                  {usersDetail.role ? usersDetail.role : "Not rendered"}
+                </td>
+                <td
+                  style={{
+                    padding: "12px 20px",
+                  }}
+                >
+                  {usersDetail.designation}
+                </td>
+                <td
+                  style={{
+                    padding: "12px 20px",
+                  }}
+                >
+                  {usersDetail.email}
+                </td>
+                <td
+                  style={{
+                    padding: "12px 20px",
+                    textAlign: "start",
+                  }}
+                >
+                  {usersDetail.is_active === 1 ? (
+                    <span
+                      style={{
+                        display: "inline-block",
+                        padding: "4px 12px",
+                        borderRadius: "12px",
+                        backgroundColor: "#28a745",
+                        color: "#FFFFFF",
+                        fontSize: "12px",
+                        fontWeight: "600",
+                      }}
+                    >
+                      Active
+                    </span>
+                  ) : (
+                    <span
+                      style={{
+                        display: "inline-block",
+                        padding: "4px 12px",
+                        borderRadius: "12px",
+                        backgroundColor: "#dc3545",
+                        color: "#FFFFFF",
+                        fontSize: "12px",
+                        fontWeight: "600",
+                      }}
+                    >
+                      Inactive
+                    </span>
+                  )}
+                </td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td
+                colSpan={5}
+                style={{
+                  padding: "12px 20px",
+                  textAlign: "center",
+                  color: "#1C335C",
+                  fontWeight: "600",
                   fontFamily: "Manrope",
                 }}
               >
-                Manage Modules
-              </span>
-            </div>
-            <div style={{ display: "flex" }}>
-              <span
-                style={{
-                  height: "36px",
-                  borderRadius: "8px",
-                  padding: "6px 10px 8px 10px",
-                  gap: "5px",
-                  // backgroundColor: "#FFFFFF",
-                  display: "flex",
-                  flexDirection: "row",
-                  cursor: "pointer",
-                  textAlign:'center'
-                }}
-                data-bs-toggle="modal"
-                data-bs-target="#staticBackdrop"
-                >
-                <div style={{ width: "120px", height: "20px",  borderRadius: "8px"
-
-
-                  ,outline:'1px solid #FFFFFF',
-                }}>
-                  <span
-                    style={{
-                      fontSize: "14px",
-                      fontWeight: "800",
-                      color: "#FFFFFF",
-                      lineHeight: "16.39px",
-                      fontFamily: "Manrope",
-                    }}
-                  >
-                   Plan Type : {subscriptionName ? subscriptionName
-                      : "No Plan Selected"}
-                  </span>
-                </div>
-              </span>
-            </div>
-            <div style={{ display: "flex" }}>
-              <span
-                style={{
-                  height: "36px",
-                  borderRadius: "8px",
-                  padding: "8px 10px 8px 10px",
-                  gap: "5px",
-                  backgroundColor: "#FFFFFF",
-                  display: "flex",
-                  flexDirection: "row",
-                  cursor: "pointer",
-                }}
-                onClick={handleModules()}
-                data-bs-toggle="modal"
-                data-bs-target="#staticBackdrop"
-              >
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 20 20"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <g clip-path="url(#clip0_103_1850)">
-                    <path
-                      d="M1.66663 10C1.66663 6.07165 1.66663 4.10746 2.88701 2.88708C4.1074 1.66669 6.07159 1.66669 9.99996 1.66669C13.9283 1.66669 15.8925 1.66669 17.1129 2.88708C18.3333 4.10746 18.3333 6.07165 18.3333 10C18.3333 13.9284 18.3333 15.8926 17.1129 17.113C15.8925 18.3334 13.9283 18.3334 9.99996 18.3334C6.07159 18.3334 4.1074 18.3334 2.88701 17.113C1.66663 15.8926 1.66663 13.9284 1.66663 10Z"
-                      stroke="black"
-                      stroke-width="1.5"
-                    />
-                    <path
-                      d="M12.5 10L10 10M10 10L7.5 10M10 10L10 7.5M10 10L10 12.5"
-                      stroke="black"
-                      stroke-width="1.5"
-                      stroke-linecap="round"
-                    />
-                  </g>
-                  <defs>
-                    <clipPath id="clip0_103_1850">
-                      <rect width="20" height="20" fill="white" />
-                    </clipPath>
-                  </defs>
-                </svg>
-                <div style={{ width: "75px", height: "9px" }}>
-                  <span
-                    style={{
-                      fontSize: "12px",
-                      fontWeight: "500",
-                      color: "#000000",
-                      lineHeight: "16.39px",
-                      fontFamily: "Manrope",
-                    }}
-                  >
-                    {schoolModules.length === 0
-                      ? "Add Modules"
-                      : "Edit Modules"}
-                  </span>
-                </div>
-              </span>
-            </div>
-          </caption>
-          <div style={{ display: "flex", justifyContent: "center" }}>
-            <tr
-              style={{
-                width: "100%",
-                height: "34px",
-                display: "flex",
-                paddingRight: "24px",
-                // justifyContent: "space-between",
-                gap: "60px",
-                // backgroundColor:'#1C335C',
-                // backgroundColor:'#F5F5F5',
-                // paddingLeft: "15px",
-                // paddingTop: "15px",
-                // paddingRight:'35px'
-              }}
-            >
-              <th style={{ width: "10%", height: "18px" }}>
-                <span
-                  style={{
-                    fontSize: "12px",
-                    fontWeight: "700",
-                    lineHeight: "18px",
-                    color: "#FFFFFF",
-                    position: "sticky",
-                    top: "0",
-                    zIndex: "1",
-                    fontFamily: "Manrope",
-                  }}
-                >
-                  Id
-                </span>
-              </th>
-              <th style={{ width: "32%", height: "18px" }}>
-                <span
-                  style={{
-                    fontSize: "12px",
-                    fontWeight: "700",
-                    lineHeight: "18px",
-                    color: "#FFFFFF",
-                    position: "sticky",
-                    top: "0",
-                    zIndex: "1",
-                    fontFamily: "Manrope",
-                  }}
-                >
-                  Group Name
-                </span>
-              </th>
-              <th style={{ width: "30%", height: "18px" }}>
-                <span
-                  style={{
-                    fontSize: "12px",
-                    fontWeight: "700",
-                    lineHeight: "18px",
-                    color: "#FFFFFF",
-                    position: "sticky",
-                    top: "0",
-                    zIndex: "1",
-                    fontFamily: "Manrope",
-                  }}
-                >
-                  Module Name
-                </span>
-              </th>
-              <th style={{ width: "fit-content", height: "18px" }}>
-                <span
-                  style={{
-                    fontSize: "12px",
-                    fontWeight: "700",
-                    lineHeight: "18px",
-                    color: "#FFFFFF",
-                    position: "sticky",
-                    top: "0",
-                    zIndex: "1",
-                    fontFamily: "Manrope",
-                  }}
-                >
-                  Can View
-                </span>
-              </th>
+                No roles assigned for this school.
+              </td>
             </tr>
-          </div>
-        </thead>
-        <tbody
-          className=""
-          style={{
-            display: "block",
-            height: "465px",
-            overflowY: "auto",
-            flexDirection: "column",
-            flex: 1,
-            justifyContent: "center",
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              height: "61px",
-              alignItems: "center",
-              justifyContent: "space-between",
-              width: "100%",
-              backgroundColor: "#F7F9FB",
-              flexDirection: "column",
-            }}
-          >
-            {subscriptionId ? (
-              schoolModules?.map((moduleDetail, index) => (
-                <tr
-                  key={index}
-                  style={{
-                    width: "100%",
-                    height: "61px",
-                    display: "flex",
-                    paddingLeft: "24px",
-                    backgroundColor: index % 2 === 0 ? "#F7F9FB" : "#FFFFFF",
-                    paddingTop: "18px",
-                    gap: "60px",
-                    paddingBottom: "15px",
-
-                    // justifyContent: "space-between",
-                  }}
-                >
-                  <td style={{ width: "10%" }}>
-                    <div
-                      className=""
-                      style={{
-                        width: "fit-content",
-                        display: "flex",
-                        justifyContent: "start",
-                        flexDirection: "column",
-                      }}
-                    >
-                      <a
-                        href="#"
-                        className=""
-                        style={{
-                          fontFamily: "Manrope",
-                          fontSize: "14px",
-                          fontWeight: "700",
-                          color: "#000",
-                        }}
-                      >
-                        {index}
-                      </a>
-                    </div>
-                  </td>
-                  <td style={{ width: "30%" }}>
-                    <div
-                      style={{
-                        width: "fit-content",
-                        display: "flex",
-                        marginRight: "25px",
-                        justifyContent: "start",
-                        flexDirection: "column",
-                      }}
-                    >
-                      <span
-                        style={{
-                          fontSize: "14px",
-                          fontWeight: "400",
-                          lineHeight: "18px",
-                          color: "#1F1F1F",
-                          fontFamily: "Manrope",
-                        }}
-                      >
-                        {moduleDetail.parent_name}
-                      </span>
-                    </div>
-                  </td>
-                  <td style={{ width: "30%" }}>
-                    <div
-                      style={{
-                        width: "fit-content",
-                        display: "flex",
-                        justifyContent: "start",
-                        flexDirection: "column",
-                      }}
-                    >
-                      <span
-                        style={{
-                          fontSize: "14px",
-                          fontWeight: "400",
-                          lineHeight: "18px",
-                          color: "#1F1F1F",
-                          fontFamily: "Manrope",
-                        }}
-                      >
-                        {moduleDetail.module_name}
-                      </span>
-                    </div>
-                  </td>
-                  <td>
-                    <div
-                      style={{
-                        width: "fit-content",
-                        display: "flex",
-                        marginRight: "25px",
-                        justifyContent: "start",
-                        flexDirection: "column",
-                      }}
-                    >
-                      <span
-                        style={{
-                          fontSize: "14px",
-                          fontWeight: "400",
-                          lineHeight: "18px",
-                          color: "#1F1F1F",
-                          fontFamily: "Manrope",
-                        }}
-                      >
-                        {moduleDetail.can_view}
-                      </span>
-                    </div>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td
-                  /* @ts-ignore */
-                  colSpan="5"
-                >
-                  No Modules Assign to the school
-                </td>
-              </tr>
-            )}
-          </div>
+          )}
         </tbody>
-        {/* end::Table body */}
       </table>
-      {/* end::Table */}
     </div>
+  </div>
   );
 };
 

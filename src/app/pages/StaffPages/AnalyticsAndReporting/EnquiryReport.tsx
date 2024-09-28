@@ -150,4 +150,4 @@ const EnquiryReport: FC = () => {
   );
 };
 
-export { EnquiryReport };
+export default EnquiryReport ;

@@ -48,11 +48,11 @@ useEffect(()=>{
       let response;
       if (currentUser?.roleName == "Teacher") {
         response = await fetch(
-          `${DOMAIN}/api/staff/get-allteachersubjects/${school_id}/${teacher_id}/${class_section_id}`
+          `${DOMAIN}/api/school/get-allteachersubjects/${school_id}/${teacher_id}/${class_section_id}`
         );
       } else {
         response = await fetch(
-          `${DOMAIN}/api/staff/get-allsubjects/${class_section_id}/${school_id}`
+          `${DOMAIN}/api/school/get-allsubjects/${class_section_id}/${school_id}`
         );
       }
       if (!response.ok) {
@@ -172,4 +172,4 @@ const SelectSubject: FC = () => {
   );
 };
 
-export { SelectSubject };
+export default SelectSubject;

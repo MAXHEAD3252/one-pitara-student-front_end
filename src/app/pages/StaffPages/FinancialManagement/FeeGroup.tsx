@@ -58,4 +58,4 @@ const FeeGroup: FC = () => {
   );
 };
 
-export { FeeGroup };
+export default FeeGroup;

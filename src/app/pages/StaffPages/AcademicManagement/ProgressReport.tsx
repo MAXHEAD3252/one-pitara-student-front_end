@@ -20,4 +20,4 @@ const ProgressReport: FC = () => {
 };
 
 
-export { ProgressReport };
+export default ProgressReport;

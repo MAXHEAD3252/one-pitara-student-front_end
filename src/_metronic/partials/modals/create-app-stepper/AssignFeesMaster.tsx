@@ -54,7 +54,7 @@ const AssignFeesMaster: React.FC<AssignFeesMasterProps> = ({
   const fetchStudents = async (classId: string, schoolId: string) => {
     try {
       const response = await fetch(
-        `${DOMAIN}/api/staff/classes/${classId}/students?schoolId=${schoolId}`
+        `${DOMAIN}/api/school/classes/${classId}/students?schoolId=${schoolId}`
       );
       const data = await response.json();
       console.log(data);
@@ -118,7 +118,7 @@ const AssignFeesMaster: React.FC<AssignFeesMasterProps> = ({
     // return;
 
     try {
-      await fetch(`${DOMAIN}/api/staff/add-studentfeesmaster`, {
+      await fetch(`${DOMAIN}/api/school/add-studentfeesmaster`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

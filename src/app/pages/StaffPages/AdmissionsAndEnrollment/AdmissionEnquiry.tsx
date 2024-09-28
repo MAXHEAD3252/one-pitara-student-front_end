@@ -61,4 +61,4 @@ const AdmissionEnquiry: FC = () => {
   );
 };
 
-export { AdmissionEnquiry };
+export default AdmissionEnquiry;

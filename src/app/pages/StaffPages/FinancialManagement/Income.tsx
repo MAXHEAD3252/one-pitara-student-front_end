@@ -192,4 +192,4 @@ const Income: FC = () => {
   );
 };
 
-export { Income };
+export default Income;

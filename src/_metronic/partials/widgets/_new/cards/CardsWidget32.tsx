@@ -15,7 +15,7 @@ const CardsWidget32: FC = () => {
     const fetchTotalQuizes = async () => {
       try {
         const response = await fetch(
-          `${DOMAIN}/api/staff/get-totalquizzes/${school_id}`
+          `${DOMAIN}/api/school/get-totalquizzes/${school_id}`
         );
         if (!response.ok) {
           throw new Error("Network response was not ok");

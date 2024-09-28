@@ -83,7 +83,7 @@ const UploadAssignmentModal = ({ show, handleClose }: Props) => {
     const fetchClasses = async () => {
       try {
         const response = await fetch(
-          `${DOMAIN}/api/staff/get-allclasses/${school_id}`
+          `${DOMAIN}/api/school/get-allclasses/${school_id}`
         );
         if (!response.ok) {
           throw new Error("Network response was not ok");
@@ -106,7 +106,7 @@ const UploadAssignmentModal = ({ show, handleClose }: Props) => {
       const fetchSections = async () => {
         try {
           const response = await fetch(
-            `${DOMAIN}/api/staff/get-allsections/${school_id}/${selectedClass.id}`
+            `${DOMAIN}/api/school/get-allsections/${school_id}/${selectedClass.id}`
           );
           if (!response.ok) {
             throw new Error("Network response was not ok");
@@ -140,7 +140,7 @@ const UploadAssignmentModal = ({ show, handleClose }: Props) => {
             class_section_id = selectedSection.class_section_id;
           }
           const response = await fetch(
-            `${DOMAIN}/api/staff/get-allsubjects/${class_section_id}/${school_id}`
+            `${DOMAIN}/api/school/get-allsubjects/${class_section_id}/${school_id}`
           );
           if (!response.ok) {
             throw new Error("Network response was not ok");
@@ -176,7 +176,7 @@ const UploadAssignmentModal = ({ show, handleClose }: Props) => {
           }
 
           const response = await fetch(
-            `${DOMAIN}/api/staff/get-alllessons/${class_section_subject_id}/${school_id}`
+            `${DOMAIN}/api/school/get-alllessons/${class_section_subject_id}/${school_id}`
           );
           if (!response.ok) {
             throw new Error("Network response was not ok");
@@ -210,7 +210,7 @@ const UploadAssignmentModal = ({ show, handleClose }: Props) => {
             class_section_subject_lesson_id = selectedLesson.class_section_subject_lesson_id;
           }
           const response = await fetch(
-            `${DOMAIN}/api/staff/get-alltopics/${class_section_subject_lesson_id}/${school_id}`
+            `${DOMAIN}/api/school/get-alltopics/${class_section_subject_lesson_id}/${school_id}`
           );
           if (!response.ok) {
             throw new Error("Network response was not ok");
@@ -293,7 +293,7 @@ const UploadAssignmentModal = ({ show, handleClose }: Props) => {
 
     try {
       const response = await axios.post(
-        `${DOMAIN}/api/staff/get-uploadcontent`,
+        `${DOMAIN}/api/school/get-uploadcontent`,
         formData,
         {
           headers: {

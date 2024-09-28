@@ -21,7 +21,7 @@ interface School {
   // Add other properties as needed
 }
 
-export const ManageSchoolsPage = () => {
+const ManageSchoolsPage = () => {
   const [schools, setSchools] = useState<School[]>([]);
   const [showModal, setShowModal] = useState(false);
   // const [selectedSchool, setSelectedSchool] = useState(0);
@@ -45,6 +45,7 @@ export const ManageSchoolsPage = () => {
       }
     };
 
+    setRefreshData(false)
     fetchSchools();
   }, [refreshData]);
 
@@ -71,7 +72,7 @@ export const ManageSchoolsPage = () => {
   const handleViewSchool = (value: any) => {
     const schoolId = value;
 
-    navigate(`/superadmin/school-profile/${schoolId}`);
+    navigate(`/school-profile/${schoolId}`);
   };
 
   return (
@@ -640,9 +641,7 @@ export const ManageSchoolsPage = () => {
             <CreateSchoolModal
               show={showModal}
               handleClose={handleModalClose}
-              refresh={function (refresh: boolean): void {
-                throw new Error("Function not implemented.");
-              }}
+              refresh={refreshData}
             />
           </div>
         </div>
@@ -660,10 +659,10 @@ const ManageSchools = () => {
         {intl.formatMessage({ id: "MENU.HOMEWORK" })}
       </PageTitle>
 
-      <HeaderWrapper toggleView={() => {}} />
+      {/* <HeaderWrapper toggleView={() => {}} /> */}
       <ManageSchoolsPage />
     </>
   );
 };
 
-export { ManageSchools };
+export default ManageSchools;

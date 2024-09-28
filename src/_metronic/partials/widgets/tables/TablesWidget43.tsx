@@ -1,26 +1,23 @@
 import React, { useEffect, useState } from "react";
-// import { CreateAdminModal } from "../../../../_metronic/partials/modals/create-app-stepper/CreateAdminModal";
-import { DOMAIN,getAssignedRoles } from "../../../../app/routing/ApiEndpoints";
+import { DOMAIN, getAssignedRoles } from "../../../../app/routing/ApiEndpoints";
 import { useNavigate } from "react-router-dom";
 
 interface TablesWidget43Props {
   schoolId: string | undefined;
 }
-interface SchoolDetail {
-  role_id: string, // Replace with actual types as needed
-  role_name: string,
-  user_name: string,
-  upadated_at:string,
-  is_active:string;
 
-  // Add other fields here
+interface SchoolDetail {
+  role_id: string;
+  role_name: string;
+  user_name: string;
+  updated_at: string;
+  is_active: string;
 }
 
-
-const TablesWidget43: React.FC<TablesWidget43Props> =  ({ schoolId }) => {
-  const [schoolDetails, setschoolDetails] = useState<SchoolDetail[]>([]);
+const TablesWidget43: React.FC<TablesWidget43Props> = ({ schoolId }) => {
+  const [schoolDetails, setSchoolDetails] = useState<SchoolDetail[]>([]);
   
-  const Navigate = useNavigate();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -32,7 +29,7 @@ const TablesWidget43: React.FC<TablesWidget43Props> =  ({ schoolId }) => {
           throw new Error("Network response was not ok");
         }
         const data = await response.json();
-        setschoolDetails(data);
+        setSchoolDetails(data);
       } catch (error) {
         console.error("Error fetching school details:", error);
       }
@@ -41,412 +38,265 @@ const TablesWidget43: React.FC<TablesWidget43Props> =  ({ schoolId }) => {
     fetchData();
   }, [schoolId]);
 
-
-  const handleAddRoles  = () => () => {
-    Navigate(`/superadmin/manage/academies/roles?schoolId=${schoolId}`);
-  }
-
+  const handleAddRoles = () => {
+    navigate(`/superadmin/manage/schools/roles?schoolId=${schoolId}`);
+  };
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
     return `${year}-${month}-${day}`;
   };
 
   return (
     <div
-      className=""
+      className="card-style"
       style={{
         width: "100%",
-        height: "600px",
         borderRadius: "16px",
-        // border: "1px solid #F5F5F5",
+        backgroundColor: "rgb(242, 246, 255)", 
+        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
         overflow: "hidden",
-        border: "1px solid gray",
+        marginTop: "20px",
+        padding: "20px",
       }}
     >
-      <table
-        className=""
+      <div
+        className="card-header"
         style={{
-          top: "223px",
-          height: "808px",
-          maxHeight: "100%",
-          borderCollapse: "collapse",
-          // tableLayout: "fixed",
-          overflowX: "hidden",
-          overflowY: "auto",
-          whiteSpace: "nowrap",
-          width: "100%",
+          backgroundColor: "rgb(242, 246, 255)",
+          padding: "16px 20px",
+          borderBottom: "1px solid #E0E4F0",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
         }}
       >
-        <thead
+        <span
           style={{
-            position: "sticky",
-            top: "0",
-            zIndex: "1",
-            height: "133px",
-            maxHeight: "100%",
-            width: "100%",
-            display: "flex",
-            flexDirection: "column",
-            backgroundColor: "#1C335C",
-            justifyContent: "space-between",
-            gap: "0px",
-            padding: "9px 24px 9px 24px",
+            fontSize: "20px",
+            fontWeight: "600",
+            color: "#1C335C",
+            fontFamily: "Manrope",
           }}
         >
-          <caption
+          Manage Roles
+        </span>
+        <div
+          onClick={handleAddRoles}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            padding: "8px 12px",
+            backgroundColor: "#1C335C",
+            borderRadius: "8px",
+            cursor: "pointer",
+            transition: "background-color 0.3s",
+          }}
+          onMouseEnter={(e) =>
+            (e.currentTarget.style.backgroundColor = "#16294D")
+          }
+          onMouseLeave={(e) =>
+            (e.currentTarget.style.backgroundColor = "#1C335C")
+          }
+        >
+          <span
             style={{
-              paddingLeft: "20px",
-              paddingRight: "20px",
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "space-between",
-              marginTop: "24px",
-              padding: "0px",
+              marginRight: "8px",
+              color: "white",
+              fontSize: "14px",
+              fontWeight: "700",
+              fontFamily: "Manrope",
             }}
           >
-            <div style={{ display: "flex", gap: "10px" }}>
-              <span
-                style={{
-                  fontSize: "16px",
-                  fontWeight: "700",
-                  lineHeight: "21.86px",
-                  color: "#FFFFFF",
-                  fontFamily: "Manrope",
-                }}
-              >
-                Manage Roles
-              </span>
-            </div>
-            <div style={{ display: "flex" }}>
-              <span
-                style={{
-                  height: "36px",
-                  borderRadius: "8px",
-                  padding: "8px 10px 8px 10px",
-                  gap: "5px",
-                  backgroundColor: "#FFFFFF",
-                  display: "flex",
-                  flexDirection: "row",
-                  cursor: "pointer",
-                }}
-                onClick={handleAddRoles()}
-                  data-bs-toggle="modal"
-                  data-bs-target="#staticBackdrop"
-              >
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 20 20"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <g clip-path="url(#clip0_103_1850)">
-                    <path
-                      d="M1.66663 10C1.66663 6.07165 1.66663 4.10746 2.88701 2.88708C4.1074 1.66669 6.07159 1.66669 9.99996 1.66669C13.9283 1.66669 15.8925 1.66669 17.1129 2.88708C18.3333 4.10746 18.3333 6.07165 18.3333 10C18.3333 13.9284 18.3333 15.8926 17.1129 17.113C15.8925 18.3334 13.9283 18.3334 9.99996 18.3334C6.07159 18.3334 4.1074 18.3334 2.88701 17.113C1.66663 15.8926 1.66663 13.9284 1.66663 10Z"
-                      stroke="black"
-                      stroke-width="1.5"
-                    />
-                    <path
-                      d="M12.5 10L10 10M10 10L7.5 10M10 10L10 7.5M10 10L10 12.5"
-                      stroke="black"
-                      stroke-width="1.5"
-                      stroke-linecap="round"
-                    />
-                  </g>
-                  <defs>
-                    <clipPath id="clip0_103_1850">
-                      <rect width="20" height="20" fill="white" />
-                    </clipPath>
-                  </defs>
-                </svg>
-                <div style={{ width: "65px", height: "9px" }}>
-                  <span
-                    style={{
-                      fontSize: "12px",
-                      fontWeight: "500",
-                      color: "#000000",
-                      lineHeight: "16.39px",
-                      fontFamily: "Manrope",
-                    }}
-                  >
-                     {schoolDetails.length === 0 ? "Add Roles" : "Edit Roles"}
-                  </span>
-                </div>
-              </span>
-            </div>
-           
-          </caption>
-          <div style={{ display: "flex", justifyContent: "center" }}>
+            {schoolDetails.length === 0 ? "Add Roles" : "Edit Roles"}
+          </span>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            width="16px"
+            height="16px"
+            fill="#ffffff"
+          >
+            <path d="M0 0h24v24H0V0z" fill="none" />
+            <path d="M3 17.25V21h3.75l11-11.03-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
+          </svg>
+        </div>
+      </div>
+      <div
+        style={{
+          height: "400px", // Fixed height for the table container
+          overflowY: "auto", // Enable vertical scrolling
+          padding: "16px 0", // Optional: adds some padding around the table
+        }}
+      >
+        <table
+          className="table"
+          style={{
+            width: "100%",
+            borderCollapse: "collapse",
+            marginTop: "10px",
+            backgroundColor: "#FFFFFF", // White background for the table
+            borderRadius: "12px", // Round corners for the table
+            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.05)", // Light shadow for the table
+          }}
+        >
+          <thead>
             <tr
               style={{
-                width: "100%",
-                height: "34px",
-                display: "flex",
-                paddingRight: "24px",
-                // justifyContent: "space-around",
-                gap: "30px",
-                // backgroundColor:'#1C335C',
-                // backgroundColor:'#F5F5F5',
-                // paddingLeft: "15px",
-                // paddingTop: "15px",
-                // paddingRight:'35px'
+                backgroundColor: "rgb(242, 246, 255)", // Header background color
+                borderBottom: "1px solid #E0E4F0",
+                fontFamily: "Manrope",
+                fontWeight: "600",
+                color: "#1C335C",
+                fontSize: "14px",
               }}
             >
-              <th style={{ width: "15%", height: "18px" }}>
-                <span
-                  style={{
-                    fontSize: "12px",
-                    fontWeight: "700",
-                    lineHeight: "18px",
-                    color: "#FFFFFF",
-                    position: "sticky",
-                    top: "0",
-                    zIndex: "1",
-                    fontFamily: "Manrope",
-                  }}
-                >
-                  Id
-                </span>
+              <th
+                style={{
+                  padding: "12px 20px",
+                  textAlign: "left",
+                }}
+              >
+                Id
               </th>
-              <th style={{ width: "35%", height: "18px" }}>
-                <span
-                  style={{
-                    fontSize: "12px",
-                    fontWeight: "700",
-                    lineHeight: "18px",
-                    color: "#FFFFFF",
-                    position: "sticky",
-                    top: "0",
-                    zIndex: "1",
-                    fontFamily: "Manrope",
-                  }}
-                >
-                  Name
-                </span>
+              <th
+                style={{
+                  padding: "12px 20px",
+                  textAlign: "left",
+                }}
+              >
+                Name
               </th>
-              <th style={{ width: "35%", height: "18px" }}>
-                <span
-                  style={{
-                    fontSize: "12px",
-                    fontWeight: "700",
-                    lineHeight: "18px",
-                    color: "#FFFFFF",
-                    position: "sticky",
-                    top: "0",
-                    zIndex: "1",
-                    fontFamily: "Manrope",
-                  }}
-                >
-                  Who Updated
-                </span>
+              <th
+                style={{
+                  padding: "12px 20px",
+                  textAlign: "left",
+                }}
+              >
+                Who Updated
               </th>
-              <th style={{ width: "35%", height: "18px" }}>
-                <span
-                  style={{
-                    fontSize: "12px",
-                    fontWeight: "700",
-                    lineHeight: "18px",
-                    color: "#FFFFFF",
-                    position: "sticky",
-                    top: "0",
-                    zIndex: "1",
-                    fontFamily: "Manrope",
-                  }}
-                >
-                  Upadted At
-                </span>
+              <th
+                style={{
+                  padding: "12px 20px",
+                  textAlign: "left",
+                }}
+              >
+                Updated At
               </th>
-              <th style={{ width: "10%", height: "18px" }}>
-                <span
-                  style={{
-                    fontSize: "12px",
-                    fontWeight: "700",
-                    lineHeight: "18px",
-                    color: "#FFFFFF",
-                    position: "sticky",
-                    top: "0",
-                    zIndex: "1",
-                    fontFamily: "Manrope",
-                  }}
-                >
-                  IsActive
-                </span>
+              <th
+                style={{
+                  padding: "12px 20px",
+                  textAlign: "left",
+                }}
+              >
+                IsActive
               </th>
             </tr>
-          </div>
-        </thead>
-        <tbody
-          className=""
-          style={{
-            display: "block",
-            height: "265px",
-            overflowY: "auto",
-            flexDirection: "column",
-            flex: 1,
-            justifyContent: "center",
-          }}
-        >
-          <div
-            className="tile-shadow"
-            style={{
-              display: "flex",
-              height: "61px",
-              alignItems: "center",
-              justifyContent: "space-between",
-              width: "100%",
-              backgroundColor: "#F7F9FB",
-              flexDirection: "column",
-            }}
-          >
-            {schoolId ? (
+          </thead>
+
+          <tbody>
+            {schoolDetails.length > 0 ? (
               schoolDetails.map((schoolDetail, index) => (
                 <tr
                   key={index}
                   style={{
-                    width: "100%",
-                    height: "61px",
-                    display: "flex",
-                    paddingLeft: "24px",
-                    backgroundColor: index % 2 === 0 ? "#F7F9FB" : "#FFFFFF",
-                    paddingTop: "18px",
-                    paddingBottom: "15px",
+                    backgroundColor: index % 2 === 0 ? "rgb(242, 246, 255)" : "#FFFFFF",
+                    borderBottom: "1px solid #E0E4F0",
+                    fontFamily: "Manrope",
+                    fontSize: "14px",
+                    color: "#1C335C",
                   }}
                 >
-                  <td style={{ width: "20%" }}>
-                    <div
-                      className=""
-                      style={{
-                        width: "fit-content",
-                        display: "flex",
-                        justifyContent: "start",
-                        flexDirection: "column",
-                      }}
-                    >
-                      <a
-                        className=""
-                        style={{
-                          fontFamily: "Manrope",
-                          fontSize: "14px",
-                          fontWeight: "700",
-                          color: "#000",
-                        }}
-                      >
-                        {schoolDetail.role_id}
-                      </a>
-                    </div>
+                  <td
+                    style={{
+                      padding: "12px 20px",
+                    }}
+                  >
+                    {schoolDetail.role_id}
                   </td>
-                  <td style={{ width: "35%" }}>
-                    <div
-                      style={{
-                        width: "fit-content",
-                        display: "flex",
-                        marginRight: "25px",
-                        justifyContent: "start",
-                        flexDirection: "column",
-                      }}
-                    >
+                  <td
+                    style={{
+                      padding: "12px 20px",
+                    }}
+                  >
+                    {schoolDetail.role_name}
+                  </td>
+                  <td
+                    style={{
+                      padding: "12px 20px",
+                    }}
+                  >
+                    {schoolDetail.user_name}
+                  </td>
+                  <td
+                    style={{
+                      padding: "12px 20px",
+                    }}
+                  >
+                    {formatDate(schoolDetail.updated_at)}
+                  </td>
+                  <td
+                    style={{
+                      padding: "12px 20px",
+                      textAlign: "start",
+                    }}
+                  >
+                    {schoolDetail.is_active === 1 ? (
                       <span
                         style={{
-                          fontSize: "14px",
-                          fontWeight: "400",
-                          lineHeight: "18px",
-                          color: "#1F1F1F",
-                          fontFamily: "Manrope",
+                          display: "inline-block",
+                          padding: "4px 12px",
+                          borderRadius: "12px",
+                          backgroundColor: "#28a745",
+                          color: "#FFFFFF",
+                          fontSize: "12px",
+                          fontWeight: "600",
                         }}
                       >
-                        {schoolDetail.role_name}
+                        Active
                       </span>
-                    </div>
-                  </td>
-                  <td style={{ width: "35%" }}>
-                    <div
-                      style={{
-                        width: "fit-content",
-                        display: "flex",
-                        marginRight: "25px",
-                        justifyContent: "start",
-                        flexDirection: "column",
-                      }}
-                    >
+                    ) : (
                       <span
                         style={{
-                          fontSize: "14px",
-                          fontWeight: "400",
-                          lineHeight: "18px",
-                          color: "#1F1F1F",
-                          fontFamily: "Manrope",
+                          display: "inline-block",
+                          padding: "4px 12px",
+                          borderRadius: "12px",
+                          backgroundColor: "#dc3545",
+                          color: "#FFFFFF",
+                          fontSize: "12px",
+                          fontWeight: "600",
                         }}
                       >
-                        {schoolDetail.user_name}
+                        Inactive
                       </span>
-                    </div>
-                  </td>
-                  <td style={{ width: "35%" }}>
-                    <div
-                      style={{
-                        width: "fit-content",
-                        display: "flex",
-                        marginRight: "25px",
-                        justifyContent: "start",
-                        flexDirection: "column",
-                      }}
-                    >
-                      <span
-                        style={{
-                          fontSize: "14px",
-                          fontWeight: "400",
-                          lineHeight: "18px",
-                          color: "#1F1F1F",
-                          fontFamily: "Manrope",
-                        }}
-                      >
-                        {formatDate(schoolDetail.upadated_at)}
-                      </span>
-                    </div>
-                  </td>
-                  <td style={{ width: "15%" }}>
-                    <div
-                      style={{
-                        width: "fit-content",
-                        display: "flex",
-                        justifyContent: "start",
-                        flexDirection: "column",
-                      }}
-                    >
-                      <span
-                        style={{
-                          fontSize: "14px",
-                          fontWeight: "400",
-                          lineHeight: "18px",
-                          color: "#1F1F1F",
-                          fontFamily: "Manrope",
-                        }}
-                      >
-                        {schoolDetail.is_active}
-                      </span>
-                    </div>
+                    )}
                   </td>
                 </tr>
               ))
             ) : (
               <tr>
-                
                 <td
-                /* @ts-ignore */
-                colSpan="5">No Admins for the school</td>
+                  colSpan={5}
+                  style={{
+                    padding: "12px 20px",
+                    textAlign: "center",
+                    color: "#1C335C",
+                    fontWeight: "600",
+                    fontFamily: "Manrope",
+                  }}
+                >
+                  No roles assigned for this school.
+                </td>
               </tr>
             )}
-          </div>
-        </tbody>
-        {/* end::Table body */}
-      </table>
-      {/* end::Table */}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };
 
-export { TablesWidget43};
+export { TablesWidget43 };

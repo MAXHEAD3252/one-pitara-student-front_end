@@ -37,7 +37,7 @@ const SelectTopicPage: FC = () => {
     const fetchTopics = async () => {
       try {
         const response = await fetch(
-          `${DOMAIN}/api/staff/get-alltopics/${cssl_id}/${school_id}`
+          `${DOMAIN}/api/school/get-alltopics/${cssl_id}/${school_id}`
         );
         if (!response.ok) {
           throw new Error("Network response was not ok");
@@ -121,4 +121,4 @@ const SelectTopic: FC = () => {
   );
 };
 
-export { SelectTopic };
+export default SelectTopic;

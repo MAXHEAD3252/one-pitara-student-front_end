@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "../../../../app/pages/StaffPages/FeeDetails/style.css";
+import "../../../../app/pages/StaffPages/FinancialManagement/style.css";
 import { useAuth } from "../../../../app/modules/auth/index.ts";
 import { EditFessMasterModal } from "../../modals/create-app-stepper/EditFessMasterModal.tsx";
 import { DOMAIN } from "../../../../app/routing/ApiEndpoints.tsx";
@@ -121,7 +121,7 @@ const TablesWidget14: React.FC = () => {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          `${DOMAIN}/api/staff/getfeemaster-list/${schoolId}/${19}`
+          `${DOMAIN}/api/school/getfeemaster-list/${schoolId}/${19}`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch data");

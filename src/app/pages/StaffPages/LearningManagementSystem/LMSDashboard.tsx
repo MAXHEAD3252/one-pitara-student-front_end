@@ -160,4 +160,4 @@ const LMSDashboard: FC = () => {
   );
 };
 
-export { LMSDashboard };
+export default LMSDashboard ;

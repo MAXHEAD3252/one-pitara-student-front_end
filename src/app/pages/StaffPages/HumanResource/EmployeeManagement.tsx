@@ -29,4 +29,4 @@ const EmployeeManagement: FC = () => {
 };
 
 
-export { EmployeeManagement };
+export default EmployeeManagement ;

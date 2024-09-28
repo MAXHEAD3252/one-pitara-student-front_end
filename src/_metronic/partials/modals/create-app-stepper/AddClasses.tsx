@@ -26,7 +26,7 @@ const AddClasses = ({ show, handleClose }: Props) => {
     const fetchSections = async () => {
       try {
         const response = await fetch(
-          `${DOMAIN}/api/staff/get-onlysections/${school_id}`
+          `${DOMAIN}/api/school/get-onlysections/${school_id}`
         );
         if (!response.ok) {
           throw new Error("Network response was not ok");

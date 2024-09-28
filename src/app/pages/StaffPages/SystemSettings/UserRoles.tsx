@@ -1,24 +1,31 @@
-
 import { FC } from "react";
-import { PageTitle } from "../../../../_metronic/layout/core";
 import { useIntl } from "react-intl";
+import { PageTitle } from "../../../../_metronic/layout/core";
+import { Content } from "../../../../_metronic/layout/components/content";
+import { TablesWidget28 } from "../../../../_metronic/partials/widgets/tables/TablesWidget28";
 
-
-const UserRolesPage: FC = () => {
-  return <div>UserRoles</div>;
+const Roles: FC = () => {
+  return (
+    <div className="">
+      <Content>
+        <TablesWidget28 />
+      </Content>
+    </div>
+  );
 };
 
 const UserRoles: FC = () => {
   const intl = useIntl();
+
   return (
     <>
       <PageTitle breadcrumbs={[]}>
-        {intl.formatMessage({ id: "MENU.UserRoles" })}
+        {intl.formatMessage({ id: "MENU.HOMEWORK" })}
       </PageTitle>
-      <UserRolesPage />
+
+      <Roles />
     </>
   );
 };
 
-
-export { UserRoles };
+export default UserRoles;

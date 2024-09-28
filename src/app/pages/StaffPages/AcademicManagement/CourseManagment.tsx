@@ -20,4 +20,4 @@ const CourseManagment: FC = () => {
 };
 
 
-export { CourseManagment };
+export default CourseManagment;

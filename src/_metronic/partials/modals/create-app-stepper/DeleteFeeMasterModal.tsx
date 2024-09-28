@@ -31,7 +31,7 @@ const DeleteFeeMasterModal = ({ show, onHide, feeId }: Props) => {
 
     try {
       const response = await fetch(
-        `${DOMAIN}/api/staff/delete-feegrouptype/${schoolId}/${feeId}`,
+        `${DOMAIN}/api/school/delete-feegrouptype/${schoolId}/${feeId}`,
         {
           method: "POST",
           headers: {

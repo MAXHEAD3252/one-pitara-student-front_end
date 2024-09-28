@@ -15,7 +15,7 @@ const CardsWidget34: FC = () => {
     const fetchTotalAnnouncements = async () => {
       try {
         const response = await fetch(
-          `${DOMAIN}/api/staff/get-totalannouncements/${school_id}`
+          `${DOMAIN}/api/school/get-totalannouncements/${school_id}`
         );
         if (!response.ok) {
           throw new Error("Network response was not ok");

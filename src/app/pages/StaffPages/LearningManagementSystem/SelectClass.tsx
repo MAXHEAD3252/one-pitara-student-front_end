@@ -29,9 +29,9 @@ const SelectClassPage: FC = () => {
       try {
         let response;
         if (currentUser?.roleName === "Teacher") {
-          response = await fetch(`${DOMAIN}/api/staff/get-allteacherclasses/${school_id}/${teacher_id}`);
+          response = await fetch(`${DOMAIN}/api/school/get-allteacherclasses/${school_id}/${teacher_id}`);
         } else {
-          response = await fetch(`${DOMAIN}/api/staff/get-allclasses/${school_id}`);
+          response = await fetch(`${DOMAIN}/api/school/get-allclasses/${school_id}`);
         }
         if (!response.ok) {
           throw new Error("Network response was not ok");
@@ -136,4 +136,4 @@ const SelectClass: FC = () => {
   );
 };
 
-export { SelectClass };
+export default SelectClass;

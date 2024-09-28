@@ -31,4 +31,4 @@ const Class: FC = () => {
 };
 
 
-export { Class };
+export default Class;

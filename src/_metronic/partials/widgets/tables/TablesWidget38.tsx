@@ -24,7 +24,7 @@ const TablesWidget38: React.FC = () => {
     const fetchAllAnnouncements = async () => {
       try {
         const response = await fetch(
-          `${DOMAIN}/api/staff/get-allannouncements/${school_id}`
+          `${DOMAIN}/api/school/get-allannouncements/${school_id}`
         );
         if (!response.ok) {
           throw new Error("Network response was not ok");

@@ -83,7 +83,7 @@ const TablesWidget63 = ({ class_id }: Props) => {
     const fetchEnquiries = async () => {
       try {
         const response = await fetch(
-          `${DOMAIN}/api/staff/get-assignstudents/${schoolId}/${class_id}`
+          `${DOMAIN}/api/school/get-assignstudents/${schoolId}/${class_id}`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch data");

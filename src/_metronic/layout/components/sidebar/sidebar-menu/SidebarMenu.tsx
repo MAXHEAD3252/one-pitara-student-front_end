@@ -16,7 +16,8 @@ const SidebarMenu = () => {
         style={{width:'110px'}}
       >
         <div
-          className='menu menu-column menu-rounded menu-sub-indention px-3'
+          className='menu menu-column menu-sub-indention'
+          style={{paddingRight:'12px',paddingLeft:'5px', justifyContent:'center',alignItems:'center'}}
           id='#kt_app_sidebar_menu'
           data-kt-menu='true'
           data-kt-menu-expand='false'

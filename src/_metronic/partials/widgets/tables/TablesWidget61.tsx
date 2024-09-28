@@ -1,6 +1,6 @@
 import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
 // import { Tooltip as ReactTooltip } from "react-tooltip";
-import "../../../../app/pages/StaffPages/FeeDetails/style.css";
+import "../../../../app/pages/StaffPages/FinancialManagement/style.css";
 // import { CreateWalkinEnquiry } from "../../modals/create-app-stepper/CreateWalkinEnquiry";
 // import { CreateEnquiryAction } from "../../modals/create-app-stepper/CreateEnquiryAction";
 // import { CreateEditEnquiry } from "../../modals/create-app-stepper/CreateEditEnquiry";
@@ -105,7 +105,7 @@ const TablesWidget61 = () => {
     const fetchClasses = async () => {
       try {
         const response = await fetch(
-          `${DOMAIN}/api/staff/get-onlyclasses/${schoolId}`
+          `${DOMAIN}/api/school/get-onlyclasses/${schoolId}`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch data");
@@ -124,7 +124,7 @@ const TablesWidget61 = () => {
     const fetchSessions = async () => {
       try {
         const response = await fetch(
-          `${DOMAIN}/api/staff/get-session?schoolId=${schoolId}`
+          `${DOMAIN}/api/school/get-session?schoolId=${schoolId}`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch data");
@@ -144,7 +144,7 @@ const TablesWidget61 = () => {
       try {
         const class_id = selectedClass.id;
         const response = await fetch(
-          `${DOMAIN}/api/staff/get-classwise-section/${class_id}/${schoolId}`
+          `${DOMAIN}/api/school/get-classwise-section/${class_id}/${schoolId}`
         );
         if (!response.ok) {
           throw new Error("Network response was not ok");
@@ -164,7 +164,7 @@ const TablesWidget61 = () => {
     const fetchFeeGroups = async () => {
       try {
         const response = await fetch(
-          `${DOMAIN}/api/staff/getfeegroup/${schoolId}`
+          `${DOMAIN}/api/school/getfeegroup/${schoolId}`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch fee groups");
@@ -231,7 +231,7 @@ const TablesWidget61 = () => {
 
     try {
       const response = await fetch(
-        `${DOMAIN}/api/staff/add-feegroup/${schoolId}`,
+        `${DOMAIN}/api/school/add-feegroup/${schoolId}`,
         {
           method: "POST",
           headers: {

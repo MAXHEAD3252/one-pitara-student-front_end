@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from "react";
 // import { Tooltip as ReactTooltip } from "react-tooltip";
-import "../../../../app/pages/StaffPages/FeeDetails/style.css";
+import "../../../../app/pages/StaffPages/FinancialManagement/style.css";
 // import { CreateWalkinEnquiry } from "../../modals/create-app-stepper/CreateWalkinEnquiry";
 // import { CreateEnquiryAction } from "../../modals/create-app-stepper/CreateEnquiryAction";
 // import { CreateEditEnquiry } from "../../modals/create-app-stepper/CreateEditEnquiry";
@@ -121,11 +121,11 @@ const TablesWidget35: React.FC<TablesWidgetProps> = ({
         let response;
         if (currentUser?.roleName === "Teacher") {
           response = await fetch(
-            `${DOMAIN}/api/staff/get-alluploadsbyteacher/${school_id}/${teacher_id}?${queryParams}`
+            `${DOMAIN}/api/school/get-alluploadsbyteacher/${school_id}/${teacher_id}?${queryParams}`
           );
         } else {
           response = await fetch(
-            `${DOMAIN}/api/staff/get-alluploadsbyid/${school_id}?${queryParams}`
+            `${DOMAIN}/api/school/get-alluploadsbyid/${school_id}?${queryParams}`
           );
         }
 

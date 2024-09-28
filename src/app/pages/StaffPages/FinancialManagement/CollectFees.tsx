@@ -1,10 +1,10 @@
 import { FC } from "react";
 import { useIntl } from "react-intl";
-import { PageTitle } from "../../../../../_metronic/layout/core";
-import { TablesWidget62 } from "../../../../../_metronic/partials/widgets";
-import { Content } from "../../../../../_metronic/layout/components/content";
-import { ToolbarFeeMasterList } from "../../../../../_metronic/layout/components/toolbar/toolbars";
-import { HeaderWrapper } from "../../../../../_metronic/layout/components/header_staff";
+import { PageTitle } from "../../../../_metronic/layout/core";
+import { TablesWidget62 } from "../../../../_metronic/partials/widgets";
+import { Content } from "../../../../_metronic/layout/components/content";
+import { ToolbarFeeMasterList } from "../../../../_metronic/layout/components/toolbar/toolbars";
+import { HeaderWrapper } from "../../../../_metronic/layout/components/header_staff";
 
 const CollectFeesPage: FC = () => {
 
@@ -37,4 +37,4 @@ const CollectFees: FC = () => {
   );
 };
 
-export { CollectFees };
+export default CollectFees;

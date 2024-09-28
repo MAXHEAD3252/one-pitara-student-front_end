@@ -1,4 +1,4 @@
-import "../../../../../app/pages/StaffPages/FeeDetails/style.css";
+import "../../../../../app/pages/StaffPages/FinancialManagement/style.css";
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { useEffect, useRef } from "react";
 import ApexCharts, {ApexOptions} from 'apexcharts'

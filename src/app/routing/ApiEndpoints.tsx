@@ -23,7 +23,7 @@ const get_schoolbyid = 'api/superadmin/get_schoolbyid';
 // const getAdmin = 'api/superadmin/get_admin';
 const getParentModule = 'api/superadmin/get-parent-module';
 const storeModuleRequest = 'api/superadmin/save-module-request';
-const getAdminBySchoolId = 'api/superadmin/get_admin';
+const getUsersBySchoolId = 'api/superadmin/school-users';
 const getAssignedRoles = 'api/superadmin/school-roles';
 const getSchoolModuleById = 'api/superadmin/get_schoolmodulesbyid';
 // const getOnboardingAcademiesRequestById = 'api/superadmin/get_onboarding-academies-request-byid';
@@ -36,4 +36,4 @@ const getTimetableStudentWise = 'api/student/time-table'
 
 // eslint-disable-next-line react-refresh/only-export-components
 // eslint-disable-next-line react-refresh/only-export-components
-export { DOMAIN, getTimetableStudentWise, getTotalNumberofEnquiries,storeModuleRequest,getParentModule,getSchoolModuleById,getStaffRoles, getClassWiseEnquiryThisYear, getEnquiriesBySources, getWinRatePercentage, getMonthWiseEnquiries, getEnquiriesStatus, getAllAdmissions, getStudentAdmissionDetails, get_schoolbyid, getAssignedRoles ,getAdminBySchoolId};
+export { DOMAIN, getTimetableStudentWise, getTotalNumberofEnquiries,storeModuleRequest,getParentModule,getSchoolModuleById,getStaffRoles, getClassWiseEnquiryThisYear, getEnquiriesBySources, getWinRatePercentage, getMonthWiseEnquiries, getEnquiriesStatus, getAllAdmissions, getStudentAdmissionDetails, get_schoolbyid, getAssignedRoles ,getUsersBySchoolId};

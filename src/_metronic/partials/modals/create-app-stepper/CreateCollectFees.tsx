@@ -199,8 +199,8 @@ const CreateCollectFees = ({
     const fetchFeeGroupType = async () => {
       try {
         const url = studentId
-          ? `${DOMAIN}/api/staff/get-studentwisefeegrouptype/${schoolId}/${studentId}/${session_id}`
-          : `${DOMAIN}/api/staff/get-feegrouptype/${schoolId}/${class_id}/${session_id}`;
+          ? `${DOMAIN}/api/school/get-studentwisefeegrouptype/${schoolId}/${studentId}/${session_id}`
+          : `${DOMAIN}/api/school/get-feegrouptype/${schoolId}/${class_id}/${session_id}`;
 
         const response = await fetch(url);
         if (!response.ok) {
@@ -371,9 +371,9 @@ const CreateCollectFees = ({
       ...sendOffline,
     };
     try {
-      // const response = await fetch(`${DOMAIN}/api/staff/get-studentwisefeegrouptype/${}`, {
+      // const response = await fetch(`${DOMAIN}/api/school/get-studentwisefeegrouptype/${}`, {
       const response = await fetch(
-        `${DOMAIN}/api/staff/store-offlinefeetransaction`,
+        `${DOMAIN}/api/school/store-offlinefeetransaction`,
         {
           method: "POST",
           headers: {
@@ -407,8 +407,8 @@ const CreateCollectFees = ({
       }
   
       const url = studentId
-        ? `${DOMAIN}/api/staff/store-feetransaction`
-        : `${DOMAIN}/api/staff/collectadmissionfees`;
+        ? `${DOMAIN}/api/school/store-feetransaction`
+        : `${DOMAIN}/api/school/collectadmissionfees`;
   
       const requestBody = studentId
         ? { transactions: studentTransaction }
@@ -497,7 +497,7 @@ const CreateCollectFees = ({
   const fetchTransactionDetails = async (studentFeesMasterId: string) => {
     try {
       const response = await fetch(
-        `${DOMAIN}/api/staff/offline-form-submit/${studentFeesMasterId}`
+        `${DOMAIN}/api/school/offline-form-submit/${studentFeesMasterId}`
       );
       if (!response.ok) {
         throw new Error(`Network response was not ok for URL`);

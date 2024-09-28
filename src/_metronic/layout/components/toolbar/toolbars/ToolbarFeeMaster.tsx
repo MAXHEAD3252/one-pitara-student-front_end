@@ -3,7 +3,7 @@ import { SetStateAction, useEffect, useState } from "react";
 import { useLayout } from "../../../core";
 import HeaderCalendar from "../../../../partials/layout/header-menus/HeaderCalendar";
 import { format} from "date-fns";
-import "../../../../../app/pages/StaffPages/FeeDetails/style.css";
+import "../../../../../app/pages/StaffPages/FinancialManagement/style.css";
 import isEqual from "date-fns/fp/isEqual";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

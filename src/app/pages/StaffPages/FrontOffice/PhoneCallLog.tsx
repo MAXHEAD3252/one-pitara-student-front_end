@@ -31,7 +31,7 @@ const PhoneCallLogPage: FC = () => {
     const fetchAcademies = async () => {
       try {
         const response = await fetch(
-          `${DOMAIN}/api/staff/general-calls/${schoolId}`
+          `${DOMAIN}/api/school/general-calls/${schoolId}`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch academies");
@@ -775,4 +775,4 @@ const PhoneCallLog: FC = () => {
   );
 };
 
-export { PhoneCallLog };
+export default PhoneCallLog;

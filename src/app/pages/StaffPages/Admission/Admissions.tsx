@@ -117,4 +117,4 @@ const Admissions: FC = () => {
   );
 };
 
-export { Admissions };
+export default Admissions;

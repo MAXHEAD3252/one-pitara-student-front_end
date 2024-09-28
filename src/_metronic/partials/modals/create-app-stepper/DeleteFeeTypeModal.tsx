@@ -30,7 +30,7 @@ const DeleteFeeTypeModal = ({ show, onHide, fee_type_id, setReferesh}: Props) =>
 
     try {
       const response = await fetch(
-        `${DOMAIN}/api/staff/delete-feetype/${fee_type_id}/${schoolId}`,
+        `${DOMAIN}/api/school/delete-feetype/${fee_type_id}/${schoolId}`,
         {
           method: "POST",
           headers: {

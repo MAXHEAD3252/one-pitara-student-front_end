@@ -135,7 +135,7 @@ const CreateStartAdmissionProcess = ({
 
       try {
         const response = await fetch(
-          `${DOMAIN}/api/staff/get-classes?schoolId=${schoolId}`
+          `${DOMAIN}/api/school/get-classes?schoolId=${schoolId}`
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -153,7 +153,7 @@ const CreateStartAdmissionProcess = ({
       if (!schoolId) return;
       try {
         const response = await fetch(
-          `${DOMAIN}/api/staff/get-source?schoolId=${schoolId}`
+          `${DOMAIN}/api/school/get-source?schoolId=${schoolId}`
         );
         if (!response.ok) {
           throw new Error(`Error in Fetching source ${response.status}`);
@@ -172,7 +172,7 @@ const CreateStartAdmissionProcess = ({
 
       try {
         const response = await fetch(
-          `${DOMAIN}/api/staff/get-reference?schoolId=${schoolId}`
+          `${DOMAIN}/api/school/get-reference?schoolId=${schoolId}`
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -192,7 +192,7 @@ const CreateStartAdmissionProcess = ({
 
       try {
         const response = await fetch(
-          `${DOMAIN}/api/staff/get-session?schoolId=${schoolId}`
+          `${DOMAIN}/api/school/get-session?schoolId=${schoolId}`
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -229,7 +229,7 @@ const CreateStartAdmissionProcess = ({
 
       try {
         const response = await fetch(
-          `${DOMAIN}/api/staff/getadmissionenquirybyid/${schoolId}/${enquiry_id}`,
+          `${DOMAIN}/api/school/getadmissionenquirybyid/${schoolId}/${enquiry_id}`,
           {
             method: "GET",
             headers: {
@@ -296,7 +296,7 @@ const CreateStartAdmissionProcess = ({
     const fetchStatus = async () => {
       const enquiry_id = enqId;
       try {
-        const response = await fetch(`${DOMAIN}/api/staff/getaddmissionstatusById/${schoolId}/${enquiry_id}`);
+        const response = await fetch(`${DOMAIN}/api/school/getaddmissionstatusById/${schoolId}/${enquiry_id}`);
         if (!response.ok) {
           throw new Error('Failed to fetch status');
         }
@@ -374,7 +374,7 @@ const CreateStartAdmissionProcess = ({
 
     try {
       const response = await axios.post(
-        `${DOMAIN}/api/staff/upload-application`,
+        `${DOMAIN}/api/school/upload-application`,
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },

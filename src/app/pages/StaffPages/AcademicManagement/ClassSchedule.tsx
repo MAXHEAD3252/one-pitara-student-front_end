@@ -20,4 +20,4 @@ const ClassSchedule: FC = () => {
 };
 
 
-export { ClassSchedule };
+export default ClassSchedule;

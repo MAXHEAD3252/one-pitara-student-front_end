@@ -38,7 +38,7 @@ const VisitorManagementPage: FC = () => {
     const fetchAcademies = async () => {
       try {
         const response = await fetch(
-          `${DOMAIN}/api/staff/get-visitors/${schoolId}`
+          `${DOMAIN}/api/school/get-visitors/${schoolId}`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch academies");
@@ -818,4 +818,4 @@ const VisitorManagement: FC = () => {
   );
 };
 
-export { VisitorManagement };
+export default VisitorManagement;

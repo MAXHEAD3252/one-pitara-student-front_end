@@ -20,4 +20,4 @@ const CurriculumPlanning: FC = () => {
 };
 
 
-export { CurriculumPlanning };
+export default CurriculumPlanning;

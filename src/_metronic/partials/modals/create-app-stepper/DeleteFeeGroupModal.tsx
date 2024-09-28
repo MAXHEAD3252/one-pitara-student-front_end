@@ -31,7 +31,7 @@ const DeleteFeeGroupModal = ({ show, onHide, fee_group_id,setReferesh, }: Props)
 
     try {
       const response = await fetch(
-        `${DOMAIN}/api/staff/delete-feegroup/${fee_group_id}/${schoolId}`,
+        `${DOMAIN}/api/school/delete-feegroup/${fee_group_id}/${schoolId}`,
         {
           method: "POST",
           headers: {

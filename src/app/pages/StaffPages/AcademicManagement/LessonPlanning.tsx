@@ -20,4 +20,4 @@ const LessonPlanning: FC = () => {
 };
 
 
-export { LessonPlanning };
+export default LessonPlanning;

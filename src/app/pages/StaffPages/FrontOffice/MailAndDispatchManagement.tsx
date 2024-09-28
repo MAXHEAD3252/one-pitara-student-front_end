@@ -36,7 +36,7 @@ const MailAndDispatchManagementPage: FC = () => {
     const fetchAcademies = async () => {
       try {
         const response = await fetch(
-          `${DOMAIN}/api/staff/dispatch-receive/${schoolId}`
+          `${DOMAIN}/api/school/dispatch-receive/${schoolId}`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch academies");
@@ -809,4 +809,4 @@ const MailAndDispatchManagement: FC = () => {
   );
 };
 
-export { MailAndDispatchManagement };
+export default MailAndDispatchManagement ;

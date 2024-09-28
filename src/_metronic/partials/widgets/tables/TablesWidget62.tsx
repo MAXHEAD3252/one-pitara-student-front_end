@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from "react";
-import "../../../../app/pages/StaffPages/FeeDetails/style.css";
+import "../../../../app/pages/StaffPages/FinancialManagement/style.css";
 // import { CreateWalkinEnquiry } from "../../modals/create-app-stepper/CreateWalkinEnquiry";
 import { CreateFeeCollectExist } from "../../modals/create-app-stepper/CreateFeeCollectExist";
 import { CreateStartAdmissionProcess } from "../../modals/create-app-stepper/CreateStartAdmissionProcess";
@@ -56,7 +56,7 @@ const TablesWidget62: React.FC = () => {
     const fetchEnquiries = async () => {
       try {
         const response = await fetch(
-          `${DOMAIN}/api/staff/get-feeclasses/${schoolId}`
+          `${DOMAIN}/api/school/get-feeclasses/${schoolId}`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch data");

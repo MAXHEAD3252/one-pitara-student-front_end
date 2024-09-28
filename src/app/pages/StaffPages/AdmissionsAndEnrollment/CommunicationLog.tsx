@@ -21,4 +21,4 @@ const CommunicationLog: FC = () => {
 };
 
 
-export { CommunicationLog };
+export default CommunicationLog ;

@@ -25,7 +25,7 @@ const TablesWidget36: React.FC = () => {
     const fetchAllUploads = async () => {
       try {
         const response = await fetch(
-          `${DOMAIN}/api/staff/get-alluploads/${school_id}`
+          `${DOMAIN}/api/school/get-alluploads/${school_id}`
         );
         if (!response.ok) {
           throw new Error("Network response was not ok");

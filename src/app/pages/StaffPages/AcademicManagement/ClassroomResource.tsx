@@ -20,4 +20,4 @@ const ClassroomResource: FC = () => {
 };
 
 
-export { ClassroomResource };
+export default ClassroomResource;

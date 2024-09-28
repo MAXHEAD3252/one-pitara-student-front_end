@@ -3,7 +3,6 @@ import { useIntl } from "react-intl";
 import { PageTitle } from "../../../../_metronic/layout/core";
 import { Content } from "../../../../_metronic/layout/components/content";
 import { TablesWidget29 } from "../../../../_metronic/partials/widgets/tables/TablesWidget29";
-import { HeaderWrapper } from "../../../../_metronic/layout/components/header_staff";
 import { useLocation } from "react-router-dom";
 
 const Roles: FC = () => {
@@ -33,10 +32,9 @@ const UserRolesPermission: FC = () => {
         {intl.formatMessage({ id: "MENU.HOMEWORK" })}
       </PageTitle>
 
-      <HeaderWrapper toggleView={() => {}} />
       <Roles />
     </>
   );
 };
 
-export { UserRolesPermission };
+export default UserRolesPermission ;

@@ -48,4 +48,4 @@ const ManageModules = () => {
   );
 };
 
-export { ManageModules };
+export default ManageModules;

@@ -29,4 +29,4 @@ const AssignTeacher: FC = () => {
 };
 
 
-export { AssignTeacher };
+export default AssignTeacher;

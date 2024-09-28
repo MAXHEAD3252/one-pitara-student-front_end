@@ -46,4 +46,4 @@ const ManageRoles = () => {
   );
 };
 
-export { ManageRoles };
+export default ManageRoles;

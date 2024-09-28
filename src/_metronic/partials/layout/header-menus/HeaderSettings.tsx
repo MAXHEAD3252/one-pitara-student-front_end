@@ -1,10 +1,10 @@
-/* eslint-disable no-constant-condition */
-import { FC  } from "react";
-import "../../../../app/pages/StaffPages/FeeDetails/style.css";
+import { FC } from "react";
+import "../../../../app/pages/StaffPages/FinancialManagement/style.css";
 import { useAuth } from "../../../../app/modules/auth/core/Auth";
+
 const HeaderSettings: FC = () => {
   const { logout } = useAuth();
- 
+
   return (
     <>
       <div
@@ -19,6 +19,7 @@ const HeaderSettings: FC = () => {
         onMouseOut={(e) => (e.currentTarget.style.backgroundColor = "#FFF")}
       >
         <div className="menu-item" style={{ display: 'flex', alignItems: 'center', margin:'6px 0px 6px 0px'}}>
+          <i className="fas fa-user" style={{ marginRight: '8px', color: '#000' }}></i>
           <a
             href="#"
             onMouseOver={(e) => (e.currentTarget.style.color = "blue")}
@@ -29,31 +30,34 @@ const HeaderSettings: FC = () => {
           </a>
         </div>
         <div className="menu-item" style={{ display: 'flex', alignItems: 'center', margin:'6px 0px 6px 0px'}}>
+          <i className="fas fa-cog" style={{ marginRight: '8px', color: '#000' }}></i>
           <a
             href="#"
             onMouseOver={(e) => (e.currentTarget.style.color = "blue")}
             onMouseOut={(e) => (e.currentTarget.style.color = "black")}
-            style={{ fontFamily: "Manrope", fontSize: "12px", color: "black",paddingBottom:'3px' }}
+            style={{ fontFamily: "Manrope", fontSize: "14px", color: "black", }}
           >
             Account
           </a>
         </div>
         <div className="menu-item" style={{ display: 'flex', alignItems: 'center', margin:'6px 0px 6px 0px'}}>
+          <i className="fas fa-question-circle" style={{ marginRight: '8px', color: '#000' }}></i>
           <a
             href="#"
             onMouseOver={(e) => (e.currentTarget.style.color = "blue")}
             onMouseOut={(e) => (e.currentTarget.style.color = "black")}
-            style={{ fontFamily: "Manrope", fontSize: "12px", color: "black" ,paddingBottom:'3px'}}
+            style={{ fontFamily: "Manrope", fontSize: "14px", color: "black", }}
           >
             Support
           </a>
         </div>
         <div className="menu-item" style={{ display: 'flex', alignItems: 'center', margin:'6px 0px 6px 0px'}}>
+          <i className="fas fa-sign-out-alt" style={{ marginRight: '8px', color: '#000' }}></i>
           <a
             onClick={logout}
             onMouseOver={(e) => (e.currentTarget.style.color = "blue")}
             onMouseOut={(e) => (e.currentTarget.style.color = "black")}
-            style={{ fontFamily: "Manrope", fontSize: "12px", color: "black" ,paddingBottom:'3px'}}
+            style={{ fontFamily: "Manrope", fontSize: "14px", color: "black", cursor: 'pointer' }}
           >
             Sign Out
           </a>
@@ -61,7 +65,6 @@ const HeaderSettings: FC = () => {
       </div>
     </>
   );
-  
 };
 
 export { HeaderSettings };

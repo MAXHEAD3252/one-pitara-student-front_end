@@ -2,7 +2,7 @@ import clsx from "clsx";
 import { useEffect, useState } from "react";
 import { useLayout } from "../../../core";
 import { useNavigate } from "react-router-dom";
-import "../../../../../app/pages/StaffPages/FeeDetails/style.css";
+import "../../../../../app/pages/StaffPages/FinancialManagement/style.css";
 
 const ToolbarStudent = ({ onViewChange, toolbarCall, DateText, clickCount }:any) => {
 

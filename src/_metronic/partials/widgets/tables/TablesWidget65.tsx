@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "../../../../app/pages/StaffPages/FeeDetails/style.css";
+import "../../../../app/pages/StaffPages/FinancialManagement/style.css";
 import { useAuth } from "../../../../app/modules/auth/core/Auth";
 import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
 import { useNavigate } from "react-router-dom";

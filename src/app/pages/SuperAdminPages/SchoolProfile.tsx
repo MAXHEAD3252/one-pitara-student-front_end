@@ -29,8 +29,6 @@ export const SchoolProfilePage = () => {
                 throw new Error(`Error: ${response.statusText}`);
             }
             const data = await response.json();
-            console.log(data);
-            
             setSubscriptionId(data.result[0]?.subscription_id);
             setSubscriptionName(data.result[0]?.subscription_name);
         } catch (err) {
@@ -72,19 +70,19 @@ export const SchoolProfilePage = () => {
               <CardsWidget5 schoolId={schoolId} />
             </div>
           </div>
-          <div className="col-md-12 col-lg-12 col-xl-12 col-xxl-6">
-            <div className="h-md-100">
-              <TablesWidget42 subscriptionId={subscriptionId} subscriptionName={subscriptionName} />
+            <div className="col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+              <div className="h-md-100">
+                <TablesWidget44 schoolId={schoolId} />
+              </div>
             </div>
-          </div>
-          <div className="col-md-12 col-lg-12 col-xl-12 col-xxl-6">
+          <div className="col-md-12 col-lg-12 col-xl-12 col-xxl-12">
             <div className="h-md-100">
               <TablesWidget43 schoolId={schoolId} />
             </div>
           </div>
           <div className="col-md-12 col-lg-12 col-xl-12 col-xxl-12">
             <div className="h-md-100">
-              <TablesWidget44 schoolId={schoolId} />
+              <TablesWidget42 subscriptionId={subscriptionId} subscriptionName={subscriptionName} />
             </div>
           </div>
         </div>
@@ -108,4 +106,4 @@ const SchoolProfile = () => {
   );
 };
 
-export { SchoolProfile };
+export default SchoolProfile;

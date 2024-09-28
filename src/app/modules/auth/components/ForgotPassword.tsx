@@ -43,7 +43,7 @@ export function ForgotPassword({ role }) {
         setLoading(true);
 
         const response = await fetch(
-          `${DOMAIN}/api/staff/getemailchecked`, // Update with your actual API endpoint
+          `${DOMAIN}/api/school/getemailchecked`, // Update with your actual API endpoint
           {
             method: "POST",
             headers: {
@@ -87,7 +87,7 @@ export function ForgotPassword({ role }) {
       try {
         setLoading(true);
 
-        const response = await fetch(`${DOMAIN}/api/staff/updatepassword`, {
+        const response = await fetch(`${DOMAIN}/api/school/updatepassword`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

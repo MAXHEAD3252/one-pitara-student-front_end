@@ -1,39 +1,158 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { Route, Routes, Navigate } from "react-router-dom";
+import {
+  Route,
+  Routes,
+  Navigate,
+  useNavigate,
+  matchPath,
+} from "react-router-dom";
 import { MasterLayout } from "../../_metronic/layout/MasterLayout";
 import { useAuth } from "../../app/modules/auth/core/Auth";
 import { useEffect, useState } from "react";
-import { routesConfig } from "./RoutesConfig";
+import { DOMAIN } from "../../app/routing/ApiEndpoints";
+import { DashboardWrapper } from "../pages/dashboard/DashboardWrapper";
+import { ErrorsPage } from "../modules/errors/ErrorsPage";
 
 interface RouteConfig {
   path: string;
   component: React.ComponentType<any>;
 }
 
-interface RoutesConfig {
-  [key: string]: RouteConfig[];
-}
-
 const PrivateRoutes = () => {
   const { currentUser } = useAuth();
   const [userRole, setUserRole] = useState<string | null>(null);
+  const [routes, setRoutes] = useState<RouteConfig[]>([]);
+  const [authorizedPaths, setAuthorizedPaths] = useState<string[]>([]);
+  const [subscriptionId, setSubscriptionId] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+  const school_id = currentUser?.school_id;
+  const role_id = currentUser?.role_id;
+  const designation_id = currentUser?.designation_id;
 
-  
+  // Fetch User Role
   useEffect(() => {
-    const fetchUserRole = async () => {
-      if (currentUser) {
-        const role = currentUser.roleName === "Teacher" ? currentUser.roleName : currentUser.role || null;
-        setUserRole(role);
+    if (currentUser) {
+      setUserRole(currentUser.role_name);
+    }
+  }, [currentUser]);
+
+  // Fetch Subscription ID for School Admin
+  useEffect(() => {
+    const fetchSubscriptionId = async () => {
+      if (school_id && userRole === "School Admin") {
+        try {
+          const response = await fetch(
+            `${DOMAIN}/api/superadmin/get-subscription-id/${school_id}`
+          );
+          if (!response.ok) {
+            throw new Error(`Error: ${response.statusText}`);
+          }
+          const data = await response.json();
+          setSubscriptionId(data.result[0].subscription_id);
+        } catch (err) {
+          console.error("Error fetching subscription ID:", err);
+        }
       }
     };
 
-    fetchUserRole();
-  }, [currentUser]);
+    fetchSubscriptionId();
+  }, [school_id, userRole]);
 
-  const roleRoutes = userRole ? (routesConfig as RoutesConfig)[userRole] || [] : [];
+  // Common function to fetch and set routes
+  const fetchRoutes = async (url: string, basePath: string) => {
+    try {
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error("Failed to fetch routes");
+      }
+      const data = await response.json();
+      let componentModule;
+      const routesPromises = Object.keys(data).flatMap((group) =>
+        data[group].map(async (module: any) => {
+          try {
+            
+            if (module.component_name && module.path) {
+              if (userRole === "Super Admin") {
+                componentModule = await import(
+                  /* @vite-ignore */ `${basePath}/${module.component_name}`
+                );
+              } else {
+                componentModule = await import(
+                  /* @vite-ignore */ `${basePath}${module.parent_module}/${module.component_name}`
+                );
+              }
+              
+              return {
+                path: module.path,
+                component: componentModule.default,
+              };
+            }
+          } catch (err) {
+            console.error(
+              `Failed to import component ${module.component_name}`,
+              err
+            );
+            return null;
+          }
+        })
+      );
 
-  if (!userRole) {
-    return <div>Loading...</div>; // You can customize the loading state
+      const fetchedRoutes = (await Promise.all(routesPromises)).filter(Boolean);
+      setRoutes(fetchedRoutes);
+
+      setAuthorizedPaths((prevPaths) => [
+        ...prevPaths,
+        ...fetchedRoutes.map((route) => route.path),
+      ]);
+    } catch (error) {
+      console.error("Error fetching routes:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Fetch routes based on user role
+  useEffect(() => {
+    if (userRole) {
+      if (userRole === "Super Admin") {
+        fetchRoutes(
+          `${DOMAIN}/api/superadmin/get-modules`,
+          "../pages/SuperAdminPages/"
+        );
+      } else if (userRole === "School Admin" && subscriptionId) {
+        fetchRoutes(
+          `${DOMAIN}/api/superadmin/get-parent-module/${subscriptionId}`,
+          "../pages/StaffPages/"
+        );
+      } else if (userRole === "School Staff" && designation_id) {
+        fetchRoutes(
+          `${DOMAIN}/api/school/get-modules/${school_id}/${role_id}/${designation_id}`,
+          "../pages/StaffPages/"
+        );
+      }
+    }
+  }, [userRole, subscriptionId, designation_id, school_id, role_id]);
+
+  // Redirect to unauthorized if the path is not in authorized paths
+  useEffect(() => {
+    if (!loading && window.location.pathname) {
+      const currentPath = window.location.pathname.split("?")[0];
+      const pathIsAuthorized = authorizedPaths.some((authorizedPath) =>
+        matchPath(authorizedPath, currentPath)
+      );
+
+      if (
+        !pathIsAuthorized &&
+        currentPath !== "/" &&
+        currentPath !== "/unauthorized"
+      ) {
+        navigate("/unauthorized", { replace: true }); // Use replace instead of navigate
+      }
+    }
+  }, [authorizedPaths, loading, navigate]);
+
+  if (loading) {
+    return <div>Loading...</div>; // Customize the loading state
   }
 
   const AuthRedirect = () => <Navigate to="/" />;
@@ -42,20 +161,24 @@ const PrivateRoutes = () => {
     <Routes>
       <Route element={<MasterLayout />}>
         <Route path="auth/*" element={<AuthRedirect />} />
-        {roleRoutes.map(({ path, component: Component }) => (
-          <Route key={path} path={path} element={<Component />} />
-        ))}
+        {/* Render dynamically fetched routes */}
+        {routes.map(({ path, component: Component }) => {
+          if (!Component) {
+            console.error(`Component for path ${path} is undefined`);
+            return null; // Skip rendering if component is not found
+          }
+          return <Route key={path} path={path} element={<Component />} />;
+        })}
+        {/* Default Route for all users */}
+        <Route path="/" element={<DashboardWrapper />} />
+        {/* Unauthorized Route */}
+        <Route path="/unauthorized" element={<ErrorsPage />} />
       </Route>
     </Routes>
   );
 };
 
 export default PrivateRoutes;
-
-
-
-
-
 
 // import { lazy, FC, Suspense } from "react";
 // import { Route, Routes, Navigate } from "react-router-dom";
@@ -66,9 +189,9 @@ export default PrivateRoutes;
 // import { getCSSVariableValue } from "../../_metronic/assets/ts/_utils";
 // import { WithChildren } from "../../_metronic/helpers";
 // import BuilderPageWrapper from "../pages/layout-builder/BuilderPageWrapper";
-// import { FeeDetails } from "../pages/StaffPages/FeeDetails/FeeDetails";
+// import { FeeDetails } from "../pages/StaffPages/FinancialManagement/FeeDetails";
 // import { LeadGeneration } from "../pages/StaffPages/LeadGeneration/LeadGeneration";
-// import { ViewFeeMaster } from "../pages/StaffPages/FeeDetails/ViewFeeMaster";
+// import { ViewFeeMaster } from "../pages/StaffPages/FinancialManagement/ViewFeeMaster";
 // import { Income } from "../pages/StaffPages/IncomeExpenseDash/Income";
 // import { DashboardStudent } from "../pages/dashboard/DashboardStudent";
 // import { useAuth } from "../../app/modules/auth/core/Auth";
@@ -115,7 +238,7 @@ export default PrivateRoutes;
 //   const UsersPage = lazy(
 //     () => import("../modules/apps/user-management/UsersPage")
 //   );
-//   const { 
+//   const {
 //  } = useAuth();
 //   const userRole = auth?.role;
 //   // console.log(auth);
@@ -227,7 +350,6 @@ export default PrivateRoutes;
 //           <Route path="/superadmin/manage/schools" element={<ManageSchools />} />
 //           <Route path="/superadmin/manage/modules" element={<ManageModules />} />
 //         </>}
-
 
 //         {/* Lazy Modules */}
 //         <Route

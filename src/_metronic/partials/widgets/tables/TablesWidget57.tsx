@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from "react";
 import { Tooltip as ReactTooltip } from "react-tooltip";
-import "../../../../app/pages/StaffPages/FeeDetails/style.css";
+import "../../../../app/pages/StaffPages/FinancialManagement/style.css";
 // import { CreateWalkinEnquiry } from "../../modals/create-app-stepper/CreateWalkinEnquiry";
 import { CreateAdmissionEnquiryReject } from "../../modals/create-app-stepper/CreateAdmissionEnquiryReject";
 import { CreateStartAdmissionProcess } from "../../modals/create-app-stepper/CreateStartAdmissionProcess";
@@ -78,7 +78,7 @@ const TablesWidget57: React.FC = () => {
     const fetchEnquiries = async () => {
       try {
         const response = await fetch(
-          `${DOMAIN}/api/staff/getadmissionenquiries/${schoolId}`
+          `${DOMAIN}/api/school/getadmissionenquiries/${schoolId}`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch data");

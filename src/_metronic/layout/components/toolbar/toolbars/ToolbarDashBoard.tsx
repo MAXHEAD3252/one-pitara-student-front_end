@@ -4,7 +4,7 @@ import { useLayout } from "../../../core";
 import { useNavigate } from "react-router-dom";
 import HeaderCalendar from "../../../../partials/layout/header-menus/HeaderCalendar";
 import { format, subDays, startOfDay, endOfDay } from "date-fns";
-import "../../../../../app/pages/StaffPages/FeeDetails/style.css";
+import "../../../../../app/pages/StaffPages/FinancialManagement/style.css";
 
 const ToolbarDashBoard = () => {
   const [selectedRange, setSelectedRange] = useState([

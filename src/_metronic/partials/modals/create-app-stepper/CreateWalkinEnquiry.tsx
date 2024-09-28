@@ -143,7 +143,7 @@ const CreateWalkinEnquiry = ({ show, handleClose ,setRefresh}: Props) => {
 
       try {
         const response = await fetch(
-          `${DOMAIN}/api/staff/get-classes?schoolId=${schoolId}`
+          `${DOMAIN}/api/school/get-classes?schoolId=${schoolId}`
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -162,7 +162,7 @@ const CreateWalkinEnquiry = ({ show, handleClose ,setRefresh}: Props) => {
 
       try {
         const response = await fetch(
-          `${DOMAIN}/api/staff/get-reference?schoolId=${schoolId}`
+          `${DOMAIN}/api/school/get-reference?schoolId=${schoolId}`
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -182,7 +182,7 @@ const CreateWalkinEnquiry = ({ show, handleClose ,setRefresh}: Props) => {
 
       try {
         const response = await fetch(
-          `${DOMAIN}/api/staff/get-source?schoolId=${schoolId}`
+          `${DOMAIN}/api/school/get-source?schoolId=${schoolId}`
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -201,7 +201,7 @@ const CreateWalkinEnquiry = ({ show, handleClose ,setRefresh}: Props) => {
 
       try {
         const response = await fetch(
-          `${DOMAIN}/api/staff/get-session?schoolId=${schoolId}`
+          `${DOMAIN}/api/school/get-session?schoolId=${schoolId}`
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -221,7 +221,7 @@ const CreateWalkinEnquiry = ({ show, handleClose ,setRefresh}: Props) => {
     e.preventDefault();
     try {
       const response = await fetch(
-        `${DOMAIN}/api/staff/walkinEnquiry/${schoolId}/${userId}`,
+        `${DOMAIN}/api/school/walkinEnquiry/${schoolId}/${userId}`,
         {
           method: "POST",
           headers: {

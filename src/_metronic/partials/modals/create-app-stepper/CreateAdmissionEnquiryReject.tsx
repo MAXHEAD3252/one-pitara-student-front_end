@@ -36,7 +36,7 @@ const CreateAdmissionEnquiryReject = ({ show, handleClose, setRefresh,enqId}: Pr
     const enquiry_id = enqId
     try {
       const response = await fetch(
-        `${DOMAIN}/api/staff/application-reject/${schoolId}/${enquiry_id}`,
+        `${DOMAIN}/api/school/application-reject/${schoolId}/${enquiry_id}`,
         {
           method: "POST", // Assuming you want to use POST instead of PUT for sending the reject reason
           headers: {

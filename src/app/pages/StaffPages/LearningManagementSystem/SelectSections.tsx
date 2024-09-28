@@ -31,11 +31,11 @@ const SelectSections: FC = () => {
         let response;
         if (currentUser?.roleName === "Teacher") {
           response = await fetch(
-            `${DOMAIN}/api/staff/get-allteachersections/${school_id}/${teacher_id}/${classId}`
+            `${DOMAIN}/api/school/get-allteachersections/${school_id}/${teacher_id}/${classId}`
           );
         } else {
           response = await fetch(
-            `${DOMAIN}/api/staff/get-allsections/${school_id}/${classId}`
+            `${DOMAIN}/api/school/get-allsections/${school_id}/${classId}`
           );
         }
         if (!response.ok) {

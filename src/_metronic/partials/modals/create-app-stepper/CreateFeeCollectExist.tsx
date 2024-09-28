@@ -92,7 +92,7 @@ useEffect(() => {
     const fetchEnquiries = async () => {
       try {
         const response = await fetch(
-          `${DOMAIN}/api/staff/get-studentcollectfee/${schoolId}/${class_id}`
+          `${DOMAIN}/api/school/get-studentcollectfee/${schoolId}/${class_id}`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch data");

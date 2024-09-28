@@ -4,7 +4,7 @@ import * as Yup from 'yup'
 import clsx from 'clsx'
 import {Link} from 'react-router-dom'
 import {useFormik} from 'formik'
-import {getAdminByToken, loginStaff} from '../core/_requests'
+import {getSchoolUserByToken, loginSchoolUser} from '../core/_requests'
 import {useAuth} from '../core/Auth'
 
 const loginSchema = Yup.object().shape({
@@ -40,13 +40,11 @@ export function StaffLogin() {
     onSubmit: async (values, {setStatus, setSubmitting}) => {
       setLoading(true)
         try {
-          const {data: auth} = await loginStaff(values.email, values.password)
+          const {data: auth} = await loginSchoolUser(values.email, values.password)
           saveAuth(auth)
-          // console.log(auth);
           
           
-          const {data: user} = await getAdminByToken(auth.id)
-          // console.log(user.data?.[0]);
+          const {data: user} = await getSchoolUserByToken(auth.id)
           
           setCurrentUser(user.data?.[0])
       } catch (error) {

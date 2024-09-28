@@ -44,7 +44,7 @@ const CreateEditFeeType = ({ show, handleClose, fee_type_id,fee_type_name,fee_ty
     e.preventDefault();
     try {
       const response = await fetch(
-        `${DOMAIN}/api/staff/edit-feetype/${fee_type_id}/${schoolId}`,
+        `${DOMAIN}/api/school/edit-feetype/${fee_type_id}/${schoolId}`,
         {
           method: 'PUT',
           headers: {

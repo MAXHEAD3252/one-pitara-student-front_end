@@ -20,4 +20,4 @@ const SolpReports: FC = () => {
 };
 
 
-export { SolpReports };
+export default SolpReports;

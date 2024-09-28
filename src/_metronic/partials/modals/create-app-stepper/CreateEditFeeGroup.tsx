@@ -76,7 +76,7 @@ const CreateEditFeeGroup = ({
     const fetchClasses = async () => {
       try {
         const response = await fetch(
-          `${DOMAIN}/api/staff/get-onlyclasses/${schoolId}`
+          `${DOMAIN}/api/school/get-onlyclasses/${schoolId}`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch data");
@@ -96,7 +96,7 @@ const CreateEditFeeGroup = ({
       try {
         const class_id = selectedClass.id;
         const response = await fetch(
-          `${DOMAIN}/api/staff/get-classwise-section/${class_id}/${schoolId}`
+          `${DOMAIN}/api/school/get-classwise-section/${class_id}/${schoolId}`
         );
         if (!response.ok) {
           throw new Error("Network response was not ok");
@@ -155,7 +155,7 @@ const CreateEditFeeGroup = ({
 
     try {
       const response = await fetch(
-        `${DOMAIN}/api/staff/edit-feegroup/${fee_group_id}/${schoolId}`,
+        `${DOMAIN}/api/school/edit-feegroup/${fee_group_id}/${schoolId}`,
         {
           method: "PUT",
           headers: {

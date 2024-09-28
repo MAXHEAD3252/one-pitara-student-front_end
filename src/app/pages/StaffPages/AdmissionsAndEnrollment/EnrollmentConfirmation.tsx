@@ -21,4 +21,4 @@ const EnrollmentConfirmation: FC = () => {
 };
 
 
-export { EnrollmentConfirmation };
+export default EnrollmentConfirmation ;

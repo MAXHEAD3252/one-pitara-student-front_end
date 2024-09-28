@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 // import { Tooltip as ReactTooltip } from "react-tooltip";
-import "../../../../app/pages/StaffPages/FeeDetails/style.css";
+import "../../../../app/pages/StaffPages/FinancialManagement/style.css";
 // import { CreateWalkinEnquiry } from "../../modals/create-app-stepper/CreateWalkinEnquiry";
 // import { CreateEnquiryAction } from "../../modals/create-app-stepper/CreateEnquiryAction";
 // import { CreateEditEnquiry } from "../../modals/create-app-stepper/CreateEditEnquiry";
@@ -81,7 +81,7 @@ const [getSection, setSection] = useState<Section[]>([]);
     const fetchClasses = async () => {
       try {
         const response = await fetch(
-          `${DOMAIN}/api/staff/get-onlyclasses/${school_id}`
+          `${DOMAIN}/api/school/get-onlyclasses/${school_id}`
         );
 
         if (!response.ok) {
@@ -103,7 +103,7 @@ const [getSection, setSection] = useState<Section[]>([]);
       try {
         const class_id = selectedClass?.id;
         const response = await fetch(
-          `${DOMAIN}/api/staff/get-classwise-section/${class_id}/${school_id}`
+          `${DOMAIN}/api/school/get-classwise-section/${class_id}/${school_id}`
         );
         if (!response.ok) {
           throw new Error("Network response was not ok");
@@ -122,7 +122,7 @@ const [getSection, setSection] = useState<Section[]>([]);
     const fetchSubjects = async () => {
       try {
         const response = await fetch(
-          `${DOMAIN}/api/staff/get-onlysubjects/${school_id}`
+          `${DOMAIN}/api/school/get-onlysubjects/${school_id}`
         );
 
         if (!response.ok) {

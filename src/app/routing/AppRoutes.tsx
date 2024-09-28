@@ -5,7 +5,7 @@ import { ErrorsPage } from "../modules/errors/ErrorsPage";
 import { Logout, AuthPage, useAuth } from "../modules/auth";
 import { App } from "../App";
 // import { ForgotPassword } from "../modules/auth/components/ForgotPassword";
-import CollectFeesLink from "../pages/StaffPages/FeeDetails/CollectFeesLink";
+import CollectFeesLink from "../pages/StaffPages/FinancialManagement/CollectFeesLink";
 
 const { BASE_URL } = import.meta.env;
 

@@ -63,7 +63,7 @@ const CreateEnquiryAction = ({ show, handleClose, enqId,setRefresh }: Props) => 
 
       try {
         const response = await fetch(
-          `${DOMAIN}/api/staff/getEnquiryById/${schoolId}/${enqId}`
+          `${DOMAIN}/api/school/getEnquiryById/${schoolId}/${enqId}`
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -98,7 +98,7 @@ const CreateEnquiryAction = ({ show, handleClose, enqId,setRefresh }: Props) => 
     e.preventDefault();
     try {
       const response = await fetch(
-        `${DOMAIN}/api/staff/update-followup/${schoolId}/${enqId}`,
+        `${DOMAIN}/api/school/update-followup/${schoolId}/${enqId}`,
         {
           method: "PUT",
           headers: {

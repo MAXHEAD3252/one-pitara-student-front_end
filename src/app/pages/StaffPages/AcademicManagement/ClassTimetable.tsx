@@ -20,4 +20,4 @@ const ClassTimetable: FC = () => {
 };
 
 
-export { ClassTimetable };
+export default ClassTimetable;

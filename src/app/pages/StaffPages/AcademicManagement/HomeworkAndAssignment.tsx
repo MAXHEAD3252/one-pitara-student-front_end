@@ -20,4 +20,4 @@ const HomeworkAndAssignment: FC = () => {
 };
 
 
-export { HomeworkAndAssignment };
+export default HomeworkAndAssignment;

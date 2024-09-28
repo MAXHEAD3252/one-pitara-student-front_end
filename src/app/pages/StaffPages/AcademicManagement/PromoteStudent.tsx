@@ -30,4 +30,4 @@ const PromoteStudent: FC = () => {
 };
 
 
-export { PromoteStudent };
+export default PromoteStudent;

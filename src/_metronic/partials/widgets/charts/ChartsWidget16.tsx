@@ -2,7 +2,7 @@ import { useRef, FC, useState, SetStateAction } from "react";
 
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
-import "../../../../app/pages/StaffPages/FeeDetails/style.css"
+import "../../../../app/pages/StaffPages/FinancialManagement/style.css"
 
 
 const ChartsWidget16: FC = () => {

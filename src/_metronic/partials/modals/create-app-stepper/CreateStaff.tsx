@@ -53,7 +53,7 @@ const CreateStaff = ({ show, handleClose, refresh }: Props) => {
     e.preventDefault();
     
     try {
-        const response = await fetch(`${DOMAIN}/api/staff/store-staff`, {
+        const response = await fetch(`${DOMAIN}/api/school/store-staff`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

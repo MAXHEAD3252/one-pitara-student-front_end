@@ -48,4 +48,4 @@ const ManageAssigns = () => {
   );
 };
 
-export { ManageAssigns };
+export default ManageAssigns;

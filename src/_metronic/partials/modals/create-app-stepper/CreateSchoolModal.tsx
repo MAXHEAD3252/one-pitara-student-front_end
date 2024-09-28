@@ -3,51 +3,56 @@ import { createPortal } from 'react-dom';
 import { Modal, Button, Form, Row, Col, InputGroup } from 'react-bootstrap';
 import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
 import './CreateSchoolModal.css'; 
+import { useAuth } from '../../../../app/modules/auth';
 
 type Props = {
   show: boolean;
   handleClose: () => void;
-  refresh: (refresh: boolean) => void;
+  refresh: (refreshState: boolean) => void;
 };
 
 const modalsRoot = document.getElementById('root-modals') || document.body;
 
 const CreateSchoolModal = ({ show, handleClose, refresh }: Props) => {
+  const {currentUser} = useAuth();
+  
   const [schoolName, setSchoolName] = useState('');
-  const [tagline, setTagline] = useState('');
+  // const [tagline, setTagline] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [address, setAddress] = useState('');
   const [state, setState] = useState('');
   const [country, setCountry] = useState('');
-  const [educationalBoard, setEducationalBoard] = useState('');
+  // const [educationalBoard, setEducationalBoard] = useState('');
   const [dateFormat, setDateFormat] = useState('dd/mm/yyyy');
   const [timeFormat, setTimeFormat] = useState('hh:mm');
   const [currency, setCurrency] = useState('Rs');
   const [currencySymbol, setCurrencySymbol] = useState('₹');
-  const [bankAccountNo, setBankAccountNo] = useState('');
-  const [ifscCode, setIfscCode] = useState('');
-  const [bankName, setBankName] = useState('');
+  // const [bankAccountNo, setBankAccountNo] = useState('');
+  // const [ifscCode, setIfscCode] = useState('');
+  // const [bankName, setBankName] = useState('');
   const [subscriptionType, setSubscriptionType] = useState('');
+  const [academicType, setAcademicType] = useState('');
   const [subscriptionOptions, setSubscriptionOptions] = useState([]);
-  const [schoolLogo, setSchoolLogo] = useState<File | null>(null);
-  const [schoolSmallLogo, setSchoolSmallLogo] = useState<File | null>(null);
+  const [academicYear, setAcademicYear] = useState([]);
+  // const [schoolLogo, setSchoolLogo] = useState<File | null>(null);
+  // const [schoolSmallLogo, setSchoolSmallLogo] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      setSchoolLogo(e.target.files[0]);
-    }
-  };
+  // const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   if (e.target.files && e.target.files.length > 0) {
+  //     setSchoolLogo(e.target.files[0]);
+  //   }
+  // };
 
-  const handleSmallLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      setSchoolSmallLogo(e.target.files[0]);
-    }
-  };
+  // const handleSmallLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   if (e.target.files && e.target.files.length > 0) {
+  //     setSchoolSmallLogo(e.target.files[0]);
+  //   }
+  // };
 
   const validateForm = () => {
-    if (!schoolName || !email || !phone || !schoolLogo || !schoolSmallLogo) {
+    if (!schoolName || !email || !phone || !subscriptionType ) {
       return false;
     }
     return true;
@@ -73,6 +78,22 @@ const CreateSchoolModal = ({ show, handleClose, refresh }: Props) => {
     };
 
     fetchSubscriptionOptions();
+    const fetchAcademicYear = async () => {
+      try {
+        const response = await fetch(`${DOMAIN}/api/superadmin/get_academicyear`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch subscription types');
+        }
+        const data = await response.json();
+        console.log(data);
+        
+        setAcademicYear(data); // Assuming the response has this structure
+      } catch (error) {
+        console.error('Error fetching subscription types:', error);
+      }
+    };
+
+    fetchAcademicYear();
   }, []);
 
 
@@ -80,42 +101,44 @@ const CreateSchoolModal = ({ show, handleClose, refresh }: Props) => {
 
 
   const handleSubmit = async () => {
+    // Validate form input
     if (!validateForm()) {
-      alert('Please fill in all required fields and upload the logos.');
+      alert('Please fill in all required fields.');
       return;
     }
-
+  
     setIsSubmitting(true);
-
-    const formData = new FormData();
-    formData.append('name', schoolName);
-    formData.append('email', email);
-    formData.append('phone', phone);
-    formData.append('address', address);
-    formData.append('state', state);
-    formData.append('country', country);
-    formData.append('educational_board', educationalBoard);
-    formData.append('date_format', dateFormat);
-    formData.append('time_format', timeFormat);
-    formData.append('currency', currency);
-    formData.append('currency_symbol', currencySymbol);
-    formData.append('bank_account_no', bankAccountNo);
-    formData.append('ifsc_code', ifscCode);
-    formData.append('bank_name', bankName);
-    formData.append('school_logo', schoolLogo as Blob);
-    formData.append('school_small_logo', schoolSmallLogo as Blob);
-    formData.append('subscription_type', subscriptionType);
-
+  
+    // Prepare JSON data
+    const formData = {
+      name: schoolName,
+      email: email,
+      phone: phone,
+      address: address,
+      state: state,
+      country: country,
+      date_format: dateFormat,
+      time_format: timeFormat,
+      currency: currency,
+      currency_symbol: currencySymbol,
+      academic_year: academicType,
+      subscription_type: subscriptionType,
+      userId: currentUser?.id,
+    };
+  
     try {
       const response = await fetch(`${DOMAIN}/api/superadmin/create_school`, {
         method: 'POST',
-        body: formData,
+        headers: {
+          'Content-Type': 'application/json', // Set header for JSON
+        },
+        body: JSON.stringify(formData), // Convert formData object to JSON string
       });
-
+  
       if (!response.ok) {
         throw new Error('Failed to create school');
       }
-
+  
       const result = await response.json();
       console.log('School created successfully:', result);
       handleClose();
@@ -126,6 +149,7 @@ const CreateSchoolModal = ({ show, handleClose, refresh }: Props) => {
       setIsSubmitting(false);
     }
   };
+  
 
   return createPortal(
     <Modal
@@ -137,14 +161,16 @@ const CreateSchoolModal = ({ show, handleClose, refresh }: Props) => {
       onHide={handleClose}
       backdrop={true}
     >
-      <div className='modal-header'>
+      <div className='modal-header' style={{
+        backgroundColor: "#F2F6FF", borderBottom:'1px solid lightgray'}}>
         <h2>Create School</h2>
         <div className='btn btn-sm btn-icon btn-active-color-primary' onClick={handleClose}>
           <i className='fas fa-times'></i>
         </div>
       </div>
 
-      <div className='modal-body py-lg-10 px-lg-10'>
+      <div className='modal-body py-lg-10 px-lg-10' style={{
+        backgroundColor: "#F2F6FF",}}>
         <Form>
           <Row>
             <Col md={4}>
@@ -165,7 +191,7 @@ const CreateSchoolModal = ({ show, handleClose, refresh }: Props) => {
                 <Form.Text className='text-muted'>This is an input helper text.</Form.Text>
               </Form.Group>
             </Col>
-            <Col md={4}>
+            {/* <Col md={4}>
               <Form.Group className='mb-3 custom-input' controlId='formTagline'>
                 <Form.Label>Tagline</Form.Label>
                 <InputGroup>
@@ -181,7 +207,7 @@ const CreateSchoolModal = ({ show, handleClose, refresh }: Props) => {
                 </InputGroup>
                 <Form.Text className='text-muted'>This is an input helper text.</Form.Text>
               </Form.Group>
-            </Col>
+            </Col> */}
             <Col md={4}>
               <Form.Group className='mb-3 custom-input' controlId='formEmail'>
                 <Form.Label>School Email *</Form.Label>
@@ -200,8 +226,6 @@ const CreateSchoolModal = ({ show, handleClose, refresh }: Props) => {
                 <Form.Text className='text-muted'>This is an input helper text.</Form.Text>
               </Form.Group>
             </Col>
-          </Row>
-          <Row>
             <Col md={4}>
               <Form.Group className='mb-3 custom-input' controlId='formPhone'>
                 <Form.Label>School Phone *</Form.Label>
@@ -220,6 +244,8 @@ const CreateSchoolModal = ({ show, handleClose, refresh }: Props) => {
                 <Form.Text className='text-muted'>This is an input helper text.</Form.Text>
               </Form.Group>
             </Col>
+          </Row>
+          <Row>
             <Col md={8}>
               <Form.Group className='mb-3 custom-input' controlId='formAddress'>
                 <Form.Label>School Address</Form.Label>
@@ -237,8 +263,6 @@ const CreateSchoolModal = ({ show, handleClose, refresh }: Props) => {
                 <Form.Text className='text-muted'>This is an input helper text.</Form.Text>
               </Form.Group>
             </Col>
-          </Row>
-          <Row>
             <Col md={4}>
               <Form.Group className='mb-3 custom-input' controlId='formState'>
                 <Form.Label>State</Form.Label>
@@ -256,6 +280,8 @@ const CreateSchoolModal = ({ show, handleClose, refresh }: Props) => {
                 <Form.Text className='text-muted'>This is an input helper text.</Form.Text>
               </Form.Group>
             </Col>
+          </Row>
+          <Row>
             <Col md={4}>
               <Form.Group className='mb-3 custom-input' controlId='formCountry'>
                 <Form.Label>Country</Form.Label>
@@ -273,7 +299,7 @@ const CreateSchoolModal = ({ show, handleClose, refresh }: Props) => {
                 <Form.Text className='text-muted'>This is an input helper text.</Form.Text>
               </Form.Group>
             </Col>
-            <Col md={4}>
+            {/* <Col md={4}>
               <Form.Group className='mb-3 custom-input' controlId='formBoard'>
                 <Form.Label>Educational Board</Form.Label>
                 <InputGroup>
@@ -289,7 +315,7 @@ const CreateSchoolModal = ({ show, handleClose, refresh }: Props) => {
                 </InputGroup>
                 <Form.Text className='text-muted'>This is an input helper text.</Form.Text>
               </Form.Group>
-            </Col>
+            </Col> */}
             <Col md={4}>
               <Form.Group className='mb-3 custom-input' controlId='formCountry'>
                 <Form.Label>Date Formate</Form.Label>
@@ -324,6 +350,27 @@ const CreateSchoolModal = ({ show, handleClose, refresh }: Props) => {
                 <Form.Text className='text-muted'>This is an input helper text.</Form.Text>
               </Form.Group>
             </Col>
+           
+            </Row>
+            <Row>
+            <Col md={8}>
+              <Form.Group className='mb-3' controlId='formAcademicYear'>
+                <Form.Label>Academic Year *</Form.Label>
+                <Form.Select
+                  value={academicType}
+                  onChange={(e) => setAcademicType(e.target.value)}
+                  required
+                >
+                  <option value=''>Select Academic Year</option>
+                  {academicYear.map((option) => (
+                    <option key={option.id} value={option.id}>
+                      {option.session}
+                    </option>
+                  ))}
+                </Form.Select>
+                <Form.Text className='text-muted'>Choose the type of subscription for the school.</Form.Text>
+              </Form.Group>
+            </Col>
             <Col md={4}>
               <Form.Group className='mb-3 custom-input' controlId='formCountry'>
                 <Form.Label>Currency</Form.Label>
@@ -341,26 +388,7 @@ const CreateSchoolModal = ({ show, handleClose, refresh }: Props) => {
                 <Form.Text className='text-muted'>Enter the Short form of the currency.</Form.Text>
               </Form.Group>
             </Col>
-            </Row>
-            <Row>
-            <Col md={4}>
-              <Form.Group className='mb-3 custom-input' controlId='formCountry'>
-                <Form.Label>Currency Symbol</Form.Label>
-                <InputGroup>
-                  <InputGroup.Text>
-                    <i className='fas fa-indian-rupee'></i>
-                  </InputGroup.Text>
-                  <Form.Control
-                    type='text'
-                    placeholder='Enter Curreny Symbol'
-                    value={currencySymbol}
-                    onChange={(e) => setCurrencySymbol(e.target.value)}
-                  />
-                </InputGroup>
-                <Form.Text className='text-muted'>Enter the Short form of the currency.</Form.Text>
-              </Form.Group>
-            </Col>
-            <Col md={4}>
+            {/* <Col md={4}>
               <Form.Group className='mb-3 custom-input' controlId='formCountry'>
                 <Form.Label>Bank Account</Form.Label>
                 <InputGroup>
@@ -376,8 +404,8 @@ const CreateSchoolModal = ({ show, handleClose, refresh }: Props) => {
                 </InputGroup>
                 <Form.Text className='text-muted'>Enter the Short form of the currency.</Form.Text>
               </Form.Group>
-            </Col>
-            <Col md={4}>
+            </Col> */}
+            {/* <Col md={4}>
               <Form.Group className='mb-3 custom-input' controlId='formCountry'>
                 <Form.Label>Ifsc Code</Form.Label>
                 <InputGroup>
@@ -393,10 +421,10 @@ const CreateSchoolModal = ({ show, handleClose, refresh }: Props) => {
                 </InputGroup>
                 <Form.Text className='text-muted'>Enter the Short form of the currency.</Form.Text>
               </Form.Group>
-            </Col>
+            </Col> */}
             </Row>
             <Row>
-            <Col md={4}>
+            {/* <Col md={4}>
               <Form.Group className='mb-3 custom-input' controlId='formCountry'>
                 <Form.Label>Bank Name</Form.Label>
                 <InputGroup>
@@ -412,7 +440,7 @@ const CreateSchoolModal = ({ show, handleClose, refresh }: Props) => {
                 </InputGroup>
                 <Form.Text className='text-muted'>Enter the Short form of the currency.</Form.Text>
               </Form.Group>
-            </Col>
+            </Col> */}
             <Col md={8}>
               <Form.Group className='mb-3' controlId='formSubscriptionType'>
                 <Form.Label>Subscription Type *</Form.Label>
@@ -431,8 +459,25 @@ const CreateSchoolModal = ({ show, handleClose, refresh }: Props) => {
                 <Form.Text className='text-muted'>Choose the type of subscription for the school.</Form.Text>
               </Form.Group>
             </Col>
+            <Col md={4}>
+              <Form.Group className='mb-3 custom-input' controlId='formCountry'>
+                <Form.Label>Currency Symbol</Form.Label>
+                <InputGroup>
+                  <InputGroup.Text>
+                    <i className='fas fa-indian-rupee'></i>
+                  </InputGroup.Text>
+                  <Form.Control
+                    type='text'
+                    placeholder='Enter Curreny Symbol'
+                    value={currencySymbol}
+                    onChange={(e) => setCurrencySymbol(e.target.value)}
+                  />
+                </InputGroup>
+                <Form.Text className='text-muted'>Enter the Short form of the currency.</Form.Text>
+              </Form.Group>
+            </Col>
           </Row>
-          <Row>
+          {/* <Row>
             <Col md={6}>
               <Form.Group className='mb-3 custom-input' controlId='formSchoolLogo'>
                 <Form.Label>School Logo *</Form.Label>
@@ -457,7 +502,7 @@ const CreateSchoolModal = ({ show, handleClose, refresh }: Props) => {
                 {schoolSmallLogo && <p className='mt-2'>Selected file: {schoolSmallLogo.name}</p>}
               </Form.Group>
             </Col>
-          </Row>
+          </Row> */}
           <div className='d-flex justify-content-end'>
             <Button variant='secondary' onClick={handleClose} className='me-2'>
               Cancel

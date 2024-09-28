@@ -17,7 +17,7 @@ import {
 } from "./_models";
 import * as authHelper from "./AuthHelpers";
 import {
-  getAdminByToken,
+  getSchoolUserByToken,
   getStudentByToken,
   getSuperAdminByToken,
 } from "./_requests";
@@ -84,7 +84,9 @@ const AuthInit: FC<WithChildren> = ({ children }) => {
   useEffect(() => {
     const requestStaff = async (id: string) => {
       try {
-        const { data } = await getAdminByToken(id);
+        const { data } = await getSchoolUserByToken(id);
+        console.log(data);
+        
         if (data) {
           setCurrentUser(data?.data?.[0]);
         }
@@ -116,7 +118,7 @@ const AuthInit: FC<WithChildren> = ({ children }) => {
     };
     const requestAdmin = async (id: string) => {
       try {
-        const { data } = await getAdminByToken(id);
+        const { data } = await getSchoolUserByToken(id);
         if (data) {
           setCurrentUser(data?.data?.[0]);
         }
@@ -145,14 +147,14 @@ const AuthInit: FC<WithChildren> = ({ children }) => {
       }
     };
 
-    if (auth && auth.user_id && auth.role) {
+    if (auth && auth.user_id && auth.role === "student") {
       /* @ts-ignore */
       requestStudent(auth.user_id, auth.role);
-    } else if (auth && auth.id && auth.role === "staff") {
+    } else if (auth && auth.id && auth.role === "School Staff") {
       requestStaff(auth.id);
-    } else if (auth && auth.id && auth.role === "admin") {
+    } else if (auth && auth.id && auth.role === "School Admin") {
       requestAdmin(auth.id);
-    } else if (auth && auth.username && auth.role === "superadmin") {
+    } else if (auth && auth.username && auth.role === "Super Admin") {
       requestSuperAdmin(auth.username);
     } else {
       logout();

@@ -47,7 +47,7 @@ const ReviewApplication = ({ show, handleClose, enqId, setRefresh }: Props) => {
     const enquiry_id = enqId
       const fetchApplication = async () => {
         try {
-          const response = await fetch(`${DOMAIN}/api/staff/get-application-review/${schoolId}/${enquiry_id}`);
+          const response = await fetch(`${DOMAIN}/api/school/get-application-review/${schoolId}/${enquiry_id}`);
           if (!response.ok) {
             throw new Error('Network response was not ok');
           }
@@ -67,7 +67,7 @@ const handleAccept = async (schoolId: string, enquiryId: string) => {
   setLoading(true);
   try {
     const response = await fetch(
-      `${DOMAIN}/api/staff/application-accept/${schoolId}/${enquiryId}`,
+      `${DOMAIN}/api/school/application-accept/${schoolId}/${enquiryId}`,
       {
         method: "POST",
         headers: {

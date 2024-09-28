@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 // import { Tooltip as ReactTooltip } from "react-tooltip";
-import "../../../../app/pages/StaffPages/FeeDetails/style.css";
+import "../../../../app/pages/StaffPages/FinancialManagement/style.css";
 // import { CreateWalkinEnquiry } from "../../modals/create-app-stepper/CreateWalkinEnquiry";
 import { DeleteFeeTypeModal } from "../../modals/create-app-stepper/DeleteFeeTypeModal";
 import { CreateEditFeeType } from "../../modals/create-app-stepper/CreateEditFeeType";
@@ -68,7 +68,7 @@ const TablesWidget60 = () => {
     const fetchEnquiries = async () => {
       try {
         const response = await fetch(
-          `${DOMAIN}/api/staff/getfeetype/${schoolId}`
+          `${DOMAIN}/api/school/getfeetype/${schoolId}`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch data");
@@ -113,7 +113,7 @@ const handleSubmit = async (e) => {
   e.preventDefault();
   try {
     const response = await fetch(
-      `${DOMAIN}/api/staff/add-feetype/${schoolId}`,
+      `${DOMAIN}/api/school/add-feetype/${schoolId}`,
       {
         method: 'POST',
         headers: {

@@ -58,7 +58,7 @@ const EditFessMasterModal = ({ show, onHide, feeId }: Props) => {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          `${DOMAIN}/api/staff/getfeemaster/${schoolId}/${feeId}`
+          `${DOMAIN}/api/school/getfeemaster/${schoolId}/${feeId}`
         );
         const data = await response.json();
 
@@ -86,7 +86,7 @@ const EditFessMasterModal = ({ show, onHide, feeId }: Props) => {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          `${DOMAIN}/api/staff/getfeemaster-dropdown/${schoolId}`
+          `${DOMAIN}/api/school/getfeemaster-dropdown/${schoolId}`
         );
         const data = await response.json();
 
@@ -150,7 +150,7 @@ const EditFessMasterModal = ({ show, onHide, feeId }: Props) => {
     if (Object.keys(modifiedData).length > 0) {
       try {
         const response = await fetch(
-          `${DOMAIN}/api/staff/updateFeeMasterById/${schoolId}/${feeId}`,
+          `${DOMAIN}/api/school/updateFeeMasterById/${schoolId}/${feeId}`,
           {
             method: "PUT",
             headers: {

@@ -37,4 +37,4 @@ const ViewFeeMaster: FC = () => {
   );
 };
 
-export { ViewFeeMaster };
+export default ViewFeeMaster;

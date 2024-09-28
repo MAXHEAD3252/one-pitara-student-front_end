@@ -25,10 +25,10 @@ const FeeDetailsPage: FC = () => {
 
   return (
     <div className="bg-white">
-      <HeaderWrapper toggleView={handleToggle} />
+      {/* <HeaderWrapper toggleView={handleToggle} /> */}
       {displayComponent === "list" ? (
         <div>
-          <ToolbarFeeMaster onSelectValue={undefined} />
+          {/* <ToolbarFeeMaster onSelectValue={undefined} /> */}
           <Content>
             <div className="row">
               <div
@@ -164,4 +164,4 @@ const FeeDetails: FC = () => {
   );
 };
 
-export { FeeDetails };
+export default FeeDetails ;

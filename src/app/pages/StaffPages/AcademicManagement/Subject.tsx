@@ -28,4 +28,4 @@ const Subject: FC = () => {
   );
 };
 
-export { Subject };
+export default Subject;

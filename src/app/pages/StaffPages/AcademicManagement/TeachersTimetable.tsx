@@ -20,4 +20,4 @@ const TeachersTimetable: FC = () => {
 };
 
 
-export { TeachersTimetable };
+export default TeachersTimetable;

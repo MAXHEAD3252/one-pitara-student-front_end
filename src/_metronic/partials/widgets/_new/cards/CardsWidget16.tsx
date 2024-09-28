@@ -1,7 +1,7 @@
 import { FC,useState,useEffect } from "react";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
-// import "../../../../app/pages/StaffPages//FeeDetails/style.css
+// import "../../../../app/pages/StaffPages//FinancialManagement/style.css
 import { DOMAIN, getEnquiriesStatus } from '../../../../../app/routing/ApiEndpoints.tsx'; 
 import { useAuth } from "../../../../../app/modules/auth/index.ts";
 

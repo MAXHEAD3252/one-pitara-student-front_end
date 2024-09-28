@@ -18,13 +18,12 @@ const localizer = momentLocalizer(moment)
 
 const DashboardPage: FC=() => {
   const { currentUser } = useAuth();
-  console.log(currentUser?.role);
-  // const [totalSchools, setTotalSchools] = useState<number | null>(null);
 
   const [totalSchools, setTotalSchools] = useState(0);
   const [activeUsers, setActiveUsers] = useState(0);
   const [subscriptionExpiringSoon, setSubscriptionExpiringSoon] = useState(0);
   const [pendingTickets, setPendingTickets] = useState(0);
+  const [userRole, setUserRole] = useState<string | null>(null);
 
   // Dummy functions for demonstration
   const fetchDashboardData = () => {
@@ -81,13 +80,30 @@ const DashboardPage: FC=() => {
     // Add more license data...
   ];
   
+  useEffect(() => {
+    const prefetchUserRole = async () => {
+      if (currentUser?.role_name) {
+        const role = currentUser.role_name;
+  
+        // If role_name is "School Staff", set the designation
+        if (role === 'School Staff' && currentUser.designation) {
+          setUserRole(currentUser.designation);
+        } else {
+          setUserRole(role);
+        }
+      }
+    };
+  
+    prefetchUserRole();
+  }, [currentUser]);  
+  
 
   
   
  return (
 
   <div className="bg-white">
-    {(currentUser?.role === 'admin' &&  'staff') && (
+    {(userRole === 'School Admin') && (
     <Content>
     <div className='row g-5 g-xl-5 mb-10' style={{maxHeight:'160px'}}>
       <div className='col-xxl-3'>
@@ -126,7 +142,43 @@ const DashboardPage: FC=() => {
     </Content>
 
     )}
-    {currentUser?.role === 'superadmin' && (
+    {(userRole === 'Teacher') && (
+    <Content>
+    <div className='row g-5 g-xl-5 mb-10' style={{maxHeight:'160px'}}>
+      <div className='col-xxl-3'>
+      <EngageWidget10 title={"No. of Students"} number={850} image={"students"} />
+      </div>
+
+      <div className='col-xxl-3'>
+      <EngageWidget10 title={"No. of Teacher"} number={150} image={"teachers"} />
+      </div>
+
+      <div className='col-xxl-3'>
+      <EngageWidget10 title={"Monthly Expense"} number={"₹5,32,200"} image={"expense"} />
+      </div>
+    </div>
+
+    <div className='row'>
+      <div className='col-xxl-8 mb-5 mb-xl-10'>
+      <Calendar
+      localizer={localizer}
+      // events={myEventsList}
+      startAccessor="start"
+      endAccessor="end"
+      style={{ height: 620 }}
+    />
+      </div>
+
+      <div className='col-xxl-4 mb-5 mb-xl-10'>
+        <TablesWidget52 />
+      </div>
+    </div>
+
+    
+    </Content>
+
+    )}
+    {userRole === 'Super Admin' && (
      <Content>
       <div className="container-fluid mt-4">
       <div className="row">
@@ -158,7 +210,7 @@ const DashboardPage: FC=() => {
         <div className="col-md-3 mb-4">
           <div className="card" style={{ width: "100%" }}>
             <div className="card-body">
-              <h5 className="card-title" style={{ fontFamily: 'Manrope', fontSize: '18px' }}>Subscriptions Expiring Soon</h5>
+              <h5 className="card-title" style={{ fontFamily: 'Manrope', fontSize: '18px' }}>Total Subscriptions</h5>
               <p className="card-text" style={{ fontFamily: 'Manrope', fontSize: '28px', fontWeight: '800' }}>
                 {subscriptionExpiringSoon ? subscriptionExpiringSoon : "-"}
               </p>
@@ -170,7 +222,7 @@ const DashboardPage: FC=() => {
         <div className="col-md-3 mb-4">
           <div className="card" style={{ width: "100%" }}>
             <div className="card-body">
-              <h5 className="card-title" style={{ fontFamily: 'Manrope', fontSize: '18px' }}>Pending Support Tickets</h5>
+              <h5 className="card-title" style={{ fontFamily: 'Manrope', fontSize: '18px' }}>Total Modules</h5>
               <p className="card-text" style={{ fontFamily: 'Manrope', fontSize: '28px', fontWeight: '800' }}>
                 {pendingTickets ? pendingTickets : "-"}
               </p>
@@ -184,8 +236,8 @@ const DashboardPage: FC=() => {
         <div className="col-md-12">
           <div className="card" style={{ width: "100%" }}>
             <div className="card-body">
-              <h5 className="card-title" style={{ fontFamily: 'Manrope', fontSize: '18px' }}>Tenant Management</h5>
-              <p>Manage and configure school tenants here.</p>
+              <h5 className="card-title" style={{ fontFamily: 'Manrope', fontSize: '18px' }}>Schools Management</h5>
+              <p>View all the school tenants details in brief here.</p>
 
               {/* Tenant Management Table */}
               <div className="table-responsive">
@@ -307,11 +359,7 @@ const DashboardPage: FC=() => {
     </div>
    </Content>
     )}
-
-
-
-
-{currentUser?.role === 'student' && (
+    {userRole === 'student' && (
 <Content>
       {/* <HeaderWrapper /> */}
       <Dashboardheader />
@@ -329,7 +377,6 @@ const DashboardPage: FC=() => {
     </div>
     </Content>
      )}
-
   </div>
 )
 }

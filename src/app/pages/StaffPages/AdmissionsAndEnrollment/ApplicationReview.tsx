@@ -58,4 +58,4 @@ const ApplicationReview: FC = () => {
   );
 };
 
-export { ApplicationReview };
+export default ApplicationReview;

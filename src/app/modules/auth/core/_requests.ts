@@ -5,18 +5,18 @@ import { DOMAIN } from "../../../routing/ApiEndpoints";
 const API_URL = import.meta.env.VITE_APP_API_URL;
 
 export const GET_STUDENT_BY_ACCESSTOKEN_URL = `${DOMAIN}/api/student/student-details`;
-export const GET_ADMIN_BY_ACCESSTOKEN_URL = `${DOMAIN}/api/staff/staff-details`;
+export const GET_SCHOOL_USER_BY_ACCESSTOKEN_URL = `${DOMAIN}/api/school/school-user/details`;
 export const GET_SUPER_ADMIN_BY_ACCESSTOKEN_URL = `${DOMAIN}/api/superadmin/by_token`;
 
-export const LOGIN_URL_STAFF = `${DOMAIN}/api/staff/staff-login`;
+export const LOGIN_URL_SCHOOL_USER = `${DOMAIN}/api/school/school-user/login`;
 export const LOGIN_URL_STUDENT = `${DOMAIN}/api/student/userlogin`;
 export const LOGIN_URL_SUPER_ADMIN = `${DOMAIN}/api/superadmin/login`;
 // export const REGISTER_URL = `${API_URL}/register`;
 export const REQUEST_PASSWORD_URL = `${API_URL}/forgot_password`;
 
 // Server should return AuthModel
-export function loginStaff(email: string, password: string) {
-  return(axios.post<AuthModel>(LOGIN_URL_STAFF, {
+export function loginSchoolUser(email: string, password: string) {
+  return(axios.post<AuthModel>(LOGIN_URL_SCHOOL_USER, {
     email,
     password,
   }) .then(response => {
@@ -24,7 +24,6 @@ export function loginStaff(email: string, password: string) {
       // console.log('Error:', response.data.message);
       throw new Error('Invalid response');
     } else {
-      // console.log('Success:', response);
       return ({response,data :response.data }); 
     }
   })
@@ -74,23 +73,6 @@ export function loginStudent(username: string, password: string) {
    
 }
 
-// Server should return AuthModel
-// export function register(
-//   username: string,
-//   firstname: string,
-//   lastname: string,
-//   password: string,
-//   password_confirmation: string
-// ) {
-//   return axios.post(REGISTER_URL, {
-//     username,
-//     first_name: firstname,
-//     last_name: lastname,
-//     password,
-//     password_confirmation,
-//   });
-// }
-
 // Server should return object => { result: boolean } (Is Email in DB)
 export function requestPassword(username: string) {
   return axios.post<{ result: boolean }>(REQUEST_PASSWORD_URL, {
@@ -107,9 +89,9 @@ export async function getStudentByToken(user_id: string) {
     response
    )
 }
-export async function getAdminByToken(token: string) {
+export async function getSchoolUserByToken(token: string) {
   try {
-    const response = await axios.post(GET_ADMIN_BY_ACCESSTOKEN_URL, {
+    const response = await axios.post(GET_SCHOOL_USER_BY_ACCESSTOKEN_URL, {
       id: token,
     });
     

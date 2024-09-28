@@ -1,13 +1,14 @@
-// /* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { FC, SetStateAction, useState } from "react";
 import { useIntl } from "react-intl";
-import { PageTitle } from "../../../../../_metronic/layout/core";
-import { Content } from "../../../../../_metronic/layout/components/content";
-import { ToolbarFeeMaster } from "../../../../../_metronic/layout/components/toolbar/toolbars";
-import { HeaderWrapper } from "../../../../../_metronic/layout/components/header_staff";
-import { TablesWidget59 } from "../../../../../_metronic/partials/widgets/tables/TablesWidget59";
+import { PageTitle } from "../../../../_metronic/layout/core";
+import {  TablesWidget34,
+} from "../../../../_metronic/partials/widgets";
+import { Content } from "../../../../_metronic/layout/components/content";
+import { ToolbarFeeMaster } from "../../../../_metronic/layout/components/toolbar/toolbars";
+import { HeaderWrapper } from "../../../../_metronic/layout/components/header_staff";
 
-const AdmissionFeesPage: FC = () => {
+const EnquiryTablePage: FC = () => {
   const [displayComponent, setDisplayComponent] = useState("chart");
   const [selectedValue, setSelectedValue] = useState("current_year");
   // console.log(selectedValue);
@@ -37,7 +38,7 @@ const AdmissionFeesPage: FC = () => {
                 flexDirection: "column",
               }}
             >
-              <TablesWidget59 />
+              <TablesWidget34 />
             </div>
           </Content>
         </div>
@@ -46,16 +47,16 @@ const AdmissionFeesPage: FC = () => {
   );
 };
 
-const AdmissionFees: FC = () => {
+const EnquiryManagement: FC = () => {
   const intl = useIntl();
   return (
     <>
       <PageTitle breadcrumbs={[]}>
         {intl.formatMessage({ id: "MENU.FEEDETAILS" })}
       </PageTitle>
-      <AdmissionFeesPage />
+      <EnquiryTablePage />
     </>
   );
 };
 
-export { AdmissionFees };
+export default EnquiryManagement ;

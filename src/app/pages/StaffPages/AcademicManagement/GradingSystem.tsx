@@ -20,4 +20,4 @@ const GradingSystem: FC = () => {
 };
 
 
-export { GradingSystem };
+export default GradingSystem;

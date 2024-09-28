@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from "react";
-import "../../../../../app/pages/StaffPages/FeeDetails/style.css";
+import "../../../../../app/pages/StaffPages/FinancialManagement/style.css";
 
 const EngageWidget10 = ({title, number,image }:any) => {
   return (

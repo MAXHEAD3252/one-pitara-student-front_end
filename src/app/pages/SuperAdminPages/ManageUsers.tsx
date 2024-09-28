@@ -13,7 +13,7 @@ interface School {
   // Add other properties as needed
 }
 
-export const ManageAdminPage = () => {
+export const ManageUserPage = () => {
   const [schools, setSchools] = useState<School[]>([]);
   const [schoolId, setSchoolId] = useState<number | null>(null);
   const [selectedSchool, setSelectedSchool] = useState<School | null>(null);
@@ -112,7 +112,7 @@ export const ManageAdminPage = () => {
   );
 };
 
-const ManageAdmins = () => {
+const ManageUsers = () => {
   const intl = useIntl();
 
   return (
@@ -122,9 +122,9 @@ const ManageAdmins = () => {
       </PageTitle>
 
       <HeaderWrapper toggleView={() => {}} />
-      <ManageAdminPage />
+      <ManageUserPage />
     </>
   );
 };
 
-export { ManageAdmins };
+export default ManageUsers;

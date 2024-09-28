@@ -1,6 +1,6 @@
 import React, { ChangeEvent,useEffect, useState } from "react";
 import { Tooltip as ReactTooltip } from "react-tooltip";
-import "../../../../app/pages/StaffPages/FeeDetails/style.css";
+import "../../../../app/pages/StaffPages/FinancialManagement/style.css";
 import { CreateWalkinEnquiry } from "../../modals/create-app-stepper/CreateWalkinEnquiry";
 import { CreateEnquiryAction } from "../../modals/create-app-stepper/CreateEnquiryAction";
 import { CreateEditEnquiry } from "../../modals/create-app-stepper/CreateEditEnquiry";
@@ -118,11 +118,11 @@ const [searchQuery, setSearchQuery] = useState<string>('');
         let response;
         if (currentUser?.roleName === "Teacher") {
           response = await fetch(
-            `${DOMAIN}/api/staff/get-allassignmentsbyteacher/${school_id}/${teacher_id}?${queryParams}`
+            `${DOMAIN}/api/school/get-allassignmentsbyteacher/${school_id}/${teacher_id}?${queryParams}`
           );
         } else {
           response = await fetch(
-            `${DOMAIN}/api/staff/get-allassignmentsbyid/${school_id}?${queryParams}`
+            `${DOMAIN}/api/school/get-allassignmentsbyid/${school_id}?${queryParams}`
           );
         }
         

@@ -2,13 +2,12 @@
 import { FC, SetStateAction, useState } from "react";
 import { useIntl } from "react-intl";
 import { PageTitle } from "../../../../_metronic/layout/core";
-import {  TablesWidget34,
-} from "../../../../_metronic/partials/widgets";
 import { Content } from "../../../../_metronic/layout/components/content";
 import { ToolbarFeeMaster } from "../../../../_metronic/layout/components/toolbar/toolbars";
 import { HeaderWrapper } from "../../../../_metronic/layout/components/header_staff";
+import { TablesWidget60 } from "../../../../_metronic/partials/widgets/tables/TablesWidget60";
 
-const EnquiryTablePage: FC = () => {
+const FeeTypePage: FC = () => {
   const [displayComponent, setDisplayComponent] = useState("chart");
   const [selectedValue, setSelectedValue] = useState("current_year");
   // console.log(selectedValue);
@@ -38,7 +37,7 @@ const EnquiryTablePage: FC = () => {
                 flexDirection: "column",
               }}
             >
-              <TablesWidget34 />
+              <TablesWidget60 />
             </div>
           </Content>
         </div>
@@ -47,16 +46,16 @@ const EnquiryTablePage: FC = () => {
   );
 };
 
-const EnquiryManagement: FC = () => {
+const FeeType: FC = () => {
   const intl = useIntl();
   return (
     <>
       <PageTitle breadcrumbs={[]}>
         {intl.formatMessage({ id: "MENU.FEEDETAILS" })}
       </PageTitle>
-      <EnquiryTablePage />
+      <FeeTypePage />
     </>
   );
 };
 
-export { EnquiryManagement };
+export default FeeType;

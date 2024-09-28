@@ -21,4 +21,4 @@ const ApplicationSubmission: FC = () => {
 };
 
 
-export { ApplicationSubmission };
+export default ApplicationSubmission ;

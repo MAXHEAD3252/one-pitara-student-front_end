@@ -1,7 +1,7 @@
 import React from 'react';
-import { HeaderWrapper } from '../../../../../_metronic/layout/components/header_staff';
-import { Content } from '../../../../../_metronic/layout/components/content';
-import { TablesWidget35 } from '../../../../../_metronic/partials/widgets';
+import { HeaderWrapper } from '../../../../_metronic/layout/components/header_staff';
+import { Content } from '../../../../_metronic/layout/components/content';
+import { TablesWidget35 } from '../../../../_metronic/partials/widgets';
 import { useLocation } from 'react-router-dom';
 
 // Custom hook to parse query parameters

@@ -40,9 +40,12 @@ export function SuperAdminLogin() {
       setLoading(true)
         try {
             const {data: auth}  = await loginSuperAdmin(values.username, values.password);
+            console.log(auth);
           saveAuth(auth) 
-
-         const {data: user} = await getSuperAdminByToken(auth.username)
+          
+          
+          const {data: user} = await getSuperAdminByToken(auth.username)
+          console.log(user);
           setCurrentUser(user);
           
       } catch (error) {

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Tooltip as ReactTooltip } from "react-tooltip";
-import "../../../../app/pages/StaffPages/FeeDetails/style.css";
+import "../../../../app/pages/StaffPages/FinancialManagement/style.css";
 // import { brotliDecompress } from 'zlib';
 
 const TablesWidget10: React.FC = () => {

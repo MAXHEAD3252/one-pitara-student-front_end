@@ -20,4 +20,4 @@ const TeacherEvaluation: FC = () => {
 };
 
 
-export { TeacherEvaluation };
+export default TeacherEvaluation;

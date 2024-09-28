@@ -1,6 +1,6 @@
 /* eslint-disable no-constant-condition */
 import { FC } from "react";
-import "../../../../app/pages/StaffPages/FeeDetails/style.css";
+import "../../../../app/pages/StaffPages/FinancialManagement/style.css";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../../../app/modules/auth/core/Auth";
 const HeaderUserMenu: FC = () => {

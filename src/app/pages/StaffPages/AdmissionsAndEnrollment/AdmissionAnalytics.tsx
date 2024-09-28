@@ -21,4 +21,4 @@ const AdmissionAnalytics: FC = () => {
 };
 
 
-export { AdmissionAnalytics };
+export default AdmissionAnalytics ;
