@@ -40,7 +40,7 @@ const TablesWidget64 = () => {
   };
 
   const handleModules = (selectedItem:number) => () => {
-    Navigate(`/superadmin/subscriptions/modules?subscriptionId=${selectedItem}`);
+    Navigate(`/subscriptions/modules?subscriptionId=${selectedItem}`);
   };
 
 

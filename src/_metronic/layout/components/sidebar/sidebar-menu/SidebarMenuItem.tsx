@@ -22,7 +22,7 @@ const SidebarMenuItem: FC<Props & WithChildren> = ({
 
   return (
     <div className='menu-item' >
-      <Link className={clsx('menu-link without-sub')} to={to} style={{padding:'4px'}}>
+      <Link className={clsx('menu-link without-sub')} to={to} style={{padding:'4px', borderRadius:'10px'}}>
         <span className='' style={{fontFamily:'Manrope', fontSize:'14px', padding:'5px'}}>{title}</span>
       </Link>
       {children}

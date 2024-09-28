@@ -81,6 +81,7 @@ const PrivateRoutes = () => {
                   /* @vite-ignore */ `${basePath}${module.parent_module}/${module.component_name}`
                 );
               }
+              console.log( module.path,module.component_name);
               
               return {
                 path: module.path,
