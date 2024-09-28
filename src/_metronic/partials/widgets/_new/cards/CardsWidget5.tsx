@@ -323,7 +323,7 @@ const CardsWidget5: FC<CardsWidget5Props> = ({ schoolId }) => {
         <div className="modal-body py-lg-10 px-lg-10">
           <Form>
             <Row>
-              <Col md={6}>
+              <Col md={4}>
                 <Form.Group className='mb-3 custom-input' controlId='formSchoolName'>
                   <Form.Label>School Name *</Form.Label>
                   <InputGroup>
@@ -342,7 +342,7 @@ const CardsWidget5: FC<CardsWidget5Props> = ({ schoolId }) => {
                 </Form.Group>
               </Col>
 
-              <Col md={6}>
+              <Col md={4}>
                 <Form.Group className='mb-3 custom-input' controlId='formEmail'>
                   <Form.Label>School Email *</Form.Label>
                   <InputGroup>
@@ -361,7 +361,7 @@ const CardsWidget5: FC<CardsWidget5Props> = ({ schoolId }) => {
                 </Form.Group>
               </Col>
 
-              <Col md={6}>
+              <Col md={4}>
                 <Form.Group className='mb-3 custom-input' controlId='formPhone'>
                   <Form.Label>School Phone *</Form.Label>
                   <InputGroup>
@@ -380,7 +380,7 @@ const CardsWidget5: FC<CardsWidget5Props> = ({ schoolId }) => {
                 </Form.Group>
               </Col>
 
-              <Col md={6}>
+              <Col md={4}>
                 <Form.Group className='mb-3 custom-input' controlId='formAddress'>
                   <Form.Label>School Address *</Form.Label>
                   <InputGroup>
@@ -399,7 +399,7 @@ const CardsWidget5: FC<CardsWidget5Props> = ({ schoolId }) => {
                 </Form.Group>
               </Col>
 
-              <Col md={6}>
+              <Col md={4}>
                 <Form.Group className='mb-3 custom-input' controlId='formState'>
                   <Form.Label>School State *</Form.Label>
                   <InputGroup>
@@ -418,7 +418,7 @@ const CardsWidget5: FC<CardsWidget5Props> = ({ schoolId }) => {
                 </Form.Group>
               </Col>
 
-              <Col md={6}>
+              <Col md={4}>
                 <Form.Group className='mb-3 custom-input' controlId='formCountry'>
                   <Form.Label>School Country *</Form.Label>
                   <InputGroup>
@@ -437,7 +437,7 @@ const CardsWidget5: FC<CardsWidget5Props> = ({ schoolId }) => {
                 </Form.Group>
               </Col>
 
-              <Col md={6}>
+              <Col md={4}>
                 <Form.Group className='mb-3 custom-input' controlId='formBankAccountNo'>
                   <Form.Label>Bank Account Number *</Form.Label>
                   <InputGroup>
@@ -456,7 +456,7 @@ const CardsWidget5: FC<CardsWidget5Props> = ({ schoolId }) => {
                 </Form.Group>
               </Col>
 
-              <Col md={6}>
+              <Col md={4}>
                 <Form.Group className='mb-3 custom-input' controlId='formBankName'>
                   <Form.Label>Bank Name *</Form.Label>
                   <InputGroup>
@@ -474,7 +474,7 @@ const CardsWidget5: FC<CardsWidget5Props> = ({ schoolId }) => {
                   </InputGroup>
                 </Form.Group>
               </Col>
-              <Col md={6}>
+              <Col md={4}>
                 <Form.Group className='mb-3 custom-input' controlId='formIfscCode'>
                   <Form.Label>IFSC Code *</Form.Label>
                   <InputGroup>
@@ -492,7 +492,7 @@ const CardsWidget5: FC<CardsWidget5Props> = ({ schoolId }) => {
                   </InputGroup>
                 </Form.Group>
               </Col>
-              <Col md={6}>
+              <Col md={4}>
                 <Form.Group className='mb-3 custom-input' controlId='formYearFounded'>
                   <Form.Label>Year Founded *</Form.Label>
                   <InputGroup>
@@ -510,7 +510,7 @@ const CardsWidget5: FC<CardsWidget5Props> = ({ schoolId }) => {
                   </InputGroup>
                 </Form.Group>
               </Col>
-              <Col md={6}>
+              <Col md={4}>
                 <Form.Group className='mb-3 custom-input' controlId='formTypeOfSchool'>
                   <Form.Label>Type Of School*</Form.Label>
                   <InputGroup>
@@ -528,7 +528,7 @@ const CardsWidget5: FC<CardsWidget5Props> = ({ schoolId }) => {
                   </InputGroup>
                 </Form.Group>
               </Col>
-              <Col md={6}>
+              <Col md={4}>
                 <Form.Group className='mb-3 custom-input' controlId='formWebsite'>
                   <Form.Label>Website *</Form.Label>
                   <InputGroup>
@@ -546,7 +546,7 @@ const CardsWidget5: FC<CardsWidget5Props> = ({ schoolId }) => {
                   </InputGroup>
                 </Form.Group>
               </Col>
-              <Col md={6}>
+              <Col md={4}>
                 <Form.Group className='mb-3 custom-input' controlId='formTagline'>
                   <Form.Label>Tagline *</Form.Label>
                   <InputGroup>
@@ -564,7 +564,7 @@ const CardsWidget5: FC<CardsWidget5Props> = ({ schoolId }) => {
                   </InputGroup>
                 </Form.Group>
               </Col>
-              <Col md={6}>
+              <Col md={4}>
                 <Form.Group className='mb-3 custom-input' controlId='formTtimezone'>
                   <Form.Label>Timezone *</Form.Label>
                   <InputGroup>
@@ -582,7 +582,7 @@ const CardsWidget5: FC<CardsWidget5Props> = ({ schoolId }) => {
                   </InputGroup>
                 </Form.Group>
               </Col>
-              <Col md={6}>
+              <Col md={4}>
                 <Form.Group className='mb-3 custom-input' controlId='formDateFormat'>
                   <Form.Label>DateFormat *</Form.Label>
                   <InputGroup>
@@ -600,7 +600,7 @@ const CardsWidget5: FC<CardsWidget5Props> = ({ schoolId }) => {
                   </InputGroup>
                 </Form.Group>
               </Col>
-              <Col md={6}>
+              <Col md={4}>
                 <Form.Group className='mb-3 custom-input' controlId='formCurrency'>
                   <Form.Label>Currency *</Form.Label>
                   <InputGroup>
@@ -618,7 +618,7 @@ const CardsWidget5: FC<CardsWidget5Props> = ({ schoolId }) => {
                   </InputGroup>
                 </Form.Group>
               </Col>
-              <Col md={6}>
+              <Col md={4}>
                 <Form.Group className='mb-3 custom-input' controlId='formCurrencySymbol'>
                   <Form.Label>Currency Symbol *</Form.Label>
                   <InputGroup>
@@ -636,7 +636,7 @@ const CardsWidget5: FC<CardsWidget5Props> = ({ schoolId }) => {
                   </InputGroup>
                 </Form.Group>
               </Col>
-              <Col md={6}>
+              <Col md={4}>
                 <Form.Group className='mb-3 custom-input' controlId='formEducationalBoard'>
                   <Form.Label>Educational Board *</Form.Label>
                   <InputGroup>
@@ -654,7 +654,7 @@ const CardsWidget5: FC<CardsWidget5Props> = ({ schoolId }) => {
                   </InputGroup>
                 </Form.Group>
               </Col>
-              <Col md={6}>
+              <Col md={4}>
                 <Form.Group className='mb-3 custom-input' controlId='formIsActive'>
                   <Form.Label>Is Active *</Form.Label>
                   <InputGroup>
@@ -673,7 +673,7 @@ const CardsWidget5: FC<CardsWidget5Props> = ({ schoolId }) => {
                 </Form.Group>
               </Col>
 
-              <Col md={6}>
+              <Col md={4}>
                 <Form.Group className='mb-3 custom-input' controlId='formLogo'>
                   <Form.Label>Upload Logo</Form.Label>
                   <Form.Control
@@ -683,7 +683,7 @@ const CardsWidget5: FC<CardsWidget5Props> = ({ schoolId }) => {
                   />
                 </Form.Group>
               </Col>
-              <Col md={6}>
+              <Col md={4}>
                 <Form.Group className='mb-3 custom-input' controlId='formImage'>
                   <Form.Label>Upload Image</Form.Label>
                   <Form.Control
@@ -693,7 +693,7 @@ const CardsWidget5: FC<CardsWidget5Props> = ({ schoolId }) => {
                   />
                 </Form.Group>
               </Col>
-              <Col md={6}>
+              <Col md={4}>
                 <Form.Group className='mb-3 custom-input' controlId='formSmallLogo'>
                   <Form.Label>Upload Small Logo</Form.Label>
                   <Form.Control
