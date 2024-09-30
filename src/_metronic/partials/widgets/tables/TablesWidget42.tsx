@@ -7,11 +7,6 @@ import { useNavigate } from "react-router-dom";
 import { Modal, Button, Form, Row, Col, InputGroup } from "react-bootstrap";
 import { toast } from "react-toastify";
 
-interface TablesWidget42Props {
-  subscriptionId: string | undefined;
-  subscriptionName: string | undefined;
-}
-
 interface SchoolModule {
   parent_name: string; // Replace with actual types as needed
   module_name: string;
@@ -25,7 +20,7 @@ interface DesignationDetail {
   // Add other fields here as needed
 }
 
-const TablesWidget42: React.FC<TablesWidget42Props> = () => {
+const TablesWidget42 = () => {
   const [designationModule, setDesignationModules] = useState<SchoolModule[]>(
     []
   );
@@ -34,12 +29,11 @@ const TablesWidget42: React.FC<TablesWidget42Props> = () => {
     null
   );
 
-
   const [formData, setFormData] = useState<Partial<DesignationDetail>>({});
   const [refresh, setRefresh] = useState(false);
   const [isAddModalVisible, setIsAddModalVisible] = useState(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
-  const [desId, setDesId] = useState('');
+  const [desId, setDesId] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -63,27 +57,24 @@ const TablesWidget42: React.FC<TablesWidget42Props> = () => {
     setIsAddModalVisible(true);
   };
 
-  const showEditModal = (id:string) => {
+  const showEditModal = (id: string) => {
     setIsEditModalVisible(true);
-    setDesId(id)
+    setDesId(id);
   };
 
   const handleAddSave = async () => {
     const updatedFormData = { ...formData, isActive: isActive ? 1 : 0 }; // Add isActive as 0 or 1
     console.log(updatedFormData);
-  
+
     try {
-      const response = await fetch(
-        `${DOMAIN}/api/superadmin/add_designation`,
-        {
-          method: "POST", // Assuming you are using PUT method to update
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(updatedFormData), // Send updated form data including isActive
-        }
-      );
-  
+      const response = await fetch(`${DOMAIN}/api/superadmin/add_designation`, {
+        method: "POST", // Assuming you are using PUT method to update
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedFormData), // Send updated form data including isActive
+      });
+
       if (!response.ok) {
         toast.error("An error occurred!", { autoClose: 3000 });
         throw new Error("Failed to update school details");
@@ -93,7 +84,7 @@ const TablesWidget42: React.FC<TablesWidget42Props> = () => {
       setSchoolDetails(updatedData); // Update the state with the new data
       setIsAddModalVisible(false);
       setRefresh(true);
-  
+
       // Close the modal
       handleAddCancel(); // Close the modal
     } catch (error) {
@@ -102,11 +93,10 @@ const TablesWidget42: React.FC<TablesWidget42Props> = () => {
     }
   };
 
-
   const handleEditSave = async () => {
     const updatedFormData = { ...formData, isActive: isActive ? 1 : 0 }; // Add isActive as 0 or 1
     console.log(updatedFormData);
-  
+
     try {
       const response = await fetch(
         `${DOMAIN}/api/superadmin/edit_designation/${desId}`,
@@ -118,7 +108,7 @@ const TablesWidget42: React.FC<TablesWidget42Props> = () => {
           body: JSON.stringify(updatedFormData), // Send updated form data including isActive
         }
       );
-  
+
       if (!response.ok) {
         toast.error("An error occurred!", { autoClose: 3000 });
         throw new Error("Failed to update Designation details");
@@ -128,7 +118,7 @@ const TablesWidget42: React.FC<TablesWidget42Props> = () => {
       setSchoolDetails(updatedData); // Update the state with the new data
       setIsEditModalVisible(false);
       setRefresh(true);
-  
+
       // Close the modal
       handleEditCancel(); // Close the modal
     } catch (error) {
@@ -136,20 +126,25 @@ const TablesWidget42: React.FC<TablesWidget42Props> = () => {
       toast.error("Failed to communicate with server!", { autoClose: 3000 });
     }
   };
-  
+
   const handleDelete = async (id: string) => {
-    const confirmDelete = window.confirm("Are you sure you want to delete this designation?");
-    
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this designation?"
+    );
+
     if (confirmDelete) {
       try {
-        const response = await fetch(`${DOMAIN}/api/superadmin/delete_designationmodule/${id}`, {
-          method: "DELETE",
-        });
-        
+        const response = await fetch(
+          `${DOMAIN}/api/superadmin/delete_designationmodule/${id}`,
+          {
+            method: "DELETE",
+          }
+        );
+
         if (!response.ok) {
           throw new Error("Failed to delete the designation");
         }
-  
+
         // Optionally, you can refresh the list or update the state to remove the deleted item
         setRefresh(true); // Assuming you have a way to refresh the list of designations
         toast.success("Designation deleted successfully.", { autoClose: 3000 });
@@ -159,7 +154,6 @@ const TablesWidget42: React.FC<TablesWidget42Props> = () => {
       }
     }
   };
-  
 
   const handleAddCancel = () => {
     setIsAddModalVisible(false);
@@ -168,7 +162,7 @@ const TablesWidget42: React.FC<TablesWidget42Props> = () => {
   const handleEditCancel = () => {
     setIsEditModalVisible(false);
   };
-  
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -176,13 +170,12 @@ const TablesWidget42: React.FC<TablesWidget42Props> = () => {
       [name]: value,
     }));
   };
-  
+
   const [isActive, setIsActive] = useState(false);
-  
+
   const handleToggle = () => {
     setIsActive((prevState) => !prevState); // Toggles the isActive state
   };
-  
 
   return (
     <div
@@ -261,7 +254,7 @@ const TablesWidget42: React.FC<TablesWidget42Props> = () => {
       </div>
       <div
         style={{
-          height: "400px", // Fixed height for the table container
+          height: "650px", // Fixed height for the table container
           overflowY: "auto", // Enable vertical scrolling
           padding: "16px 0", // Optional: adds some padding around the table
         }}
@@ -326,7 +319,7 @@ const TablesWidget42: React.FC<TablesWidget42Props> = () => {
 
           <tbody>
             {designationModule.length > 0 ? (
-              designationModule.map((usersDetail, index) => (
+              designationModule.map((designationDetail, index) => (
                 <tr
                   key={index}
                   style={{
@@ -343,14 +336,14 @@ const TablesWidget42: React.FC<TablesWidget42Props> = () => {
                       padding: "12px 20px",
                     }}
                   >
-                    {usersDetail.id}
+                    {designationDetail.id}
                   </td>
                   <td
                     style={{
                       padding: "12px 20px",
                     }}
                   >
-                    {usersDetail.name}
+                    {designationDetail.name}
                   </td>
 
                   <td
@@ -359,7 +352,7 @@ const TablesWidget42: React.FC<TablesWidget42Props> = () => {
                       textAlign: "start",
                     }}
                   >
-                    {usersDetail.is_active === 1 ? (
+                    {designationDetail.is_active === 1 ? (
                       <span
                         style={{
                           display: "inline-block",
@@ -399,7 +392,7 @@ const TablesWidget42: React.FC<TablesWidget42Props> = () => {
                     }}
                   >
                     <div
-                      onClick={() => showEditModal(usersDetail.id)}
+                      onClick={() => showEditModal(designationDetail.id)}
                       style={{
                         display: "flex",
                         alignItems: "center",
@@ -440,7 +433,7 @@ const TablesWidget42: React.FC<TablesWidget42Props> = () => {
                     </div>
 
                     <div
-                    onClick={() => handleDelete(usersDetail.id)}
+                      onClick={() => handleDelete(designationDetail.id)}
                       style={{
                         width: "32px",
                         height: "40px",
@@ -448,7 +441,7 @@ const TablesWidget42: React.FC<TablesWidget42Props> = () => {
                         padding: "10px 6px 10px 6px",
                         gap: "10px",
                         backgroundColor: "#FFE7E1",
-                        cursor:'pointer',
+                        cursor: "pointer",
                       }}
                     >
                       <svg
@@ -504,7 +497,7 @@ const TablesWidget42: React.FC<TablesWidget42Props> = () => {
                     fontFamily: "Manrope",
                   }}
                 >
-                  No roles assigned for this school.
+                  No Designations for School Staff Role.
                 </td>
               </tr>
             )}
@@ -610,7 +603,6 @@ const TablesWidget42: React.FC<TablesWidget42Props> = () => {
           </button>
         </div>
       </Modal>
-
 
       {/* Modal for Editing designation Details */}
       <Modal

@@ -132,48 +132,6 @@ const DashboardPage: FC=() => {
 
   }, []);
 
-
-
-
-  const tenants = [
-    {
-      id: 1,
-      name: 'School A',
-      contactPerson: 'John Doe',
-      email: 'john@example.com',
-      phone: '123-456-7890',
-      subscriptionStatus: 'Active',
-      licenseExpiry: '2024-09-21'
-    },
-    {
-      id: 2,
-      name: 'School B',
-      contactPerson: 'Jane Smith',
-      email: 'jane@example.com',
-      phone: '987-654-3210',
-      subscriptionStatus: 'Inactive',
-      licenseExpiry: '2024-01-15'
-    },
-    // More tenants...
-  ];
-
-  const licenses = [
-    {
-      id: 1,
-      schoolName: 'School A',
-      subscriptionPlan: 'Premium',
-      licenseExpiry: '2024-09-21',
-      autoRenew: true,
-    },
-    {
-      id: 2,
-      schoolName: 'School B',
-      subscriptionPlan: 'Basic',
-      licenseExpiry: '2024-01-15',
-      autoRenew: false,
-    },
-    // Add more license data...
-  ];
   
   useEffect(() => {
     const prefetchUserRole = async () => {

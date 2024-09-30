@@ -5,12 +5,27 @@ import { Content } from "../../../_metronic/layout/components/content";
 import { HeaderWrapper } from "../../../_metronic/layout/components/header_staff"
 import { TablesWidget45 } from "../../../_metronic/partials/widgets"; 
 import { useLocation } from 'react-router-dom';
+import { useEffect } from "react";
 
 
 export const ManageAssignsPage = () => {
   const location = useLocation();
-  const params = new URLSearchParams(location.search);
-  const subscriptionId = params.get('subscriptionId');
+  let subscriptionId;
+  let subscriptionName;
+
+  useEffect(() => {
+    // Get the current query parameters from the URL
+    const params = new URLSearchParams(location.search);
+
+    // Get the specific values
+    subscriptionId = params.get('subscriptionId');
+    subscriptionName = params.get('subscriptionName');
+
+    // Log the retrieved subscriptionName to check
+    console.log(subscriptionId); // Should print the decoded subscription name
+
+    // You can now use these values as needed in your component
+  }, [location]);
   
 
 
@@ -24,6 +39,7 @@ export const ManageAssignsPage = () => {
           <div className="col-xl-12 p-6">
             <TablesWidget45
               subscription_id={subscriptionId}
+              subscription_name={subscriptionName}
 
             />
           </div>

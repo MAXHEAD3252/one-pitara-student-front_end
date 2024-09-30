@@ -3,7 +3,7 @@ import { useIntl } from "react-intl";
 import { PageTitle } from "../../../_metronic/layout/core";
 import { Content } from "../../../_metronic/layout/components/content";
 import { HeaderWrapper } from "../../../_metronic/layout/components/header_staff"
-import {  TablesWidget47 } from "../../../_metronic/partials/widgets"; 
+import {  TablesWidget42 } from "../../../_metronic/partials/widgets"; 
 import { useLocation } from 'react-router-dom';
 
 
@@ -19,13 +19,11 @@ export const ManageDesignationPage = () => {
       {/* <HeaderWrapper toggleView={() => {}} /> */}
       <Content>
         
-        <div className="row gy-5 gx-xl-8">
-          <div className="col-xl-12 p-6">
-            <TablesWidget47
-              school_id={schoolId}
-            />
+      <div className="col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+            <div className="h-md-100">
+              <TablesWidget42 />
+            </div>
           </div>
-        </div>
       </Content>
     </div>
   );
