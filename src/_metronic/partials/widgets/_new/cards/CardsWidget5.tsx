@@ -334,7 +334,7 @@ const CardsWidget5: FC<CardsWidget5Props> = ({ schoolId }) => {
                       type='text'
                       name='name'
                       placeholder='Update school name'
-                      // value={formData.name || ''}
+                      value={formData.name || ''}
                       onChange={handleInputChange}
                       required
                     />
@@ -353,7 +353,7 @@ const CardsWidget5: FC<CardsWidget5Props> = ({ schoolId }) => {
                       type='text'
                       name='email'
                       placeholder='Upadte school email'
-                      // value={formData.email || ''}
+                      value={formData.email || ''}
                       onChange={handleInputChange}
                       required
                     />
@@ -372,7 +372,7 @@ const CardsWidget5: FC<CardsWidget5Props> = ({ schoolId }) => {
                       type='text'
                       name='phone'
                       placeholder='Upadte school phone'
-                      // value={formData.phone || ''}
+                      value={formData.phone || ''}
                       onChange={handleInputChange}
                       required
                     />
@@ -391,7 +391,7 @@ const CardsWidget5: FC<CardsWidget5Props> = ({ schoolId }) => {
                       type='text'
                       name='address'
                       placeholder='Upadte school address'
-                      // value={formData.address || ''}
+                      value={formData.address || ''}
                       onChange={handleInputChange}
                       required
                     />
@@ -410,7 +410,7 @@ const CardsWidget5: FC<CardsWidget5Props> = ({ schoolId }) => {
                       type='text'
                       name='state'
                       placeholder='Upadte school state'
-                      // value={formData.state || ''}
+                      value={formData.state || ''}
                       onChange={handleInputChange}
                       required
                     />
@@ -429,7 +429,7 @@ const CardsWidget5: FC<CardsWidget5Props> = ({ schoolId }) => {
                       type='text'
                       name='country'
                       placeholder='Upadte school country'
-                      // value={formData.country || ''}
+                      value={formData.country || ''}
                       onChange={handleInputChange}
                       required
                     />
@@ -448,7 +448,7 @@ const CardsWidget5: FC<CardsWidget5Props> = ({ schoolId }) => {
                       type='text'
                       name='bank_account_no'
                       placeholder='Upadte bank account number'
-                      // value={formData.bank_account_no || ''}
+                      value={formData.bank_account_no || ''}
                       onChange={handleInputChange}
                       required
                     />
@@ -467,7 +467,7 @@ const CardsWidget5: FC<CardsWidget5Props> = ({ schoolId }) => {
                       type='text'
                       name='bank_name'
                       placeholder='Upadte bank name'
-                      // value={formData.bank_name || ''}
+                      value={formData.bank_name || ''}
                       onChange={handleInputChange}
                       required
                     />
@@ -485,7 +485,7 @@ const CardsWidget5: FC<CardsWidget5Props> = ({ schoolId }) => {
                       type='text'
                       name='ifsc_code'
                       placeholder='Upadte IFSC Code'
-                      // value={formData.ifsc_code || ''}
+                      value={formData.ifsc_code || ''}
                       onChange={handleInputChange}
                       required
                     />
@@ -503,7 +503,7 @@ const CardsWidget5: FC<CardsWidget5Props> = ({ schoolId }) => {
                       type='text'
                       name='year_founded'
                       placeholder='Upadte Year Founded'
-                      // value={formData.year_founded || ''}
+                      value={formData.year_founded || ''}
                       onChange={handleInputChange}
                       required
                     />
@@ -521,7 +521,7 @@ const CardsWidget5: FC<CardsWidget5Props> = ({ schoolId }) => {
                       type='text'
                       name='type_of_school'
                       placeholder='Upadte Type Of School'
-                      // value={formData.type_of_school || ''}
+                      value={formData.type_of_school || ''}
                       onChange={handleInputChange}
                       required
                     />
@@ -539,7 +539,7 @@ const CardsWidget5: FC<CardsWidget5Props> = ({ schoolId }) => {
                       type='text'
                       name='website'
                       placeholder='Update Website'
-                      // value={formData.website || ''}
+                      value={formData.website || ''}
                       onChange={handleInputChange}
                       required
                     />
@@ -557,7 +557,7 @@ const CardsWidget5: FC<CardsWidget5Props> = ({ schoolId }) => {
                       type='text'
                       name='tagline'
                       placeholder='Update Tagline'
-                      // value={formData.tagline || ''}
+                      value={formData.tagline || ''}
                       onChange={handleInputChange}
                       required
                     />
@@ -575,7 +575,7 @@ const CardsWidget5: FC<CardsWidget5Props> = ({ schoolId }) => {
                       type='text'
                       name='timezone'
                       placeholder='Update Timezone'
-                      // value={formData.timezone || ''}
+                      value={formData.timezone || ''}
                       onChange={handleInputChange}
                       required
                     />
@@ -593,7 +593,7 @@ const CardsWidget5: FC<CardsWidget5Props> = ({ schoolId }) => {
                       type='text'
                       name='dateformat'
                       placeholder='Update DateFormat'
-                      // value={formData.date_format || ''}
+                      value={formData.date_format || ''}
                       onChange={handleInputChange}
                       required
                     />
@@ -611,7 +611,7 @@ const CardsWidget5: FC<CardsWidget5Props> = ({ schoolId }) => {
                       type='text'
                       name='currency'
                       placeholder='Update Currency'
-                      // value={formData.currency || ''}
+                      value={formData.currency || ''}
                       onChange={handleInputChange}
                       required
                     />
@@ -629,7 +629,7 @@ const CardsWidget5: FC<CardsWidget5Props> = ({ schoolId }) => {
                       type='text'
                       name='currency_symbol'
                       placeholder='Update Currency Symbol'
-                      // value={formData.currency_symbol || ''}
+                      value={formData.currency_symbol || ''}
                       onChange={handleInputChange}
                       required
                     />
@@ -647,7 +647,7 @@ const CardsWidget5: FC<CardsWidget5Props> = ({ schoolId }) => {
                       type='text'
                       name='educational_board'
                       placeholder='Update Educational Board'
-                      // value={formData.educational_board || ''}
+                      value={formData.educational_board || ''}
                       onChange={handleInputChange}
                       required
                     />
@@ -665,7 +665,7 @@ const CardsWidget5: FC<CardsWidget5Props> = ({ schoolId }) => {
                       type='text'
                       name='is_active'
                       placeholder='Update Is Active'
-                      // value={formData.is_active || ''}
+                      value={formData.is_active || ''}
                       onChange={handleInputChange}
                       required
                     />

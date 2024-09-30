@@ -112,7 +112,7 @@ const ManageSchoolsPage = () => {
                 fontFamily: "Manrope",
               }}
             >
-              Manage Designations
+              School Lists
             </span>
             <div
               onClick={handlePrimaryButtonClick}

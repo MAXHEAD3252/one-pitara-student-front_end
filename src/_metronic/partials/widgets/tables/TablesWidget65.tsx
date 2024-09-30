@@ -2,22 +2,12 @@ import React, { useEffect, useState } from "react";
 import "../../../../app/pages/StaffPages/FinancialManagement/style.css";
 import { useAuth } from "../../../../app/modules/auth/core/Auth";
 import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
-import { useNavigate } from "react-router-dom";
 import { CreateViewSchool } from "../../modals/create-app-stepper/CreateViewSchool";
-
-
-interface CurrentUser {
-  school_id: string;
-}
-interface DataItem {
-  id: number;
-  name: string;
-}
 
 const TablesWidget65 = () => {
   const [schools, setSchools] = useState([]);
   console.log(schools);
-  
+
   const { currentUser } = useAuth();
   const schoolId = currentUser?.school_id;
   const [showViewSchoolModal, setShowViewSchoolModal] = useState(false);
@@ -29,7 +19,9 @@ const TablesWidget65 = () => {
   useEffect(() => {
     const fetchSchools = async () => {
       try {
-        const response = await fetch(`${DOMAIN}/api/superadmin/get-all-schools`);
+        const response = await fetch(
+          `${DOMAIN}/api/superadmin/get-all-schools`
+        );
         if (!response.ok) {
           throw new Error("Failed to fetch schools");
         }
@@ -59,555 +51,275 @@ const TablesWidget65 = () => {
     setSelectedSchoolDetails(null);
   };
   return (
-    <div className="d-flex" style={{ gap: "10px" }}>
+    <div
+      className="card-style"
+      style={{
+        width: "100%",
+        borderRadius: "16px",
+        backgroundColor: "rgb(242, 246, 255)",
+        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+        overflow: "hidden",
+        marginTop: "20px",
+        padding: "20px",
+      }}
+    >
       <div
-        className="col-xxl-12"
+        className="card-header"
         style={{
-          borderRadius: "16px",
-          border: "1px solid #5D637A",
-          overflowX: "hidden",
-          minHeight: "100%",
-          marginBottom: "20px",
-          height: "770px",
+          backgroundColor: "rgb(242, 246, 255)",
+          padding: "16px 20px",
+          borderBottom: "1px solid #E0E4F0",
           display: "flex",
-          flexDirection: "column",
-          fontFamily: "Manrope",
-          maxWidth: "100%",
-          overflow: "hidden",
+          justifyContent: "space-between",
+          alignItems: "center",
         }}
       >
-        <div style={{ width: "auto", height: "100%", overflow: "hidden" }}>
-          <table
-            style={{
-              top: "223px",
-              height: "612px",
-              maxHeight: "100%",
-              borderCollapse: "collapse",
-              overflowX: "hidden",
-              overflowY: "auto",
-              whiteSpace: "nowrap",
-              width: "100%",
-            }}
-          >
-            <thead
+        <span
+          style={{
+            fontSize: "20px",
+            fontWeight: "600",
+            color: "#1C335C",
+            fontFamily: "Manrope",
+          }}
+        >
+          Manage Schools with Subscriptions List
+        </span>
+      </div>
+      <div
+        style={{
+          height: "650px", // Fixed height for the table container
+          overflowY: "auto", // Enable vertical scrolling
+          padding: "16px 0", // Optional: adds some padding around the table
+        }}
+      >
+        <table
+          className="table"
+          style={{
+            width: "100%",
+            borderCollapse: "collapse",
+            marginTop: "10px",
+            backgroundColor: "#FFFFFF", // White background for the table
+            borderRadius: "12px", // Round corners for the table
+            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.05)", // Light shadow for the table
+            fontFamily:'Manrope'
+          }}
+        >
+          <thead>
+            <tr
               style={{
-                height: "123px",
-                maxHeight: "100%",
-                display: "flex",
-                flexDirection: "column",
-                backgroundColor: "#1C335C",
-                justifyContent: "space-between",
-                zIndex: 999,
+                backgroundColor: "rgb(242, 246, 255)", // Header background color
+                borderBottom: "1px solid #E0E4F0",
+                fontFamily: "Manrope",
+                fontWeight: "600",
+                color: "#1C335C",
+                fontSize: "14px",
               }}
-              className="col-xxl-12 col-lg-6"
             >
-              <div>
-                <caption
-                  style={{
-                    backgroundColor: "#1C335C",
-                    padding: "20px",
-                    display: "flex",
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    // tableLayout: "fixed",
-                    // borderCollapse: "collapse",
+              <th
+                style={{
+                  padding: "12px 20px",
+                  textAlign: "left",
+                }}
+              >
+                School Id
+              </th>
+              <th
+                style={{
+                  padding: "12px 20px",
+                  textAlign: "left",
+                }}
+              >
+                    School Name
+              </th>
+              <th
+                style={{
+                  padding: "12px 20px",
+                  textAlign: "left",
+                }}
+              >
+                    School Email
+              </th>
+              <th
+                style={{
+                  padding: "12px 20px",
+                  textAlign: "left",
+                }}
+              >
+                    Subscription Type
+              </th>
+              <th
+                style={{
+                  padding: "12px 20px",
+                  textAlign: "left",
+                }}
+              >
+                    Is Active
+              </th>
+              <th
+                style={{
+                  padding: "12px 20px",
+                  textAlign: "right",
+                }}
+              >
+                    Action
+              </th>
+            </tr>
+          </thead>
 
-                    // border:'1px solid'
-                    width: "100%",
-                  }}
-                >
-                  <div>
+          <tbody>
+            {schools.map((school, index) => (
+              <tr
+              key={index}
+              style={{
+                backgroundColor:
+                  index % 2 === 0 ? "rgb(242, 246, 255)" : "#FFFFFF",
+                borderBottom: "1px solid #E0E4F0",
+                fontFamily: "Manrope",
+                fontSize: "14px",
+                color: "#1C335C",
+              }}
+              >
+                 <td
+                    style={{
+                      padding: "12px 20px",
+                    }}
+                  >
+                      {school.school_id}
+                </td>
+                <td
+                    style={{
+                      padding: "12px 20px",
+                    }}
+                  >
+                      {school.name}
+                </td>
+                <td
+                    style={{
+                      padding: "12px 20px",
+                    }}
+                  >
+                      {school.email}
+                </td>
+                <td
+                    style={{
+                      padding: "12px 20px",
+                    }}
+                  >
+                      {school.sub_type}
+                </td>
+                {/* <td>
+                  <div
+                    style={{
+                      width: "0px",
+                      display: "flex",
+                      justifyContent: "center",
+                      flexDirection: "column",
+                    }}
+                  >
                     <span
                       style={{
-                        color: "#FFF",
-                        fontSize: "16px",
-                        fontWeight: "700",
+                        fontSize: "14px",
+                        fontWeight: "500",
+                        lineHeight: "18px",
+                        color: "#1F1F1F",
                         fontFamily: "Manrope",
                       }}
                     >
-                      Subscriptions List
+                      {school.is_active === 1 ? "Active" : "Not Active"}
                     </span>
                   </div>
-                  <div
+                </td> */}
+                <td
                     style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "10px",
+                      padding: "12px 20px",
+                      textAlign: "start",
                     }}
                   >
-                    <div
-                      className="input-group flex-nowrap"
-                      style={{
-                        width: "300px",
-                        height: "36px",
-                        borderRadius: "8px",
-                        border: "1px solid #D9D9D9",
-                      }}
-                    >
+                    {school.is_active === 1 ? (
                       <span
-                        className="input-group-text border-0 pe-1 pr-0"
-                        style={{ backgroundColor: "transparent" }}
-                        id="addon-wrapping"
-                      >
-                        <svg
-                          width="16"
-                          height="16"
-                          viewBox="0 0 17 16"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <g clip-path="url(#clip0_582_4295)">
-                            <circle
-                              cx="8.50002"
-                              cy="7.66665"
-                              r="6.33333"
-                              stroke="white"
-                              stroke-width="1.5"
-                            />
-                            <path
-                              d="M14.1667 13.3333L15.5 14.6666"
-                              stroke="white"
-                              stroke-width="1.5"
-                              stroke-linecap="round"
-                            />
-                          </g>
-                          <defs>
-                            <clipPath id="clip0_582_4295">
-                              <rect
-                                width="16"
-                                height="16"
-                                fill="white"
-                                transform="translate(0.833374)"
-                              />
-                            </clipPath>
-                          </defs>
-                        </svg>
-                      </span>
-                      <input
-                        type="text"
                         style={{
-                          backgroundColor: "transparent",
+                          display: "inline-block",
+                          padding: "4px 12px",
+                          borderRadius: "12px",
+                          backgroundColor: "#28a745",
                           color: "#FFFFFF",
-                        }}
-                        className="form-control border-0"
-                        placeholder="Search ...."
-                        aria-label="Search"
-                        aria-describedby="addon-wrapping"
-                      />
-                    </div>
-                  </div>
-                </caption>
-              </div>
-
-              <tr
-                style={{
-                  height: "61px",
-                  display: "flex",
-                  paddingLeft: "30px",
-                  justifyContent: "space-between",
-                  width: "95%",
-                  overflowY: "auto",
-                  overflowX: "hidden",
-                  backgroundColor: "#1C335C",
-                }}
-              >
-                <th>
-                  <div style={{ width: "0px" }}>
-                    <span
-                      style={{
-                        fontSize: "13px",
-                        fontWeight: "600",
-                        lineHeight: "18px",
-                        color: "#FFFFFF",
-                      }}
-                    >
-                      School Id
-                    </span>
-                  </div>
-                </th>
-                <th>
-                  <div style={{ width: "20px" }}>
-                    <span
-                      style={{
-                        fontSize: "13px",
-                        fontWeight: "600",
-                        lineHeight: "18px",
-                        color: "#FFFFFF",
-                      }}
-                    >
-                      School Name
-                    </span>
-                  </div>
-                </th>
-                <th>
-                  <div style={{ width: "10px" }}>
-                    <span
-                      style={{
-                        fontSize: "13px",
-                        fontWeight: "600",
-                        lineHeight: "18px",
-                        color: "#FFFFFF",
-                      }}
-                    >
-                      School Email
-                    </span>
-                  </div>
-                </th>
-                <th>
-                  <div style={{ width: "20px" }}>
-                    <span
-                      style={{
-                        fontSize: "13px",
-                        fontWeight: "600",
-                        lineHeight: "18px",
-                        color: "#FFFFFF",
-                      }}
-                    >
-                      Subscription Type
-                    </span>
-                  </div>
-                </th>
-                <th>
-                  <div style={{ width: "20px" }}>
-                    <span
-                      style={{
-                        fontSize: "13px",
-                        fontWeight: "600",
-                        lineHeight: "18px",
-                        color: "#FFFFFF",
-                      }}
-                    >
-                      Is Active
-                    </span>
-                  </div>
-                </th>
-                <th>
-                  <div
-                    style={{
-                      width: "60px",
-                      // textAlign:'left'
-                      // border:'1px solid',
-                      display: "flex",
-                      justifyContent: "end",
-                      fontFamily: "Manrope",
-                    }}
-                  >
-                    <span
-                      style={{
-                        fontSize: "13px",
-                        fontWeight: "600",
-                        lineHeight: "18px",
-                        color: "#FFFFFF",
-                      }}
-                    >
-                      Action
-                    </span>
-                  </div>
-                </th>
-              </tr>
-            </thead>
-
-            <tbody
-              className="col-xxl-12 col-lg-6"
-              style={{
-                height: "105%",
-                display: "flex",
-                flexDirection: "column",
-                minHeight: "calc(100vh - 550px)",
-                overflowY: "auto",
-                backgroundColor: "#F5F5F5",
-              }}
-            >
-             {schools.map((school, index) => (
-                <tr
-                  key={index}
-                  style={{
-                    height: "80px",
-                    paddingLeft: "30px",
-                    paddingTop: "25px",
-                    marginBottom: "5px",
-                    justifyContent: "space-between",
-                    width: "90%",
-                    display: "flex",
-                    // borderBottom:'1px solid grey'
-                  }}
-                >
-                  <td>
-                    <div
-                      style={{
-                        width: "60px",
-                        display: "flex",
-                        justifyContent: "center",
-                        flexDirection: "column",
-                      }}
-                    >
-                      <span
-                        style={{
-                          fontSize: "14px",
-                          fontWeight: "500",
-                          lineHeight: "18px",
-                          color: "#1F1F1F",
-                          fontFamily: "Manrope",
-                        }}
-                      >
-                        {school.school_id}
-                      </span>
-                    </div>
-                  </td>
-                  <td>
-                    <div
-                      style={{
-                        width: "80px",
-                        display: "flex",
-                        justifyContent: "center",
-                        flexDirection: "column",
-                      }}
-                    >
-                      <span
-                        style={{
-                          fontSize: "14px",
-                          fontWeight: "500",
-                          lineHeight: "18px",
-                          color: "#1F1F1F",
-                          fontFamily: "Manrope",
-                        }}
-                      >
-                        {school.name}
-                      </span>
-                    </div>
-                  </td>
-                  <td>
-                    <div
-                      style={{
-                        width: "120px",
-                        display: "flex",
-                        justifyContent: "center",
-                        flexDirection: "column",
-                      }}
-                    >
-                      <span
-                        style={{
-                          fontSize: "14px",
-                          fontWeight: "500",
-                          lineHeight: "18px",
-                          color: "#1F1F1F",
-                          fontFamily: "Manrope",
-                        }}
-                      >
-                        {school.email}
-                      </span>
-                    </div>
-                  </td>
-                  <td>
-                    <div
-                      style={{
-                        width: "100px",
-                        display: "flex",
-                        justifyContent: "center",
-                        flexDirection: "column",
-                      }}
-                    >
-                      <span
-                        style={{
-                          fontSize: "14px",
-                          fontWeight: "500",
-                          lineHeight: "18px",
-                          color: "#1F1F1F",
-                          fontFamily: "Manrope",
-                        }}
-                      >
-                        {school.sub_type}
-                      </span>
-                    </div>
-                  </td>
-                  <td>
-                    <div
-                      style={{
-                        width: "0px",
-                        display: "flex",
-                        justifyContent: "center",
-                        flexDirection: "column",
-                      }}
-                    >
-                      <span
-                        style={{
-                          fontSize: "14px",
-                          fontWeight: "500",
-                          lineHeight: "18px",
-                          color: "#1F1F1F",
-                          fontFamily: "Manrope",
-                        }}
-                      >
-                        {school.is_active === 1 ? "Active" : "Not Active"}
-                      </span>
-                    </div>
-                  </td>
-                  <td>
-                    <div
-                      style={{
-                        width: "20px",
-                        display: "flex",
-                        justifyContent: "space-around",
-                        flexDirection: "row",
-                        gap: "6px",
-                        marginTop: "-8px",
-                      }}
-                    >
-                      <button
-                        type="button"
-                        className="btn"
-                        style={{
-                          backgroundColor: "#1F3259",
-                          fontFamily: "Manrope",
                           fontSize: "12px",
                           fontWeight: "600",
-                          color: "#FFF",
                         }}
-                        onClick={() => handleShowModal(school.school_id)}
                       >
-                        Change Subscription
-                      </button>
-                    </div>
+                        Active
+                      </span>
+                    ) : (
+                      <span
+                        style={{
+                          display: "inline-block",
+                          padding: "4px 12px",
+                          borderRadius: "12px",
+                          backgroundColor: "#dc3545",
+                          color: "#FFFFFF",
+                          fontSize: "12px",
+                          fontWeight: "600",
+                        }}
+                      >
+                        Inactive
+                      </span>
+                    )}
                   </td>
-                </tr>
-              ))}
-            </tbody>
-            {selectedSchoolDetails && (
-        <CreateViewSchool
-          show={showViewSchoolModal}
-          handleClose={handleModalClose}
-          school_id={selectedSchoolId} // Pass selected school ID
-          setRefresh={setRefresh}
-          previousSubscription={selectedSchoolDetails.sub_type} // Pass previous subscription type
-          previousSubscriptionId={selectedSchoolDetails.subscription_id} // Pass previous subscription ID
-        />
-      )}
-          </table>
-        </div>
+                <td
+                style={{
+                      display: "flex",
+                      gap: "10px", // Adds space between the buttons
+                      justifyContent: "right", // Aligns buttons horizontally in the center
+                      alignItems: "center", // Vertically centers the buttons
+                      padding: "12px 20px",
+                    }}
+                  >
+                    <button
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        padding: "8px 12px",
+                        backgroundColor: "#1C335C",
+                        borderRadius: "8px",
+                        cursor: "pointer",
+                        transition: "background-color 0.3s",
+                      }}
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.backgroundColor = "#16294D")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.backgroundColor = "#1C335C")
+                      }
+                      onClick={() => handleShowModal(school.school_id)}
+                    >
+                      <span
+                        style={{
+                          marginRight: "8px",
+                          color: "white",
+                          fontSize: "14px",
+                          fontWeight: "700",
+                          fontFamily: "Manrope",
+                        }}
+                      >
+                      Change Subscription
+                      </span>
+                    </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+          {selectedSchoolDetails && (
+            <CreateViewSchool
+              show={showViewSchoolModal}
+              handleClose={handleModalClose}
+              school_id={selectedSchoolId} // Pass selected school ID
+              setRefresh={setRefresh}
+              previousSubscription={selectedSchoolDetails.sub_type} // Pass previous subscription type
+              previousSubscriptionId={selectedSchoolDetails.subscription_id} // Pass previous subscription ID
+            />
+          )}
+        </table>
       </div>
-      {/* <div
-        className="col-xxl-4"
-        style={{
-          borderRadius: "16px",
-          border: "1px solid #5D637A",
-          overflowX: "hidden",
-          minHeight: "100%",
-          marginBottom: "20px",
-          height: "280px",
-          display: "flex",
-          flexDirection: "column",
-          fontFamily: "Manrope",
-          maxWidth: "100%",
-          overflow: "hidden",
-        }}
-      >
-        <div
-          style={{
-            padding: "20px",
-            backgroundColor: "#1C335C",
-            height: "80px",
-            display: "flex",
-            alignItems: "center",
-          }}
-        >
-          <span
-            className=""
-            id="staticBackdropLabel"
-            style={{
-              fontSize: "18px",
-              fontWeight: "600",
-              fontFamily: "Manrope",
-              color: "white",
-            }}
-          >
-            Add Subscription:
-          </span>
-        </div>
-        <div>
-          <form
-            onSubmit={handleSubmit}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              padding: "20px",
-              flexDirection: "column",
-              marginTop: "10px",
-            }}
-          >
-            <div style={{ marginBottom: "23px", width: "100%" }}>
-              <label
-                htmlFor="name"
-                className="form-label"
-                style={{
-                  fontSize: "12px",
-                  color: "#434343",
-                  fontWeight: "500",
-                }}
-              >
-                Name
-              </label>
-
-              <div id="name">
-                <input
-                  className=""
-                  style={{
-                    height: "46px",
-                    width: "100%",
-                    paddingLeft: "10px",
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    backgroundColor: "transparent",
-                    border: "1px solid #ECEDF1",
-                    borderRadius: "8px",
-                  }}
-                  onChange={handleInputChange}
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  placeholder="Enter Name"
-                  aria-expanded="false"
-                  required
-                />
-              </div>
-            </div>
-            <div
-              style={{
-                width: "100%",
-                justifyContent: "right",
-                display: "flex",
-              }}
-            >
-              <button
-                type="submit"
-                className="btn btn-secondary"
-                data-bs-dismiss="modal"
-                style={{
-                  width: "118px",
-                  height: "36px",
-                  padding: "8px 10px",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  gap: "10px",
-                  flexShrink: "0",
-                  backgroundColor: "rgba(39, 59, 99, 0.76)",
-                }}
-              >
-                <span
-                  style={{
-                    color: "#FFF",
-                    fontFamily: "Manrope",
-                    fontSize: "12px",
-                    fontWeight: "500",
-                  }}
-                >
-                  Save
-                </span>
-              </button>
-            </div>
-          </form>
-        </div>
-      </div> */}
     </div>
   );
 };

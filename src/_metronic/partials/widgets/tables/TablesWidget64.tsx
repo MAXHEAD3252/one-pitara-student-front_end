@@ -738,7 +738,7 @@ const TablesWidget64 = () => {
         <div className="modal-body py-lg-10 px-lg-10">
           <Form onSubmit={handleSave}>
             <Row>
-              <Col md={6}>
+              <Col md={12}>
                 <Form.Group
                   className="mb-3 custom-input"
                   controlId="formSchoolName"
@@ -746,7 +746,7 @@ const TablesWidget64 = () => {
                   <Form.Label>Subscription Name</Form.Label>
                   <InputGroup>
                     <InputGroup.Text>
-                      <i className="fas fa-school"></i>
+                      <i className="fas fa-bookmark"></i>
                     </InputGroup.Text>
                     <Form.Control
                       type="text"
