@@ -5,16 +5,18 @@ import { PageTitle } from "../../../_metronic/layout/core";
 import { EngageWidget10 } from "../../../_metronic/partials/widgets";
 import { Content } from "../../../_metronic/layout/components/content";
 import { useAuth } from "../../modules/auth/core/Auth";
-import { Calendar, momentLocalizer } from "react-big-calendar";
-import moment from "moment";
+// import { Calendar, momentLocalizer } from "react-big-calendar";
+// import moment from "moment";
 import { TablesWidget52 } from "../../../_metronic/partials/widgets/tables/TablesWidget52";
 import { Dashboardheader } from "../../../_metronic/partials/components/student/DashboardHeader";
 import { ListsWidget10 } from "../../../_metronic/partials/widgets/lists/ListsWidget10";
 import { ListsWidget11 } from "../../../_metronic/partials/widgets/lists/ListsWidget11";
 import { DOMAIN } from "../../routing/ApiEndpoints";
+import ChartsWidget19 from "../../../_metronic/partials/widgets/charts/ChartsWidget19";
+import SchoolEventsCalendar from "../../../_metronic/partials/widgets/_new/cards/SchoolEventsCalendar";
 // import { HeaderWrapper } from "../../../_metronic/layout/components/header_student";
 
-const localizer = momentLocalizer(moment);
+// const localizer = momentLocalizer(moment);
 
 const DashboardPage: FC = () => {
   const { currentUser } = useAuth();
@@ -151,13 +153,16 @@ const DashboardPage: FC = () => {
     <div className="bg-white">
       {userRole === "School Admin" && (
         <Content>
-          <div className="row g-5 g-xl-5 mb-10" style={{ maxHeight: "160px" }}>
+          <div className="row g-5 g-xl-5" style={{ maxHeight: "160px" }}>
             <div className="col-xxl-3">
               <EngageWidget10
                 title={"No. of Students"}
                 number={850}
                 image={"students"}
-              />
+                backgroundColor={"#1F3259"}
+                titlecolor={"#fff"}
+                textcolor={"#fff"}
+                />
             </div>
 
             <div className="col-xxl-3">
@@ -165,14 +170,20 @@ const DashboardPage: FC = () => {
                 title={"No. of Teacher"}
                 number={150}
                 image={"teachers"}
-              />
+                backgroundColor={"#DFFFB6"}
+                titlecolor={"#1F3259"}
+                textcolor={"#29B837"}
+                />
             </div>
             <div className="col-xxl-3">
               <EngageWidget10
                 title={"Monthly Fees Collection"}
                 number={"₹24,30,800"}
                 image={"fees"}
-              />
+                backgroundColor={"#FFE7E1"}
+                titlecolor={"#1F3259"}
+                textcolor={"#FF5B5B"}
+                />
             </div>
 
             <div className="col-xxl-3">
@@ -180,23 +191,24 @@ const DashboardPage: FC = () => {
                 title={"Monthly Expense"}
                 number={"₹5,32,200"}
                 image={"expense"}
+                backgroundColor={"#F2F6FF"}
+                titlecolor={"#1F3259"}
+                textcolor={"#1F3259"}
               />
             </div>
           </div>
 
           <div className="row">
-            <div className="col-xxl-8 mb-5 mb-xl-10">
-              <Calendar
-                localizer={localizer}
-                // events={myEventsList}
-                startAccessor="start"
-                endAccessor="end"
-                style={{ height: 620 }}
-              />
+            <div className="col-xxl-8 mb-xl-10">
+              <SchoolEventsCalendar />
             </div>
-
             <div className="col-xxl-4 mb-5 mb-xl-10">
               <TablesWidget52 />
+            </div>
+          </div>
+          <div className="row">
+            <div className="col-xxl-12 mb-5 mb-xl-10">
+              <ChartsWidget19 />
             </div>
           </div>
         </Content>

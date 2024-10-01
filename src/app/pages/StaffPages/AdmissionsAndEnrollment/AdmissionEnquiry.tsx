@@ -5,9 +5,9 @@ import { PageTitle } from "../../../../_metronic/layout/core";
 import {  TablesWidget57,
 } from "../../../../_metronic/partials/widgets";
 import { Content } from "../../../../_metronic/layout/components/content";
-import { ToolbarFeeMaster } from "../../../../_metronic/layout/components/toolbar/toolbars";
-import { HeaderWrapper } from "../../../../_metronic/layout/components/header_staff";
-import { ToolbarCommon } from "../../../../_metronic/layout/components/toolbar/toolbars/ToolbarCommon";
+// import { ToolbarFeeMaster } from "../../../../_metronic/layout/components/toolbar/toolbars";
+// import { HeaderWrapper } from "../../../../_metronic/layout/components/header_staff";
+// import { ToolbarCommon } from "../../../../_metronic/layout/components/toolbar/toolbars/ToolbarCommon";
 
 const AdmissionEnquiryPage: FC = () => {
   const [displayComponent, setDisplayComponent] = useState("chart");
@@ -15,21 +15,19 @@ const AdmissionEnquiryPage: FC = () => {
   // console.log(selectedValue);
   
 
-  const handleSelectValue = (value: SetStateAction<null>) => {
-     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-expect-error
-    setSelectedValue(value);
-  };
-  const handleToggle = (value: string) => {
-    setDisplayComponent(value);
-  };
+  // const handleSelectValue = (value: SetStateAction<null>) => {
+  //    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  //           // @ts-expect-error
+  //   setSelectedValue(value);
+  // };
+  // const handleToggle = (value: string) => {
+  //   setDisplayComponent(value);
+  // };
 
   return (
     <div className="bg-white">
-      <HeaderWrapper toggleView={handleToggle} />
             {/* <ToolbarCommon /> */}
         <div>
-        <ToolbarFeeMaster onSelectValue={handleSelectValue} />
           <Content>
             <div className="col-xxl-12"
               style={{

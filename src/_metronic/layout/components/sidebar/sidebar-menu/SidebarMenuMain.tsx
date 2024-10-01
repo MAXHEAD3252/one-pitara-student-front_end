@@ -85,7 +85,7 @@ const SidebarMenuMain = () => {
   return (
     <>
       <SidebarMenuHome to="/" icon="media/logos/home.svg" />
-      {userRole === "Super Admin" || userRole === "School Admin" || userRole === "School Staff" ? (
+      {
         // If user is Super Admin, render using modulesData directly
         Object.keys(modulesData).length > 0 &&
         Object.keys(modulesData).map((perm_group_name, index) => (
@@ -127,42 +127,7 @@ const SidebarMenuMain = () => {
               )}
             </div>
           </SidebarMenuItemWithSub>
-        ))
-      ) : (
-        // For other roles, use existing logic
-        Object.keys(modulesData).length > 0 &&
-        Object.keys(modulesData).map((key, index) => (
-          <SidebarMenuItemWithSub
-            key={index}
-            to="#"
-            icon={getIconPath(key)}
-            menuPlacement="right-start"
-            menuTrigger="hover"
-          >
-            <div style={{ paddingLeft: "15px", paddingBottom: "15px" }}>
-              <span
-                className="menu-section"
-                style={{
-                  color: "#000",
-                  fontFamily: "Manrope",
-                  fontSize: "16px",
-                  fontWeight: "600",
-                }}
-              >
-                {key}
-              </span>
-            </div>
-            {modulesData[key].map((moduleDataItem, index) => (
-              <SidebarMenuItem
-                key={index}
-                icon=""
-                to={getPathForModule(moduleDataItem[1])}
-                title={moduleDataItem[1]}
-              />
-            ))}
-          </SidebarMenuItemWithSub>
-        ))
-      )}
+        ))}
     </>
   );
 };

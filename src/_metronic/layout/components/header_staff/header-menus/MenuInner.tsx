@@ -40,7 +40,7 @@ export function MenuInner() {
             listStyle: "none",
           }}
         >
-          {schoolName ? schoolName : "Dexpert Portal"}
+          {schoolName ? schoolName : "Dexpert_Portal"}
         </ol>
       </nav>
     </div>

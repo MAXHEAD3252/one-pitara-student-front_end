@@ -410,52 +410,22 @@ const CreateStartAdmissionProcess = ({
       show={show}
       onHide={handleClose}
     >
-      <div
-        className="modal-content"
-        style={{ padding: "20px 5px", borderRadius: "17px" }}
+       <div
+        className="modal-header"
+        style={{
+          backgroundColor: "#F2F6FF",
+          borderBottom: "1px solid lightgray",
+        }}
       >
+        <h2>Student Application</h2>
         <div
-          className="modal-header border-0"
-          style={{ width: "100%", height: "27px" }}
+          className="btn btn-sm btn-icon btn-active-color-primary"
+          onClick={handleClose}
         >
-          <span
-            className=""
-            id="staticBackdropLabel"
-            style={{
-              justifyContent: "center",
-              textAlign: "center",
-              alignItems: "center",
-              fontSize: "24px",
-              fontWeight: "600",
-              fontFamily: "Manrope",
-            }}
-          >
-           Admission Process  
-          </span>
-          <span
-            data-bs-dismiss="modal"
-            onClick={handleClose}
-            aria-label="Close"
-          >
-            <svg
-              width="32"
-              height="32"
-              viewBox="0 0 32 32"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <circle cx="16" cy="16" r="16" fill="#ECECEC" />
-              <path
-                d="M22.8572 9.14294L9.14288 22.8572M9.14288 9.14294L22.8572 22.8572"
-                stroke="#464646"
-                strokeWidth="2"
-                strokeLinecap="square"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </span>
+          <i className="fas fa-times"></i>
         </div>
-        <hr />
+      </div>
+      <div className="modal-body"    style={{ backgroundColor: "#F2F6FF" }}>
         <div
           className="modal-body"
           style={{
@@ -1627,7 +1597,7 @@ const CreateStartAdmissionProcess = ({
           )}
           
         </div>
-      </div>
+        </div>
     </Modal>,
     modalsRoot
   );

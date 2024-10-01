@@ -32,6 +32,8 @@ const TablesWidget34: React.FC = () => {
   const [data, setData] = useState<DataItem[]>([]);
 
   const [filteredData, setFilteredData] = useState<FilterData[]>([]);
+  console.log(filteredData);
+
   const [searchQuery, setSearchQuery] = useState("");
   const { currentUser } = useAuth();
   const schoolId = currentUser?.school_id;
@@ -111,684 +113,510 @@ const TablesWidget34: React.FC = () => {
 
   return (
     <div
-      className="col-xxl-12"
+      className="card-style"
       style={{
+        width: "100%",
         borderRadius: "16px",
-        border: "1px solid #5D637A",
-        overflowX: "hidden",
-        minHeight: "100%",
-        marginBottom: "20px",
-        height: "770px",
-        display: "flex",
-        flexDirection: "column",
-        fontFamily: "Manrope",
-        maxWidth: "100%",
+        backgroundColor: "rgb(242, 246, 255)",
+        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
         overflow: "hidden",
+        marginTop: "20px",
+        padding: "20px",
+        fontFamily:'Manrope'
       }}
     >
-      <div style={{ width: "auto", height: "100%", overflow: "hidden" }}>
-        <table
-          //   className="col-xxl-12"
+      <div
+        className="card-header"
+        style={{
+          backgroundColor: "rgb(242, 246, 255)",
+          padding: "16px 20px",
+          borderBottom: "1px solid #E0E4F0",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <span
           style={{
-            top: "223px",
-            height: "612px",
-            maxHeight: "100%",
-            borderCollapse: "collapse",
-            // tableLayout: "fixed",
-            overflowX: "hidden",
-            overflowY: "auto",
-            whiteSpace: "nowrap",
-            width: "100%",
-            // border:'8px solid black'
+            fontSize: "20px",
+            fontWeight: "600",
+            color: "#1C335C",
+            fontFamily: "Manrope",
           }}
         >
-          <thead
-            className=""
+          Enquiry List
+        </span>
+        <div style={{ display: "flex", gap: "10px" }}>
+          <div
+            className="input-group flex-nowrap"
             style={{
-              height: "123px",
-              maxHeight: "100%",
-              display: "flex",
-              flexDirection: "column",
-              backgroundColor: "#1C335C",
-              //   width:'fit-content',
-              // overflowY: "auto",
-              // overflowX: "hidden",
-              justifyContent: "space-between",
-              zIndex: 999,
+              width: "300px",
+              height: "36px",
+              borderRadius: "8px",
+              border: "1px solid #1C335C",
             }}
           >
-            <div>
-              <caption
-                style={{
-                  backgroundColor: "#1C335C",
-                  padding: "20px",
-                  display: "flex",
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  // tableLayout: "fixed",
-                  // borderCollapse: "collapse",
-
-                  // border:'1px solid'
-                  width: "98%",
-                }}
-                className="col-xxl-12 col-lg-6"
+            <span
+              className="input-group-text border-0 pe-1 pr-0"
+              style={{ backgroundColor: "transparent" }}
+              id="addon-wrapping"
+            >
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 17 16"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
               >
-                <div>
-                  <span
-                    style={{
-                      color: "#FFF",
-                      fontSize: "16px",
-                      fontWeight: "700",
-                      fontFamily: "Manrope",
-                    }}
-                  >
-                    Enquiry List
-                  </span>
-                </div>
-                <div
-                  style={{ display: "flex", alignItems: "center", gap: "10px" }}
-                >
-                  <div
-                    className="input-group flex-nowrap"
-                    style={{
-                      width: "300px",
-                      height: "36px",
-                      borderRadius: "8px",
-                      border: "1px solid #D9D9D9",
-                    }}
-                  >
-                    <span
-                      className="input-group-text border-0 pe-1 pr-0"
-                      style={{ backgroundColor: "transparent" }}
-                      id="addon-wrapping"
-                    >
-                      <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 17 16"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <g clip-path="url(#clip0_582_4295)">
-                          <circle
-                            cx="8.50002"
-                            cy="7.66665"
-                            r="6.33333"
-                            stroke="white"
-                            stroke-width="1.5"
-                          />
-                          <path
-                            d="M14.1667 13.3333L15.5 14.6666"
-                            stroke="white"
-                            stroke-width="1.5"
-                            stroke-linecap="round"
-                          />
-                        </g>
-                        <defs>
-                          <clipPath id="clip0_582_4295">
-                            <rect
-                              width="16"
-                              height="16"
-                              fill="white"
-                              transform="translate(0.833374)"
-                            />
-                          </clipPath>
-                        </defs>
-                      </svg>
-                    </span>
-                    <input
-                      type="text"
-                      style={{
-                        backgroundColor: "transparent",
-                        color: "#FFFFFF",
-                      }}
-                      className="form-control border-0"
-                      placeholder="Search ...."
-                      aria-label="Search"
-                      aria-describedby="addon-wrapping"
-                      onChange={handleSearch}
-                      value={searchQuery}
+                <g clip-path="url(#clip0_582_4295)">
+                  <circle
+                    cx="8.50002"
+                    cy="7.66665"
+                    r="6.33333"
+                    stroke="#1C335C"
+                    stroke-width="1.5"
+                  />
+                  <path
+                    d="M14.1667 13.3333L15.5 14.6666"
+                    stroke="#1C335C"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                  />
+                </g>
+                <defs>
+                  <clipPath id="clip0_582_4295">
+                    <rect
+                      width="16"
+                      height="16"
+                      fill="#1C335C"
+                      transform="translate(0.833374)"
                     />
-                  </div>
-                  <div>
-                    <span
-                      className=""
-                      style={{
-                        height: "36px",
-                        border: "1px solid #D9D9D9",
-                        width: "135px",
-                        borderRadius: "8px",
-                        padding: "8px 10px 8px 10px",
-                        gap: "10px",
-                        display: "flex",
-                        alignItems: "center",
-                        color: "#FFF",
-                        cursor: "pointer",
-                      }}
-                      onClick={handleModal}
-                      //
-                    >
-                      <svg
-                        width="17"
-                        height="16"
-                        viewBox="0 0 17 16"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M7.16672 9.3333C8.27129 9.3333 9.16672 10.2287 9.16672 11.3333C9.16672 12.4379 8.27129 13.3333 7.16672 13.3333C6.06215 13.3333 5.16672 12.4379 5.16672 11.3333C5.16672 10.2287 6.06215 9.3333 7.16672 9.3333Z"
-                          stroke="white"
-                        />
-                        <path
-                          d="M10.5 2.66667C9.39546 2.66667 8.50003 3.5621 8.50003 4.66667C8.50003 5.77124 9.39546 6.66667 10.5 6.66667C11.6046 6.66667 12.5 5.77124 12.5 4.66667C12.5 3.5621 11.6046 2.66667 10.5 2.66667Z"
-                          stroke="white"
-                        />
-                        <path
-                          d="M10.8334 11.3057L15.5 11.3057"
-                          stroke="white"
-                          stroke-linecap="round"
-                        />
-                        <path
-                          d="M6.83337 4.63898L2.16671 4.63898"
-                          stroke="white"
-                          stroke-linecap="round"
-                        />
-                        <path
-                          d="M2.16672 11.3057L3.50005 11.3057"
-                          stroke="white"
-                          stroke-linecap="round"
-                        />
-                        <path
-                          d="M15.5 4.63898L14.1667 4.63898"
-                          stroke="white"
-                          stroke-linecap="round"
-                        />
-                      </svg>
-                      WalkIn Enquiry
-                    </span>
-                  </div>
-                </div>
-              </caption>
-            </div>
-            <tr
+                  </clipPath>
+                </defs>
+              </svg>
+            </span>
+            <input
+              type="text"
               style={{
-                height: "61px",
-                gap: "40px",
-                display: "flex",
-                paddingTop: "10px",
-                paddingLeft: "55px",
-                // paddingBottom:'10px',
-                // position: "sticky",
-                // top: 0,
-                width: "auto",
-                // border:'1px solid white',
-                overflowY: "auto",
-                overflowX: "hidden",
-                backgroundColor: "#1C335C",
-                // zIndex: 100,
+                backgroundColor: "transparent",
+                color: "#1C335C",
+              }}
+              className="form-control border-0"
+              placeholder="Search ...."
+              aria-label="Search"
+              aria-describedby="addon-wrapping"
+              onChange={handleSearch}
+              value={searchQuery}
+            />
+          </div>
+          <div
+            onClick={handleModal}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              padding: "8px 12px",
+              backgroundColor: "#1C335C",
+              borderRadius: "8px",
+              cursor: "pointer",
+              transition: "background-color 0.3s",
+            }}
+            onMouseEnter={(e) =>
+              (e.currentTarget.style.backgroundColor = "#16294D")
+            }
+            onMouseLeave={(e) =>
+              (e.currentTarget.style.backgroundColor = "#1C335C")
+            }
+          >
+            <span
+              style={{
+                marginRight: "8px",
+                color: "white",
+                fontSize: "14px",
+                fontWeight: "700",
+                fontFamily: "Manrope",
               }}
             >
-              <th>
-                <div style={{ width: "100px" }}>
-                  <span
-                    style={{
-                      fontSize: "13px",
-                      fontWeight: "600",
-                      lineHeight: "18px",
-                      color: "#FFFFFF",
-                    }}
-                  >
-                    Date
-                  </span>
-                </div>
+              WalkIn Enquiry
+            </span>
+            <svg
+              width="17"
+              height="16"
+              viewBox="0 0 17 16"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M7.16672 9.3333C8.27129 9.3333 9.16672 10.2287 9.16672 11.3333C9.16672 12.4379 8.27129 13.3333 7.16672 13.3333C6.06215 13.3333 5.16672 12.4379 5.16672 11.3333C5.16672 10.2287 6.06215 9.3333 7.16672 9.3333Z"
+                stroke="white"
+              />
+              <path
+                d="M10.5 2.66667C9.39546 2.66667 8.50003 3.5621 8.50003 4.66667C8.50003 5.77124 9.39546 6.66667 10.5 6.66667C11.6046 6.66667 12.5 5.77124 12.5 4.66667C12.5 3.5621 11.6046 2.66667 10.5 2.66667Z"
+                stroke="white"
+              />
+              <path
+                d="M10.8334 11.3057L15.5 11.3057"
+                stroke="white"
+                stroke-linecap="round"
+              />
+              <path
+                d="M6.83337 4.63898L2.16671 4.63898"
+                stroke="white"
+                stroke-linecap="round"
+              />
+              <path
+                d="M2.16672 11.3057L3.50005 11.3057"
+                stroke="white"
+                stroke-linecap="round"
+              />
+              <path
+                d="M15.5 4.63898L14.1667 4.63898"
+                stroke="white"
+                stroke-linecap="round"
+              />
+            </svg>
+          </div>
+        </div>
+      </div>
+      <div
+        style={{
+          height: "670px", // Fixed height for the table container
+          overflowY: "auto", // Enable vertical scrolling
+          padding: "16px 0", // Optional: adds some padding around the table
+        }}
+      >
+        <table
+          className="table"
+          style={{
+            width: "100%",
+            borderCollapse: "collapse",
+            marginTop: "10px",
+            backgroundColor: "#FFFFFF", // White background for the table
+            borderRadius: "12px", // Round corners for the table
+            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.05)", // Light shadow for the table
+          }}
+        >
+          <thead>
+            <tr
+              style={{
+                backgroundColor: "rgb(242, 246, 255)", // Header background color
+                borderBottom: "1px solid #E0E4F0",
+                fontFamily: "Manrope",
+                fontWeight: "600",
+                color: "#1C335C",
+                fontSize: "14px",
+              }}
+            >
+              <th
+                style={{
+                  padding: "12px 20px",
+                  textAlign: "left",
+                }}
+              >
+                Date
               </th>
-              <th>
-                <div style={{ width: "110px" }}>
-                  <span
-                    style={{
-                      fontSize: "13px",
-                      fontWeight: "600",
-                      lineHeight: "18px",
-                      color: "#FFFFFF",
-                      fontFamily: "Manrope",
-                    }}
-                  >
-                    Class
-                  </span>
-                </div>
+              <th
+                style={{
+                  padding: "12px 20px",
+                  textAlign: "left",
+                }}
+              >
+                Class
               </th>
-              <th>
-                <div style={{ width: "230px" }}>
-                  <span
-                    style={{
-                      fontSize: "13px",
-                      fontWeight: "600",
-                      lineHeight: "18px",
-                      color: "#FFFFFF",
-                      fontFamily: "Manrope",
-                    }}
-                  >
-                    Student Name
-                  </span>
-                </div>
+              <th
+                style={{
+                  padding: "12px 20px",
+                  textAlign: "left",
+                }}
+              >
+                Student Name
               </th>
-              <th>
-                <div style={{ width: "130px" }}>
-                  <span
-                    style={{
-                      fontSize: "13px",
-                      fontWeight: "600",
-                      lineHeight: "18px",
-                      color: "#FFFFFF",
-                      fontFamily: "Manrope",
-                    }}
-                  >
-                    Source
-                  </span>
-                </div>
+              <th
+                style={{
+                  padding: "12px 20px",
+                  textAlign: "left",
+                }}
+              >
+                Source
               </th>
-              <th>
-                <div style={{ width: "260px" }}>
-                  <span
-                    style={{
-                      fontSize: "13px",
-                      fontWeight: "600",
-                      lineHeight: "18px",
-                      color: "#FFFFFF",
-                      fontFamily: "Manrope",
-                    }}
-                  >
-                    Email
-                  </span>
-                </div>
+              <th
+                style={{
+                  padding: "12px 20px",
+                  textAlign: "left",
+                }}
+              >
+                Email
               </th>
-              <th>
-                <div style={{ width: "130px" }}>
-                  <span
-                    style={{
-                      fontSize: "13px",
-                      fontWeight: "600",
-                      lineHeight: "18px",
-                      color: "#FFFFFF",
-                      fontFamily: "Manrope",
-                    }}
-                  >
-                    FollowUp-Date
-                  </span>
-                </div>
-              </th>
-
-              <th>
-                <div
-                  style={{
-                    width: "90px",
-                  }}
-                >
-                  <span
-                    style={{
-                      fontSize: "13px",
-                      fontWeight: "600",
-                      lineHeight: "18px",
-                      color: "#FFFFFF",
-                      fontFamily: "Manrope",
-                    }}
-                  >
-                    Enquiry Type
-                  </span>
-                </div>
-              </th>
-              <th>
-                <div
-                  style={{
-                    width: "90px",
-                  }}
-                >
-                  <span
-                    style={{
-                      fontSize: "13px",
-                      fontWeight: "600",
-                      lineHeight: "18px",
-                      color: "#FFFFFF",
-                      fontFamily: "Manrope",
-                    }}
-                  >
-                    Status
-                  </span>
-                </div>
+              <th
+                style={{
+                  padding: "12px 20px",
+                  textAlign: "left",
+                }}
+              >
+                FollowUp-Date
               </th>
 
-              <th>
-                <div
-                  style={{
-                    width: "80px",
-                    // textAlign:'left'
-                    // border:'1px solid',
-                    display: "flex",
-                    justifyContent: "end",
-                    fontFamily: "Manrope",
-                  }}
-                >
-                  <span
-                    style={{
-                      fontSize: "13px",
-                      fontWeight: "600",
-                      lineHeight: "18px",
-                      color: "#FFFFFF",
-                    }}
-                  >
-                    Action
-                  </span>
-                </div>
+              <th
+                style={{
+                  padding: "12px 20px",
+                  textAlign: "left",
+                }}
+              >
+                Enquiry Type
+              </th>
+              <th
+                style={{
+                  padding: "12px 20px",
+                  textAlign: "left",
+                }}
+              >
+                Status
+              </th>
+
+              <th
+                style={{
+                  padding: "12px 20px",
+                  textAlign: "right",
+                }}
+              >
+                Action
               </th>
             </tr>
           </thead>
 
-          <tbody
-            className="col-xxl-12 h-[s]"
-            style={{
-              height: "105%",
-              // maxHeight: "100%",
-              display: "flex",
-              flexDirection: "column",
-              minHeight: "calc(100vh - 550px)",
-              overflowY: "auto",
-            }}
-          >
+          <tbody>
             {filteredData.map((item, index) => (
               <tr
                 key={index}
                 style={{
-                  height: "61px",
-                  gap: "40px",
-                  paddingLeft: "55px",
-                  paddingRight: "55px",
-                  paddingTop: "16px",
-                  width: "100%",
-                  display: "flex",
-                  backgroundColor: index % 2 === 0 ? "#F5F5F5" : "#FFF",
-                  // border:'1px solid'
+                  backgroundColor:
+                    index % 2 === 0 ? "rgb(242, 246, 255)" : "#FFFFFF",
+                  borderBottom: "1px solid #E0E4F0",
+                  fontFamily: "Manrope",
+                  fontSize: "14px",
+                  color: "#1C335C",
                 }}
               >
-                <td>
-                  <div
-                    style={{
-                      width: "100px",
-                      display: "flex",
-                      justifyContent: "start",
-                      flexDirection: "column",
-                      // border:'1px solid'
-                    }}
-                  >
-                    <span
-                      style={{
-                        fontSize: "14px",
-                        fontWeight: "600",
-                        lineHeight: "18px",
-                        color: "#000000",
-                        fontFamily: "Manrope",
-                        // border:'1px solid'
-                      }}
-                    >
-                      {formatDate(item.date)}
-                    </span>
-                  </div>
+                <td
+                  style={{
+                    padding: "12px 20px",
+                  }}
+                >
+                  {formatDate(item.date)}
                 </td>
-                <td>
-                  <div
-                    style={{
-                      width: "110px",
-                      display: "flex",
-                      justifyContent: "start",
-                      flexDirection: "column",
-                    }}
-                  >
-                    <span
-                      style={{
-                        fontSize: "14px",
-                        fontWeight: "500",
-                        lineHeight: "18px",
-                        color: "#1F1F1F",
-                        fontFamily: "Manrope",
-                      }}
-                    >
-                      {item.class}
-                    </span>
-                  </div>
+                <td
+                  style={{
+                    padding: "12px 20px",
+                  }}
+                >
+                  {item.class}
                 </td>
-                <td>
-                  <div
-                    className="overflow-hidden whitespace-nowrap"
-                    style={{
-                      width: "230px",
-                      // paddingLeft:'5px',
-                      display: "flex",
-                      justifyContent: "start",
-                      flexDirection: "column",
-                    }}
-                  >
-                    <span
-                      data-tooltip-id={`tooltip-${index}`}
-                      style={{
-                        fontSize: "14px",
-                        fontWeight: "500",
-                        lineHeight: "18px",
-                        color: "#1F1F1F",
-                        fontFamily: "Manrope",
-                      }}
-                    >
-                      {item.student_name}
-                    </span>
-                  </div>
-                  <ReactTooltip
-                    id={`tooltip-${index}`}
-                    place="bottom"
-                    // content={item.name}
-                    opacity={1}
-                    style={{
-                      zIndex: 999,
-                      backgroundColor: "#FFF",
-                      boxShadow: "0px 0px 10px 4px #00000026",
-                      color: "#000",
-                    }}
-                  />
+                <td
+                  style={{
+                    padding: "12px 20px",
+                  }}
+                >
+                  {item.student_name}
                 </td>
-                <td>
-                  <div
-                    className=" flex justify-start flex-col overflow-hidden whitespace-nowrap text-ellipsis"
-                    style={{ width: "130px" }}
-                  >
-                    <span
-                      className="font-normal leading-6 text-gray-800 w-100 overflow-hidden"
-                      style={{
-                        width: "100px",
-                        overflow: "hidden",
-                        fontSize: "14px",
-                        fontWeight: "500",
-                        fontFamily: "Manrope",
-                      }}
-                    >
-                      {item.source}
-                    </span>
-                  </div>
+                <td
+                  style={{
+                    padding: "12px 20px",
+                  }}
+                >
+                  {item.source}
                 </td>
-                <td>
-                  <div
-                    className=" flex justify-start flex-col overflow-hidden whitespace-nowrap text-ellipsis"
-                    style={{ width: "250px" }}
-                  >
-                    <span
-                      data-tooltip-id={`tooltip-${index}`}
-                      className="font-normal leading-6 text-gray-800 w-100 overflow-hidden"
-                      style={{
-                        width: "100px",
-                        overflow: "hidden",
-                        fontSize: "14px",
-                        fontWeight: "500",
-                        fontFamily: "Manrope",
-                      }}
-                    >
-                      {item.student_email}
-                    </span>
-                  </div>
-                  <ReactTooltip
-                    id={`tooltip-${index}`}
-                    place="bottom"
-                    content={item.student_email}
-                    opacity={1}
-                    style={{
-                      zIndex: 999,
-                      backgroundColor: "#FFF",
-                      boxShadow: "0px 0px 10px 4px #00000026",
-                      color: "#000",
-                      fontFamily: "Manrope",
-                    }}
-                  />
+                <td
+                  style={{
+                    padding: "12px 20px",
+                  }}
+                >
+                  {item.student_email}
                 </td>
 
-                <td>
-                  <div
-                    style={{
-                      width: "140px",
-                      display: "flex",
-                      justifyContent: "start",
-                      flexDirection: "column",
-                    }}
-                  >
-                    <span
-                      style={{
-                        fontSize: "14px",
-                        width: "100px",
-                        textAlign: "center",
-                        borderRadius: "5px",
-                        // padding: "5px",
-                        fontWeight: "500",
-                        lineHeight: "18px",
-                        color: "#000",
-                        fontFamily: "Manrope",
-                        // backgroundColor: "#FFE7E1",
-                      }}
-                    >
-                      {formatDate(item.follow_up_date)}
-                    </span>
-                  </div>
+                <td
+                  style={{
+                    padding: "12px 20px",
+                  }}
+                >
+                  {formatDate(item.follow_up_date)}
                 </td>
-
-                <td>
-                  <div
-                    style={{
-                      width: "90px",
-                      display: "flex",
-                      justifyContent: "start",
-                      flexDirection: "column",
-                    }}
-                  >
+                <td
+                  style={{
+                    padding: "12px 20px",
+                    textAlign: "start",
+                  }}
+                >
+                  {item.enquiry_type !== "" ? (
                     <span
                       style={{
-                        fontSize: "14px",
-                        width: "50px",
-                        textAlign: "center",
-                        borderRadius: "5px",
+                        display: "inline-block",
                         padding: "5px",
-                        marginTop: "-8px",
-                        fontWeight: "500",
-                        lineHeight: "18px",
-                        fontFamily: "Manrope",
-                        color:
-                          item.status === "general"
-                            ? "#4BCD60"
-                            : item.status === "admission"
-                            ? "#000000"
-                            : "#ED5578",
-                        backgroundColor:
-                          item.status === "general"
-                            ? "#E7FFEA"
-                            : item.status === "admission"
-                            ? "#FF8B20"
-                            : "#FFE7E1",
-                      }}
-                    >
-                      {item.enquiry_type}
-                    </span>
-                  </div>
-                </td>
-                <td>
-                  <div
-                    style={{
-                      width: "90px",
-                      display: "flex",
-                      justifyContent: "start",
-                      flexDirection: "column",
-                    }}
-                  >
-                    <span
-                      style={{
-                        fontSize: "14px",
-                        width: "50px",
-                        textAlign: "center",
                         borderRadius: "5px",
-                        padding: "5px",
-                        marginTop: "-8px",
-                        fontWeight: "500",
-                        lineHeight: "18px",
-                        fontFamily: "Manrope",
-                        color:
-                          item.status === "active"
-                            ? "#4BCD60"
-                            : item.status === "lost"
-                            ? "#000000"
-                            : "#ED5578",
-                        backgroundColor:
-                          item.status === "active"
-                            ? "#E7FFEA"
-                            : item.status === "lost"
-                            ? "#FF8B20"
-                            : "#FFE7E1",
-                      }}
-                    >
-                      {item.status}
-                    </span>
-                  </div>
-                </td>
-                <td>
-                  <div
-                    style={{
-                      width: "150px",
-                      display: "flex",
-                      justifyContent: "space-around ",
-                      flexDirection: "row",
-                      gap: "6px",
-                      marginTop: "-8px",
-                      // border:'1px solid'
-                    }}
-                  >
-                    <button
-                      type="button"
-                      className="btn"
-                      style={{
-                        backgroundColor: "#1F3259",
-                        fontFamily: "Manrope",
+                        backgroundColor: "#B1E3FF",
+                        color: "#1C335C",
                         fontSize: "12px",
                         fontWeight: "600",
-                        color: "#FFF",
                       }}
-                      onClick={() => handleModalEdit(item.enquiry_id)}
+                    >
+                      Admission
+                    </span>
+                  ) : (
+                    <span
+                      style={{
+                        display: "inline-block",
+                        padding: "5px",
+                        borderRadius: "5px",
+                        backgroundColor: "#FFE7E1",
+                        color: "#ED5578",
+                        fontSize: "12px",
+                        fontWeight: "600",
+                      }}
+                    >
+                      General
+                    </span>
+                  )}
+                </td>
+                <td
+                  style={{
+                    padding: "12px 20px",
+                    textAlign: "start",
+                  }}
+                >
+                  <span
+                    style={{
+                      display: "inline-block",
+                      padding: "5px",
+                      borderRadius: "5px",
+                      backgroundColor:
+                        item.status === "active"
+                          ? "#E7FFEA"
+                          : item.status === "lost"
+                          ? "#FFF8B6"
+                          : item.status === "won"
+                          ? "#E3F2FD"
+                          : "#FFEAEA", // for dead
+                      color:
+                        item.status === "active"
+                          ? "#4BCD60"
+                          : item.status === "lost"
+                          ? "#D4840C"
+                          : item.status === "won"
+                          ? "#1976D2"
+                          : "#D32F2F", // for dead
+                      fontSize: "12px",
+                      fontWeight: "600",
+                    }}
+                  >
+                    {item.status.charAt(0).toUpperCase() + item.status.slice(1)}
+                  </span>
+                </td>
+                <td
+                  style={{
+                    display: "flex",
+                    gap: "10px", // Adds space between the buttons
+                    justifyContent: "center", // Aligns buttons horizontally in the center
+                    alignItems: "center", // Vertically centers the buttons
+                    padding: "12px 20px",
+                  }}
+                >
+                  <div
+                    onClick={() => handleModalEdit(item.enquiry_id)}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      padding: "8px 12px",
+                      backgroundColor: "#1C335C",
+                      borderRadius: "8px",
+                      cursor: "pointer",
+                      transition: "background-color 0.3s",
+                    }}
+                    onMouseEnter={(e) =>
+                      (e.currentTarget.style.backgroundColor = "#16294D")
+                    }
+                    onMouseLeave={(e) =>
+                      (e.currentTarget.style.backgroundColor = "#1C335C")
+                    }
+                  >
+                    <span
+                      style={{
+                        marginRight: "8px",
+                        color: "white",
+                        fontSize: "14px",
+                        fontWeight: "700",
+                        fontFamily: "Manrope",
+                      }}
                     >
                       Edit
-                    </button>
-                    <button
-                      type="button"
-                      className="btn"
+                    </span>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      width="16px"
+                      height="16px"
+                      fill="#ffffff"
+                    >
+                      <path d="M0 0h24v24H0V0z" fill="none" />
+                      <path d="M3 17.25V21h3.75l11-11.03-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
+                    </svg>
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                        alignItems: "center",
+                        padding: "8px 12px",
+                      backgroundColor: "#FFE7E1",
+                      borderRadius: "8px",
+                      cursor: "pointer",
+                      transition: "background-color 0.3s",
+                    }}
+                    onClick={() => handleActionModal(item.enquiry_id)}
+                  >
+                    <span
                       style={{
-                        border: "1px solid #1F3259",
+                        marginRight: "8px",
+                        color: "#ED5578",
+                        fontSize: "14px",
+                        fontWeight: "700",
                         fontFamily: "Manrope",
-                        fontSize: "12px",
-                        fontWeight: "600",
-                        color: "#1F3259",
                       }}
-                      onClick={() => handleActionModal(item.enquiry_id)}
                     >
                       Action
-                    </button>
+                    </span>
+                    <svg
+                      width="17"
+                      height="16"
+                      viewBox="0 0 17 16"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M7.16672 9.3333C8.27129 9.3333 9.16672 10.2287 9.16672 11.3333C9.16672 12.4379 8.27129 13.3333 7.16672 13.3333C6.06215 13.3333 5.16672 12.4379 5.16672 11.3333C5.16672 10.2287 6.06215 9.3333 7.16672 9.3333Z"
+                        stroke="#ED5578"
+                      />
+                      <path
+                        d="M10.5 2.66667C9.39546 2.66667 8.50003 3.5621 8.50003 4.66667C8.50003 5.77124 9.39546 6.66667 10.5 6.66667C11.6046 6.66667 12.5 5.77124 12.5 4.66667C12.5 3.5621 11.6046 2.66667 10.5 2.66667Z"
+                        stroke="#ED5578"
+                      />
+                      <path
+                        d="M10.8334 11.3057L15.5 11.3057"
+                        stroke="#ED5578"
+                        stroke-linecap="round"
+                      />
+                      <path
+                        d="M6.83337 4.63898L2.16671 4.63898"
+                        stroke="#ED5578"
+                        stroke-linecap="round"
+                      />
+                      <path
+                        d="M2.16672 11.3057L3.50005 11.3057"
+                        stroke="#ED5578"
+                        stroke-linecap="round"
+                      />
+                      <path
+                        d="M15.5 4.63898L14.1667 4.63898"
+                        stroke="#ED5578"
+                        stroke-linecap="round"
+                      />
+                    </svg>
                   </div>
                 </td>
               </tr>

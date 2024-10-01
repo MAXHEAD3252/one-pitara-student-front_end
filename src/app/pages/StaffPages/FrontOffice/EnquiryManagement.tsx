@@ -5,8 +5,8 @@ import { PageTitle } from "../../../../_metronic/layout/core";
 import {  TablesWidget34,
 } from "../../../../_metronic/partials/widgets";
 import { Content } from "../../../../_metronic/layout/components/content";
-import { ToolbarFeeMaster } from "../../../../_metronic/layout/components/toolbar/toolbars";
-import { HeaderWrapper } from "../../../../_metronic/layout/components/header_staff";
+// import { ToolbarFeeMaster } from "../../../../_metronic/layout/components/toolbar/toolbars";
+// import { HeaderWrapper } from "../../../../_metronic/layout/components/header_staff";
 
 const EnquiryTablePage: FC = () => {
   const [displayComponent, setDisplayComponent] = useState("chart");
@@ -25,9 +25,9 @@ const EnquiryTablePage: FC = () => {
 
   return (
     <div className="bg-white">
-      <HeaderWrapper toggleView={handleToggle} />
+      {/* <HeaderWrapper toggleView={handleToggle} /> */}
         <div>
-        <ToolbarFeeMaster onSelectValue={handleSelectValue} />
+        {/* <ToolbarFeeMaster onSelectValue={handleSelectValue} /> */}
           <Content>
             <div className="col-xxl-12"
               style={{

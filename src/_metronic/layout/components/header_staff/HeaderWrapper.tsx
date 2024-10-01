@@ -53,8 +53,8 @@ export function HeaderWrapper({ toggleView }: HeaderWrapperProps) {
   }
 
   // const pathname = location.pathname;
-  const isStudent = currentUser?.role === 'student';
-  const isAdmin = currentUser?.role === 'School Admin';
+  const isStudent = currentUser?.role_name === 'student';
+  const isAdmin = currentUser?.role_name === 'School Admin';
 
   // // Create breadcrumbs based on role
   // const pathParts = isStudent

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import { Modal } from "react-bootstrap";
+import { Col, Form, InputGroup, Modal, Row } from "react-bootstrap";
 import { useAuth } from "../../../../app/modules/auth/core/Auth";
 import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
 
@@ -57,7 +57,7 @@ interface FormData {
 
 const modalsRoot = document.getElementById("root-modals") || document.body;
 
-const CreateWalkinEnquiry = ({ show, handleClose ,setRefresh}: Props) => {
+const CreateWalkinEnquiry = ({ show, handleClose, setRefresh }: Props) => {
   const { currentUser } = useAuth();
 
   const schoolId = currentUser?.school_id;
@@ -246,360 +246,323 @@ const CreateWalkinEnquiry = ({ show, handleClose ,setRefresh}: Props) => {
 
   return createPortal(
     <Modal
-      id="kt_modal_create_app"
+      id="kt_modal_create_school"
       tabIndex={-1}
-      size="lg"
       aria-hidden="true"
       dialogClassName="modal-dialog modal-dialog-centered mw-1000px"
       show={show}
       onHide={handleClose}
-      // fullscreen={true}
+      backdrop={true}
     >
       <div
-        className="modal-content"
-        style={{ padding: "20px 5px", borderRadius: "17px" }}
+        className="modal-header"
+        style={{
+          backgroundColor: "#F2F6FF",
+          borderBottom: "1px solid lightgray",
+        }}
       >
+        <h2>WalkIn Enquiry</h2>
         <div
-          className="modal-header border-0"
-          style={{ width: "100%", height: "27px" }}
+          className="btn btn-sm btn-icon btn-active-color-primary"
+          onClick={handleClose}
         >
-          <span
-            className=""
-            id="staticBackdropLabel"
-            style={{
-              justifyContent: "center",
-              textAlign: "center",
-              alignItems: "center",
-              fontSize: "24px",
-              fontWeight: "600",
-              fontFamily: "Manrope",
-            }}
-          >
-            WalkIn Enquiry
-          </span>
-
-          <span
-            data-bs-dismiss="modal"
-            onClick={handleClose}
-            aria-label="Close"
-          >
-            <svg
-              width="32"
-              height="32"
-              viewBox="0 0 32 32"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <circle cx="16" cy="16" r="16" fill="#ECECEC" />
-              <path
-                d="M22.8572 9.14294L9.14288 22.8572M9.14288 9.14294L22.8572 22.8572"
-                stroke="#464646"
-                stroke-width="2"
-                stroke-linecap="square"
-                stroke-linejoin="round"
-              />
-            </svg>
-          </span>
+          <i className="fas fa-times"></i>
         </div>
-        <hr></hr>
+      </div>
 
-        <div className="modal-body" style={{ justifyContent: "center" }}>
-          <form action="/" method="post" onSubmit={handleSubmit}>
-            <div style={{ marginBottom: "23px" }}>
-              {/* row start */}
-              <div
-                className="fv-row mb-10"
-                style={{ display: "flex", gap: "10px" }}
+      <div
+        className="modal-body py-lg-10 px-lg-10"
+        style={{ backgroundColor: "#F2F6FF" }}
+      >
+        <Form onSubmit={handleSubmit}>
+          <Row>
+            {/* Student Name */}
+            <Col md={4}>
+              <Form.Group
+                className="mb-3 custom-input"
+                controlId="formStudentName"
               >
-                <div
-                  className="form-floating mb-3"
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    width: "100%",
-                  }}
-                >
-                  <input
+                <Form.Label>Student Name *</Form.Label>
+                <InputGroup>
+                  <InputGroup.Text>
+                    <i className="fas fa-user"></i>
+                  </InputGroup.Text>
+                  <Form.Control
                     type="text"
-                    className="form-control"
-                    id="student_name"
-                    name="student_name"
-                    placeholder=""
+                    placeholder="Enter student name"
                     value={formData.student_name}
                     onChange={handleChange}
+                    name="student_name"
+                    required
                   />
-                  <label htmlFor="admissstudent_nameion_no">Name</label>
-                </div>
-                <div
-                  className="form-floating mb-3"
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    width: "100%",
-                  }}
-                >
-                  <input
+                </InputGroup>
+                <Form.Text className="text-muted">
+                  This is an input helper text.
+                </Form.Text>
+              </Form.Group>
+            </Col>
+            <Col md={4}>
+              <Form.Group
+                className="mb-3 custom-input"
+                controlId="formStudentPhone"
+              >
+                <Form.Label>Phone Number *</Form.Label>
+                <InputGroup>
+                  <InputGroup.Text>
+                    <i className="fas fa-phone"></i>
+                  </InputGroup.Text>
+                  <Form.Control
                     type="tel"
-                    className="form-control"
-                    id="student_phone"
-                    name="student_phone"
-                    placeholder=""
+                    placeholder="Enter phone number"
                     value={formData.student_phone}
                     onChange={handleChange}
+                    name="student_phone"
+                    required
                   />
-                  <label htmlFor="contstudent_phoneact">Contact no</label>
-                </div>
-                <div
-                  className="form-floating mb-3"
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    width: "100%",
-                  }}
-                >
-                  <input
+                </InputGroup>
+                <Form.Text className="text-muted">
+                  This is an input helper text.
+                </Form.Text>
+              </Form.Group>
+            </Col>
+            <Col md={4}>
+              <Form.Group
+                className="mb-3 custom-input"
+                controlId="formStudentAddress"
+              >
+                <Form.Label>Address *</Form.Label>
+                <InputGroup>
+                  <InputGroup.Text>
+                    <i className="fas fa-map-marker-alt"></i>
+                  </InputGroup.Text>
+                  <Form.Control
                     type="text"
-                    className="form-control"
-                    id="student_address"
-                    name="student_address"
-                    placeholder=""
+                    placeholder="Enter address"
                     value={formData.student_address}
                     onChange={handleChange}
+                    name="student_address"
+                    required
                   />
-                  <label htmlFor="student_address">Address</label>
-                </div>
-              </div>
-              <div
-                className="fv-row mb-10"
-                style={{ display: "flex", gap: "10px" }}
+                </InputGroup>
+                <Form.Text className="text-muted">
+                  This is an input helper text.
+                </Form.Text>
+              </Form.Group>
+            </Col>
+          </Row>
+
+          <Row>
+            {/* Email */}
+            <Col md={4}>
+              <Form.Group
+                className="mb-3 custom-input"
+                controlId="formStudentEmail"
               >
-                <div
-                  className="form-floating mb-3"
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    width: "100%",
-                  }}
-                >
-                  <input
+                <Form.Label>Email *</Form.Label>
+                <InputGroup>
+                  <InputGroup.Text>
+                    <i className="fas fa-envelope"></i>
+                  </InputGroup.Text>
+                  <Form.Control
                     type="email"
-                    className="form-control"
-                    id="student_email"
-                    name="student_email"
-                    placeholder=""
+                    placeholder="Enter email"
                     value={formData.student_email}
                     onChange={handleChange}
+                    name="student_email"
+                    required
                   />
-                  <label htmlFor="student_email">E-Mail</label>
-                </div>
-                <div
-                  className="form-floating mb-3"
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    width: "100%",
-                  }}
-                >
-                  <select
-                    className="form-select"
-                    id="reference"
-                    name="reference"
-                    aria-label="Default select example"
+                </InputGroup>
+                <Form.Text className="text-muted">
+                  This is an input helper text.
+                </Form.Text>
+              </Form.Group>
+            </Col>
+            <Col md={4}>
+              <Form.Group
+                className="mb-3 custom-input"
+                controlId="formReference"
+              >
+                <Form.Label>Select Reference</Form.Label>
+                <InputGroup>
+                  <InputGroup.Text>
+                    <i className="fas fa-link"></i>
+                  </InputGroup.Text>
+                  <Form.Select
                     value={formData.reference}
                     onChange={handleChange}
-                  >
-                    <option value="reference">
-                      {formData.reference
-                        ? formData.reference
-                        : "Selecr Reference"}
-                    </option>
-                    {reference.map((value) => (
-                      <option
-                        key={value.id}
-                        value={`${value.id}:${value.reference}`}
-                      >
-                        {value.reference}
-                      </option>
-                    ))}
-                  </select>
-                  <label htmlFor="reference">Select Reference</label>
-                </div>
-                <div
-                  className="form-floating mb-3"
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    width: "100%",
-                  }}
-                >
-                  <select
-                    className="form-select"
-                    id="source"
-                    name="source"
-                    aria-label="Default select example"
-                    value={formData.source}
-                    onChange={handleChange}
+                    name="reference"
                   >
                     <option value="">
-                      {formData.source ? formData.source : "Selecr Source"}
+                      {formData.reference
+                        ? formData.reference
+                        : "Select Reference"}
                     </option>
-                    {source.map((value) => (
-                      <option
-                        key={value.id}
-                        value={`${value.id}:${value.source}`}
-                      >
-                        {value.source}
+                    {reference.map((ref) => (
+                      <option key={ref.id} value={`${ref.id}:${ref.reference}`}>
+                        {ref.reference}
                       </option>
                     ))}
-                  </select>
-                  <label htmlFor="source">Select Source</label>
-                </div>
-              </div>
-
-              {/* row end */}
-
-              {/* row start */}
-              <div
-                className="fv-row mb-10"
-                style={{ display: "flex", gap: "10px" }}
-              >
-                <div
-                  className="form-floating mb-3"
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    width: "100%",
-                  }}
-                >
-                  <select
-                    className="form-select"
-                    id="status"
-                    name="status"
-                    aria-label="Default select example"
+                  </Form.Select>
+                </InputGroup>
+                <Form.Text className="text-muted">
+                  Select a reference.
+                </Form.Text>
+              </Form.Group>
+            </Col>
+            <Col md={4}>
+              <Form.Group className="mb-3 custom-input" controlId="formSource">
+                <Form.Label>Select Source</Form.Label>
+                <InputGroup>
+                  <InputGroup.Text>
+                    <i className="fas fa-globe"></i>
+                  </InputGroup.Text>
+                  <Form.Select
+                    value={formData.source}
+                    onChange={handleChange}
+                    name="source"
+                  >
+                    <option value="">
+                      {formData.source ? formData.source : "Select Source"}
+                    </option>
+                    {source.map((src) => (
+                      <option key={src.id} value={`${src.id}:${src.source}`}>
+                        {src.source}
+                      </option>
+                    ))}
+                  </Form.Select>
+                </InputGroup>
+                <Form.Text className="text-muted">Select a source.</Form.Text>
+              </Form.Group>
+            </Col>
+          </Row>
+          <Row>
+            {/* Status */}
+            <Col md={4}>
+              <Form.Group className="mb-3 custom-input" controlId="formStatus">
+                <Form.Label>Status</Form.Label>
+                <InputGroup>
+                  <InputGroup.Text>
+                    <i className="fas fa-flag"></i>
+                  </InputGroup.Text>
+                  <Form.Select
                     value={formData.status}
                     onChange={handleChange}
+                    name="status"
                   >
                     <option value="active">Active</option>
                     <option value="dead">Dead</option>
                     <option value="lost">Lost</option>
                     <option value="won">Won</option>
-                    {/* {classes.map((value) => (
-                      <option key={value.id} value={value.id}>
-                        {value.reference}
-                      </option>
-                    ))} */}
-                  </select>
-                  <label htmlFor="Status">Status</label>
-                </div>
-                <div
-                  className="form-floating mb-3"
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    width: "100%",
-                  }}
-                >
-                  <input
+                  </Form.Select>
+                </InputGroup>
+                <Form.Text className="text-muted">
+                  Select the current status.
+                </Form.Text>
+              </Form.Group>
+            </Col>
+            <Col md={4}>
+              <Form.Group
+                className="mb-3 custom-input"
+                controlId="formFollowUpDate"
+              >
+                <Form.Label>Follow-up Date</Form.Label>
+                <InputGroup>
+                  <InputGroup.Text>
+                    <i className="fas fa-calendar"></i>
+                  </InputGroup.Text>
+                  <Form.Control
                     type="date"
-                    className="form-control"
-                    id="follow_up_date"
-                    name="follow_up_date"
-                    placeholder=""
-                    /* @ts-ignore */
                     value={formData.follow_up_date}
                     onChange={handleChange}
+                    name="follow_up_date"
                   />
-                  <label htmlFor="follow_up_date">Follow up date</label>
-                </div>
+                </InputGroup>
+                <Form.Text className="text-muted">
+                  Select a follow-up date.
+                </Form.Text>
+              </Form.Group>
+            </Col>
 
-                <div
-                  className="form-floating mb-3"
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    width: "100%",
-                  }}
-                >
-                  <select
-                    className="form-control"
-                    id="enquiry_type"
-                    name="enquiry_type"
+            <Col md={4}>
+              <Form.Group
+                className="mb-3 custom-input"
+                controlId="formEnquiryType"
+              >
+                <Form.Label>Enquiry Type</Form.Label>
+                <InputGroup>
+                  <InputGroup.Text>
+                    <i className="fas fa-info-circle"></i>
+                  </InputGroup.Text>
+                  <Form.Select
                     value={formData.enquiry_type}
                     onChange={handleChange}
+                    name="enquiry_type"
                   >
                     <option value="general">General</option>
                     <option value="admission">Admission</option>
-                  </select>
-                  <label htmlFor="enquiry_type">Enquiry Type</label>
-                </div>
-              </div>
-              <div
-                className="fv-row mb-10"
-                style={{ display: "flex", gap: "10px" }}
+                  </Form.Select>
+                </InputGroup>
+                <Form.Text className="text-muted">
+                  Select the type of enquiry.
+                </Form.Text>
+              </Form.Group>
+            </Col>
+          </Row>
+          <Row>
+            {/* Description */}
+            <Col md={6}>
+              <Form.Group
+                className="mb-3 custom-input"
+                controlId="formDescription"
               >
-                <div
-                  className="form-floating mb-3"
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    width: "100%",
-                  }}
-                >
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="description"
-                    name="description"
-                    placeholder=""
-                    value={formData.description}
-                    onChange={handleChange}
-                  />
-                  <label htmlFor="description">Description</label>
-                </div>
-                <div
-                  className="form-floating mb-3"
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    width: "100%",
-                  }}
-                >
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="note"
-                    name="note"
-                    placeholder=""
-                    value={formData.note}
-                    onChange={handleChange}
-                  />
-                  <label htmlFor="note">Note</label>
-                </div>
-              </div>
-              {formData.enquiry_type === "admission" && (
-                <>
-                  <div
-                    className="fv-row mb-10"
-                    style={{ display: "flex", gap: "10px" }}
+                <Form.Label>Description</Form.Label>
+                <Form.Control
+                  as="textarea"
+                  rows={3}
+                  placeholder="Enter description"
+                  value={formData.description}
+                  onChange={handleChange}
+                  name="description"
+                />
+              </Form.Group>
+            </Col>
+
+            {/* Note */}
+            <Col md={6}>
+              <Form.Group className="mb-3 custom-input" controlId="formNote">
+                <Form.Label>Note</Form.Label>
+                <Form.Control
+                  as="textarea"
+                  rows={3}
+                  placeholder="Enter note"
+                  value={formData.note}
+                  onChange={handleChange}
+                  name="note"
+                />
+              </Form.Group>
+            </Col>
+          </Row>
+          {formData.enquiry_type === "admission" && (
+            <>
+              <Row className="mb-3">
+                {/* Class */}
+                <Col md={4}>
+                  <Form.Group
+                    className="mb-3 custom-input"
+                    controlId="formClass"
                   >
-                    <div
-                      className="form-floating mb-3"
-                      style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        width: "100%",
-                      }}
-                    >
-                      <select
-                        className="form-select"
-                        id="class"
-                        name="class"
-                        aria-label="Default select example"
+                    <Form.Label>Select Class</Form.Label>
+                    <InputGroup>
+                      <InputGroup.Text>
+                        <i className="fas fa-chalkboard"></i>
+                      </InputGroup.Text>
+                      <Form.Select
                         value={formData.class}
                         onChange={handleChange}
+                        name="class"
                       >
                         <option value="class">
-                          {formData.class ? formData.class : "Selecr Class"}
+                          {formData.class ? formData.class : "Select Class"}
                         </option>
                         {classes.map((value) => (
                           <option
@@ -609,83 +572,89 @@ const CreateWalkinEnquiry = ({ show, handleClose ,setRefresh}: Props) => {
                             {value.class}
                           </option>
                         ))}
-                      </select>
-                      <label htmlFor="Class">Select Class</label>
-                    </div>
-                    <div
-                      className="form-floating mb-3"
-                      style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        width: "100%",
-                      }}
-                    >
-                      <input
+                      </Form.Select>
+                    </InputGroup>
+                    <Form.Text className="text-muted">
+                      Select the class for admission.
+                    </Form.Text>
+                  </Form.Group>
+                </Col>
+
+                {/* Date of Birth */}
+                <Col md={4}>
+                  <Form.Group
+                    className="mb-3 custom-input"
+                    controlId="formDateOfBirth"
+                  >
+                    <Form.Label>Date of Birth</Form.Label>
+                    <InputGroup>
+                      <InputGroup.Text>
+                        <i className="fas fa-calendar-alt"></i>
+                      </InputGroup.Text>
+                      <Form.Control
                         type="date"
-                        className="form-control"
-                        id="date_of_birth"
-                        name="date_of_birth"
-                        placeholder=""
-                        /* @ts-ignore */
                         value={formData.date_of_birth}
                         onChange={handleChange}
+                        name="date_of_birth"
                       />
-                      <label htmlFor="date_of_birth">Date_of_birth</label>
-                    </div>
-                    <div
-                      className="form-floating mb-3"
-                      style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        width: "100%",
-                      }}
-                    >
-                      <select
-                        className="form-select"
-                        id="gender"
-                        name="gender"
-                        aria-label="Default select example"
+                    </InputGroup>
+                    <Form.Text className="text-muted">
+                      Enter the student's date of birth.
+                    </Form.Text>
+                  </Form.Group>
+                </Col>
+
+                {/* Gender */}
+                <Col md={4}>
+                  <Form.Group
+                    className="mb-3 custom-input"
+                    controlId="formGender"
+                  >
+                    <Form.Label>Select Gender</Form.Label>
+                    <InputGroup>
+                      <InputGroup.Text>
+                        <i className="fas fa-venus-mars"></i>
+                      </InputGroup.Text>
+                      <Form.Select
                         value={formData.gender}
                         onChange={handleChange}
+                        name="gender"
                       >
                         <option defaultChecked disabled>
                           Gender
                         </option>
                         <option value="male">Male</option>
                         <option value="female">Female</option>
-                        {/* {classes.map((value) => (
-      <option key={value.id} value={value.id}>
-        {value.reference}
-      </option>
-    ))} */}
-                      </select>
-                      <label htmlFor="gender">Select Gender</label>
-                    </div>
-                  </div>
-                  <div
-                    className="fv-row mb-10"
-                    style={{ display: "flex", gap: "10px" }}
+                      </Form.Select>
+                    </InputGroup>
+                    <Form.Text className="text-muted">
+                      Select the student's gender.
+                    </Form.Text>
+                  </Form.Group>
+                </Col>
+              </Row>
+
+              <Row className="mb-3">
+                {/* Academic Year */}
+                <Col md={4}>
+                  <Form.Group
+                    className="mb-3 custom-input"
+                    controlId="formAcademicYear"
                   >
-                    <div
-                      className="form-floating mb-3"
-                      style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        width: "100%",
-                      }}
-                    >
-                      <select
-                        className="form-select"
-                        id="academic_year"
-                        name="academic_year"
-                        aria-label="Default select example"
+                    <Form.Label>Academic Year</Form.Label>
+                    <InputGroup>
+                      <InputGroup.Text>
+                        <i className="fas fa-calendar"></i>
+                      </InputGroup.Text>
+                      <Form.Select
                         value={formData.academic_year}
                         onChange={handleChange}
+                        name="academic_year"
                       >
                         <option value="academic_year">
                           {formData.academic_year
                             ? formData.academic_year
-                            : "Selecr Session"}
+                            : "Select Session"}
                         </option>
                         {sessions.map((value) => (
                           <option
@@ -695,123 +664,150 @@ const CreateWalkinEnquiry = ({ show, handleClose ,setRefresh}: Props) => {
                             {value.session}
                           </option>
                         ))}
-                      </select>
-                      <label htmlFor="academic_year">Academic_year</label>
-                    </div>
-                    <div
-                      className="form-floating mb-3"
-                      style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        width: "100%",
-                      }}
-                    >
-                      <input
+                      </Form.Select>
+                    </InputGroup>
+                    <Form.Text className="text-muted">
+                      Select the academic year.
+                    </Form.Text>
+                  </Form.Group>
+                </Col>
+
+                {/* Father Name */}
+                <Col md={4}>
+                  <Form.Group
+                    className="mb-3 custom-input"
+                    controlId="formFatherName"
+                  >
+                    <Form.Label>Father Name</Form.Label>
+                    <InputGroup>
+                      <InputGroup.Text>
+                        <i className="fas fa-user-tie"></i>
+                      </InputGroup.Text>
+                      <Form.Control
                         type="text"
-                        className="form-control"
-                        id="father_name"
-                        name="father_name"
-                        placeholder=""
+                        placeholder="Enter father's name"
                         value={formData.father_name}
                         onChange={handleChange}
+                        name="father_name"
                       />
-                      <label htmlFor="father_name">Father name</label>
-                    </div>
-                    <div
-                      className="form-floating mb-3"
-                      style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        width: "100%",
-                      }}
-                    >
-                      <input
+                    </InputGroup>
+                    <Form.Text className="text-muted">
+                      Enter the father's name.
+                    </Form.Text>
+                  </Form.Group>
+                </Col>
+
+                {/* Father Contact Number */}
+                <Col md={4}>
+                  <Form.Group
+                    className="mb-3 custom-input"
+                    controlId="formFatherPhone"
+                  >
+                    <Form.Label>Father Contact Number</Form.Label>
+                    <InputGroup>
+                      <InputGroup.Text>
+                        <i className="fas fa-phone"></i>
+                      </InputGroup.Text>
+                      <Form.Control
                         type="tel"
-                        className="form-control"
-                        id="father_phone"
-                        name="father_phone"
-                        placeholder=""
+                        placeholder="Enter father's contact number"
                         value={formData.father_phone}
                         onChange={handleChange}
+                        name="father_phone"
                       />
-                      <label htmlFor="father_phone">Father contact no</label>
-                    </div>
-                  </div>
-                  <div
-                    className="fv-row mb-10"
-                    style={{ display: "flex", gap: "10px" }}
+                    </InputGroup>
+                    <Form.Text className="text-muted">
+                      Enter the father's contact number.
+                    </Form.Text>
+                  </Form.Group>
+                </Col>
+              </Row>
+
+              <Row className="mb-3">
+                {/* Mother Name */}
+                <Col md={4}>
+                  <Form.Group
+                    className="mb-3 custom-input"
+                    controlId="formMotherName"
                   >
-                    <div
-                      className="form-floating mb-3"
-                      style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        width: "100%",
-                      }}
-                    >
-                      <input
+                    <Form.Label>Mother Name</Form.Label>
+                    <InputGroup>
+                      <InputGroup.Text>
+                        <i className="fas fa-user-tie"></i>
+                      </InputGroup.Text>
+                      <Form.Control
                         type="text"
-                        className="form-control"
-                        id="mother_name"
-                        name="mother_name"
-                        placeholder=""
+                        placeholder="Enter mother's name"
                         value={formData.mother_name}
                         onChange={handleChange}
+                        name="mother_name"
                       />
-                      <label htmlFor="mother_name">Mother name</label>
-                    </div>
-                    <div
-                      className="form-floating mb-3"
-                      style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        width: "100%",
-                      }}
-                    >
-                      <input
+                    </InputGroup>
+                    <Form.Text className="text-muted">
+                      Enter the mother's name.
+                    </Form.Text>
+                  </Form.Group>
+                </Col>
+
+                {/* Mother Contact Number */}
+                <Col md={4}>
+                  <Form.Group
+                    className="mb-3 custom-input"
+                    controlId="formMotherPhone"
+                  >
+                    <Form.Label>Mother Contact Number</Form.Label>
+                    <InputGroup>
+                      <InputGroup.Text>
+                        <i className="fas fa-phone"></i>
+                      </InputGroup.Text>
+                      <Form.Control
                         type="tel"
-                        className="form-control"
-                        id="mother_phone"
-                        name="mother_phone"
-                        placeholder=""
+                        placeholder="Enter mother's contact number"
                         value={formData.mother_phone}
                         onChange={handleChange}
+                        name="mother_phone"
                       />
-                      <label htmlFor="mother_phone">
-                        Mother contact number
-                      </label>
-                    </div>
-                    <div
-                      className="form-floating mb-3"
-                      style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        width: "100%",
-                      }}
-                    >
-                      <input
+                    </InputGroup>
+                    <Form.Text className="text-muted">
+                      Enter the mother's contact number.
+                    </Form.Text>
+                  </Form.Group>
+                </Col>
+
+                {/* Current School */}
+                <Col md={4}>
+                  <Form.Group
+                    className="mb-3 custom-input"
+                    controlId="formCurrentSchool"
+                  >
+                    <Form.Label>Current School</Form.Label>
+                    <InputGroup>
+                      <InputGroup.Text>
+                        <i className="fas fa-school"></i>
+                      </InputGroup.Text>
+                      <Form.Control
                         type="text"
-                        className="form-control"
-                        id="current_school"
-                        name="current_school"
-                        placeholder=""
+                        placeholder="Enter current school"
                         value={formData.current_school}
                         onChange={handleChange}
+                        name="current_school"
                       />
-                      <label htmlFor="current_school">Current_school</label>
-                    </div>
-                  </div>
-                </>
-              )}
+                    </InputGroup>
+                    <Form.Text className="text-muted">
+                      Enter the current school of the student.
+                    </Form.Text>
+                  </Form.Group>
+                </Col>
+              </Row>
+            </>
+          )}
 
-              <div style={{ display: "flex", justifyContent: "end" }}>
-                <button className="btn btn-primary" type="submit">
-                  Submit
-                </button>
-              </div>
-            </div>
-          </form>
-        </div>
+          <div style={{ display: "flex", justifyContent: "end" }}>
+            <button className="btn btn-primary" type="submit">
+              Submit
+            </button>
+          </div>
+        </Form>
       </div>
     </Modal>,
     modalsRoot
