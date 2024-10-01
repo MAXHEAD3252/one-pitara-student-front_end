@@ -20,6 +20,7 @@ const TablesWidget64 = () => {
   const { currentUser } = useAuth();
   const Navigate = useNavigate();
   const schoolId = (currentUser as unknown as CurrentUser)?.school_id;
+  
   const [isAddModalVisible, setIsAddModalVisible] = useState(false);
 
   const [formData, setFormData] = useState({

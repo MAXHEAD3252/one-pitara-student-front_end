@@ -45,7 +45,7 @@ const CardsWidget5: FC<CardsWidget5Props> = ({ schoolId }) => {
         }
         const data = await response.json();
         setSchoolDetails(data[0]);
-        setFormData(data[0]); // Populate the form data
+        setFormData(data[0]); // Populate the form data 
       } catch (error) {
         console.error("Error fetching school details:", error);
       }
@@ -66,8 +66,8 @@ const CardsWidget5: FC<CardsWidget5Props> = ({ schoolId }) => {
     try {
       // Handle file uploads first if necessary
       const updatedFormData = { ...formData };
-
-       if (logoFile) {
+      console.log(updatedFormData)
+      if (logoFile) {
       const logoResponse = await uploadFile(logoFile, 'logo',schoolId);
       updatedFormData.school_logo = logoResponse.url; // Update logo URL in formData
     }
@@ -91,6 +91,7 @@ const CardsWidget5: FC<CardsWidget5Props> = ({ schoolId }) => {
       if (!response.ok) {
         toast.error("An error occurred!", { autoClose: 3000 });
         throw new Error("Failed to update school details");
+
       }
       const updatedData = await response.json();
       toast.success("Data sent successfully.", { autoClose: 3000 });
@@ -136,7 +137,6 @@ const CardsWidget5: FC<CardsWidget5Props> = ({ schoolId }) => {
     formData.append('file', file);
     formData.append('type', type);
     formData.append('school_id', schoolId);
-  
     try {
       const response = await fetch(`${DOMAIN}/api/superadmin/school_update_upload`, {
         method: 'POST',
@@ -173,7 +173,7 @@ const CardsWidget5: FC<CardsWidget5Props> = ({ schoolId }) => {
     educational_board: "fas fa-book",
     school_id: "fas fa-id-card",
     is_active: "fas fa-check",
-    upload_documents: "fas fa-file-upload",
+    upload_documents: "fas fa-file-upload", 
   };
 
   return (

@@ -3,8 +3,8 @@ import {
   DOMAIN,
   getDesignationModule,
 } from "../../../../app/routing/ApiEndpoints";
-import { useNavigate } from "react-router-dom";
-import { Modal, Button, Form, Row, Col, InputGroup } from "react-bootstrap";
+import { DeleteConfirmationModal } from "../../modals/create-app-stepper/DeleteConfirmationModal";
+import { Modal, Form, Row, Col, InputGroup } from "react-bootstrap";
 import { toast } from "react-toastify";
 
 interface SchoolModule {
@@ -34,6 +34,11 @@ const TablesWidget42 = () => {
   const [isAddModalVisible, setIsAddModalVisible] = useState(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [desId, setDesId] = useState("");
+  const [id, setId] = useState('');
+  const [DesData, setDesData] = useState([]);
+  const [isActive, setIsActive] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -53,6 +58,40 @@ const TablesWidget42 = () => {
     fetchData();
   }, [refresh]);
 
+console.log(DesData)
+
+  useEffect(() => {
+    const fetchDesignation = async () => {
+      try {
+        const response = await fetch(`${DOMAIN}/api/superadmin/get_designation/${desId}`);
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const data = await response.json();
+        console.log(data);
+        setDesData(data[0]);
+        setRefresh(false);
+      } catch (error) {
+        console.error("Error fetching school details:", error);
+      }
+    };
+
+    fetchDesignation();
+  }, [refresh,desId]);
+
+
+  
+
+  const handleShowDeleteModal = (id: string) => {
+    setId(id);
+    setShowModal(true);
+  };
+
+  const handleCloseDeleteModal = () => {
+    setId('');
+    setShowModal(false);
+  };
+
   const showAddModal = () => {
     setIsAddModalVisible(true);
   };
@@ -64,7 +103,7 @@ const TablesWidget42 = () => {
 
   const handleAddSave = async () => {
     const updatedFormData = { ...formData, isActive: isActive ? 1 : 0 }; // Add isActive as 0 or 1
-    console.log(updatedFormData);
+    // console.log(updatedFormData);
 
     try {
       const response = await fetch(`${DOMAIN}/api/superadmin/add_designation`, {
@@ -94,7 +133,7 @@ const TablesWidget42 = () => {
   };
 
   const handleEditSave = async () => {
-    const updatedFormData = { ...formData, isActive: isActive ? 1 : 0 }; // Add isActive as 0 or 1
+    const updatedFormData = { ...DesData, isActive: isActive ? 1 : 0 }; // Add isActive as 0 or 1
     console.log(updatedFormData);
 
     try {
@@ -127,12 +166,7 @@ const TablesWidget42 = () => {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this designation?"
-    );
-
-    if (confirmDelete) {
+  const handleDelete = async () => {
       try {
         const response = await fetch(
           `${DOMAIN}/api/superadmin/delete_designationmodule/${id}`,
@@ -148,11 +182,11 @@ const TablesWidget42 = () => {
         // Optionally, you can refresh the list or update the state to remove the deleted item
         setRefresh(true); // Assuming you have a way to refresh the list of designations
         toast.success("Designation deleted successfully.", { autoClose: 3000 });
+        handleCloseDeleteModal();
       } catch (error) {
         console.error("Error deleting designation:", error);
         toast.error("Failed to delete designation!", { autoClose: 3000 });
       }
-    }
   };
 
   const handleAddCancel = () => {
@@ -171,10 +205,25 @@ const TablesWidget42 = () => {
     }));
   };
 
-  const [isActive, setIsActive] = useState(false);
+  const handleEditInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setDesData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
 
   const handleToggle = () => {
     setIsActive((prevState) => !prevState); // Toggles the isActive state
+  };
+
+
+  const handleEditToggle = () => {
+    setDesData((prevData) => ({
+      ...prevData,
+      is_active: !prevData.is_active, // Toggle the boolean value
+    }));
   };
 
   return (
@@ -433,7 +482,7 @@ const TablesWidget42 = () => {
                     </div>
 
                     <div
-                      onClick={() => handleDelete(designationDetail.id)}
+                      onClick={() => handleShowDeleteModal(designationDetail.id)}
                       style={{
                         width: "32px",
                         height: "40px",
@@ -515,7 +564,7 @@ const TablesWidget42 = () => {
         backdrop={true}
       >
         <div className="modal-header">
-          <h2 style={{ fontFamily: "Manrope" }}>Edit Designation Details:</h2>
+          <h2 style={{ fontFamily: "Manrope" }}>Add Designation Details:</h2>
           <div
             className="btn btn-sm btn-icon btn-active-color-primary"
             onClick={handleAddCancel}
@@ -640,8 +689,8 @@ const TablesWidget42 = () => {
                       type="text"
                       name="name"
                       placeholder="Update school name"
-                      value={formData.name || ""} // Update the formData value
-                      onChange={handleInputChange}
+                      value={DesData.name} // Update the formData value
+                      onChange={handleEditInputChange}
                       required
                     />
                   </InputGroup>
@@ -657,15 +706,15 @@ const TablesWidget42 = () => {
                   <Form.Check
                     type="switch"
                     id="isActiveSwitch"
-                    label={isActive ? "Active" : "Inactive"}
-                    checked={isActive}
-                    onChange={handleToggle}
+                    label={DesData.is_active ? "Active" : "Inactive"}
+                    checked={DesData.is_active}
+                    onChange={handleEditToggle}
                     className="ms-2"
                     style={{
                       fontFamily: "Manrope",
                       fontSize: "14px",
                       fontWeight: "500",
-                      color: isActive ? "#28a745" : "#dc3545",
+                      color: DesData.is_active ? "#28a745" : "#dc3545",
                     }}
                   />
                 </Form.Group>
@@ -703,6 +752,16 @@ const TablesWidget42 = () => {
           </button>
         </div>
       </Modal>
+
+      <DeleteConfirmationModal
+        show={showModal}
+        handleClose={handleCloseDeleteModal}
+        handleDelete={handleDelete}
+        title="Confirm Deletion"
+        description={`Are you sure you want to delete the Designation ?  \n This action cannot be undone.`}
+        confirmButtonText="Delete"
+        cancelButtonText="Cancel"
+      />
     </div>
   );
 };

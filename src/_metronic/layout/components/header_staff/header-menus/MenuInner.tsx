@@ -1,5 +1,7 @@
 import { toAbsoluteUrl } from "../../../../helpers";
 import { useAuth } from "../../../../../app/modules/auth/core/Auth";
+import { useEffect } from "react";
+import { DOMAIN } from "../../../../../app/routing/ApiEndpoints";
 
 
 
@@ -8,7 +10,39 @@ export function MenuInner() {
   const useRole = currentUser?.role_name;
   const school_id = currentUser?.school_id;
   const schoolName = currentUser?.school_name;
+  const schoollogopath = currentUser?.school_logo;
+  const schoolsmalllogopath = currentUser?.school_small_logo;
+  const schoolimage = currentUser?.school_image;
   
+  console.log(schoollogopath)
+  // console.log(schoolsmalllogopath)
+  // console.log(schoolimage)
+
+  useEffect(() => {
+    const fetchlogo = async () => {
+      try {
+        console.log('hi');
+        const response = await fetch(`${DOMAIN}/api/superadmin/get_school_logo`, {
+          method: "POST",
+          headers: { 
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({schoollogopath}), // Send the path to the backend
+        });
+
+        console.log(response)
+        if (!response.ok) {
+          throw new Error("Failed to fetch logo");
+        }
+        const data = await response.json();
+
+      } catch (error) {
+        console.error("Error fetching school details:", error);
+      }
+    };
+
+    fetchlogo();
+  }, []);
 
   return (
     <div

@@ -22,19 +22,21 @@ interface UserDetails {
   role_id: number;
   role_name: string;
   designation_name: string;
-  is_active: number;
-  designation_id : number;
+  isActive: number;
+  designation_id: number;
   // Add more properties as per your actual data structure
 }
 
 const TablesWidget44: React.FC<TablesWidget44Props> = ({ schoolId }: any) => {
   const [usersDetails, setUsersDetails] = useState<UserDetails[]>([]);
   const [formData, setFormData] = useState<Partial<UserDetails>>({});
-  console.log(usersDetails);
   const [refresh, setRefresh] = useState(false);
   const [isAddModalVisible, setIsAddModalVisible] = useState(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [userId, setUserId] = useState("");
+  const [userData, setUserData] = useState([]);
+  
+
   const [isActive, setIsActive] = useState(false);
   const [roles, setRoles] = useState([]);
   const [designations, setDesignations] = useState([]);
@@ -51,14 +53,14 @@ const TablesWidget44: React.FC<TablesWidget44Props> = ({ schoolId }: any) => {
         const data = await response.json();
         setUsersDetails(data);
         // console.log(data);
-        setRefresh(false)
+        setRefresh(false);
       } catch (error) {
         console.error("Error fetching school details:", error);
       }
     };
 
     fetchData();
-  }, [schoolId,refresh]);
+  }, [schoolId, refresh]);
 
   const fetchRoles = async () => {
     try {
@@ -78,15 +80,16 @@ const TablesWidget44: React.FC<TablesWidget44Props> = ({ schoolId }: any) => {
     fetchRoles(); // Fetch roles when the component mounts
   }, []);
 
-
   const fetchDesignation = async () => {
     try {
-      const response = await fetch(`${DOMAIN}/api/superadmin/get_designationmodule`);
+      const response = await fetch(
+        `${DOMAIN}/api/superadmin/get_designationmodule`
+      );
       if (!response.ok) {
         throw new Error("Failed to fetch roles");
       }
       const data = await response.json();
-      setDesignations(data); 
+      setDesignations(data);
     } catch (error) {
       console.error("Error fetching roles:", error);
       toast.error("Failed to fetch roles!", { autoClose: 3000 });
@@ -96,6 +99,29 @@ const TablesWidget44: React.FC<TablesWidget44Props> = ({ schoolId }: any) => {
   useEffect(() => {
     fetchDesignation(); // Fetch roles when the component mounts
   }, []);
+
+  const fetchUserById = async () => {
+    try {
+      const response = await fetch(
+        `${DOMAIN}/api/superadmin/get_user/${userId}`
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch roles");
+      }
+      const data = await response.json();
+      console.log(data);
+      
+      setUserData(data[0]);
+    } catch (error) {
+      console.error("Error fetching roles:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchUserById(); // Fetch roles when the component mounts
+  }, [isEditModalVisible]);
+
+  
 
   const showAddModal = () => {
     setIsAddModalVisible(true);
@@ -111,13 +137,16 @@ const TablesWidget44: React.FC<TablesWidget44Props> = ({ schoolId }: any) => {
     console.log(updatedFormData);
 
     try {
-      const response = await fetch(`${DOMAIN}/api/superadmin/add_user/${schoolId}`, {
-      method: "POST", // Assuming you are using PUT method to update
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(updatedFormData), // Send updated form data including isActive
-      });
+      const response = await fetch(
+        `${DOMAIN}/api/superadmin/add_user/${schoolId}`,
+        {
+          method: "POST", // Assuming you are using PUT method to update
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(updatedFormData), // Send updated form data including isActive
+        }
+      );
 
       if (!response.ok) {
         toast.error("An error occurred!", { autoClose: 3000 });
@@ -138,9 +167,7 @@ const TablesWidget44: React.FC<TablesWidget44Props> = ({ schoolId }: any) => {
   };
 
   const handleEditSave = async () => {
-    const updatedFormData = { ...formData, isActive: isActive ? 1 : 0 }; // Add isActive as 0 or 1
-    console.log(updatedFormData);
-
+    const updatedFormData = { ...userData, isActive: isActive ? 1 : 0 }; 
     try {
       const response = await fetch(
         `${DOMAIN}/api/superadmin/edit_user/${userId}`,
@@ -162,7 +189,6 @@ const TablesWidget44: React.FC<TablesWidget44Props> = ({ schoolId }: any) => {
       setUsersDetails(updatedData); // Update the state with the new data
       setIsEditModalVisible(false);
       setRefresh(true);
-
       // Close the modal
       handleEditCancel(); // Close the modal
     } catch (error) {
@@ -199,9 +225,6 @@ const TablesWidget44: React.FC<TablesWidget44Props> = ({ schoolId }: any) => {
     }
   };
 
-
-
-
   const handleAddCancel = () => {
     setIsAddModalVisible(false);
   };
@@ -217,10 +240,25 @@ const TablesWidget44: React.FC<TablesWidget44Props> = ({ schoolId }: any) => {
       [name]: value,
     }));
   };
+  const handleInputEditChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setUserData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
 
   const handleToggle = () => {
     setIsActive((prevState) => !prevState); // Toggles the isActive state
   };
+
+  const handleEditToggle = () => {
+    setUserData((prevData) => ({
+      ...prevData,
+      is_active: !prevData.is_active, // Toggle the boolean value
+    }));
+  };
+  
 
   return (
     <div
@@ -496,7 +534,7 @@ const TablesWidget44: React.FC<TablesWidget44Props> = ({ schoolId }: any) => {
                         padding: "10px 6px 10px 6px",
                         gap: "10px",
                         backgroundColor: "#FFE7E1",
-                        cursor:'pointer',
+                        cursor: "pointer",
                       }}
                     >
                       <svg
@@ -560,7 +598,6 @@ const TablesWidget44: React.FC<TablesWidget44Props> = ({ schoolId }: any) => {
         </table>
       </div>
 
-      
       {/* Modal for Adding designation  */}
       <Modal
         id="kt_modal_create_app"
@@ -604,7 +641,6 @@ const TablesWidget44: React.FC<TablesWidget44Props> = ({ schoolId }: any) => {
                   </InputGroup>
                 </Form.Group>
               </Col>
-
 
               <Col md={6}>
                 <Form.Group
@@ -739,7 +775,7 @@ const TablesWidget44: React.FC<TablesWidget44Props> = ({ schoolId }: any) => {
                 fontSize: "12px",
                 fontWeight: "500",
               }}
-              >
+            >
               Save
             </span>
           </button>
@@ -773,23 +809,22 @@ const TablesWidget44: React.FC<TablesWidget44Props> = ({ schoolId }: any) => {
                   className="mb-3 custom-input"
                   controlId="formUserName"
                 >
-                  <Form.Label>User First name</Form.Label>
+                  <Form.Label>User First Name</Form.Label>
                   <InputGroup>
                     <InputGroup.Text>
-                      <i className="fas fa-school"></i>
+                      <i className="fas fa-user"></i>
                     </InputGroup.Text>
                     <Form.Control
                       type="text"
                       name="name"
-                      placeholder="Enter User name"
-                      value={formData.name || ""}
-                      onChange={handleInputChange}
+                      placeholder="Enter User Name"
+                      value={userData.name}
+                      onChange={handleInputEditChange}
                       required
                     />
                   </InputGroup>
                 </Form.Group>
               </Col>
-
 
               <Col md={6}>
                 <Form.Group
@@ -799,14 +834,14 @@ const TablesWidget44: React.FC<TablesWidget44Props> = ({ schoolId }: any) => {
                   <Form.Label>User Surname</Form.Label>
                   <InputGroup>
                     <InputGroup.Text>
-                      <i className="fas fa-school"></i>
+                      <i className="fas fa-user"></i>
                     </InputGroup.Text>
                     <Form.Control
                       type="text"
                       name="surname"
                       placeholder="Enter User Surname"
-                      value={formData.surname || ""}
-                      onChange={handleInputChange}
+                      value={userData.surname}
+                      onChange={handleInputEditChange}
                       required
                     />
                   </InputGroup>
@@ -818,14 +853,14 @@ const TablesWidget44: React.FC<TablesWidget44Props> = ({ schoolId }: any) => {
                   <Form.Label>Email</Form.Label>
                   <InputGroup>
                     <InputGroup.Text>
-                      <i className="fas fa-school"></i>
+                      <i className="fas fa-envelope"></i>
                     </InputGroup.Text>
                     <Form.Control
-                      type="text"
+                      type="email"
                       name="email"
                       placeholder="Enter Email"
-                      value={formData.email || ""}
-                      onChange={handleInputChange}
+                      value={userData.email}
+                      onChange={handleInputEditChange}
                       required
                     />
                   </InputGroup>
@@ -838,8 +873,8 @@ const TablesWidget44: React.FC<TablesWidget44Props> = ({ schoolId }: any) => {
                   <Form.Control
                     as="select"
                     name="roleId"
-                    value={formData.role_id}
-                    onChange={handleInputChange}
+                    value={userData.role_id}
+                    onChange={handleInputEditChange}
                     required
                   >
                     <option value="">Select a role</option>
@@ -861,8 +896,8 @@ const TablesWidget44: React.FC<TablesWidget44Props> = ({ schoolId }: any) => {
                   <Form.Control
                     as="select"
                     name="designationId"
-                    value={formData.designation_id}
-                    onChange={handleInputChange}
+                    value={userData.designation}
+                    onChange={handleInputEditChange}
                     required
                   >
                     <option value="">Select a designation</option>
@@ -884,15 +919,15 @@ const TablesWidget44: React.FC<TablesWidget44Props> = ({ schoolId }: any) => {
                   <Form.Check
                     type="switch"
                     id="isActiveSwitch"
-                    label={isActive ? "Active" : "Inactive"}
-                    checked={isActive}
-                    onChange={handleToggle}
+                    label={userData.is_active ? "Active" : "Inactive"}
+                    checked={userData.is_active}
+                    onChange={handleEditToggle}
                     className="ms-2"
                     style={{
                       fontFamily: "Manrope",
                       fontSize: "14px",
                       fontWeight: "500",
-                      color: isActive ? "#28a745" : "#dc3545",
+                      color: userData.is_active ? "#28a745" : "#dc3545",
                     }}
                   />
                 </Form.Group>
@@ -924,7 +959,7 @@ const TablesWidget44: React.FC<TablesWidget44Props> = ({ schoolId }: any) => {
                 fontSize: "12px",
                 fontWeight: "500",
               }}
-              >
+            >
               Save
             </span>
           </button>
