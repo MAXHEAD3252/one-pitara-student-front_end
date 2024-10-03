@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import { Modal } from "react-bootstrap";
+import { Button, Col, Form, InputGroup, Modal, Row } from "react-bootstrap";
 import { useAuth } from "../../../../app/modules/auth/core/Auth";
 import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
 import axios from "axios";
@@ -69,14 +69,7 @@ interface Data {
   gardian_address: string;
 }
 
-
-
-const CreateStartAdmissionProcess = ({
-  show,
-  handleClose,
-  enqId,
-}: Props) => {
-
+const CreateStartAdmissionProcess = ({ show, handleClose, enqId }: Props) => {
   const { currentUser } = useAuth();
   const schoolId = currentUser?.school_id;
   const [source, setSource] = useState<Source[]>([]);
@@ -296,20 +289,22 @@ const CreateStartAdmissionProcess = ({
     const fetchStatus = async () => {
       const enquiry_id = enqId;
       try {
-        const response = await fetch(`${DOMAIN}/api/school/getaddmissionstatusById/${schoolId}/${enquiry_id}`);
+        const response = await fetch(
+          `${DOMAIN}/api/school/getaddmissionstatusById/${schoolId}/${enquiry_id}`
+        );
         if (!response.ok) {
-          throw new Error('Failed to fetch status');
+          throw new Error("Failed to fetch status");
         }
         const data = await response.json();
         setStatus(data[0].status);
       } catch (error) {
-        console.error('Error fetching status:', error);
+        console.error("Error fetching status:", error);
         return null;
       }
     };
     fetchStatus();
   }, [schoolId, enqId, formSubmitted]);
-  
+
   /* @ts-ignore */
   const handleChange = (key, value, type) => {
     if (type === "file") {
@@ -331,7 +326,7 @@ const CreateStartAdmissionProcess = ({
     const enquiry_id = enqId;
     const formData = new FormData();
 
-      /* @ts-ignore */
+    /* @ts-ignore */
     formData.append("enquiry_id", enquiry_id);
     formData.append("name", data.name);
     formData.append("contact", data.contact);
@@ -369,7 +364,7 @@ const CreateStartAdmissionProcess = ({
     if (pic_data.mother_pic) formData.append("mother_pic", pic_data.mother_pic);
     if (pic_data.gardian_pic)
       formData.append("gardian_pic", pic_data.gardian_pic);
-        /* @ts-ignore */
+    /* @ts-ignore */
     formData.append("school_id", schoolId);
 
     try {
@@ -394,7 +389,7 @@ const CreateStartAdmissionProcess = ({
       console.error("Error submitting form:", error);
       setFormSubmitted(false);
       setSubmissionStatus(
-            /* @ts-ignore */
+        /* @ts-ignore */
         `Submission failed: ${error.message || "Unknown error"}`
       );
     }
@@ -410,7 +405,7 @@ const CreateStartAdmissionProcess = ({
       show={show}
       onHide={handleClose}
     >
-       <div
+      <div
         className="modal-header"
         style={{
           backgroundColor: "#F2F6FF",
@@ -425,7 +420,7 @@ const CreateStartAdmissionProcess = ({
           <i className="fas fa-times"></i>
         </div>
       </div>
-      <div className="modal-body"    style={{ backgroundColor: "#F2F6FF" }}>
+      <div className="modal-body" style={{ backgroundColor: "#F2F6FF" }}>
         <div
           className="modal-body"
           style={{
@@ -434,8 +429,8 @@ const CreateStartAdmissionProcess = ({
             display: "flex",
             alignItems: "center",
             flexDirection: "row",
-            fontSize:'16px',
-            fontFamily:'Manrope'
+            fontSize: "16px",
+            fontFamily: "Manrope",
           }}
         >
           {status === "isPending"
@@ -453,1020 +448,893 @@ const CreateStartAdmissionProcess = ({
 
         <div className="modal-body" style={{ justifyContent: "center" }}>
           {status === "isPending" && (
-            <form onSubmit={handleSubmit}>
-              <div
-                style={{
-                  marginBottom: "23px",
-                  overflowY: "scroll",
-                  height: "500px",
-                }}
-              >
-                <div
-                  className="head"
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-around",
-                    alignItems: "center",
-                    marginBottom: "20px",
-                  }}
-                >
-                  <span
-                    className=""
-                    id="staticBackdropLabel"
-                    style={{
-                      justifyContent: "center",
-                      textAlign: "center",
-                      alignItems: "center",
-                      fontSize: "20px",
-                      fontWeight: "600",
-                      fontFamily: "Manrope",
-                    }}
+            <Form onSubmit={handleSubmit}>
+              <h1>Student Information</h1>
+              <hr />
+              <Row>
+                <Col md={4}>
+                  <Form.Group
+                    className="mb-3 custom-input"
+                    controlId="formName"
                   >
-                    Student Information
-                  </span>
-                </div>
-                <hr style={{ marginBottom: "30px" }} />
-                <div
-                  className="fv-row mb-10"
-                  style={{ display: "flex", gap: "10px" }}
-                >
-                  <div
-                    className="form-floating mb-3"
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      width: "100%",
-                    }}
-                  >
-                    <input
-                      type="text"
-                      className="form-control"
-                      id="name"
-                      name="name"
-                      placeholder=""
-                      value={data.name}
-                      onChange={(e) =>
-                        handleChange("name", e.target.value, "text")
-                      }
-                    />
-                    <label htmlFor="name">Name</label>
-                  </div>
-                  <div
-                    className="form-floating mb-3"
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      width: "100%",
-                    }}
-                  >
-                    <input
-                      type="tel"
-                      className="form-control"
-                      id="contact"
-                      name="contact"
-                      placeholder=""
-                      value={data.contact}
-                      onChange={(e) =>
-                        handleChange("contact", e.target.value, "text")
-                      }
-                    />
-                    <label htmlFor="contact">Contact no</label>
-                  </div>
+                    <Form.Label>Name *</Form.Label>
+                    <InputGroup>
+                      <InputGroup.Text>
+                        <i className="fas fa-user"></i>
+                      </InputGroup.Text>
+                      <Form.Control
+                        type="text"
+                        name="name"
+                        placeholder="Enter name"
+                        value={data.name || ""}
+                        onChange={(e) =>
+                          handleChange("name", e.target.value, "text")
+                        }
+                        required
+                      />
+                    </InputGroup>
+                  </Form.Group>
+                </Col>
 
-                  <div
-                    className="form-floating mb-3"
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      width: "100%",
-                    }}
+                <Col md={4}>
+                  <Form.Group
+                    className="mb-3 custom-input"
+                    controlId="formContact"
                   >
-                    <input
-                      type="email"
-                      className="form-control"
-                      id="email"
-                      name="email"
-                      placeholder=""
-                      value={data.email}
-                      onChange={(e) =>
-                        handleChange("email", e.target.value, "text")
-                      }
-                    />
-                    <label htmlFor="admission_no">E-Mail</label>
-                  </div>
-                </div>
+                    <Form.Label>Contact no *</Form.Label>
+                    <InputGroup>
+                      <InputGroup.Text>
+                        <i className="fas fa-phone"></i>
+                      </InputGroup.Text>
+                      <Form.Control
+                        type="tel"
+                        name="contact"
+                        placeholder="Enter contact no"
+                        value={data.contact || ""}
+                        onChange={(e) =>
+                          handleChange("contact", e.target.value, "text")
+                        }
+                        required
+                      />
+                    </InputGroup>
+                  </Form.Group>
+                </Col>
 
-                <div
-                  className="fv-row mb-10"
-                  style={{ display: "flex", gap: "10px" }}
-                >
-                  <div
-                    className="form-floating mb-3"
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      width: "100%",
-                    }}
+                <Col md={4}>
+                  <Form.Group
+                    className="mb-3 custom-input"
+                    controlId="formEmail"
                   >
-                    <input
-                      type="text"
-                      className="form-control"
-                      id="state"
-                      name="state"
-                      placeholder=""
-                      value={data.state}
-                      onChange={(e) =>
-                        handleChange("state", e.target.value, "text")
-                      }
-                    />
-                    <label htmlFor="state">State</label>
-                  </div>
-                  <div
-                    className="form-floating mb-3"
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      width: "100%",
-                    }}
-                  >
-                    <input
-                      type="text"
-                      className="form-control"
-                      id="city"
-                      name="city"
-                      placeholder=""
-                      value={data.city}
-                      onChange={(e) =>
-                        handleChange("city", e.target.value, "text")
-                      }
-                    />
-                    <label htmlFor="city">City</label>
-                  </div>
-                  <div
-                    className="form-floating mb-3"
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      width: "100%",
-                    }}
-                  >
-                    <input
-                      type="text"
-                      className="form-control"
-                      id="pincode"
-                      name="pincode"
-                      placeholder=""
-                      value={data.pincode}
-                      onChange={(e) =>
-                        handleChange("pincode", e.target.value, "text")
-                      }
-                    />
-                    <label htmlFor="pincode">Pincode</label>
-                  </div>
-                </div>
+                    <Form.Label>E-Mail *</Form.Label>
+                    <InputGroup>
+                      <InputGroup.Text>
+                        <i className="fas fa-envelope"></i>
+                      </InputGroup.Text>
+                      <Form.Control
+                        type="email"
+                        name="email"
+                        placeholder="Enter email"
+                        value={data.email || ""}
+                        onChange={(e) =>
+                          handleChange("email", e.target.value, "text")
+                        }
+                        required
+                      />
+                    </InputGroup>
+                  </Form.Group>
+                </Col>
+              </Row>
 
-                <div
-                  className="fv-row mb-10"
-                  style={{ display: "flex", gap: "10px" }}
-                >
-                  <div
-                    className="form-floating mb-3"
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      width: "100%",
-                    }}
+              <Row>
+                <Col md={4}>
+                  <Form.Group
+                    className="mb-3 custom-input"
+                    controlId="formState"
                   >
-                    <input
-                      type="text"
-                      className="form-control"
-                      id="religion"
-                      name="religion"
-                      placeholder=""
-                      value={data.religion}
-                      onChange={(e) =>
-                        handleChange("religion", e.target.value, "text")
-                      }
-                    />
-                    <label htmlFor="religion">Religion</label>
-                  </div>
+                    <Form.Label>State *</Form.Label>
+                    <InputGroup>
+                      <InputGroup.Text>
+                        <i className="fas fa-map"></i>
+                      </InputGroup.Text>
+                      <Form.Control
+                        type="text"
+                        name="state"
+                        placeholder="Enter state"
+                        value={data.state || ""}
+                        onChange={(e) =>
+                          handleChange("state", e.target.value, "text")
+                        }
+                        required
+                      />
+                    </InputGroup>
+                  </Form.Group>
+                </Col>
 
-                  <div
-                    className="form-floating mb-3"
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      width: "100%",
-                    }}
+                <Col md={4}>
+                  <Form.Group
+                    className="mb-3 custom-input"
+                    controlId="formCity"
                   >
-                    <select
-                      className="form-select"
-                      id="gender"
-                      name="gender"
-                      aria-label="Default select example"
-                      value={data.gender}
-                      onChange={(e) =>
-                        handleChange("gender", e.target.value, "text")
-                      }
-                    >
-                      <option defaultChecked disabled>
-                        Gender
-                      </option>
-                      <option value="male">Male</option>
-                      <option value="female">Female</option>
-                      {/* {classes.map((value) => (
-                      <option key={value.id} value={value.id}>
-                        {value.reference}
-                      </option>
-                    ))} */}
-                    </select>
-                    <label htmlFor="gender">Select Gender</label>
-                  </div>
-                  <div
-                    className="form-floating mb-3"
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      width: "100%",
-                    }}
-                  >
-                    <input
-                      type="text"
-                      className="form-control"
-                      id="current_school"
-                      name="current_school"
-                      placeholder=""
-                      value={data.current_school}
-                      onChange={(e) =>
-                        handleChange("current_school", e.target.value, "text")
-                      }
-                    />
-                    <label htmlFor="current_school">Current_school</label>
-                  </div>
-                </div>
+                    <Form.Label>City *</Form.Label>
+                    <InputGroup>
+                      <InputGroup.Text>
+                        <i className="fas fa-city"></i>
+                      </InputGroup.Text>
+                      <Form.Control
+                        type="text"
+                        name="city"
+                        placeholder="Enter city"
+                        value={data.city || ""}
+                        onChange={(e) =>
+                          handleChange("city", e.target.value, "text")
+                        }
+                        required
+                      />
+                    </InputGroup>
+                  </Form.Group>
+                </Col>
 
-                <div
-                  className="fv-row mb-10"
-                  style={{ display: "flex", gap: "10px" }}
-                >
-                  <div
-                    className="form-floating mb-3"
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      width: "100%",
-                    }}
+                <Col md={4}>
+                  <Form.Group
+                    className="mb-3 custom-input"
+                    controlId="formPincode"
                   >
-                    <input
-                      type="date"
-                      className="form-control"
-                      id="date_of_birth"
-                      name="date_of_birth"
-                      placeholder=""
-                      value={data.date_of_birth}
-                      onChange={(e) =>
-                        handleChange("date_of_birth", e.target.value, "text")
-                      }
-                    />
-                    <label htmlFor="date_of_birth">Date_of_birth</label>
-                  </div>
+                    <Form.Label>Pincode *</Form.Label>
+                    <InputGroup>
+                      <InputGroup.Text>
+                        <i className="fas fa-mail-bulk"></i>
+                      </InputGroup.Text>
+                      <Form.Control
+                        type="text"
+                        name="pincode"
+                        placeholder="Enter pincode"
+                        value={data.pincode || ""}
+                        onChange={(e) =>
+                          handleChange("pincode", e.target.value, "text")
+                        }
+                        required
+                      />
+                    </InputGroup>
+                  </Form.Group>
+                </Col>
+              </Row>
 
-                  <div
-                    className="form-floating mb-3"
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      width: "100%",
-                    }}
+              <Row>
+                <Col md={4}>
+                  <Form.Group
+                    className="mb-3 custom-input"
+                    controlId="formReligion"
                   >
-                    <input
-                      type="text"
-                      className="form-control"
-                      id="aadhaar_no"
-                      name="aadhaar_no"
-                      placeholder=""
-                      value={data.aadhaar_no}
-                      onChange={(e) =>
-                        handleChange("aadhaar_no", e.target.value, "text")
-                      }
-                    />
-                    <label htmlFor="aadhaar_no">aadhaar_no</label>
-                  </div>
-                </div>
+                    <Form.Label>Religion *</Form.Label>
+                    <InputGroup>
+                      <InputGroup.Text>
+                        <i className="fas fa-praying-hands"></i>
+                      </InputGroup.Text>
+                      <Form.Control
+                        type="text"
+                        name="religion"
+                        placeholder="Enter religion"
+                        value={data.religion || ""}
+                        onChange={(e) =>
+                          handleChange("religion", e.target.value, "text")
+                        }
+                        required
+                      />
+                    </InputGroup>
+                  </Form.Group>
+                </Col>
 
-                <div
-                  className="fv-row mb-10"
-                  style={{ display: "flex", gap: "10px" }}
-                >
-                  <div style={{ marginBottom: "23px", width: "50%" }}>
-                    <label
-                      htmlFor="student_image"
-                      className="form-label"
-                      style={{
-                        fontSize: "12px",
-                        color: "#434343",
-                        fontWeight: "500",
-                      }}
-                    >
-                      Upload Student Image
-                    </label>
-                    <input
-                      type="file"
-                      className="form-control"
-                      id="student_pic"
-                      placeholder="Upload Student Image"
-                      onChange={(e) => handleChange("student_pic", e, "file")}
-                      style={{
-                        border: "1px solid #ECEDF1",
-                        borderRadius: "8px",
-                        padding: "10px",
-                      }}
-                    />
-                  </div>
+                <Col md={4}>
+                  <Form.Group
+                    className="mb-3 custom-input"
+                    controlId="formGender"
+                  >
+                    <Form.Label>Gender *</Form.Label>
+                    <InputGroup>
+                      <InputGroup.Text>
+                        <i className="fas fa-venus-mars"></i>
+                      </InputGroup.Text>
+                      <Form.Select
+                        name="gender"
+                        value={data.gender || ""}
+                        onChange={(e) =>
+                          handleChange("gender", e.target.value, "text")
+                        }
+                        required
+                      >
+                        <option value="">Select Gender</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                      </Form.Select>
+                    </InputGroup>
+                  </Form.Group>
+                </Col>
 
-                  <div
-                    className="form-floating mb-3"
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      width: "100%",
-                    }}
+                <Col md={4}>
+                  <Form.Group
+                    className="mb-3 custom-input"
+                    controlId="formCurrentSchool"
                   >
-                    <select
-                      className="form-select"
-                      id="academic_year"
-                      name="academic_year"
-                      aria-label="Default select example"
-                      value={data.academic_year}
-                      onChange={(e) =>
-                        handleChange("academic_year", e.target.value, "text")
-                      }
-                    >
-                      {!sessions.some(
-                        (value) => value.id === data.academic_year
-                      ) && (
-                        <option value={data.academic_year}>
-                          {data.academic_year}
-                        </option>
-                      )}
-                      {sessions.map((value) => (
-                        <option key={value.id} value={value.id}>
-                          {value.session}
-                        </option>
-                      ))}
-                    </select>
+                    <Form.Label>Current School *</Form.Label>
+                    <InputGroup>
+                      <InputGroup.Text>
+                        <i className="fas fa-school"></i>
+                      </InputGroup.Text>
+                      <Form.Control
+                        type="text"
+                        name="current_school"
+                        placeholder="Enter current school"
+                        value={data.current_school || ""}
+                        onChange={(e) =>
+                          handleChange("current_school", e.target.value, "text")
+                        }
+                        required
+                      />
+                    </InputGroup>
+                  </Form.Group>
+                </Col>
+              </Row>
 
-                    <label htmlFor="academic_year">Academic_year</label>
-                  </div>
-                </div>
-                <div
-                  className="fv-row mb-10"
-                  style={{ display: "flex", gap: "10px" }}
-                >
-                  <div
-                    className="form-floating mb-3"
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      width: "100%",
-                    }}
-                  >
-                    <select
-                      className="form-select"
-                      id="class_id"
-                      name="class_id"
-                      aria-label="Default select example"
-                      value={data.class_id}
-                      onChange={(e) =>
-                        handleChange("class_id", e.target.value, "text")
-                      }
-                    >
-                      {classes.map((value) => (
-                        <option key={value.id} value={value.id}>
-                          {value.class}
-                        </option>
-                      ))}
-                    </select>
+              <Row>
+                <Col md={4}>
+                  <Form.Group className="mb-3 custom-input" controlId="formDOB">
+                    <Form.Label>Date of Birth *</Form.Label>
+                    <InputGroup>
+                      <InputGroup.Text>
+                        <i className="fas fa-calendar"></i>
+                      </InputGroup.Text>
+                      <Form.Control
+                        type="date"
+                        name="date_of_birth"
+                        value={data.date_of_birth || ""}
+                        onChange={(e) =>
+                          handleChange("date_of_birth", e.target.value, "text")
+                        }
+                        required
+                      />
+                    </InputGroup>
+                  </Form.Group>
+                </Col>
 
-                    <label htmlFor="class_id">Select Class</label>
-                  </div>
-                </div>
+                <Col md={4}>
+                  <Form.Group
+                    className="mb-3 custom-input"
+                    controlId="formAadhaar"
+                  >
+                    <Form.Label>Aadhaar No *</Form.Label>
+                    <InputGroup>
+                      <InputGroup.Text>
+                        <i className="fas fa-id-card"></i>
+                      </InputGroup.Text>
+                      <Form.Control
+                        type="text"
+                        name="aadhaar_no"
+                        placeholder="Enter Aadhaar no"
+                        value={data.aadhaar_no || ""}
+                        onChange={(e) =>
+                          handleChange("aadhaar_no", e.target.value, "text")
+                        }
+                        required
+                      />
+                    </InputGroup>
+                  </Form.Group>
+                </Col>
 
-                <div
-                  className="head"
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-around",
-                    alignItems: "center",
-                    marginBottom: "20px",
-                  }}
-                >
-                  <span
-                    className=""
-                    id="staticBackdropLabel"
-                    style={{
-                      justifyContent: "center",
-                      textAlign: "center",
-                      alignItems: "center",
-                      fontSize: "20px",
-                      fontWeight: "600",
-                      fontFamily: "Manrope",
-                    }}
+                <Col md={4}>
+                  <Form.Group
+                    className="mb-3 custom-input"
+                    controlId="formStudentImage"
                   >
-                    Family Information
-                  </span>
-                </div>
-                <hr style={{ marginBottom: "30px" }} />
+                    <Form.Label>Upload Student Image *</Form.Label>
+                    <InputGroup>
+                      <InputGroup.Text>
+                        <i className="fas fa-camera"></i>
+                      </InputGroup.Text>
+                      <Form.Control
+                        type="file"
+                        name="student_pic"
+                        onChange={(e) => handleChange("student_pic", e, "file")}
+                        required
+                      />
+                    </InputGroup>
+                  </Form.Group>
+                </Col>
+              </Row>
 
-                <div
-                  className="fv-row mb-10"
-                  style={{ display: "flex", gap: "10px" }}
-                >
-                  <div
-                    className="form-floating mb-3"
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      width: "100%",
-                    }}
+              <Row>
+                <Col md={4}>
+                  <Form.Group
+                    className="mb-3 custom-input"
+                    controlId="formAcademicYear"
                   >
-                    <input
-                      type="text"
-                      className="form-control"
-                      id="father_name"
-                      name="father_name"
-                      placeholder=""
-                      value={data.father_name}
-                      onChange={(e) =>
-                        handleChange("father_name", e.target.value, "text")
-                      }
-                    />
-                    <label htmlFor="father_name">Father name</label>
-                  </div>
-                  <div
-                    className="form-floating mb-3"
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      width: "100%",
-                    }}
-                  >
-                    <input
-                      type="tel"
-                      className="form-control"
-                      id="father_contact_number"
-                      name="father_contact_number"
-                      placeholder=""
-                      value={data.father_contact_number}
-                      onChange={(e) =>
-                        handleChange(
-                          "father_contact_number",
-                          e.target.value,
-                          "text"
-                        )
-                      }
-                    />
-                    <label htmlFor="father_contact_number">
-                      Father contact no
-                    </label>
-                  </div>
-                  <div
-                    className="form-floating mb-3"
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      width: "100%",
-                    }}
-                  >
-                    <input
-                      type="text"
-                      className="form-control"
-                      id="father_occupation"
-                      name="father_occupation"
-                      placeholder=""
-                      value={data.father_occupation}
-                      onChange={(e) =>
-                        handleChange(
-                          "father_occupation",
-                          e.target.value,
-                          "text"
-                        )
-                      }
-                    />
-                    <label htmlFor="father_occupation">Father occupation</label>
-                  </div>
-                </div>
+                    <Form.Label>Academic Year *</Form.Label>
+                    <InputGroup>
+                      <InputGroup.Text>
+                        <i className="fas fa-calendar-alt"></i>
+                      </InputGroup.Text>
+                      <Form.Select
+                        name="academic_year"
+                        value={data.academic_year || ""}
+                        onChange={(e) =>
+                          handleChange("academic_year", e.target.value, "text")
+                        }
+                        required
+                      >
+                        {sessions.map((value) => (
+                          <option key={value.id} value={value.id}>
+                            {value.session}
+                          </option>
+                        ))}
+                      </Form.Select>
+                    </InputGroup>
+                  </Form.Group>
+                </Col>
 
-                <div
-                  className="fv-row mb-10"
-                  style={{ display: "flex", gap: "10px" }}
-                >
-                  <div
-                    className="form-floating mb-3"
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      width: "100%",
-                    }}
+                <Col md={4}>
+                  <Form.Group
+                    className="mb-3 custom-input"
+                    controlId="formClass"
                   >
-                    <input
-                      type="text"
-                      className="form-control"
-                      id="father_type_of_work"
-                      name="father_type_of_work"
-                      placeholder=""
-                      value={data.father_type_of_work}
-                      onChange={(e) =>
-                        handleChange(
-                          "father_type_of_work",
-                          e.target.value,
-                          "text"
-                        )
-                      }
-                    />
-                    <label htmlFor="father_type_of_work">
-                      Father type of work
-                    </label>
-                  </div>
-                  <div
-                    className="form-floating mb-3"
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      width: "100%",
-                    }}
-                  >
-                    <input
-                      type="text"
-                      className="form-control"
-                      id="father_organization"
-                      name="father_organization"
-                      placeholder=""
-                      value={data.father_organization}
-                      onChange={(e) =>
-                        handleChange(
-                          "father_organization",
-                          e.target.value,
-                          "text"
-                        )
-                      }
-                    />
-                    <label htmlFor="father_organization">
-                      Father organization
-                    </label>
-                  </div>
-                  <div
-                    className="form-floating mb-3"
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      width: "100%",
-                    }}
-                  >
-                    <input
-                      type="text"
-                      className="form-control"
-                      id="mother_name"
-                      name="mother_name"
-                      placeholder=""
-                      value={data.mother_name}
-                      onChange={(e) =>
-                        handleChange("mother_name", e.target.value, "text")
-                      }
-                    />
-                    <label htmlFor="mother_name">Mother name</label>
-                  </div>
-                </div>
+                    <Form.Label>Select Class *</Form.Label>
+                    <InputGroup>
+                      <InputGroup.Text>
+                        <i className="fas fa-chalkboard"></i>
+                      </InputGroup.Text>
+                      <Form.Select
+                        name="class_id"
+                        value={data.class_id || ""}
+                        onChange={(e) =>
+                          handleChange("class_id", e.target.value, "text")
+                        }
+                        required
+                      >
+                        {classes.map((value) => (
+                          <option key={value.id} value={value.id}>
+                            {value.class}
+                          </option>
+                        ))}
+                      </Form.Select>
+                    </InputGroup>
+                  </Form.Group>
+                </Col>
+              </Row>
+              <br />
+              <h1>Parents Information</h1>
+              <hr />
 
-                <div
-                  className="fv-row mb-10"
-                  style={{ display: "flex", gap: "10px" }}
-                >
-                  <div
-                    className="form-floating mb-3"
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      width: "100%",
-                    }}
+              <Row>
+                <Col md={4}>
+                  <Form.Group
+                    className="mb-3 custom-input"
+                    controlId="formFatherName"
                   >
-                    <input
-                      type="tel"
-                      className="form-control"
-                      id="mother_contact_number"
-                      name="mother_contact_number"
-                      placeholder=""
-                      value={data.mother_contact_number}
-                      onChange={(e) =>
-                        handleChange(
-                          "mother_contact_number",
-                          e.target.value,
-                          "text"
-                        )
-                      }
-                    />
-                    <label htmlFor="mother_contact_number">
-                      Mother contact number
-                    </label>
-                  </div>
-                  <div
-                    className="form-floating mb-3"
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      width: "100%",
-                    }}
-                  >
-                    <input
-                      type="text"
-                      className="form-control"
-                      id="mother_occupation"
-                      name="mother_occupation"
-                      placeholder=""
-                      value={data.mother_occupation}
-                      onChange={(e) =>
-                        handleChange(
-                          "mother_occupation",
-                          e.target.value,
-                          "text"
-                        )
-                      }
-                    />
-                    <label htmlFor="mother_occupation">Mother occupation</label>
-                  </div>
-                  <div
-                    className="form-floating mb-3"
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      width: "100%",
-                    }}
-                  >
-                    <input
-                      type="text"
-                      className="form-control"
-                      id="mother_organization"
-                      name="mother_organization"
-                      placeholder=""
-                      value={data.mother_organization}
-                      onChange={(e) =>
-                        handleChange(
-                          "mother_organization",
-                          e.target.value,
-                          "text"
-                        )
-                      }
-                    />
-                    <label htmlFor="mother_organization">
-                      Mother organization
-                    </label>
-                  </div>
-                </div>
+                    <Form.Label>Father's Name *</Form.Label>
+                    <InputGroup>
+                      <InputGroup.Text>
+                        <i className="fas fa-user"></i>
+                      </InputGroup.Text>
+                      <Form.Control
+                        type="text"
+                        name="father_name"
+                        placeholder="Enter father's name"
+                        value={data.father_name || ""}
+                        onChange={(e) =>
+                          handleChange("father_name", e.target.value, "text")
+                        }
+                        required
+                      />
+                    </InputGroup>
+                  </Form.Group>
+                </Col>
 
-                <div
-                  className="fv-row mb-10"
-                  style={{ display: "flex", gap: "10px" }}
-                >
-                  <div style={{ marginBottom: "23px", width: "50%" }}>
-                    <label
-                      htmlFor="student_image"
-                      className="form-label"
-                      style={{
-                        fontSize: "12px",
-                        color: "#434343",
-                        fontWeight: "500",
-                      }}
-                    >
-                      Upload Father Image
-                    </label>
-                    <input
-                      type="file"
-                      className="form-control"
-                      id="father_image"
-                      onChange={(e) => handleChange("father_pic", e, "file")}
-                      style={{
-                        border: "1px solid #ECEDF1",
-                        borderRadius: "8px",
-                        padding: "10px",
-                      }}
-                    />
-                  </div>
-                  <div style={{ marginBottom: "23px", width: "50%" }}>
-                    <label
-                      htmlFor="mother_image"
-                      className="form-label"
-                      style={{
-                        fontSize: "12px",
-                        color: "#434343",
-                        fontWeight: "500",
-                      }}
-                    >
-                      Upload Mother Image
-                    </label>
-                    <input
-                      type="file"
-                      className="form-control"
-                      id="student_image"
-                      onChange={(e) => handleChange("mother_pic", e, "file")}
-                      style={{
-                        border: "1px solid #ECEDF1",
-                        borderRadius: "8px",
-                        padding: "10px",
-                      }}
-                    />
-                  </div>
-                </div>
-                <div
-                  className="head"
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-around",
-                    alignItems: "center",
-                    marginBottom: "20px",
-                  }}
-                >
-                  <span
-                    className=""
-                    id="staticBackdropLabel"
-                    style={{
-                      justifyContent: "center",
-                      textAlign: "center",
-                      alignItems: "center",
-                      fontSize: "20px",
-                      fontWeight: "600",
-                      fontFamily: "Manrope",
-                    }}
+                <Col md={4}>
+                  <Form.Group
+                    className="mb-3 custom-input"
+                    controlId="formFatherContact"
                   >
-                    Bank Information
-                  </span>
-                </div>
-                <hr style={{ marginBottom: "30px" }} />
-                <div
-                  className="fv-row mb-10"
-                  style={{ display: "flex", gap: "10px" }}
-                >
-                  <div
-                    className="form-floating mb-3"
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      width: "100%",
-                    }}
-                  >
-                    <input
-                      type="text"
-                      className="form-control"
-                      id="back_account_no"
-                      name="back_account_no"
-                      placeholder=""
-                      value={data.back_account_no}
-                      onChange={(e) =>
-                        handleChange("back_account_no", e.target.value, "text")
-                      }
-                    />
-                    <label htmlFor="back_account_no">Bank Account No</label>
-                  </div>
+                    <Form.Label>Father's Contact Number *</Form.Label>
+                    <InputGroup>
+                      <InputGroup.Text>
+                        <i className="fas fa-phone"></i>
+                      </InputGroup.Text>
+                      <Form.Control
+                        type="tel"
+                        name="father_contact_number"
+                        placeholder="Enter father's contact number"
+                        value={data.father_contact_number || ""}
+                        onChange={(e) =>
+                          handleChange(
+                            "father_contact_number",
+                            e.target.value,
+                            "text"
+                          )
+                        }
+                        required
+                      />
+                    </InputGroup>
+                  </Form.Group>
+                </Col>
 
-                  <div
-                    className="form-floating mb-3"
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      width: "100%",
-                    }}
+                <Col md={4}>
+                  <Form.Group
+                    className="mb-3 custom-input"
+                    controlId="formFatherOccupation"
                   >
-                    <input
-                      type="text"
-                      className="form-control"
-                      id="bank_name"
-                      name="bank_name"
-                      placeholder=""
-                      value={data.bank_name}
-                      onChange={(e) =>
-                        handleChange("bank_name", e.target.value, "text")
-                      }
-                    />
-                    <label htmlFor="bank_name">Bank Name</label>
-                  </div>
-                </div>
+                    <Form.Label>Father's Occupation *</Form.Label>
+                    <InputGroup>
+                      <InputGroup.Text>
+                        <i className="fas fa-briefcase"></i>
+                      </InputGroup.Text>
+                      <Form.Control
+                        type="text"
+                        name="father_occupation"
+                        placeholder="Enter father's occupation"
+                        value={data.father_occupation || ""}
+                        onChange={(e) =>
+                          handleChange(
+                            "father_occupation",
+                            e.target.value,
+                            "text"
+                          )
+                        }
+                        required
+                      />
+                    </InputGroup>
+                  </Form.Group>
+                </Col>
+              </Row>
+              <Row>
+                <Col md={4}>
+                  <Form.Group
+                    className="mb-3 custom-input"
+                    controlId="formFatherTypeOfWork"
+                  >
+                    <Form.Label>Father's Type Of Work *</Form.Label>
+                    <InputGroup>
+                      <InputGroup.Text>
+                        <i className="fas fa-briefcase"></i>
+                      </InputGroup.Text>
+                      <Form.Control
+                        type="text"
+                        name="father_type_of_work"
+                        placeholder="Enter father's occupation"
+                        value={data.father_type_of_work || ""}
+                        onChange={(e) =>
+                          handleChange(
+                            "father_type_of_work",
+                            e.target.value,
+                            "text"
+                          )
+                        }
+                        required
+                      />
+                    </InputGroup>
+                  </Form.Group>
+                </Col>
+                <Col md={4}>
+                  <Form.Group
+                    className="mb-3 custom-input"
+                    controlId="formFatherOrganization"
+                  >
+                    <Form.Label>Father's Organization*</Form.Label>
+                    <InputGroup>
+                      <InputGroup.Text>
+                        <i className="fas fa-briefcase"></i>
+                      </InputGroup.Text>
+                      <Form.Control
+                        type="text"
+                        name="father_organization"
+                        placeholder="Enter father's organization"
+                        value={data.father_organization || ""}
+                        onChange={(e) =>
+                          handleChange(
+                            "father_organization",
+                            e.target.value,
+                            "text"
+                          )
+                        }
+                        required
+                      />
+                    </InputGroup>
+                  </Form.Group>
+                </Col>
+                <Col md={4}>
+                  <Form.Group
+                    className="mb-3 custom-input"
+                    controlId="formFatherImage"
+                  >
+                    <Form.Label>Upload Father's Image *</Form.Label>
+                    <InputGroup>
+                      <InputGroup.Text>
+                        <i className="fas fa-camera"></i>
+                      </InputGroup.Text>
+                      <Form.Control
+                        type="file"
+                        name="father_pic"
+                        onChange={(e) => handleChange("father_pic", e, "file")}
+                        required
+                      />
+                    </InputGroup>
+                  </Form.Group>
+                </Col>
+              </Row>
+              <Row>
+                <Col md={4}>
+                  <Form.Group
+                    className="mb-3 custom-input"
+                    controlId="formMotherName"
+                  >
+                    <Form.Label>Mother's Name *</Form.Label>
+                    <InputGroup>
+                      <InputGroup.Text>
+                        <i className="fas fa-user"></i>
+                      </InputGroup.Text>
+                      <Form.Control
+                        type="text"
+                        name="mother_name"
+                        placeholder="Enter mother's name"
+                        value={data.mother_name || ""}
+                        onChange={(e) =>
+                          handleChange("mother_name", e.target.value, "text")
+                        }
+                        required
+                      />
+                    </InputGroup>
+                  </Form.Group>
+                </Col>
 
-                <div
-                  className="fv-row mb-10"
-                  style={{ display: "flex", gap: "10px" }}
-                >
-                  <div
-                    className="form-floating mb-3"
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      width: "100%",
-                    }}
+                <Col md={4}>
+                  <Form.Group
+                    className="mb-3 custom-input"
+                    controlId="formMotherContact"
                   >
-                    <input
-                      type="text"
-                      className="form-control"
-                      id="ifsc_code"
-                      name="ifsc_code"
-                      placeholder=""
-                      value={data.ifsc_code}
-                      onChange={(e) =>
-                        handleChange("ifsc_code", e.target.value, "text")
-                      }
-                    />
-                    <label htmlFor="ifsc_code">IFSC Code</label>
-                  </div>
-                </div>
-                <div
-                  className="head"
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-around",
-                    alignItems: "center",
-                    marginBottom: "20px",
-                  }}
-                >
-                  <span
-                    className=""
-                    id="staticBackdropLabel"
-                    style={{
-                      justifyContent: "center",
-                      textAlign: "center",
-                      alignItems: "center",
-                      fontSize: "20px",
-                      fontWeight: "600",
-                      fontFamily: "Manrope",
-                    }}
-                  >
-                    Gardian Information
-                  </span>
-                </div>
-                <hr style={{ marginBottom: "30px" }} />
+                    <Form.Label>Mother's Contact Number *</Form.Label>
+                    <InputGroup>
+                      <InputGroup.Text>
+                        <i className="fas fa-phone"></i>
+                      </InputGroup.Text>
+                      <Form.Control
+                        type="tel"
+                        name="mother_contact_number"
+                        placeholder="Enter mother's contact number"
+                        value={data.mother_contact_number || ""}
+                        onChange={(e) =>
+                          handleChange(
+                            "mother_contact_number",
+                            e.target.value,
+                            "text"
+                          )
+                        }
+                        required
+                      />
+                    </InputGroup>
+                  </Form.Group>
+                </Col>
 
-                <div
-                  className="fv-row mb-10"
-                  style={{ display: "flex", gap: "10px" }}
-                >
-                  <div
-                    className="form-floating mb-3"
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      width: "100%",
-                    }}
+                <Col md={4}>
+                  <Form.Group
+                    className="mb-3 custom-input"
+                    controlId="formMotherOccupation"
                   >
-                    <input
-                      type="text"
-                      className="form-control"
-                      id="gardian_name"
-                      name="gardian_name"
-                      placeholder=""
-                      value={data.gardian_name}
-                      onChange={(e) =>
-                        handleChange("gardian_name", e.target.value, "text")
-                      }
-                    />
-                    <label htmlFor="gardian_name">Gardian Name</label>
-                  </div>
-                  <div
-                    className="form-floating mb-3"
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      width: "100%",
-                    }}
+                    <Form.Label>Mother's Occupation *</Form.Label>
+                    <InputGroup>
+                      <InputGroup.Text>
+                        <i className="fas fa-briefcase"></i>
+                      </InputGroup.Text>
+                      <Form.Control
+                        type="text"
+                        name="mother_occupation"
+                        placeholder="Enter mother's occupation"
+                        value={data.mother_occupation || ""}
+                        onChange={(e) =>
+                          handleChange(
+                            "mother_occupation",
+                            e.target.value,
+                            "text"
+                          )
+                        }
+                        required
+                      />
+                    </InputGroup>
+                  </Form.Group>
+                </Col>
+              </Row>
+              <Row>
+                <Col md={4}>
+                  <Form.Group
+                    className="mb-3 custom-input"
+                    controlId="formMotherOccupation"
                   >
-                    <input
-                      type="tel"
-                      className="form-control"
-                      id="gardian_contact_number"
-                      name="gardian_contact_number"
-                      placeholder=""
-                      value={data.gardian_contact_number}
-                      onChange={(e) =>
-                        handleChange(
-                          "gardian_contact_number",
-                          e.target.value,
-                          "text"
-                        )
-                      }
-                    />
-                    <label htmlFor="gardian_contact_number">
-                      Gardian contact no
-                    </label>
-                  </div>
+                    <Form.Label>Mother's Organization *</Form.Label>
+                    <InputGroup>
+                      <InputGroup.Text>
+                        <i className="fas fa-briefcase"></i>
+                      </InputGroup.Text>
+                      <Form.Control
+                        type="text"
+                        name="mother_organization"
+                        placeholder="Enter mother's organization"
+                        value={data.mother_organization || ""}
+                        onChange={(e) =>
+                          handleChange(
+                            "mother_organization",
+                            e.target.value,
+                            "text"
+                          )
+                        }
+                        required
+                      />
+                    </InputGroup>
+                  </Form.Group>
+                </Col>
+                <Col md={4}>
+                  <Form.Group
+                    className="mb-3 custom-input"
+                    controlId="formMotherImage"
+                  >
+                    <Form.Label>Upload Mother's Image *</Form.Label>
+                    <InputGroup>
+                      <InputGroup.Text>
+                        <i className="fas fa-camera"></i>
+                      </InputGroup.Text>
+                      <Form.Control
+                        type="file"
+                        name="mother_pic"
+                        onChange={(e) => handleChange("mother_pic", e, "file")}
+                        required
+                      />
+                    </InputGroup>
+                  </Form.Group>
+                </Col>
+              </Row>
+              {/* Bank Information */}
+              <h4>Bank Information</h4>
+              <hr />
+              <Row>
+                <Col md={4}>
+                  <Form.Group
+                    className="mb-3 custom-input"
+                    controlId="formBankAccountNo"
+                  >
+                    <Form.Label>Bank Account No *</Form.Label>
+                    <InputGroup>
+                      <InputGroup.Text>
+                        <i className="fas fa-university"></i>
+                      </InputGroup.Text>
+                      <Form.Control
+                        type="text"
+                        name="back_account_no"
+                        placeholder="Enter bank account number"
+                        value={data.back_account_no || ""}
+                        onChange={(e) =>
+                          handleChange(
+                            "back_account_no",
+                            e.target.value,
+                            "text"
+                          )
+                        }
+                        required
+                      />
+                    </InputGroup>
+                  </Form.Group>
+                </Col>
 
-                  <div
-                    className="form-floating mb-3"
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      width: "100%",
-                    }}
+                <Col md={4}>
+                  <Form.Group
+                    className="mb-3 custom-input"
+                    controlId="formBankName"
                   >
-                    <input
-                      type="text"
-                      className="form-control"
-                      id="gardian_occupation"
-                      name="gardian_occupation"
-                      placeholder=""
-                      value={data.gardian_occupation}
-                      onChange={(e) =>
-                        handleChange(
-                          "gardian_occupation",
-                          e.target.value,
-                          "text"
-                        )
-                      }
-                    />
-                    <label htmlFor="gardian_occupation">
-                      Gardian occupation
-                    </label>
-                  </div>
-                </div>
-                <div
-                  className="fv-row mb-10"
-                  style={{ display: "flex", gap: "10px" }}
-                >
-                  <div
-                    className="form-floating mb-3"
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      width: "100%",
-                    }}
-                  >
-                    <input
-                      type="text"
-                      className="form-control"
-                      id="gardian_relation"
-                      name="gardian_relation"
-                      placeholder=""
-                      value={data.gardian_relation}
-                      onChange={(e) =>
-                        handleChange("gardian_relation", e.target.value, "text")
-                      }
-                    />
-                    <label htmlFor="gardian_relation">Gardian Relation</label>
-                  </div>
-                  <div
-                    className="form-floating mb-3"
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      width: "100%",
-                    }}
-                  >
-                    <input
-                      type="text"
-                      className="form-control"
-                      id="gardian_address"
-                      name="gardian_address"
-                      placeholder=""
-                      value={data.gardian_address}
-                      onChange={(e) =>
-                        handleChange("gardian_address", e.target.value, "text")
-                      }
-                    />
-                    <label htmlFor="gardian_address">Gardian Address</label>
-                  </div>
-                </div>
+                    <Form.Label>Bank Name *</Form.Label>
+                    <InputGroup>
+                      <InputGroup.Text>
+                        <i className="fas fa-building"></i>
+                      </InputGroup.Text>
+                      <Form.Control
+                        type="text"
+                        name="bank_name"
+                        placeholder="Enter bank name"
+                        value={data.bank_name || ""}
+                        onChange={(e) =>
+                          handleChange("bank_name", e.target.value, "text")
+                        }
+                        required
+                      />
+                    </InputGroup>
+                  </Form.Group>
+                </Col>
 
-                <div
-                  className="fv-row mb-10"
-                  style={{ display: "flex", gap: "10px" }}
-                >
-                  <div style={{ marginBottom: "23px", width: "50%" }}>
-                    <label
-                      htmlFor="gardian_image"
-                      className="form-label"
-                      style={{
-                        fontSize: "12px",
-                        color: "#434343",
-                        fontWeight: "500",
-                      }}
-                    >
-                      Upload Gardian Image
-                    </label>
-                    <input
-                      type="file"
-                      className="form-control"
-                      id="father_image"
-                      onChange={(e) => handleChange("gardian_pic", e, "file")}
-                      style={{
-                        border: "1px solid #ECEDF1",
-                        borderRadius: "8px",
-                        padding: "10px",
-                      }}
-                    />
-                  </div>
-                </div>
-              </div>
-              <div>
-                <button type="submit" className="btn btn-primary">
-                  submit
-                </button>
-              </div>
-            </form>
+                <Col md={4}>
+                  <Form.Group
+                    className="mb-3 custom-input"
+                    controlId="formIFSCCode"
+                  >
+                    <Form.Label>IFSC Code *</Form.Label>
+                    <InputGroup>
+                      <InputGroup.Text>
+                        <i className="fas fa-code"></i>
+                      </InputGroup.Text>
+                      <Form.Control
+                        type="text"
+                        name="ifsc_code"
+                        placeholder="Enter IFSC code"
+                        value={data.ifsc_code || ""}
+                        onChange={(e) =>
+                          handleChange("ifsc_code", e.target.value, "text")
+                        }
+                        required
+                      />
+                    </InputGroup>
+                  </Form.Group>
+                </Col>
+              </Row>
+              <br />
+              {/* Guardian Information */}
+              <h1>Guardian Information</h1>
+              <hr />
+              <Row>
+                <Col md={4}>
+                  <Form.Group
+                    className="mb-3 custom-input"
+                    controlId="formGuardianName"
+                  >
+                    <Form.Label>Guardian's Name *</Form.Label>
+                    <InputGroup>
+                      <InputGroup.Text>
+                        <i className="fas fa-user"></i>
+                      </InputGroup.Text>
+                      <Form.Control
+                        type="text"
+                        name="guardian_name"
+                        placeholder="Enter guardian's name"
+                        value={data.gardian_name || ""}
+                        onChange={(e) =>
+                          handleChange("gardian_name", e.target.value, "text")
+                        }
+                        required
+                      />
+                    </InputGroup>
+                  </Form.Group>
+                </Col>
+
+                <Col md={4}>
+                  <Form.Group
+                    className="mb-3 custom-input"
+                    controlId="formGuardianContact"
+                  >
+                    <Form.Label>Guardian's Contact Number *</Form.Label>
+                    <InputGroup>
+                      <InputGroup.Text>
+                        <i className="fas fa-phone"></i>
+                      </InputGroup.Text>
+                      <Form.Control
+                        type="tel"
+                        name="guardian_contact_number"
+                        placeholder="Enter guardian's contact number"
+                        value={data.gardian_contact_number || ""}
+                        onChange={(e) =>
+                          handleChange(
+                            "gardian_contact_number",
+                            e.target.value,
+                            "text"
+                          )
+                        }
+                        required
+                      />
+                    </InputGroup>
+                  </Form.Group>
+                </Col>
+
+                <Col md={4}>
+                  <Form.Group
+                    className="mb-3 custom-input"
+                    controlId="formGuardianOccupation"
+                  >
+                    <Form.Label>Guardian's Occupation *</Form.Label>
+                    <InputGroup>
+                      <InputGroup.Text>
+                        <i className="fas fa-briefcase"></i>
+                      </InputGroup.Text>
+                      <Form.Control
+                        type="text"
+                        name="guardian_occupation"
+                        placeholder="Enter guardian's occupation"
+                        value={data.gardian_occupation || ""}
+                        onChange={(e) =>
+                          handleChange(
+                            "gardian_occupation",
+                            e.target.value,
+                            "text"
+                          )
+                        }
+                        required
+                      />
+                    </InputGroup>
+                  </Form.Group>
+                </Col>
+              </Row>
+
+              <Row>
+                <Col md={4}>
+                  <Form.Group
+                    className="mb-3 custom-input"
+                    controlId="formGuardianRelation"
+                  >
+                    <Form.Label>Guardian's Relation *</Form.Label>
+                    <InputGroup>
+                      <InputGroup.Text>
+                        <i className="fas fa-user-friends"></i>
+                      </InputGroup.Text>
+                      <Form.Control
+                        type="text"
+                        name="guardian_relation"
+                        placeholder="Enter relation to the guardian"
+                        value={data.gardian_relation || ""}
+                        onChange={(e) =>
+                          handleChange(
+                            "gardian_relation",
+                            e.target.value,
+                            "text"
+                          )
+                        }
+                        required
+                      />
+                    </InputGroup>
+                  </Form.Group>
+                </Col>
+
+                <Col md={4}>
+                  <Form.Group
+                    className="mb-3 custom-input"
+                    controlId="formGuardianAddress"
+                  >
+                    <Form.Label>Guardian's Address *</Form.Label>
+                    <InputGroup>
+                      <InputGroup.Text>
+                        <i className="fas fa-home"></i>
+                      </InputGroup.Text>
+                      <Form.Control
+                        type="text"
+                        name="guardian_address"
+                        placeholder="Enter guardian's address"
+                        value={data.gardian_address || ""}
+                        onChange={(e) =>
+                          handleChange(
+                            "gardian_address",
+                            e.target.value,
+                            "text"
+                          )
+                        }
+                        required
+                      />
+                    </InputGroup>
+                  </Form.Group>
+                </Col>
+
+                <Col md={4}>
+                  <Form.Group
+                    className="mb-3 custom-input"
+                    controlId="formGuardianImage"
+                  >
+                    <Form.Label>Upload Guardian's Image *</Form.Label>
+                    <InputGroup>
+                      <InputGroup.Text>
+                        <i className="fas fa-camera"></i>
+                      </InputGroup.Text>
+                      <Form.Control
+                        type="file"
+                        name="guardian_pic"
+                        onChange={(e) => handleChange("gardian_pic", e, "file")}
+                        required
+                      />
+                    </InputGroup>
+                  </Form.Group>
+                </Col>
+              </Row>
+              <br />
+              <Button type="submit" className="btn btn-primary">
+                Submit
+              </Button>
+            </Form>
           )}
 
           {status === "isSubmited" && (
@@ -1480,22 +1348,21 @@ const CreateStartAdmissionProcess = ({
               }}
             >
               <div
-                  className="review-status"
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    flexDirection: "column",
-                  }}
+                className="review-status"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  flexDirection: "column",
+                }}
+              >
+                <span
+                  className="exclamation-mark"
+                  style={{ fontSize: "200px" }}
                 >
-                  <span
-                    className="exclamation-mark"
-                    style={{ fontSize: "200px" }}
-                  >
-                    ⚠️
-                  </span>
-                  <h3 style={{ fontSize: "40px" }}>Review Pending</h3>
-                </div>
-             
+                  ⚠️
+                </span>
+                <h3 style={{ fontSize: "40px" }}>Review Pending</h3>
+              </div>
             </div>
           )}
 
@@ -1595,9 +1462,8 @@ const CreateStartAdmissionProcess = ({
               </div>
             </div>
           )}
-          
         </div>
-        </div>
+      </div>
     </Modal>,
     modalsRoot
   );

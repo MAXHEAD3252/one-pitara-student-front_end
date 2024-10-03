@@ -8,61 +8,78 @@ import { useAuth } from "../../../../app/modules/auth/core/Auth";
 // import { UploadsFilter } from "../../modals/create-app-stepper/UploadsFilter";
 // import { AddClasses } from "../../modals/create-app-stepper/AddClasses";
 import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
+import { Button, Col, Form, InputGroup, Modal, Row } from "react-bootstrap";
 
 interface CurrentUser {
   school_id: string;
 }
 interface DataItem {
-    id: number;
-    name: string;
-    feecode: string;
-  }
+  id: number;
+  name: string;
+  feecode: string;
+}
 
 const TablesWidget60 = () => {
-    const [data, setData] = useState<DataItem[]>([]);
+  const [data, setData] = useState<DataItem[]>([]);
+  const [isAddModalVisible, setIsAddModalVisible] = useState(false);
   const [showEditModal, setShowEditModal] = useState<boolean>(false);
   const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
   const [referesh, setReferesh] = useState(false);
   const { currentUser } = useAuth();
   const [fee_type_id, setfee_type_id] = useState<number | null>(null);
-  const [fee_type_name, setfee_type_name] = useState<string>('');
-  const [fee_type_code, setfee_type_code] = useState<string>('');
+  const [fee_type_name, setfee_type_name] = useState<string>("");
+  const [fee_type_code, setfee_type_code] = useState<string>("");
+  const [fee_type_description, setfee_type_description] = useState<string>("");
   const schoolId = (currentUser as unknown as CurrentUser)?.school_id;
+  
 
   const [formData, setFormData] = useState({
-    name: '',
-    feeCode: '',
-    description: '',
+    name: "",
+    feeCode: "",
+    description: "",
   });
 
-
-  const handleShowEditModal = (fee_type_id: number,name : string, feecode : string) => {
+  const handleShowEditModal = (
+    fee_type_id: number,
+    name: string,
+    feecode: string,
+    description: string
+  ) => {
     setfee_type_id(fee_type_id);
-    setfee_type_name(name)
-    setfee_type_code(feecode)
+    setfee_type_name(name);
+    setfee_type_code(feecode);
+    setfee_type_description(description);
     setShowEditModal(true);
   };
 
-  const handleShowDeleteModal = (fee_type_id: number) =>{
-    setfee_type_id(fee_type_id)
+  const handleShowDeleteModal = (fee_type_id: number) => {
+    setfee_type_id(fee_type_id);
     setShowDeleteModal(true);
-  }
-
+  };
 
   const handleCloseDeleteModal = () => {
     setShowDeleteModal(false);
     setfee_type_id(null);
   };
 
-
-  const handleCloseEditModal = () => {
-    setShowEditModal(false);
+  const showAddModal = () => {
+    setIsAddModalVisible(true);
+  };
+  const handleAddCancel = () => {
     setfee_type_id(null);
-    setfee_type_name('')
-    setfee_type_code('')
+    setfee_type_name("");
+    setfee_type_code("");
+    setfee_type_description("")
+    setIsAddModalVisible(false);
   };
 
-
+  const handleCloseEditModal = () => {
+    setfee_type_id(null);
+    setfee_type_name("");
+    setfee_type_code("");
+    setfee_type_description("")
+    setShowEditModal(false);
+  };
 
   useEffect(() => {
     const fetchEnquiries = async () => {
@@ -74,7 +91,6 @@ const TablesWidget60 = () => {
           throw new Error("Failed to fetch data");
         }
         const responseData = await response.json();
-        console.log(responseData);
         setData(responseData);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -83,615 +99,516 @@ const TablesWidget60 = () => {
 
     fetchEnquiries();
     setReferesh(false);
+  }, [schoolId, referesh]);
 
-  }, [schoolId,referesh]);
+  //   const handleSearch = (e: any) => {
+  //     const query = e.target.value.toLowerCase();
+  //     setSearchQuery(query);
 
-//   const handleSearch = (e: any) => {
-//     const query = e.target.value.toLowerCase();
-//     setSearchQuery(query);
+  //     const filtered = data.filter(
+  //       (item) =>
+  //         item.status.toLowerCase().includes(query) ||
+  //         item.name.toLowerCase().includes(query)
+  //     );
+  //     /* @ts-ignore */
+  //     setFilteredData(filtered);
+  //   };
 
-//     const filtered = data.filter(
-//       (item) =>
-//         item.status.toLowerCase().includes(query) ||
-//         item.name.toLowerCase().includes(query)
-//     );
-//     /* @ts-ignore */
-//     setFilteredData(filtered);
-//   };
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
 
-
-const handleInputChange = (e) => {
-  const { name, value } = e.target;
-  setFormData((prevData) => ({
-    ...prevData,
-    [name]: value,
-  }));
-};
-
-
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  try {
-    const response = await fetch(
-      `${DOMAIN}/api/school/add-feetype/${schoolId}`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await fetch(
+        `${DOMAIN}/api/school/add-feetype/${schoolId}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        }
+      );
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
-    );
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      const data = await response.json();
+      setReferesh(true);
+      handleAddCancel();
+    } catch (error) {
+      console.error("Error:", error);
     }
-    const data = await response.json();
-    setReferesh(true);
-    console.log('Response:', data);
-  } catch (error) {
-    console.error('Error:', error);
-  }
-};
-
+  };
 
   return (
-    <div className="d-flex" style={{ gap: "10px" }}>
+    <div
+      className="card-style"
+      style={{
+        width: "100%",
+        borderRadius: "16px",
+        backgroundColor: "rgb(242, 246, 255)",
+        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+        overflow: "hidden",
+        marginTop: "20px",
+        padding: "20px",
+      }}
+    >
       <div
-        className="col-xxl-8"
+        className="card-header"
         style={{
-          borderRadius: "16px",
-          border: "1px solid #5D637A",
-          overflowX: "hidden",
-          minHeight: "100%",
-          marginBottom: "20px",
-          height: "770px",
+          backgroundColor: "rgb(242, 246, 255)",
+          padding: "16px 20px",
+          borderBottom: "1px solid #E0E4F0",
           display: "flex",
-          flexDirection: "column",
-          fontFamily: "Manrope",
-          maxWidth: "100%",
-          overflow: "hidden",
+          justifyContent: "space-between",
+          alignItems: "center",
         }}
       >
-        <div style={{ width: "auto", height: "100%", overflow: "hidden" }}>
-          <table
-            //   className="col-xxl-12"
+        <span
+          style={{
+            fontSize: "20px",
+            fontWeight: "600",
+            color: "#1C335C",
+            fontFamily: "Manrope",
+          }}
+        >
+          Fees Type List
+        </span>
+        <div style={{ display: "flex", gap: "10px" }}>
+          <div
+            className="input-group flex-nowrap"
             style={{
-              top: "223px",
-              height: "612px",
-              maxHeight: "100%",
-              borderCollapse: "collapse",
-              // tableLayout: "fixed",
-              overflowX: "hidden",
-              overflowY: "auto",
-              whiteSpace: "nowrap",
-              width: "100%",
-              // border:'8px solid black'
+              width: "300px",
+              height: "36px",
+              borderRadius: "8px",
+              border: "1px solid #1C335C",
             }}
           >
-            <thead
-              style={{
-                height: "123px",
-                maxHeight: "100%",
-                display: "flex",
-                flexDirection: "column",
-                backgroundColor: "#1C335C",
-                //   width:'fit-content',
-                // overflowY: "auto",
-                // overflowX: "hidden",
-                justifyContent: "space-between",
-                zIndex: 999,
-              }}
-              className="col-xxl-12 col-lg-6"
+            <span
+              className="input-group-text border-0 pe-1 pr-0"
+              style={{ backgroundColor: "transparent" }}
+              id="addon-wrapping"
             >
-              <div>
-                <caption
-                  style={{
-                    backgroundColor: "#1C335C",
-                    padding: "20px",
-                    display: "flex",
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    // tableLayout: "fixed",
-                    // borderCollapse: "collapse",
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 17 16"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <g clip-path="url(#clip0_582_4295)">
+                  <circle
+                    cx="8.50002"
+                    cy="7.66665"
+                    r="6.33333"
+                    stroke="#1C335C"
+                    stroke-width="1.5"
+                  />
+                  <path
+                    d="M14.1667 13.3333L15.5 14.6666"
+                    stroke="#1C335C"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                  />
+                </g>
+                <defs>
+                  <clipPath id="clip0_582_4295">
+                    <rect
+                      width="16"
+                      height="16"
+                      fill="#1C335C"
+                      transform="translate(0.833374)"
+                    />
+                  </clipPath>
+                </defs>
+              </svg>
+            </span>
+            <input
+              type="text"
+              style={{
+                backgroundColor: "transparent",
+                color: "#1C335C",
+              }}
+              className="form-control border-0"
+              placeholder="Search ...."
+              aria-label="Search"
+              aria-describedby="addon-wrapping"
+            />
+          </div>
+          <div
+            onClick={showAddModal}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              padding: "8px 12px",
+              backgroundColor: "#1C335C",
+              borderRadius: "8px",
+              cursor: "pointer",
+              transition: "background-color 0.3s",
+            }}
+            onMouseEnter={(e) =>
+              (e.currentTarget.style.backgroundColor = "#16294D")
+            }
+            onMouseLeave={(e) =>
+              (e.currentTarget.style.backgroundColor = "#1C335C")
+            }
+          >
+            <span
+              style={{
+                marginRight: "8px",
+                color: "white",
+                fontSize: "14px",
+                fontWeight: "700",
+                fontFamily: "Manrope",
+              }}
+            >
+              Add Type
+            </span>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              width="16px"
+              height="16px"
+              fill="#ffffff"
+            >
+              <path d="M0 0h24v24H0V0z" fill="none" />
+              <path d="M3 17.25V21h3.75l11-11.03-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
+            </svg>
+          </div>
+        </div>
+      </div>
+      <div
+        style={{
+          height: "620px", // Fixed height for the table container
+          overflowY: "auto", // Enable vertical scrolling
+          padding: "16px 0", // Optional: adds some padding around the table
+        }}
+      >
+        <table
+          className="table"
+          style={{
+            width: "100%",
+            borderCollapse: "collapse",
+            marginTop: "10px",
+            backgroundColor: "#FFFFFF", // White background for the table
+            borderRadius: "12px", // Round corners for the table
+            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.05)", // Light shadow for the table
+          }}
+        >
+          <thead>
+            <tr
+              style={{
+                backgroundColor: "rgb(242, 246, 255)", // Header background color
+                borderBottom: "1px solid #E0E4F0",
+                fontFamily: "Manrope",
+                fontWeight: "600",
+                color: "#1C335C",
+                fontSize: "14px",
+              }}
+            >
+              <th
+                style={{
+                  padding: "12px 20px",
+                  textAlign: "left",
+                }}
+              >
+                Fee Type
+              </th>
+              <th
+                style={{
+                  padding: "12px 20px",
+                  textAlign: "left",
+                }}
+              >
+                Fee Code
+              </th>
+              <th
+                style={{
+                  padding: "12px 20px",
+                  textAlign: "right",
+                }}
+              >
+                Action
+              </th>
+            </tr>
+          </thead>
 
-                    // border:'1px solid'
-                    width: "100%",
+          <tbody>
+            {data.map((item, index) => (
+              <tr
+                key={index}
+                style={{
+                  backgroundColor:
+                    index % 2 === 0 ? "rgb(242, 246, 255)" : "#FFFFFF",
+                  borderBottom: "1px solid #E0E4F0",
+                  fontFamily: "Manrope",
+                  fontSize: "14px",
+                  color: "#1C335C",
+                }}
+              >
+                <td
+                  style={{
+                    padding: "12px 20px",
                   }}
                 >
-                  <div>
+                  {item.type}
+                </td>
+                <td
+                  style={{
+                    padding: "12px 20px",
+                  }}
+                >
+                  {item.code}
+                </td>
+                <td
+                  style={{
+                    display: "flex",
+                    gap: "10px", // Adds space between the buttons
+                    justifyContent: "right", // Aligns buttons horizontally in the center
+                    alignItems: "center", // Vertically centers the buttons
+                    padding: "12px 20px",
+                  }}
+                >
+                  <div
+                    onClick={() =>
+                      handleShowEditModal(item.id, item.type, item.code, item.description)
+                    }
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      padding: "8px 12px",
+                      backgroundColor: "#1C335C",
+                      borderRadius: "8px",
+                      cursor: "pointer",
+                      transition: "background-color 0.3s",
+                    }}
+                    onMouseEnter={(e) =>
+                      (e.currentTarget.style.backgroundColor = "#16294D")
+                    }
+                    onMouseLeave={(e) =>
+                      (e.currentTarget.style.backgroundColor = "#1C335C")
+                    }
+                  >
                     <span
                       style={{
-                        color: "#FFF",
-                        fontSize: "16px",
+                        marginRight: "8px",
+                        color: "white",
+                        fontSize: "14px",
                         fontWeight: "700",
                         fontFamily: "Manrope",
                       }}
                     >
-                      Fees Type List
+                      Edit
                     </span>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      width="16px"
+                      height="16px"
+                      fill="#ffffff"
+                    >
+                      <path d="M0 0h24v24H0V0z" fill="none" />
+                      <path d="M3 17.25V21h3.75l11-11.03-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
+                    </svg>
                   </div>
                   <div
+                    onClick={() => handleShowDeleteModal(item.id)}
                     style={{
-                      display: "flex",
-                      alignItems: "center",
+                      width: "32px",
+                      height: "40px",
+                      borderRadius: "6px",
+                      padding: "10px 6px 10px 6px",
                       gap: "10px",
+                      backgroundColor: "#FFE7E1",
+                      cursor: "pointer",
                     }}
                   >
-                    <div
-                      className="input-group flex-nowrap"
-                      style={{
-                        width: "300px",
-                        height: "36px",
-                        borderRadius: "8px",
-                        border: "1px solid #D9D9D9",
-                      }}
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 20 20"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
                     >
-                      <span
-                        className="input-group-text border-0 pe-1 pr-0"
-                        style={{ backgroundColor: "transparent" }}
-                        id="addon-wrapping"
-                      >
-                        <svg
-                          width="16"
-                          height="16"
-                          viewBox="0 0 17 16"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <g clip-path="url(#clip0_582_4295)">
-                            <circle
-                              cx="8.50002"
-                              cy="7.66665"
-                              r="6.33333"
-                              stroke="white"
-                              stroke-width="1.5"
-                            />
-                            <path
-                              d="M14.1667 13.3333L15.5 14.6666"
-                              stroke="white"
-                              stroke-width="1.5"
-                              stroke-linecap="round"
-                            />
-                          </g>
-                          <defs>
-                            <clipPath id="clip0_582_4295">
-                              <rect
-                                width="16"
-                                height="16"
-                                fill="white"
-                                transform="translate(0.833374)"
-                              />
-                            </clipPath>
-                          </defs>
-                        </svg>
-                      </span>
-                      <input
-                        type="text"
-                        style={{
-                          backgroundColor: "transparent",
-                          color: "#FFFFFF",
-                        }}
-                        className="form-control border-0"
-                        placeholder="Search ...."
-                        aria-label="Search"
-                        aria-describedby="addon-wrapping"
+                      <path
+                        d="M17.0834 5H2.91663"
+                        stroke="#ED5578"
+                        stroke-width="1.5"
+                        stroke-linecap="round"
                       />
-                    </div>
+                      <path
+                        d="M15.6944 7.08331L15.3111 12.8326C15.1637 15.045 15.0899 16.1512 14.3691 16.8256C13.6482 17.5 12.5396 17.5 10.3222 17.5H9.67775C7.46042 17.5 6.35175 17.5 5.63091 16.8256C4.91007 16.1512 4.83632 15.045 4.68883 12.8326L4.30554 7.08331"
+                        stroke="#ED5578"
+                        stroke-width="1.5"
+                        stroke-linecap="round"
+                      />
+                      <path
+                        d="M7.91663 9.16669L8.33329 13.3334"
+                        stroke="#ED5578"
+                        stroke-width="1.5"
+                        stroke-linecap="round"
+                      />
+                      <path
+                        d="M12.0833 9.16669L11.6666 13.3334"
+                        stroke="#ED5578"
+                        stroke-width="1.5"
+                        stroke-linecap="round"
+                      />
+                      <path
+                        d="M5.41663 5C5.46319 5 5.48648 5 5.50758 4.99947C6.19379 4.98208 6.79915 4.54576 7.03264 3.90027C7.03982 3.88041 7.04719 3.85832 7.06191 3.81415L7.14282 3.57143C7.21188 3.36423 7.24642 3.26063 7.29222 3.17267C7.47497 2.82173 7.81308 2.57803 8.2038 2.51564C8.30173 2.5 8.41094 2.5 8.62934 2.5H11.3706C11.589 2.5 11.6982 2.5 11.7961 2.51564C12.1868 2.57803 12.525 2.82173 12.7077 3.17267C12.7535 3.26063 12.788 3.36423 12.8571 3.57143L12.938 3.81415C12.9527 3.85826 12.9601 3.88042 12.9673 3.90027C13.2008 4.54576 13.8061 4.98208 14.4923 4.99947C14.5134 5 14.5367 5 14.5833 5"
+                        stroke="#ED5578"
+                        stroke-width="1.5"
+                      />
+                    </svg>
                   </div>
-                </caption>
-              </div>
-
-              <tr
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <Modal
+        id="kt_modal_create_app"
+        tabIndex={-1}
+        aria-hidden="true"
+        dialogClassName="modal-dialog modal-dialog-centered mw-1000px"
+        show={isAddModalVisible}
+        onHide={handleAddCancel}
+        backdrop={true}
+      >
+        <div className="modal-header">
+          <h2 style={{ fontFamily: "Manrope" }}>Add Fees Type :</h2>
+          <div
+            className="btn btn-sm btn-icon btn-active-color-primary"
+            onClick={handleAddCancel}
+          >
+            <i className="fas fa-times"></i>
+          </div>
+        </div>
+        <div className="modal-body py-lg-10 px-lg-10">
+          <Form onSubmit={handleSubmit}>
+            <Row>
+              <Col md={6}>
+                <Form.Group
+                  className="mb-3 custom-input"
+                  controlId="formDesignationName"
+                >
+                  <Form.Label>Fees Type Name</Form.Label>
+                  <InputGroup>
+                    <InputGroup.Text>
+                      <i className="fas fa-school"></i>
+                    </InputGroup.Text>
+                    <Form.Control
+                      type="text"
+                      name="name"
+                      placeholder="Enter Fees Type name"
+                      value={formData.name || ""}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </InputGroup>
+                </Form.Group>
+              </Col>
+              <Col md={6}>
+                <Form.Group
+                  className="mb-3 custom-input"
+                  controlId="formFeesCode"
+                >
+                  <Form.Label>Fees Code</Form.Label>
+                  <InputGroup>
+                    <InputGroup.Text>
+                      <i className="fas fa-code"></i>
+                    </InputGroup.Text>
+                    <Form.Control
+                      type="text"
+                      name="feeCode"
+                      placeholder="Enter fee code"
+                      value={formData.feeCode || ""}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </InputGroup>
+                </Form.Group>
+              </Col>
+              <Col md={12}>
+                <Form.Group
+                  className="mb-3 custom-input"
+                  controlId="formDescription"
+                >
+                  <Form.Label>Description</Form.Label>
+                  <InputGroup>
+                    <InputGroup.Text>
+                      <i className="fas fa-info-circle"></i>
+                    </InputGroup.Text>
+                    <Form.Control
+                      type="text"
+                      name="description"
+                      placeholder="Enter description"
+                      value={formData.description || ""}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </InputGroup>
+                </Form.Group>
+              </Col>
+            </Row>
+            <div style={{ justifyContent: "right", display: "flex" }}>
+              <Button
+                type="submit"
+                variant="secondary"
                 style={{
-                  height: "61px",
-                  display: "flex",
-                  paddingLeft: "30px",
-                  justifyContent: "space-between",
-                  width: "95%",
-                  overflowY: "auto",
-                  overflowX: "hidden",
-                  backgroundColor: "#1C335C",
+                  width: "118px",
+                  height: "36px",
+                  padding: "8px 10px",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  gap: "10px",
+                  backgroundColor: "rgba(39, 59, 99, 0.76)",
                 }}
               >
-                <th>
-                  <div style={{ width: "0px" }}>
-                    <span
-                      style={{
-                        fontSize: "13px",
-                        fontWeight: "600",
-                        lineHeight: "18px",
-                        color: "#FFFFFF",
-                      }}
-                    >
-                      Fee Type
-                    </span>
-                  </div>
-                </th>
-                <th>
-                  <div style={{ width: "70px" }}>
-                    <span
-                      style={{
-                        fontSize: "13px",
-                        fontWeight: "600",
-                        lineHeight: "18px",
-                        color: "#FFFFFF",
-                      }}
-                    >
-                      Fee Code
-                    </span>
-                  </div>
-                </th>
-                <th>
-                  <div
-                    style={{
-                      width: "60px",
-                      // textAlign:'left'
-                      // border:'1px solid',
-                      display: "flex",
-                      justifyContent: "end",
-                      fontFamily: "Manrope",
-                    }}
-                  >
-                    <span
-                      style={{
-                        fontSize: "13px",
-                        fontWeight: "600",
-                        lineHeight: "18px",
-                        color: "#FFFFFF",
-                      }}
-                    >
-                      Action
-                    </span>
-                  </div>
-                </th>
-              </tr>
-            </thead>
-
-            <tbody
-              className="col-xxl-12 col-lg-6"
-              style={{
-                height: "105%",
-                display: "flex",
-                flexDirection: "column",
-                minHeight: "calc(100vh - 550px)",
-                overflowY: "auto",
-                backgroundColor: "#F5F5F5",
-              }}
-            >
-              {data.map((item, index) => (
-                <tr
-                  key={index}
+                <span
                   style={{
-                    height: "80px",
-                    paddingLeft: "30px",
-                    paddingTop: "25px",
-                    marginBottom: "5px",
-                    justifyContent: "space-between",
-                    width: "90%",
-                    display: "flex",
-                    // borderBottom:'1px solid grey'
+                    color: "#FFF",
+                    fontFamily: "Manrope",
+                    fontSize: "12px",
+                    fontWeight: "500",
                   }}
                 >
-                  <td>
-                    <div
-                      style={{
-                        width: "55px",
-                        display: "flex",
-                        justifyContent: "center",
-                        flexDirection: "column",
-                      }}
-                    >
-                      <span
-                        style={{
-                          fontSize: "14px",
-                          fontWeight: "500",
-                          lineHeight: "18px",
-                          color: "#1F1F1F",
-                          fontFamily: "Manrope",
-                        }}
-                      >
-                        {item.type}
-                      </span>
-                    </div>
-                  </td>
-                  <td>
-                    <div
-                      style={{
-                        width: "55px",
-                        display: "flex",
-                        justifyContent: "center",
-                        flexDirection: "column",
-                      }}
-                    >
-                      <span
-                        style={{
-                          fontSize: "14px",
-                          fontWeight: "500",
-                          lineHeight: "18px",
-                          color: "#1F1F1F",
-                          fontFamily: "Manrope",
-                        }}
-                      >
-                        {item.code}
-                      </span>
-                    </div>
-                  </td>
-                  <td>
-                    <div
-                      style={{
-                        width: "60px",
-                        display: "flex",
-                        justifyContent: "space-around",
-                        flexDirection: "row",
-                        gap: "6px",
-                        marginTop: "-8px",
-                      }}
-                    >
-                      <button
-                        type="button"
-                        className="btn"
-                        style={{
-                          backgroundColor: "#1F3259",
-                          fontFamily: "Manrope",
-                          fontSize: "12px",
-                          fontWeight: "600",
-                          color: "#FFF",
-                        }}
-                        onClick={() => handleShowEditModal(item.id,item.type,item.code)}
-                      >
-                        Edit
-                      </button>
-                      <button
-                        type="button"
-                        className="btn"
-                        style={{
-                          border: "1px solid #1F3259",
-                          fontFamily: "Manrope",
-                          fontSize: "12px",
-                          fontWeight: "600",
-                          color: "#1F3259",
-                        }}
-                        onClick={() => handleShowDeleteModal(item.id)}
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-
-            {/* 
-          <UploadsFilter
-            show={showModal}
-            handleClose={handleModalClose}
-            filterData={applyfilters}
-          /> */}
-            {/* <CreateEnquiryAction show={showActionModal} handleClose={handleActionModalClose} enqId={enqId}/> */}
-            {/* <AddClasses show={showModal} handleClose={handleModalClose} /> */}
-
-            {/* end::Table body */}
-          </table>
-        </div>
-      </div>
-
-
-      
-      <div
-        className="col-xxl-4"
-        style={{
-          borderRadius: "16px",
-          border: "1px solid #5D637A",
-          overflowX: "hidden",
-          minHeight: "100%",
-          marginBottom: "20px",
-          height: "480px",
-          display: "flex",
-          flexDirection: "column",
-          fontFamily: "Manrope",
-          maxWidth: "100%",
-          overflow: "hidden",
-        }}
-      >
-        <div
-          style={{
-            padding: "20px",
-            backgroundColor: "#1C335C",
-            height: "80px",
-            display: "flex",
-            alignItems: "center",
-          }}
-        >
-          <span
-            className=""
-            id="staticBackdropLabel"
-            style={{
-              fontSize: "18px",
-              fontWeight: "600",
-              fontFamily: "Manrope",
-              color: "white",
-            }}
-          >
-            Add Fees Type :
-          </span>
-        </div>
-        <div
-          
-        >
-          <form onSubmit={handleSubmit} style={{
-            display: "flex",
-            alignItems: "center",
-            padding: "20px",
-            flexDirection: "column",
-            marginTop: "10px",
-          }}>
-          <div style={{ marginBottom: "23px", width: "100%" }}>
-            <label
-              htmlFor="name"
-              className="form-label"
-              style={{
-                fontSize: "12px",
-                color: "#434343",
-                fontWeight: "500",
-              }}
-            >
-              Name
-            </label>
-
-            <div id="name">
-            <input
-              className=""
-              style={{
-                height: '46px',
-                width: '100%',
-                paddingLeft: '10px',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                backgroundColor: 'transparent',
-                border: '1px solid #ECEDF1',
-                borderRadius: '8px',
-                
-              }}
-              onChange={handleInputChange}
-              type="text"
-              name="name"
-              value={formData.name}
-              placeholder="Enter Name"
-              aria-expanded="false"
-              required
-            />
+                  Add
+                </span>
+              </Button>
             </div>
-          </div>
-          <div style={{ marginBottom: "23px", width: "100%" }}>
-            <label
-              htmlFor="materialtitle"
-              className="form-label"
-              style={{
-                fontSize: "12px",
-                color: "#434343",
-                fontWeight: "500",
-              }}
-            >
-              Fees Code
-            </label>
-
-            <div id="materialtitle">
-            <input
-              className=""
-              style={{
-                height: '46px',
-                width: '100%',
-                paddingLeft: '10px',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                backgroundColor: 'transparent',
-                border: '1px solid #ECEDF1',
-                borderRadius: '8px',
-              }}
-              onChange={handleInputChange}
-              type="text"
-              name="feeCode"
-              value={formData.feeCode}
-              placeholder="Enter Fee Code"
-              aria-expanded="false"
-              required
-            />
-            </div>
-          </div>
-          <div style={{ marginBottom: "23px", width: "100%" }}>
-            <label
-              htmlFor="materialtitle"
-              className="form-label"
-              style={{
-                fontSize: "12px",
-                color: "#434343",
-                fontWeight: "500",
-              }}
-            >
-              Description
-            </label>
-
-            <div id="materialtitle">
-            <input
-              className=""
-              style={{
-                height: '46px',
-                width: '100%',
-                paddingLeft: '10px',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                backgroundColor: 'transparent',
-                border: '1px solid #ECEDF1',
-                borderRadius: '8px',
-              }}
-              onChange={handleInputChange}
-              type="text"
-              name="description"
-              value={formData.description}
-              placeholder="Enter Description"
-              aria-expanded="false"
-              required
-            />
-            </div>
-          </div>
-        
-
-          <div
-            style={{
-              width: "100%",
-              justifyContent: "right",
-              display: "flex",
-            }}
-          >
-            <button
-              type="submit"
-              className="btn btn-secondary"
-              data-bs-dismiss="modal"
-              style={{
-                width: "118px",
-                height: "36px",
-                padding: "8px 10px",
-                justifyContent: "center",
-                alignItems: "center",
-                gap: "10px",
-                flexShrink: "0",
-                backgroundColor: "rgba(39, 59, 99, 0.76)",
-              }}
-            >
-              <span
-                style={{
-                  color: "#FFF",
-                  fontFamily: "Manrope",
-                  fontSize: "12px",
-                  fontWeight: "500",
-                }}
-              >
-                Add
-              </span>
-            </button>
-          </div>
-          </form>
+          </Form>
         </div>
-        <CreateEditFeeType
-          show={showEditModal}
-          handleClose={handleCloseEditModal}
-          fee_type_id={fee_type_id}
-          fee_type_name = {fee_type_name}
-          fee_type_code = {fee_type_code}
-          setReferesh = {setReferesh}
-        />
-        <DeleteFeeTypeModal
-          show={showDeleteModal}
-          onHide={handleCloseDeleteModal}
-          fee_type_id={fee_type_id}
-          setReferesh = {setReferesh}
-        />
-      </div>
+      </Modal>
+
+<CreateEditFeeType
+  show={showEditModal}
+  handleClose={handleCloseEditModal}
+  fee_type_id={fee_type_id}
+  fee_type_name = {fee_type_name}
+  fee_type_code = {fee_type_code}
+  fee_type_description = {fee_type_description}
+  setReferesh = {setReferesh}
+/>
+
+<DeleteFeeTypeModal
+  show={showDeleteModal}
+  onHide={handleCloseDeleteModal}
+  fee_type_id={fee_type_id}
+  setReferesh = {setReferesh}
+/>
     </div>
   );
 };
 
 export { TablesWidget60 };
+
+//   </div>
+// </div>

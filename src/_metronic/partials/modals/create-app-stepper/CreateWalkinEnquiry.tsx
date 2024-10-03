@@ -261,7 +261,7 @@ const CreateWalkinEnquiry = ({ show, handleClose, setRefresh }: Props) => {
           borderBottom: "1px solid lightgray",
         }}
       >
-        <h2>WalkIn Enquiry</h2>
+        <h2>WalkIn Enquiry</h2> 
         <div
           className="btn btn-sm btn-icon btn-active-color-primary"
           onClick={handleClose}

@@ -71,6 +71,7 @@ const TablesWidget57: React.FC = () => {
 
   const handleModalEditClose = () => {
     setShowEditModal(false);
+    setRefresh(true)
   };
 
   useEffect(() => {

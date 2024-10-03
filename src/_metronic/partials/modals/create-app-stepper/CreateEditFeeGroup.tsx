@@ -1,6 +1,15 @@
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import { Modal } from "react-bootstrap";
+import {
+  Button,
+  Col,
+  Dropdown,
+  DropdownButton,
+  Form,
+  InputGroup,
+  Modal,
+  Row,
+} from "react-bootstrap";
 import { useAuth } from "../../../../app/modules/auth";
 import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
 
@@ -8,7 +17,7 @@ type Props = {
   show: boolean;
   handleClose: () => void;
   fee_group_id: number | null;
-  setReferesh : any;
+  setReferesh: any;
 };
 
 interface CurrentUser {
@@ -190,139 +199,64 @@ const CreateEditFeeGroup = ({
       backdrop={true}
     >
       <div
-        className="modal-content"
-        style={{ padding: "20px 5px", borderRadius: "17px" }}
+        className="modal-header"
+        style={{
+          backgroundColor: "#F2F6FF",
+          borderBottom: "1px solid lightgray",
+        }}
       >
+        <h2>Edit Fee Group</h2>
         <div
-          className="modal-header border-0"
-          style={{ width: "100%", height: "27px" }}
+          className="btn btn-sm btn-icon btn-active-color-primary"
+          onClick={handleClose}
         >
-          <span
-            className=""
-            id="staticBackdropLabel"
-            style={{
-              justifyContent: "center",
-              textAlign: "center",
-              alignItems: "center",
-              fontSize: "24px",
-              fontWeight: "600",
-              fontFamily: "Manrope",
-            }}
-          >
-            Edit Fee Group
-          </span>
-          <span
-            data-bs-dismiss="modal"
-            onClick={handleClose}
-            aria-label="Close"
-          >
-            <svg
-              width="32"
-              height="32"
-              viewBox="0 0 32 32"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <circle cx="16" cy="16" r="16" fill="#ECECEC" />
-              <path
-                d="M22.8572 9.14294L9.14288 22.8572M9.14288 9.14294L22.8572 22.8572"
-                stroke="#464646"
-                strokeWidth="2"
-                strokeLinecap="square"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </span>
+          <i className="fas fa-times"></i>
         </div>
-        <hr />
-        <div className="modal-body" style={{ justifyContent: "center" }}>
-          <div
-            className="col-xxl-4"
-            style={{
-              borderRadius: "16px",
-              border: "1px solid #5D637A",
-              overflowX: "hidden",
-              minHeight: "100%",
-              marginBottom: "20px",
-              height: "480px",
-              width: "100%",
-              display: "flex",
-              flexDirection: "column",
-              fontFamily: "Manrope",
-              maxWidth: "100%",
-              overflow: "hidden",
-            }}
-          >
-            <div
-              style={{
-                padding: "20px",
-                backgroundColor: "#1C335C",
-                height: "80px",
-                display: "flex",
-                alignItems: "center",
-              }}
-            >
-              <span
-                className=""
-                id="staticBackdropLabel"
-                style={{
-                  fontSize: "18px",
-                  fontWeight: "600",
-                  fontFamily: "Manrope",
-                  color: "white",
-                }}
-              >
-                Add Fees Type :
-              </span>
-            </div>
-            <div>
-              <form
-                onSubmit={handleSubmit}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  padding: "20px",
-                  flexDirection: "column",
-                  marginTop: "10px",
-                }}
-              >
-                <div style={{ marginBottom: "23px", width: "100%" }}>
-                  <label
-                    htmlFor="name"
-                    className="form-label"
-                    style={{
-                      fontSize: "12px",
-                      color: "#434343",
-                      fontWeight: "500",
-                    }}
-                  >
-                    Name
-                  </label>
+      </div>
 
-                  <div id="name">
-                    <input
-                      className=""
-                      style={{
-                        height: "46px",
-                        width: "100%",
-                        paddingLeft: "10px",
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        backgroundColor: "transparent",
-                        border: "1px solid #ECEDF1",
-                        borderRadius: "8px",
-                      }}
-                      onChange={handleInputChange}
-                      type="text"
-                      name="name"
-                      value={formData.name}
-                      placeholder="Enter Name"
-                      aria-expanded="false"
-                      required
-                    />
-                  </div>
-                </div>
+      <div className="modal-body" style={{ backgroundColor: "#F2F6FF" }}>
+        <Form
+          onSubmit={handleSubmit}
+          className="d-flex flex-column align-items-center"
+          style={{ padding: "20px", marginTop: "10px" }}
+        >
+          <Row style={{ width: "100%" }}>
+            {/* Name Field */}
+            <Col md={12} style={{ marginBottom: "23px" }}>
+              <Form.Group controlId="formName">
+                <Form.Label
+                  style={{
+                    fontSize: "12px",
+                    color: "#434343",
+                    fontWeight: "500",
+                  }}
+                >
+                  Name
+                </Form.Label>
+                <InputGroup>
+                  <Form.Control
+                    type="text"
+                    placeholder="Enter Name"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleInputChange}
+                    required
+                    style={{
+                      height: "46px",
+                      paddingLeft: "10px",
+                      backgroundColor: "transparent",
+                      border: "1px solid #ECEDF1",
+                      borderRadius: "8px",
+                    }}
+                  />
+                </InputGroup>
+              </Form.Group>
+            </Col>
+
+            {/* Select Class Dropdown */}
+            <Col md={12}>
+              <Form.Group controlId="formSelectClass">
+                <Form.Label>Select Class</Form.Label>
                 <div style={{ marginBottom: "23px", width: "100%" }}>
                   <div className="dropdown" id="selectClass">
                     <div
@@ -370,92 +304,101 @@ const CreateEditFeeGroup = ({
                     </ul>
                   </div>
                 </div>
-                <div style={{ marginBottom: "23px", width: "100%" }}>
-                  <div className="dropdown" id="selectSection">
-                    <button
-                      className="btn btn-secondary dropdown-toggle"
-                      style={{
-                        width: "100%",
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        backgroundColor: "transparent",
-                        border: "1px solid #ECEDF1",
-                        borderRadius: "8px",
-                      }}
-                      data-bs-toggle="dropdown"
-                      aria-expanded="false"
-                    >
-                      {selectedSections.length
-                        ? selectedSections
-                            .map((section) => section.section)
-                            .join(", ")
-                        : "Select Section"}
-                    </button>
-                    <ul
-                      className="dropdown-menu"
-                      style={{
-                        width: "100%",
-                        maxHeight: "150px",
-                        overflowY: "scroll",
-                      }}
-                    >
-                      <li>
+              </Form.Group>
+            </Col>
+
+            {/* Select Section Dropdown */}
+            <Col md={12} style={{ marginBottom: "23px" }}>
+              <Form.Group controlId="formSelectSection">
+                <Form.Label>Select Section</Form.Label>
+                <div className="dropdown" id="selectSection">
+                  <button
+                    className="btn btn-secondary dropdown-toggle"
+                    style={{
+                      width: "100%",
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      backgroundColor: "transparent",
+                      border: "1px solid #ECEDF1",
+                      borderRadius: "8px",
+                    }}
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >
+                    {selectedSections.length
+                      ? selectedSections
+                          .map((section) => section.section)
+                          .join(", ")
+                      : "Select Section"}
+                  </button>
+                  <ul
+                    className="dropdown-menu"
+                    style={{
+                      width: "100%",
+                      maxHeight: "150px",
+                      overflowY: "scroll",
+                    }}
+                  >
+                    <li>
+                      <button
+                        className="dropdown-item"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          handleSelectAllSections();
+                        }}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={isAllSectionsSelected}
+                          readOnly
+                          style={{ marginRight: "8px" }}
+                        />
+                        Select All
+                      </button>
+                    </li>
+                    {getSection.map((section) => (
+                      <li key={section.id}>
                         <button
                           className="dropdown-item"
                           onClick={(e) => {
                             e.preventDefault();
-                            handleSelectAllSections();
+                            handleSectionSelected(section);
                           }}
                         >
                           <input
                             type="checkbox"
-                            checked={isAllSectionsSelected}
+                            checked={isSelectedSection(section)}
                             readOnly
                             style={{ marginRight: "8px" }}
                           />
-                          Select All
+                          {section.section}
                         </button>
                       </li>
-                      {getSection.map((section) => (
-                        <li key={section.id}>
-                          <button
-                            className="dropdown-item"
-                            onClick={(e) => {
-                              e.preventDefault();
-                              handleSectionSelected(section);
-                            }}
-                          >
-                            <input
-                              type="checkbox"
-                              checked={isSelectedSection(section)}
-                              readOnly
-                              style={{ marginRight: "8px" }}
-                            />
-                            {section.section}
-                          </button>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
+                    ))}
+                  </ul>
                 </div>
-                <button
-                  type="submit"
-                  className="btn btn-primary"
-                  style={{
-                    borderRadius: "8px",
-                    width: "100%",
-                    padding: "10px",
-                    fontSize: "16px",
-                    fontWeight: "600",
-                  }}
-                >
-                  Submit
-                </button>
-              </form>
-            </div>
-          </div>
-        </div>
+              </Form.Group>
+            </Col>
+
+            {/* Submit Button */}
+            <Col md={12}>
+              <Button
+                type="submit"
+                variant="primary"
+                className="w-100"
+                style={{
+                  borderRadius: "8px",
+                  padding: "10px",
+                  fontSize: "16px",
+                  fontWeight: "600",
+                }}
+              >
+                Submit
+              </Button>
+            </Col>
+          </Row>
+        </Form>
       </div>
     </Modal>,
     modalsRoot

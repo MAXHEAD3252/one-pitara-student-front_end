@@ -32,8 +32,6 @@ const CardsWidget5: FC<CardsWidget5Props> = ({ schoolId }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [formData, setFormData] = useState<Partial<SchoolDetail>>({});
   const [logoFile, setLogoFile] = useState<File | null>(null);
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [smallLogoFile, setSmallLogoFile] = useState<File | null>(null);
   const [refresh, setRefresh] = useState(false);
 
   useEffect(() => {
@@ -64,43 +62,54 @@ const CardsWidget5: FC<CardsWidget5Props> = ({ schoolId }) => {
  
   const handleSave = async () => {
     try {
-      // Handle file uploads first if necessary
-      const updatedFormData = { ...formData };
-      console.log(updatedFormData)
+      // Compare formData with schoolDetail to only send the fields that have changed
+      const updatedFormData = Object.keys(formData).reduce((acc, key) => {
+        if (formData[key] !== schoolDetail[key]) {
+          acc[key] = formData[key]; // Add only changed fields to the update object
+        }
+        return acc;
+      }, {} as Partial<SchoolDetail>); // Make sure to type this properly
+  
+      console.log("Updated Form Data:", updatedFormData);
+  
+      // If no fields are changed, do nothing
+      if (Object.keys(updatedFormData).length === 0 && !logoFile) {
+        toast.info("No changes detected.", { autoClose: 3000 });
+        return;
+      }
+  
+      // If a logo file is provided, upload it first
       if (logoFile) {
-      const logoResponse = await uploadFile(logoFile, 'logo',schoolId);
-      updatedFormData.school_logo = logoResponse.url; // Update logo URL in formData
-    }
-      if (imageFile) {
-         const imageResponse = await uploadFile(imageFile, 'image',schoolId);
-      updatedFormData.school_image = imageResponse.url;
+        const logoResponse = await uploadFile(logoFile, schoolId);
+        if (logoResponse && logoResponse.url) {
+          updatedFormData.school_logo = logoResponse.url; // Update formData with logo URL
+        } else {
+          throw new Error("Logo upload failed");
+        }
       }
-      if (smallLogoFile) {
-        const smallLogoResponse = await uploadFile(smallLogoFile, 'smallLogo',schoolId);
-        updatedFormData.school_small_logo = smallLogoResponse.url;
-      }
-
+  
       // Update school details after file uploads
       const response = await fetch(`${DOMAIN}/api/superadmin/school_update/${schoolId}`, {
         method: "PUT", // Assuming you are using PUT method to update
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(updatedFormData), // Send updated form data
+        body: JSON.stringify(updatedFormData), // Send only updated form data
       });
+  
       if (!response.ok) {
         toast.error("An error occurred!", { autoClose: 3000 });
         throw new Error("Failed to update school details");
-
       }
+  
       const updatedData = await response.json();
       toast.success("Data sent successfully.", { autoClose: 3000 });
       setSchoolDetails(updatedData); // Update the state with the new data
       setIsModalVisible(false);
       setRefresh(true);
-
-    // Close the modal
-    handleCancel(); // Close the modal
+  
+      // Close the modal
+      handleCancel();
     } catch (error) {
       console.error("Error updating school details:", error);
       toast.error("Failed to communicate with server!", { autoClose: 3000 });
@@ -119,23 +128,16 @@ const CardsWidget5: FC<CardsWidget5Props> = ({ schoolId }) => {
     }));
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, type: string) => {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
-      if (type === 'logo') {
         setLogoFile(file);
-      } else if (type === 'image') {
-        setImageFile(file);
-      } else if (type === 'smallLogo') {
-        setSmallLogoFile(file);
-      }
     }
   };
 
-  const uploadFile = async (file, type,schoolId) => {
+  const uploadFile = async (file, schoolId) => {
     const formData = new FormData();
     formData.append('file', file);
-    formData.append('type', type);
     formData.append('school_id', schoolId);
     try {
       const response = await fetch(`${DOMAIN}/api/superadmin/school_update_upload`, {
@@ -679,27 +681,7 @@ const CardsWidget5: FC<CardsWidget5Props> = ({ schoolId }) => {
                   <Form.Control
                     type='file'
                     name='logo'
-                    onChange={(e) => handleFileChange(e, 'logo')}
-                  />
-                </Form.Group>
-              </Col>
-              <Col md={4}>
-                <Form.Group className='mb-3 custom-input' controlId='formImage'>
-                  <Form.Label>Upload Image</Form.Label>
-                  <Form.Control
-                    type='file'
-                    name='image'
-                    onChange={(e) => handleFileChange(e, 'image')}
-                  />
-                </Form.Group>
-              </Col>
-              <Col md={4}>
-                <Form.Group className='mb-3 custom-input' controlId='formSmallLogo'>
-                  <Form.Label>Upload Small Logo</Form.Label>
-                  <Form.Control
-                    type='file'
-                    name='smallLogo'
-                    onChange={(e) => handleFileChange(e, 'smallLogo')}
+                    onChange={(e) => handleFileChange(e)}
                   />
                 </Form.Group>
               </Col>
