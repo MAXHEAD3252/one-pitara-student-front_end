@@ -10,14 +10,9 @@ import { useAuth } from "../../../../app/modules/auth/core/Auth";
 import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
 // import { DeleteFeeGroupModal } from "../../modals/create-app-stepper/DeleteFeeGroupModal";
 import { CreateEditFeeGroup } from "../../modals/create-app-stepper/CreateEditFeeGroup";
-import {
-  Button,
-  Col,
-  Form,
-  InputGroup,
-  Modal,
-  Row,
-} from "react-bootstrap";
+import { Button, Col, Form, InputGroup, Modal, Row } from "react-bootstrap";
+import { toast } from "react-toastify";
+import { DeleteConfirmationModal } from "../../modals/create-app-stepper/DeleteConfirmationModal";
 
 interface CurrentUser {
   school_id: string;
@@ -58,10 +53,14 @@ const TablesWidget61 = () => {
   const { currentUser } = useAuth();
 
   const [referesh, setReferesh] = useState(false);
-  const [fee_group_id, setfee_group_id] = useState<number | null>(null);
-  // const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
+  const [fee_group_id, setfee_group_id] = useState<number>(0);
+  const [fee_group_session_id, setfee_group_session_id] = useState<number>(0);
+  const [fee_group_name, setfee_group_name] = useState<string>("");
   const [showEditModal, setShowEditModal] = useState<boolean>(false);
-  // const [session_id, setSession_id] = useState<boolean>(false);
+  const [showDeletModal, setShowDeleteModal] = useState<boolean>(false);
+  const [editsession, setEditSession] = useState<number>(0);
+  const [editclass, setEditClass] = useState<number>(0);
+  const [editsection, setEditSection] = useState<number>(0);
 
   const schoolId = (currentUser as CurrentUser)?.school_id;
 
@@ -82,6 +81,7 @@ const TablesWidget61 = () => {
     id: 0,
     className: "",
   });
+
   const [selectedSession, setSelectedSession] = useState<SessionData>({
     id: 0,
     session: 0,
@@ -91,10 +91,23 @@ const TablesWidget61 = () => {
   const [isAllSectionsSelected, setIsAllSectionsSelected] = useState(false);
   const [isAddModalVisible, setIsAddModalVisible] = useState(false);
 
-  const handleShowEditModal = (fee_type_id: number) => {
-    setfee_group_id(fee_type_id);
+  const handleShowEditModal = (
+    fee_group_id: number,
+    fee_group_name: string,
+    fee_group_session_id: number,
+    session: number,
+    class_id: number,
+    section_id: number
+  ) => {
+    setfee_group_id(fee_group_id);
+    setfee_group_name(fee_group_name);
+    setfee_group_session_id(fee_group_session_id);
+    setEditSession(session);
+    setEditClass(class_id);
+    setEditSection(section_id);
     setShowEditModal(true);
   };
+  
 
   const showAddModal = () => {
     setIsAddModalVisible(true);
@@ -105,18 +118,51 @@ const TablesWidget61 = () => {
 
   const handleCloseEditModal = () => {
     setShowEditModal(false);
-    setfee_group_id(null);
+    setfee_group_id(0);
+    setfee_group_name('');
+    setfee_group_session_id(0);
+    setEditSession(0);
+    setEditClass(0);
+    setEditSection(0);
   };
 
-  // const handleShowDeleteModal = (fee_group_id: number) => {
-  //   setfee_group_id(fee_group_id);
-  //   setShowDeleteModal(true);
-  // };
+  const handleDelete = async () => {
+    console.log(fee_group_id,fee_group_session_id,schoolId)
+    try {
+      const response = await fetch(
+        `${DOMAIN}/api/school/delete-feegroup/${fee_group_id}/${fee_group_session_id}/${schoolId}`,
+        {
+          method: "DELETE",
+        }
+      );
 
-  // const handleCloseDeleteModal = () => {
-  //   setShowDeleteModal(false);
-  //   setfee_group_id(null);
-  // };
+      if (!response.ok) {
+        throw new Error("Failed to delete the designation");
+      }
+
+      // Optionally, you can refresh the list or update the state to remove the deleted item
+      setReferesh(true); // Assuming you have a way to refresh the list of designations
+      toast.success("Fee Group deleted successfully.", { autoClose: 3000 });
+      handleCloseDeleteModal();
+    } catch (error) {
+      console.error("Error deleting designation:", error);
+      toast.error("Failed to delete designation!", { autoClose: 3000 });
+    }
+};
+
+  const handleShowDeleteModal = (fee_group_id: number, fee_group_session_id: number) => {
+    setfee_group_id(fee_group_id);
+    setfee_group_session_id(fee_group_session_id);
+    setShowDeleteModal(true);
+  };
+
+  const handleCloseDeleteModal = () => {
+    setShowDeleteModal(false);
+    setfee_group_id(0);
+    setfee_group_session_id(0);
+  };
+
+
 
   useEffect(() => {
     const fetchClasses = async () => {
@@ -187,8 +233,6 @@ const TablesWidget61 = () => {
           throw new Error("Failed to fetch fee groups");
         }
         const responseData = await response.json();
-        console.log(responseData);
-
         console.log(responseData);
         setData(responseData);
       } catch (error) {
@@ -266,11 +310,13 @@ const TablesWidget61 = () => {
       }
       const data = await response.json();
       setReferesh(true);
+      handleAddCancel();
       console.log("Response:", data);
     } catch (error) {
       console.error("Error:", error);
     }
   };
+  console.log(data);
 
   return (
     <div
@@ -488,7 +534,16 @@ const TablesWidget61 = () => {
                   }}
                 >
                   <div
-                    onClick={() => handleShowEditModal(item.fee_groups_id)}
+                    onClick={() =>
+                      handleShowEditModal(
+                        item.fee_groups_id,
+                        item.fee_group_name,
+                        item.fee_group_session_id,
+                        item.session_id,
+                        item.class_id,
+                        item.section_id
+                      )
+                    }
                     style={{
                       display: "flex",
                       alignItems: "center",
@@ -528,7 +583,7 @@ const TablesWidget61 = () => {
                     </svg>
                   </div>
                   <div
-                    onClick={() => handleShowDeleteModal(item.fee_groups_id)}
+                    onClick={() => handleShowDeleteModal(item.fee_groups_id,item.fee_group_session_id)}
                     style={{
                       width: "32px",
                       height: "40px",
@@ -850,11 +905,27 @@ const TablesWidget61 = () => {
           </Form>
         </div>
       </Modal>
+
       <CreateEditFeeGroup
         show={showEditModal}
         handleClose={handleCloseEditModal}
         fee_group_id={fee_group_id}
-        setReferesh={setReferesh} 
+        fee_group_session_id={fee_group_session_id}
+        fee_group_name={fee_group_name}
+        session={editsession}
+        class_id={editclass}
+        section_id={editsection}
+        setReferesh={setReferesh}
+      />
+
+<DeleteConfirmationModal
+        show={showDeletModal}
+        handleClose={handleCloseDeleteModal}
+        handleDelete={handleDelete}
+        title="Confirm Deletion"
+        description={`Are you sure you want to delete this Fee Group ?  \n This action cannot be undone.`}
+        confirmButtonText="Delete"
+        cancelButtonText="Cancel"
       />
     </div>
   );

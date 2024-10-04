@@ -1,15 +1,6 @@
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import {
-  Button,
-  Col,
-  Dropdown,
-  DropdownButton,
-  Form,
-  InputGroup,
-  Modal,
-  Row,
-} from "react-bootstrap";
+import { Button, Col, Form, InputGroup, Modal, Row } from "react-bootstrap";
 import { useAuth } from "../../../../app/modules/auth";
 import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
 
@@ -18,6 +9,11 @@ type Props = {
   handleClose: () => void;
   fee_group_id: number | null;
   setReferesh: any;
+  fee_group_session_id: number | null;
+  fee_group_name: string | number | undefined;
+  session: number;
+  class_id: number;
+  section_id: number;
 };
 
 interface CurrentUser {
@@ -45,41 +41,93 @@ interface ClassData {
   id: number;
   className: string;
 }
+interface SessionData {
+  id: number;
+  session: number;
+}
 
+interface Session {
+  id: number;
+  session: number;
+}
 const modalsRoot = document.getElementById("root-modals") || document.body;
 
 const CreateEditFeeGroup = ({
   show,
   handleClose,
   fee_group_id,
+  fee_group_session_id,
+  fee_group_name,
+  session,
+  class_id,
+  section_id,
   setReferesh,
 }: Props) => {
-  const [data, setData] = useState<DataItem[]>([]);
   const [formData, setFormData] = useState({
-    name: "",
-    description: "",
-    class_id: 0,
-    section_id: "",
-    session_id: "19",
+    name: fee_group_name || "",
+    class_id: class_id || 0,
+    section_id: section_id || "",
+    session_id: session || 0,
+    fee_group_session_id: fee_group_session_id || 0,
   });
 
   const [getClass, setClass] = useState<Class[]>([]);
   const [getSection, setSection] = useState<Section[]>([]);
-  console.log(getSection);
-
   const [selectedClass, setSelectedClass] = useState<ClassData>({
-    id: 0,
+    id: class_id || 0,
     className: "",
+  });
+  const [selectedSession, setSelectedSession] = useState<SessionData>({
+    id: session || 0,
+    session: session || 0,
   });
   const [selectedSections, setSelectedSections] = useState<Section[]>([]);
   const [isAllSectionsSelected, setIsAllSectionsSelected] = useState(false);
-
-  console.log(selectedSections);
+  const [getSession, setSession] = useState<Session[]>([]);
 
   const { currentUser } = useAuth();
   const schoolId = (currentUser as CurrentUser)?.school_id;
 
-  //   console.log(fee_group_id)
+  // console.log(fee_group_id);
+  // console.log(fee_group_session_id);
+  // console.log(fee_group_name);
+  // console.log(session);
+  // console.log(class_id);
+  // console.log(section_id);
+
+  useEffect(() => {
+    setFormData({
+      name: fee_group_name || "",
+      class_id: class_id || 0,
+      section_id: section_id || "",
+      session_id: session || 0,
+      fee_group_session_id: fee_group_session_id || 0,
+    });
+    setSelectedClass({ id: class_id || 0, className: "" });
+    setSelectedSession({ id: session || 0, session: session || 0 });
+  }, [fee_group_name, session, class_id, section_id, fee_group_session_id]);
+
+  useEffect(() => {
+    if (class_id && getClass.length > 0) {
+      const selected = getClass.find((item) => item.class_id === class_id);
+      if (selected) {
+        setSelectedClass({ id: selected.class_id, className: selected.class });
+        setFormData((prevFormData) => ({
+          ...prevFormData,
+          class_id: selected.class_id,
+        }));
+      }
+    }
+  }, [class_id, getClass]);
+
+  useEffect(() => {
+    if (section_id && getSection.length > 0) {
+      const selected = getSection.filter((section) =>
+        section_id.includes(section.id)
+      );
+      setSelectedSections(selected);
+    }
+  }, [section_id, getSection]);
 
   useEffect(() => {
     const fetchClasses = async () => {
@@ -87,9 +135,7 @@ const CreateEditFeeGroup = ({
         const response = await fetch(
           `${DOMAIN}/api/school/get-onlyclasses/${schoolId}`
         );
-        if (!response.ok) {
-          throw new Error("Failed to fetch data");
-        }
+        if (!response.ok) throw new Error("Failed to fetch data");
         const responseData = await response.json();
         setClass(responseData);
       } catch (error) {
@@ -101,15 +147,30 @@ const CreateEditFeeGroup = ({
   }, [schoolId]);
 
   useEffect(() => {
+    const fetchSessions = async () => {
+      try {
+        const response = await fetch(
+          `${DOMAIN}/api/school/get-session?schoolId=${schoolId}`
+        );
+        if (!response.ok) throw new Error("Failed to fetch data");
+        const responseData = await response.json();
+        setSession(responseData);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchSessions();
+  }, [schoolId]);
+
+  useEffect(() => {
     const fetchSections = async () => {
       try {
         const class_id = selectedClass.id;
         const response = await fetch(
           `${DOMAIN}/api/school/get-classwise-section/${class_id}/${schoolId}`
         );
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
+        if (!response.ok) throw new Error("Network response was not ok");
         const data = await response.json();
         setSection(data);
       } catch (error) {
@@ -117,9 +178,7 @@ const CreateEditFeeGroup = ({
       }
     };
 
-    if (selectedClass.id) {
-      fetchSections();
-    }
+    if (selectedClass.id) fetchSections();
   }, [selectedClass.id, schoolId]);
 
   const handleClassSelected = ({ id, className }: ClassData) => {
@@ -127,6 +186,14 @@ const CreateEditFeeGroup = ({
     setFormData((prevFormData) => ({
       ...prevFormData,
       class_id: id,
+    }));
+  };
+
+  const handleSessionSelected = ({ id, session }: SessionData) => {
+    setSelectedSession({ id, session });
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      session_id: id,
     }));
   };
 
@@ -163,6 +230,7 @@ const CreateEditFeeGroup = ({
     e.preventDefault();
 
     try {
+      console.log(formData)
       const response = await fetch(
         `${DOMAIN}/api/school/edit-feegroup/${fee_group_id}/${schoolId}`,
         {
@@ -176,9 +244,8 @@ const CreateEditFeeGroup = ({
           }),
         }
       );
-      if (!response.ok) {
+      if (!response.ok)
         throw new Error(`HTTP error! status: ${response.status}`);
-      }
       const data = await response.json();
       setReferesh(true);
       handleClose();
@@ -221,7 +288,6 @@ const CreateEditFeeGroup = ({
           style={{ padding: "20px", marginTop: "10px" }}
         >
           <Row style={{ width: "100%" }}>
-            {/* Name Field */}
             <Col md={12} style={{ marginBottom: "23px" }}>
               <Form.Group controlId="formName">
                 <Form.Label
@@ -379,6 +445,59 @@ const CreateEditFeeGroup = ({
                   </ul>
                 </div>
               </Form.Group>
+            </Col>
+
+            <Col md={6}>
+              <div className="mb-2">
+                <span>Select Session</span>
+              </div>
+              <div style={{ marginBottom: "23px", width: "100%" }}>
+                <div className="dropdown" id="selectSession">
+                  <div
+                    className="btn btn-secondary dropdown-toggle"
+                    style={{
+                      width: "100%",
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      backgroundColor: "transparent",
+                      border: "1px solid #ECEDF1",
+                      borderRadius: "8px",
+                    }}
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >
+                    {selectedSession.session
+                      ? selectedSession.session
+                      : "Select Session"}
+                  </div>
+                  <ul
+                    className="dropdown-menu"
+                    style={{
+                      width: "100%",
+                      maxHeight: "150px",
+                      overflowY: "scroll",
+                    }}
+                  >
+                    {getSession.map((item) => (
+                      <li key={item.id}>
+                        <div
+                          className="dropdown-item"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            handleSessionSelected({
+                              id: item.id,
+                              session: item.session,
+                            });
+                          }}
+                        >
+                          {item.session}
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
             </Col>
 
             {/* Submit Button */}
