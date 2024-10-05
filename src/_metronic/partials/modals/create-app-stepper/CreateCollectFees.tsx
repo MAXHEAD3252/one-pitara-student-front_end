@@ -108,7 +108,7 @@ const CreateCollectFees = ({
   const [offlineFormData, setOfflineFormData] = useState<OfflineFormData>({
     paymentMode: "",
     paymentDate: "",
-    checkNo: "",
+    checkNo: null,
     accountHolderName: "",
     branchName: "",
     ifscCode: "",
@@ -384,10 +384,16 @@ const CreateCollectFees = ({
       );
 
       const result = await response.json();
+      console.log(result);
+      
 
-      if (response.ok) {
+      if (result.status === 200) {
         // Handle success
         console.log("Form submitted successfully:", result);
+        setShowOfflineForm(false);
+        setOfflineButtonText("Collect Offline");
+        setdisableonlinebutton("active");
+        setAllRefresh(true)
       } else {
         // Handle error
         console.error("Error submitting form:", result.message);
@@ -399,34 +405,36 @@ const CreateCollectFees = ({
 
   const handleSubmit = async () => {
     setLoading(true); // Optionally show loading state
-  
+
     try {
       if (!studentEmail || studentEmail.trim() === "") {
-        toast.error("Error: Student email is not present. Cannot send the transaction.");
+        toast.error(
+          "Error: Student email is not present. Cannot send the transaction."
+        );
         return; // Exit the function to prevent further execution
       }
-  
+
       const url = studentId
         ? `${DOMAIN}/api/school/store-feetransaction`
         : `${DOMAIN}/api/school/collectadmissionfees`;
-  
+
       const requestBody = studentId
         ? { transactions: studentTransaction }
         : { data: data };
-  
+
       const response = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(requestBody),
       });
-  
+
       // Check if the response is not OK (status is not 200-299)
       if (!response.ok) {
         // Get the JSON error message from the response body
         const errorData = await response.json();
         throw new Error(errorData.error || "Network response was not ok");
       }
-  
+
       const result = await response.json();
       toast.success("Data submitted successfully!");
       setAllRefresh(true); // Optionally refresh the UI
@@ -438,8 +446,6 @@ const CreateCollectFees = ({
       setLoading(false); // Stop loading spinner or state
     }
   };
-  
-  
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -516,6 +522,39 @@ const CreateCollectFees = ({
     setShowTransactionDetails(false);
   };
 
+
+  const handleModalClose = () => {
+    // Reset all useState values to their default or null
+    setLoading(false);
+    setData([]);
+    setShowOfflineForm(false);
+    setOfflineButtonText("Collect Offline");
+    setdisableonlinebutton("active");
+    setAllRefresh(false);
+    setGroupedData(undefined);
+    setSelectedGroup(null);
+    setDetailedData([]);
+    setSelectedId(0);
+    setStudentTransaction([]);
+    setSendOffline([]);
+    setTransactionDetails([]);
+    setShowTransactionDetails(false);
+    setOfflineFormData({
+      paymentMode: "",
+      paymentDate: "",
+      checkNo: null,
+      accountHolderName: "",
+      branchName: "",
+      ifscCode: "",
+      bankName: "",
+      transactionRef: "",
+      transferDate: "",
+    });
+
+    // Call the original handleClose from props
+    handleClose();
+  };
+
   <style>{`
     .custom-modal .modal-dialog {
       max-width: 90%; /* Adjust the modal width according to the content */
@@ -537,414 +576,796 @@ const CreateCollectFees = ({
       onHide={handleCloseModal}
     >
       <div
-        className="modal-content"
-        style={{ padding: "20px 5px", borderRadius: "17px" }}
+        className="modal-header"
+        style={{
+          backgroundColor: "#F2F6FF",
+          borderBottom: "1px solid lightgray",
+          fontFamily: "Manrope",
+        }}
       >
+        <h2>
+          {" "}
+          {showTransactionDetails
+            ? "Transaction Details"
+            : selectedGroup
+            ? "Fee Types"
+            : "Collect Fees"}
+        </h2>
         <div
-          className="modal-header border-0"
-          style={{ width: "100%", height: "27px" }}
+          className="btn btn-sm btn-icon btn-active-color-primary"
+          onClick={handleModalClose}
         >
-          <span
-            className="text-center w-100"
-            id="staticBackdropLabel"
-            style={{
-              justifyContent: "center",
-              textAlign: "center",
-              alignItems: "center",
-              fontSize: "24px",
-              fontWeight: "600",
-              fontFamily: "Manrope",
-            }}
-          >
-            {showTransactionDetails 
-  ? "Transaction Details" 
-  : selectedGroup 
-    ? "Fee Types" 
-    : "Collect Fees"
-}
-
-          </span>
-          <span
-            data-bs-dismiss="modal"
-            onClick={handleCloseModal}
-            aria-label="Close"
-            style={{ cursor: "pointer" }}
-          >
-            <svg
-              width="32"
-              height="32"
-              viewBox="0 0 32 32"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <circle cx="16" cy="16" r="16" fill="#ECECEC" />
-              <path
-                d="M22.8572 9.14294L9.14288 22.8572M9.14288 9.14294L22.8572 22.8572"
-                stroke="#464646"
-                strokeWidth="2"
-                strokeLinecap="square"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </span>
+          <i className="fas fa-times"></i>
         </div>
-        <hr />
-        <div className="modal-body" style={{ padding: "20px" }}>
-          <div className="table-responsive" style={{ maxHeight: "400px" }}>
-            {selectedGroup ? (
-              // Detailed view for fee types
-              <>
-                <Button
-                  variant="secondary"
-                  onClick={
-                    showTransactionDetails
-                      ? handleCloseTransactionDetails
-                      : () => handleBackClick(selectedId)
-                  }
-                  style={{
-                    marginBottom: "10px",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "8px",
-                    padding: "8px 16px",
-                    borderRadius: "8px",
-                    color: "black",
-                    border: "none",
-                  }}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
-                    fill="currentColor"
-                    viewBox="0 0 16 16"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M15 8a.5.5 0 0 1-.5.5H3.707l4.147 4.146a.5.5 0 0 1-.708.708l-5-5a.5.5 0 0 1 0-.708l5-5a.5.5 0 0 1 .708.708L3.707 7.5H14.5A.5.5 0 0 1 15 8z"
-                    />
-                  </svg>
-                </Button>
+      </div>
 
-                {showTransactionDetails ? (
-                  <>
-                    {/* <div
-                      className="modal-header border-0 d-flex justify-content-end"
-                      style={{ padding: "0 1rem", alignItems: "center" }}
-                    >
-                      <span
-                        data-bs-dismiss="modal"
-                        onClick={handleCloseTransactionDetails}
-                        aria-label="Close"
-                        style={{
-                          cursor: "pointer",
-                          marginTop: "0.5rem",
-                          marginRight: "0.5rem",
-                        }}
-                      >
-                        <svg
-                          width="32"
-                          height="32"
-                          viewBox="0 0 32 32"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <circle cx="16" cy="16" r="16" fill="#ECECEC" />
-                          <path
-                            d="M22.8572 9.14294L9.14288 22.8572M9.14288 9.14294L22.8572 22.8572"
-                            stroke="#464646"
-                            strokeWidth="2"
-                            strokeLinecap="square"
-                            strokeLinejoin="round"
-                          />
-                        </svg>
-                      </span>
-                    </div> */}
-                    <div className="modal-body">
-                      {/* <h5 className="modal-title mb-4">Transaction Details</h5> */}
-
-                      <div className="table-responsive">
-                        <table className="table table-bordered table-hover">
-                          <thead
-                            className="thead-dark"
-                            style={{
-                              backgroundColor: "#1C335C",
-                              color: "white",
-                              fontFamily:'Manrope',
-                              fontSize:'14px'
-                            }}
-                          >
-                            <tr>
-                              <th scope="col">Transaction ID</th>
-                              <th scope="col">Transaction Date</th>
-                              <th scope="col">Student Fees Master ID</th>
-                              <th scope="col">Amount</th>
-                              <th scope="col">Payment Method</th>
-                              <th scope="col">Transaction Reference</th>
-                              <th scope="col">Status</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {transactionDetails.map((item, index) => (
-                              <tr key={index} style={{fontFamily:'Manrope',
-                                fontSize:'14px'}}>
-                                <td>{item.transaction_id}</td>
-                                <td>
-                                  {new Date(
-                                    item.transaction_date
-                                  ).toLocaleDateString()}
-                                </td>
-                                <td>{item.student_fees_master_id}</td>
-                                <td>{`$${Number(item.amount).toFixed(2)}`}</td>{" "}
-                                {/* Conversion to number */}
-                                <td>{item.payment_method}</td>
-                                <td>{item.transaction_ref || "N/A"}</td>
-                                <td>
-                                  <span
-                                  style={{fontFamily:'Manrope',
-                                    fontSize:'14px'}}
-                                    className={`badge ${
-                                      item.status === "Success"
-                                        ? "bg-success"
-                                        : "bg-danger"
-                                    }`}
-                                  >
-                                    {item.status}
-                                  </span>
-                                </td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
-                  </>
-                ) : (
-                  <div className="table-responsive">
-                    <table className="table table-bordered table-hover">
-                      <thead
-                        className="thead-dark"
-                        style={{ backgroundColor: "#1C335C", color: "white",fontFamily:'Manrope',
-                          fontSize:'14px' }}
-                      >
-                        <tr>
-                          <th>Fee Type</th>
-                          <th>Due Date</th>
-                          <th>Amount</th>
-                          <th>Adjustment</th>
-                          <th>Total Amount</th>
-                          <th>Status</th>
-                          <th>Amount Paid</th>
-                          <th>Pending Amount</th>
-                          <th>Currently Paying</th>
-                          <th>Transaction History</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {detailedData.map((item) => {
-                          const isPaid =
-                            item.status === "paid" ||
-                            disableonlinebutton === "disable";
-                          return (
-                            <tr
-                              key={item.feetype_id}
-                              style={{
-                                backgroundColor: isPaid ? "#f5f5f5" : "inherit",
-                                opacity: isPaid ? 0.5 : 1,fontFamily:'Manrope',
-                              fontSize:'14px'
-                              }}
-                            >
-                              <td>{item.fee_type_name}</td>
-                              <td>{formatDate(item.due_date)}</td>
-                              <td>{item.amount}</td>
-                              <td>
-                                <input
-                                  type="number"
-                                  disabled={isPaid}
-                                  value={item.adjustment}
-                                  onChange={(e) =>
-                                    handleAdjustmentChange(
-                                      item.fee_group_id,
-                                      item.feetype_id,
-                                      e.target.value,
-                                      "adjustment"
-                                    )
-                                  }
-                                  style={{ width: "100px" }}
-                                />
-                              </td>
-                              <td>
-                                {(
-                                  parseFloat(item.amount) +
-                                  (parseFloat(item.adjustment) || 0)
-                                ).toFixed(2)}
-                              </td>
-                              <td>{item.status}</td>
-                              <td>{item.amount_paid}</td>
-                              <td>
-                                {(
-                                  parseFloat(item.total_amount) -
-                                  parseFloat(item.amount_paid)
-                                ).toFixed(2)}
-                              </td>
-                              <td>
-                                <input
-                                  type="number"
-                                  disabled={isPaid}
-                                  onChange={(e) =>
-                                    handleAdjustmentChange(
-                                      item.fee_group_id,
-                                      item.feetype_id,
-                                      e.target.value,
-                                      "currentlyPaying" // Specify that this is for currently paying
-                                    )
-                                  }
-                                  value={item.currentlyPaying}
-                                  placeholder={(
-                                    parseFloat(item.total_amount) -
-                                    parseFloat(item.amount_paid)
-                                  ).toFixed(2)}
-                                  // onBlur={(e) => {
-                                  //   // Check if the input value is empty and set to the placeholder
-                                  //   if (!e.target.value) {
-                                  //     handleAdjustmentChange(
-                                  //       item.fee_group_id,
-                                  //       item.feetype_id,
-                                  //       (
-                                  //         parseFloat(item.total_amount) -
-                                  //         parseFloat(item.amount_paid)
-                                  //       ).toFixed(2),
-                                  //       "currentlyPaying"
-                                  //     );
-                                  //   }
-                                  // }}
-                                  style={{ width: "100px" }}
-                                />
-                              </td>
-
-                              <td className="d-flex justify-content-around align-items-center">
-                                <div
-                                  style={{
-                                    width: "32px",
-                                    height: "35px",
-                                    borderRadius: "6px",
-                                    padding: "6px",
-                                    backgroundColor: "#b0efff",
-                                    display: "flex",
-                                    cursor: "pointer",
-                                  }}
-                                  onClick={() =>
-                                    fetchTransactionDetails(
-                                      item.student_fees_master_id
-                                    )
-                                  }
-                                >
-                                  <img
-                                    src="/media/svg/files/view.svg"
-                                    alt="View"
-                                    style={{ width: "22px", height: "22px" }}
-                                  />
-                                </div>
-                              </td>
-                            </tr>
-                          );
-                        })}
-                      </tbody>
-
-                      <tfoot>
-                        <tr>
-                          <td colSpan={2}>Total</td>
-                          <td>{calculateTotalAmount(selectedGroup)}</td>
-                          <td colSpan={3}>Total Paid</td>
-                          <td>
-                            {calculateTotalAmountPaid(
-                              selectedGroup,
-                              data
-                            ).toFixed(2)}
-                          </td>
-                          <td colSpan={2}>Total Pending</td>
-                          <td>
-                            {calculateTotalPendingAmount(
-                              selectedGroup,
-                              data
-                            ).toFixed(2)}
-                          </td>
-                        </tr>
-                      </tfoot>
-                    </table>
-                  </div>
-                )}
-              </>
-            ) : (
-              // Initial view of groups
-              <table
-                className="table table-striped table-hover"
-                style={{ marginBottom: "0" }}
-              >
-                <thead className="thead-dark">
-                  <tr
-                    style={{
-                      color: "black",
-                      fontFamily: "Manrope",
-                      borderBottom: "1px solid lightGray",
-                      fontFamily:'Manrope',
-                              fontSize:'14px'
-                    }}
-                  >
-                    <th style={{ padding: "10px" }}>Fee Group</th>
-                    <th style={{ padding: "10px" }}>Total Amount</th>
-                    <th style={{ padding: "10px" }}>Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {groupedData &&
-                    Array.from(groupedData.entries()).map(
-                      ([groupName, items]) => (
-                        <tr key={groupName} style={{fontFamily:'Manrope',
-                          fontSize:'14px'}}>
-                          <td
-                            style={{ padding: "10px", fontFamily: "Manrope" }}
-                          >
-                            {groupName}
-                          </td>
-                          <td
-                            style={{ padding: "10px", fontFamily: "Manrope" }}
-                          >
-                            {calculateTotalAmount(groupName)}
-                          </td>
-                          <td
-                            style={{ padding: "10px", fontFamily: "Manrope" }}
-                          >
-                            <button
-                              type="button"
-                              className="btn btn-outline-dark"
-                              onClick={() => handleGroupClick(groupName)}
-                            >
-                              Collect
-                            </button>
-                          </td>
-                        </tr>
-                      )
-                    )}
-                </tbody>
-              </table>
-            )}
-          </div>
-
-          {showOfflineForm && (
-            <div className="offline-form mt-3">
-              <h5
+      <div
+        className="modal-body py-lg-5 px-lg-5"
+        style={{
+          backgroundColor: "#F2F6FF",
+        }}
+      >
+        {selectedGroup ? (
+          // Detailed view for fee types
+          <>
+            <div
+              style={{
+                display: "flex",
+                gap: "10px", // Adds space between the buttons
+                justifyContent: "left", // Aligns buttons horizontally in the center
+                alignItems: "center", // Vertically centers the buttons
+                marginBottom: "10px",
+              }}
+            >
+              <div
+                onClick={
+                  showTransactionDetails
+                    ? handleCloseTransactionDetails
+                    : () => handleBackClick(selectedId)
+                }
                 style={{
-                  marginBottom: "30px",
-                  marginTop: "30px",
-                  fontSize: "16px",
+                  display: "flex",
+                  alignItems: "center",
+                  padding: "8px 12px",
+                  backgroundColor: "#1C335C",
+                  borderRadius: "8px",
+                  cursor: "pointer",
+                  transition: "background-color 0.3s",
                 }}
               >
-                Offline Payment Details
-              </h5>
-              <form onSubmit={offlineFormSubmit}>
-                <div style={{ marginBottom: "23px" }}>
-                  {/* Payment Mode Selection */}
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  fill="white"
+                  viewBox="0 0 16 16"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M15 8a.5.5 0 0 1-.5.5H3.707l4.147 4.146a.5.5 0 0 1-.708.708l-5-5a.5.5 0 0 1 0-.708l5-5a.5.5 0 0 1 .708.708L3.707 7.5H14.5A.5.5 0 0 1 15 8z"
+                  />
+                </svg>
+              </div>
+            </div>
+
+            {showTransactionDetails ? (
+              <>
+                <div
+                  style={{
+                    height: "auto", // Fixed height for the table container
+                    overflowY: "hidden",
+                    // border:'1px solid'
+                  }}
+                >
+                  <table
+                    className="table"
+                    style={{
+                      width: "100%",
+                      borderCollapse: "collapse",
+                      // marginTop: "10px",
+                      backgroundColor: "#FFFFFF", // White background for the table
+                      borderRadius: "12px", // Round corners for the table
+                      boxShadow: "0 4px 8px rgba(0, 0, 0, 0.05)", // Light shadow for the table
+                    }}
+                  >
+                    <thead>
+                      <tr
+                        style={{
+                          backgroundColor: "rgb(242, 246, 255)", // Header background color
+                          borderBottom: "1px solid #E0E4F0",
+                          fontFamily: "Manrope",
+                          fontWeight: "600",
+                          color: "#1C335C",
+                          fontSize: "14px",
+                        }}
+                      >
+                        <th
+                          style={{
+                            padding: "12px 20px",
+                            textAlign: "left",
+                          }}
+                        >
+                          Transaction ID
+                        </th>
+                        <th
+                          style={{
+                            padding: "12px 20px",
+                            textAlign: "left",
+                          }}
+                        >
+                          Transaction Date
+                        </th>
+                        <th
+                          style={{
+                            padding: "12px 20px",
+                            textAlign: "left",
+                          }}
+                        >
+                          Student Fees Master ID
+                        </th>
+                        <th
+                          style={{
+                            padding: "12px 20px",
+                            textAlign: "left",
+                          }}
+                        >
+                          Amount
+                        </th>
+                        <th
+                          style={{
+                            padding: "12px 20px",
+                            textAlign: "left",
+                          }}
+                        >
+                          Payment Method
+                        </th>
+                        <th
+                          style={{
+                            padding: "12px 20px",
+                            textAlign: "left",
+                          }}
+                        >
+                          Transaction Reference
+                        </th>
+                        <th
+                          style={{
+                            padding: "12px 20px",
+                            textAlign: "left",
+                          }}
+                        >
+                          Status
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {transactionDetails.map((item, index) => (
+                        <tr
+                          key={index}
+                          style={{
+                            backgroundColor:
+                              index % 2 === 0
+                                ? "rgb(242, 246, 255)"
+                                : "#FFFFFF",
+                            borderBottom: "1px solid #E0E4F0",
+                            fontFamily: "Manrope",
+                            fontSize: "14px",
+                            color: "#1C335C",
+                          }}
+                        >
+                          <td
+                            style={{
+                              padding: "12px 20px",
+                            }}
+                          >
+                            {item.transaction_id}
+                          </td>
+                          <td
+                            style={{
+                              padding: "12px 20px",
+                            }}
+                          >
+                            {new Date(
+                              item.transaction_date
+                            ).toLocaleDateString()}
+                          </td>
+                          <td
+                            style={{
+                              padding: "12px 20px",
+                            }}
+                          >
+                            {item.student_fees_master_id}
+                          </td>
+                          <td
+                            style={{
+                              padding: "12px 20px",
+                            }}
+                          >{`$${Number(item.amount).toFixed(2)}`}</td>{" "}
+                          {/* Conversion to number */}
+                          <td
+                            style={{
+                              padding: "12px 20px",
+                            }}
+                          >
+                            {item.payment_method}
+                          </td>
+                          <td
+                            style={{
+                              padding: "12px 20px",
+                            }}
+                          >
+                            {item.transaction_ref || "N/A"}
+                          </td>
+                          <td
+                            style={{
+                              padding: "12px 20px",
+                            }}
+                          >
+                            <span
+                              style={{
+                                fontFamily: "Manrope",
+                                fontSize: "14px",
+                              }}
+                              className={`badge ${
+                                item.status === "Success"
+                                  ? "bg-success"
+                                  : "bg-danger"
+                              }`}
+                            >
+                              {item.status}
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </>
+            ) : (
+              <div
+                style={{
+                  height: "auto", // Fixed height for the table container
+                  overflowY: "auto", // Enable vertical scrolling
+                }}
+              >
+                <table
+                  className="table"
+                  style={{
+                    width: "100%",
+                    borderCollapse: "collapse",
+                    marginTop: "10px",
+                    backgroundColor: "#FFFFFF", // White background for the table
+                    borderRadius: "12px", // Round corners for the table
+                    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.05)", // Light shadow for the table
+                  }}
+                >
+                  <thead>
+                    <tr
+                      style={{
+                        backgroundColor: "rgb(242, 246, 255)", // Header background color
+                        borderBottom: "1px solid #E0E4F0",
+                        fontFamily: "Manrope",
+                        fontWeight: "600",
+                        color: "#1C335C",
+                        fontSize: "14px",
+                      }}
+                    >
+                      <th
+                        style={{
+                          padding: "12px 20px",
+                          textAlign: "left",
+                        }}
+                      >
+                        Fee Type
+                      </th>
+                      <th
+                        style={{
+                          padding: "12px 20px",
+                          textAlign: "left",
+                        }}
+                      >
+                        Due Date
+                      </th>
+                      <th
+                        style={{
+                          padding: "12px 20px",
+                          textAlign: "left",
+                        }}
+                      >
+                        Amount
+                      </th>
+                      <th
+                        style={{
+                          padding: "12px 20px",
+                          textAlign: "left",
+                        }}
+                      >
+                        Adjustment
+                      </th>
+                      <th
+                        style={{
+                          padding: "12px 20px",
+                          textAlign: "left",
+                        }}
+                      >
+                        Total Amount
+                      </th>
+                      <th
+                        style={{
+                          padding: "12px 20px",
+                          textAlign: "left",
+                        }}
+                      >
+                        Status
+                      </th>
+                      <th
+                        style={{
+                          padding: "12px 20px",
+                          textAlign: "left",
+                        }}
+                      >
+                        Amount Paid
+                      </th>
+                      <th
+                        style={{
+                          padding: "12px 20px",
+                          textAlign: "left",
+                        }}
+                      >
+                        Pending Amount
+                      </th>
+                      <th
+                        style={{
+                          padding: "12px 20px",
+                          textAlign: "left",
+                        }}
+                      >
+                        Currently Paying
+                      </th>
+                      <th
+                        style={{
+                          padding: "12px 20px",
+                          textAlign: "left",
+                        }}
+                      >
+                        Transaction History
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {detailedData.map((item) => {
+                      const isPaid =
+                        item.status === "paid" ||
+                        disableonlinebutton === "disable";
+                      return (
+                        <tr
+                          key={item.feetype_id}
+                          style={{
+                            backgroundColor:
+                              item.feetype_id % 2 === 0
+                                ? "rgb(242, 246, 255)"
+                                : "#FFFFFF",
+                            borderBottom: "1px solid #E0E4F0",
+                            fontFamily: "Manrope",
+                            fontSize: "14px",
+                            color: "#1C335C",
+                          }}
+                        >
+                          <td
+                            style={{
+                              padding: "12px 20px",
+                            }}
+                          >
+                            {item.fee_type_name}
+                          </td>
+                          <td
+                            style={{
+                              padding: "12px 20px",
+                            }}
+                          >
+                            {formatDate(item.due_date)}
+                          </td>
+                          <td
+                            style={{
+                              padding: "12px 20px",
+                            }}
+                          >
+                            {item.amount}
+                          </td>
+                          <td
+                            style={{
+                              padding: "12px 20px",
+                            }}
+                          >
+                            <input
+                              type="number"
+                              disabled={isPaid}
+                              value={item.adjustment}
+                              onChange={(e) =>
+                                handleAdjustmentChange(
+                                  item.fee_group_id,
+                                  item.feetype_id,
+                                  e.target.value,
+                                  "adjustment"
+                                )
+                              }
+                              style={{ width: "100px" }}
+                            />
+                          </td>
+                          <td
+                            style={{
+                              padding: "12px 20px",
+                            }}
+                          >
+                            {(
+                              parseFloat(item.amount) +
+                              (parseFloat(item.adjustment) || 0)
+                            ).toFixed(2)}
+                          </td>
+                          <td
+                            style={{
+                              padding: "12px 20px",
+                            }}
+                          >
+                            {item.status}
+                          </td>
+                          <td
+                            style={{
+                              padding: "12px 20px",
+                            }}
+                          >
+                            {item.amount_paid}
+                          </td>
+                          <td
+                            style={{
+                              padding: "12px 20px",
+                            }}
+                          >
+                            {(
+                              parseFloat(item.total_amount) -
+                              parseFloat(item.amount_paid)
+                            ).toFixed(2)}
+                          </td>
+                          <td
+                            style={{
+                              padding: "12px 20px",
+                            }}
+                          >
+                            <input
+                              type="number"
+                              disabled={isPaid}
+                              onChange={(e) =>
+                                handleAdjustmentChange(
+                                  item.fee_group_id,
+                                  item.feetype_id,
+                                  e.target.value,
+                                  "currentlyPaying" // Specify that this is for currently paying
+                                )
+                              }
+                              value={item.currentlyPaying}
+                              placeholder={(
+                                parseFloat(item.total_amount) -
+                                parseFloat(item.amount_paid)
+                              ).toFixed(2)}
+                              // onBlur={(e) => {
+                              //   // Check if the input value is empty and set to the placeholder
+                              //   if (!e.target.value) {
+                              //     handleAdjustmentChange(
+                              //       item.fee_group_id,
+                              //       item.feetype_id,
+                              //       (
+                              //         parseFloat(item.total_amount) -
+                              //         parseFloat(item.amount_paid)
+                              //       ).toFixed(2),
+                              //       "currentlyPaying"
+                              //     );
+                              //   }
+                              // }}
+                              style={{ width: "100px" }}
+                            />
+                          </td>
+
+                          <td
+                            style={{
+                              padding: "12px 20px",
+                            }}
+                          >
+                            <div
+                              style={{
+                                width: "32px",
+                                height: "35px",
+                                borderRadius: "6px",
+                                padding: "6px",
+                                backgroundColor: "#b0efff",
+                                display: "flex",
+                                cursor: "pointer",
+                              }}
+                              onClick={() =>
+                                fetchTransactionDetails(
+                                  item.student_fees_master_id
+                                )
+                              }
+                            >
+                              <img
+                                src="/media/svg/files/view.svg"
+                                alt="View"
+                                style={{ width: "22px", height: "22px" }}
+                              />
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+
+                  <tfoot>
+                    <tr
+                      style={{
+                        borderBottom: "1px solid #E0E4F0",
+                        fontFamily: "Manrope",
+                        fontSize: "14px",
+                        color: "#1C335C",
+                      }}
+                    >
+                      <td
+                        style={{
+                          padding: "12px 20px",
+                        }}
+                        colSpan={2}
+                      >
+                        Total
+                      </td>
+                      <td
+                        style={{
+                          padding: "12px 20px",
+                        }}
+                      >
+                        {calculateTotalAmount(selectedGroup)}
+                      </td>
+                      <td
+                        style={{
+                          padding: "12px 20px",
+                        }}
+                        colSpan={3}
+                      >
+                        Total Paid
+                      </td>
+                      <td
+                        style={{
+                          padding: "12px 20px",
+                        }}
+                      >
+                        {calculateTotalAmountPaid(selectedGroup, data).toFixed(
+                          2
+                        )}
+                      </td>
+                      <td
+                        style={{
+                          padding: "12px 20px",
+                        }}
+                        colSpan={2}
+                      >
+                        Total Pending
+                      </td>
+                      <td
+                        style={{
+                          padding: "12px 20px",
+                        }}
+                      >
+                        {calculateTotalPendingAmount(
+                          selectedGroup,
+                          data
+                        ).toFixed(2)}
+                      </td>
+                    </tr>
+                  </tfoot>
+                </table>
+                <div className="modal-footer border-0 d-flex justify-content-end">
+                  <Button
+                    onClick={handleSubmit}
+                    variant="success"
+                    disabled={detailedData.every(
+                      (item) =>
+                        item.status === "paid" ||
+                        disableonlinebutton === "disable"
+                      // || showTransactionDetails === true
+                    )}
+                  >
+                    {loading ? "Sending..." : "Send Payment Link"}
+                  </Button>
+                  <Button
+                    onClick={handleOfflineClick}
+                    variant="secondary"
+                    disabled={detailedData.every(
+                      (item) => item.status === "paid"
+                      // || showTransactionDetails === true
+                    )}
+                  >
+                    {offlineButtonText}
+                  </Button>
+                </div>
+              </div>
+            )}
+          </>
+        ) : (
+          // Initial view of groups
+          <div
+            style={{
+              height: "auto", // Fixed height for the table container
+              overflowY: "auto", // Enable vertical scrolling
+              // padding: "16px 0", // Optional: adds some padding around the table
+            }}
+          >
+            <table
+              className="table"
+              style={{
+                width: "100%",
+                borderCollapse: "collapse",
+                marginTop: "10px",
+                backgroundColor: "#FFFFFF", // White background for the table
+                borderRadius: "12px", // Round corners for the table
+                boxShadow: "0 4px 8px rgba(0, 0, 0, 0.05)", // Light shadow for the table
+              }}
+            >
+              <thead>
+                <tr
+                  style={{
+                    backgroundColor: "rgb(242, 246, 255)", // Header background color
+                    borderBottom: "1px solid #E0E4F0",
+                    fontFamily: "Manrope",
+                    fontWeight: "600",
+                    color: "#1C335C",
+                    fontSize: "14px",
+                  }}
+                >
+                  <th
+                    style={{
+                      padding: "12px 20px",
+                      textAlign: "left",
+                    }}
+                  >
+                    Fee Group
+                  </th>
+                  <th
+                    style={{
+                      padding: "12px 20px",
+                      textAlign: "left",
+                    }}
+                  >
+                    Total Amount
+                  </th>
+                  <th
+                    style={{
+                      padding: "12px 20px",
+                      textAlign: "right",
+                    }}
+                  >
+                    Action
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {groupedData &&
+                  Array.from(groupedData.entries()).map(
+                    ([groupName, items]) => (
+                      <tr
+                        key={groupName}
+                        style={{
+                          backgroundColor:
+                            groupName.id % 2 === 0
+                              ? "rgb(242, 246, 255)"
+                              : "#FFFFFF",
+                          borderBottom: "1px solid #E0E4F0",
+                          fontFamily: "Manrope",
+                          fontSize: "14px",
+                          color: "#1C335C",
+                        }}
+                      >
+                        <td
+                          style={{
+                            padding: "12px 20px",
+                          }}
+                        >
+                          {groupName}
+                        </td>
+                        <td
+                          style={{
+                            padding: "12px 20px",
+                          }}
+                        >
+                          {calculateTotalAmount(groupName)}
+                        </td>
+                        <td
+                          style={{
+                            display: "flex",
+                            gap: "10px", // Adds space between the buttons
+                            justifyContent: "right", // Aligns buttons horizontally in the center
+                            alignItems: "center", // Vertically centers the buttons
+                            padding: "12px 20px",
+                          }}
+                        >
+                          <div
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              padding: "8px 12px",
+                              backgroundColor: "#1C335C",
+                              borderRadius: "8px",
+                              cursor: "pointer",
+                              transition: "background-color 0.3s",
+                            }}
+                            onClick={() => handleGroupClick(groupName)}
+                          >
+                            <span
+                              style={{
+                                marginRight: "8px",
+                                color: "white",
+                                fontSize: "14px",
+                                fontWeight: "700",
+                                fontFamily: "Manrope",
+                              }}
+                            >
+                              Collect
+                            </span>
+                          </div>
+                        </td>
+                      </tr>
+                    )
+                  )}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        {showOfflineForm && (
+          <div className="offline-form mt-3">
+            <hr />
+            <h5
+              style={{
+                fontSize: "20px",
+                fontWeight: "600",
+                color: "#1C335C",
+                fontFamily: "Manrope",
+              }}
+            >
+              Offline Payment Details
+            </h5>
+            <form onSubmit={offlineFormSubmit}>
+              <div style={{ marginBottom: "23px" }}>
+                {/* Payment Mode Selection */}
+                <div
+                  className="fv-row mb-5"
+                  style={{ display: "flex", gap: "10px" }}
+                >
+                  <div
+                    className="form-floating mb-3"
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      width: "100%",
+                      color: "#1C335C",
+                      fontFamily: "Manrope",
+                    }}
+                  >
+                    <select
+                      className="form-select"
+                      id="paymentMode"
+                      name="paymentMode"
+                      aria-label="Payment Mode"
+                      value={offlineFormData.paymentMode}
+                      onChange={handleChange}
+                    >
+                      <option value="">Select Payment Mode</option>
+                      <option value="cash">Cash</option>
+                      <option value="check">Check</option>
+                      <option value="bank_transfer">Bank Transfer</option>
+                      <option value="demand_draft">Demand Draft</option>
+                    </select>
+                    <label htmlFor="paymentMode">Payment Mode</label>
+                  </div>
+                </div>
+
+                {/* Conditional Fields */}
+                {offlineFormData.paymentMode === "cash" && (
                   <div
                     className="fv-row mb-10"
                     style={{ display: "flex", gap: "10px" }}
@@ -957,199 +1378,240 @@ const CreateCollectFees = ({
                         width: "100%",
                       }}
                     >
-                      <select
-                        className="form-select"
-                        id="paymentMode"
-                        name="paymentMode"
-                        aria-label="Payment Mode"
-                        value={offlineFormData.paymentMode}
+                      <input
+                        type="date"
+                        className="form-control"
+                        id="paymentDate"
+                        name="paymentDate"
+                        placeholder="Payment Date"
+                        value={offlineFormData.paymentDate}
                         onChange={handleChange}
-                      >
-                        <option value="">Select Payment Mode</option>
-                        <option value="cash">Cash</option>
-                        <option value="check">Check</option>
-                        <option value="bank_transfer">Bank Transfer</option>
-                        <option value="demand_draft">Demand Draft</option>
-                      </select>
-                      <label htmlFor="paymentMode">Payment Mode</label>
+                      />
+                      <label htmlFor="paymentDate">Payment Date</label>
                     </div>
                   </div>
+                )}
 
-                  {/* Conditional Fields */}
-                  {offlineFormData.paymentMode === "cash" && (
+                {offlineFormData.paymentMode === "check" && (
+                  <div className="fv-row mb-10">
+                    {/* First row with 3 inputs */}
                     <div
-                      className="fv-row mb-10"
-                      style={{ display: "flex", gap: "10px" }}
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        gap: "10px",
+                        marginBottom: "23px",
+                      }}
                     >
                       <div
                         className="form-floating mb-3"
                         style={{
+                          flex: "1",
                           display: "flex",
                           flexDirection: "column",
-                          width: "100%",
+                        }}
+                      >
+                        <input
+                          type="number"
+                          className="form-control"
+                          id="checkNo"
+                          name="checkNo"
+                          placeholder="Check No"
+                          value={offlineFormData.checkNo || 0}
+                          onChange={handleChange}
+                        />
+                        <label htmlFor="checkNo">Check No</label>
+                      </div>
+                      <div
+                        className="form-floating mb-3"
+                        style={{
+                          flex: "1",
+                          display: "flex",
+                          flexDirection: "column",
+                        }}
+                      >
+                        <input
+                          type="text"
+                          className="form-control"
+                          id="accountHolderName"
+                          name="accountHolderName"
+                          placeholder="Account Holder Name"
+                          value={offlineFormData.accountHolderName || ""}
+                          onChange={handleChange}
+                        />
+                        <label htmlFor="accountHolderName">
+                          Account Holder Name
+                        </label>
+                      </div>
+                      <div
+                        className="form-floating mb-3"
+                        style={{
+                          flex: "1",
+                          display: "flex",
+                          flexDirection: "column",
+                        }}
+                      >
+                        <input
+                          type="text"
+                          className="form-control"
+                          id="branchName"
+                          name="branchName"
+                          placeholder="Branch Name"
+                          value={offlineFormData.branchName || ""}
+                          onChange={handleChange}
+                        />
+                        <label htmlFor="branchName">Branch Name</label>
+                      </div>
+                    </div>
+
+                    {/* Second row with remaining inputs */}
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        gap: "10px",
+                      }}
+                    >
+                      <div
+                        className="form-floating mb-3"
+                        style={{
+                          flex: "1",
+                          display: "flex",
+                          flexDirection: "column",
+                        }}
+                      >
+                        <input
+                          type="text"
+                          className="form-control"
+                          id="ifscCode"
+                          name="ifscCode"
+                          placeholder="IFSC Code"
+                          value={offlineFormData.ifscCode || ""}
+                          onChange={handleChange}
+                        />
+                        <label htmlFor="ifscCode">IFSC Code</label>
+                      </div>
+                      <div
+                        className="form-floating mb-3"
+                        style={{
+                          flex: "1",
+                          display: "flex",
+                          flexDirection: "column",
                         }}
                       >
                         <input
                           type="date"
                           className="form-control"
-                          id="paymentDate"
-                          name="paymentDate"
-                          placeholder="Payment Date"
-                          value={offlineFormData.paymentDate}
+                          id="checkGivenDate"
+                          name="checkGivenDate"
+                          placeholder="Check Given Date"
+                          value={offlineFormData.checkGivenDate || ""}
                           onChange={handleChange}
                         />
-                        <label htmlFor="paymentDate">Payment Date</label>
+                        <label htmlFor="checkGivenDate">Check Given Date</label>
                       </div>
-                    </div>
-                  )}
-
-                  {offlineFormData.paymentMode === "check" && (
-                    <div className="fv-row mb-10">
-                      {/* First row with 3 inputs */}
-                      <div
-                        style={{
-                          display: "flex",
-                          flexDirection: "row",
-                          gap: "10px",
-                          marginBottom: "23px",
-                        }}
-                      >
-                        <div
-                          className="form-floating mb-3"
-                          style={{
-                            flex: "1",
-                            display: "flex",
-                            flexDirection: "column",
-                          }}
-                        >
-                          <input
-                            type="text"
-                            className="form-control"
-                            id="checkNo"
-                            name="checkNo"
-                            placeholder="Check No"
-                            value={offlineFormData.checkNo || ""}
-                            onChange={handleChange}
-                          />
-                          <label htmlFor="checkNo">Check No</label>
-                        </div>
-                        <div
-                          className="form-floating mb-3"
-                          style={{
-                            flex: "1",
-                            display: "flex",
-                            flexDirection: "column",
-                          }}
-                        >
-                          <input
-                            type="text"
-                            className="form-control"
-                            id="accountHolderName"
-                            name="accountHolderName"
-                            placeholder="Account Holder Name"
-                            value={offlineFormData.accountHolderName || ""}
-                            onChange={handleChange}
-                          />
-                          <label htmlFor="accountHolderName">
-                            Account Holder Name
-                          </label>
-                        </div>
-                        <div
-                          className="form-floating mb-3"
-                          style={{
-                            flex: "1",
-                            display: "flex",
-                            flexDirection: "column",
-                          }}
-                        >
-                          <input
-                            type="text"
-                            className="form-control"
-                            id="branchName"
-                            name="branchName"
-                            placeholder="Branch Name"
-                            value={offlineFormData.branchName || ""}
-                            onChange={handleChange}
-                          />
-                          <label htmlFor="branchName">Branch Name</label>
-                        </div>
-                      </div>
-
-                      {/* Second row with remaining inputs */}
-                      <div
-                        style={{
-                          display: "flex",
-                          flexDirection: "row",
-                          gap: "10px",
-                        }}
-                      >
-                        <div
-                          className="form-floating mb-3"
-                          style={{
-                            flex: "1",
-                            display: "flex",
-                            flexDirection: "column",
-                          }}
-                        >
-                          <input
-                            type="text"
-                            className="form-control"
-                            id="ifscCode"
-                            name="ifscCode"
-                            placeholder="IFSC Code"
-                            value={offlineFormData.ifscCode || ""}
-                            onChange={handleChange}
-                          />
-                          <label htmlFor="ifscCode">IFSC Code</label>
-                        </div>
-                        <div
-                          className="form-floating mb-3"
-                          style={{
-                            flex: "1",
-                            display: "flex",
-                            flexDirection: "column",
-                          }}
-                        >
-                          <input
-                            type="date"
-                            className="form-control"
-                            id="checkGivenDate"
-                            name="checkGivenDate"
-                            placeholder="Check Given Date"
-                            value={offlineFormData.checkGivenDate || ""}
-                            onChange={handleChange}
-                          />
-                          <label htmlFor="checkGivenDate">
-                            Check Given Date
-                          </label>
-                        </div>
-                        <div
-                          className="form-floating mb-3"
-                          style={{
-                            flex: "1",
-                            display: "flex",
-                            flexDirection: "column",
-                          }}
-                        >
-                          <input
-                            type="text"
-                            className="form-control"
-                            id="bankName"
-                            name="bankName"
-                            placeholder="Bank Name"
-                            value={offlineFormData.bankName || ""}
-                            onChange={handleChange}
-                          />
-                          <label htmlFor="bankName">Bank Name</label>
-                        </div>
-                      </div>
-
                       <div
                         className="form-floating mb-3"
                         style={{
+                          flex: "1",
                           display: "flex",
                           flexDirection: "column",
-                          marginTop: "10px",
+                        }}
+                      >
+                        <input
+                          type="text"
+                          className="form-control"
+                          id="bankName"
+                          name="bankName"
+                          placeholder="Bank Name"
+                          value={offlineFormData.bankName || ""}
+                          onChange={handleChange}
+                        />
+                        <label htmlFor="bankName">Bank Name</label>
+                      </div>
+                    </div>
+
+                    <div
+                      className="form-floating mb-3"
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        marginTop: "10px",
+                      }}
+                    >
+                      <input
+                        type="text"
+                        className="form-control"
+                        id="transactionRef"
+                        name="transactionRef"
+                        placeholder="Transaction Reference (optional)"
+                        value={offlineFormData.transactionRef || ""}
+                        onChange={handleChange}
+                      />
+                      <label htmlFor="transactionRef">
+                        Transaction Reference (optional)
+                      </label>
+                    </div>
+                  </div>
+                )}
+
+                {offlineFormData.paymentMode === "bank_transfer" && (
+                  <div className="fv-row mb-10">
+                    {/* First row with 3 inputs */}
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        gap: "10px",
+                        marginBottom: "23px",
+                      }}
+                    >
+                      <div
+                        className="form-floating mb-3"
+                        style={{
+                          flex: "1",
+                          display: "flex",
+                          flexDirection: "column",
+                        }}
+                      >
+                        <input
+                          type="text"
+                          className="form-control"
+                          id="accountHolderName"
+                          name="accountHolderName"
+                          placeholder="Account Holder Name"
+                          value={offlineFormData.accountHolderName || ""}
+                          onChange={handleChange}
+                        />
+                        <label htmlFor="accountHolderName">
+                          Account Holder Name
+                        </label>
+                      </div>
+                      <div
+                        className="form-floating mb-3"
+                        style={{
+                          flex: "1",
+                          display: "flex",
+                          flexDirection: "column",
+                        }}
+                      >
+                        <input
+                          type="text"
+                          className="form-control"
+                          id="bankName"
+                          name="bankName"
+                          placeholder="Bank Name"
+                          value={offlineFormData.bankName || ""}
+                          onChange={handleChange}
+                        />
+                        <label htmlFor="bankName">Bank Name</label>
+                      </div>
+                      <div
+                        className="form-floating mb-3"
+                        style={{
+                          flex: "1",
+                          display: "flex",
+                          flexDirection: "column",
                         }}
                       >
                         <input
@@ -1157,319 +1619,214 @@ const CreateCollectFees = ({
                           className="form-control"
                           id="transactionRef"
                           name="transactionRef"
-                          placeholder="Transaction Reference (optional)"
+                          placeholder="Transaction or Reference No"
                           value={offlineFormData.transactionRef || ""}
                           onChange={handleChange}
                         />
                         <label htmlFor="transactionRef">
-                          Transaction Reference (optional)
+                          Transaction or Reference No
                         </label>
                       </div>
                     </div>
-                  )}
 
-                  {offlineFormData.paymentMode === "bank_transfer" && (
-                    <div className="fv-row mb-10">
-                      {/* First row with 3 inputs */}
-                      <div
-                        style={{
-                          display: "flex",
-                          flexDirection: "row",
-                          gap: "10px",
-                          marginBottom: "23px",
-                        }}
-                      >
-                        <div
-                          className="form-floating mb-3"
-                          style={{
-                            flex: "1",
-                            display: "flex",
-                            flexDirection: "column",
-                          }}
-                        >
-                          <input
-                            type="text"
-                            className="form-control"
-                            id="accountHolderName"
-                            name="accountHolderName"
-                            placeholder="Account Holder Name"
-                            value={offlineFormData.accountHolderName || ""}
-                            onChange={handleChange}
-                          />
-                          <label htmlFor="accountHolderName">
-                            Account Holder Name
-                          </label>
-                        </div>
-                        <div
-                          className="form-floating mb-3"
-                          style={{
-                            flex: "1",
-                            display: "flex",
-                            flexDirection: "column",
-                          }}
-                        >
-                          <input
-                            type="text"
-                            className="form-control"
-                            id="bankName"
-                            name="bankName"
-                            placeholder="Bank Name"
-                            value={offlineFormData.bankName || ""}
-                            onChange={handleChange}
-                          />
-                          <label htmlFor="bankName">Bank Name</label>
-                        </div>
-                        <div
-                          className="form-floating mb-3"
-                          style={{
-                            flex: "1",
-                            display: "flex",
-                            flexDirection: "column",
-                          }}
-                        >
-                          <input
-                            type="text"
-                            className="form-control"
-                            id="transactionRef"
-                            name="transactionRef"
-                            placeholder="Transaction or Reference No"
-                            value={offlineFormData.transactionRef || ""}
-                            onChange={handleChange}
-                          />
-                          <label htmlFor="transactionRef">
-                            Transaction or Reference No
-                          </label>
-                        </div>
-                      </div>
-
-                      {/* Second row with remaining inputs */}
-                      <div
-                        style={{
-                          display: "flex",
-                          flexDirection: "row",
-                          gap: "10px",
-                        }}
-                      >
-                        <div
-                          className="form-floating mb-3"
-                          style={{
-                            flex: "1",
-                            display: "flex",
-                            flexDirection: "column",
-                          }}
-                        >
-                          <input
-                            type="date"
-                            className="form-control"
-                            id="transferDate"
-                            name="transferDate"
-                            placeholder="Transfer Date"
-                            value={offlineFormData.transferDate || ""}
-                            onChange={handleChange}
-                          />
-                          <label htmlFor="transferDate">Transfer Date</label>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  {offlineFormData.paymentMode === "demand_draft" && (
-                    <div className="fv-row mb-10">
-                      {/* First row with 3 inputs */}
-                      <div
-                        style={{
-                          display: "flex",
-                          flexDirection: "row",
-                          gap: "10px",
-                          marginBottom: "23px",
-                        }}
-                      >
-                        <div
-                          className="form-floating mb-3"
-                          style={{
-                            flex: "1",
-                            display: "flex",
-                            flexDirection: "column",
-                          }}
-                        >
-                          <input
-                            type="text"
-                            className="form-control"
-                            id="checkNo"
-                            name="checkNo"
-                            placeholder="Check No"
-                            value={offlineFormData.checkNo || ""}
-                            onChange={handleChange}
-                          />
-                          <label htmlFor="checkNo">Check No</label>
-                        </div>
-                        <div
-                          className="form-floating mb-3"
-                          style={{
-                            flex: "1",
-                            display: "flex",
-                            flexDirection: "column",
-                          }}
-                        >
-                          <input
-                            type="text"
-                            className="form-control"
-                            id="accountHolderName"
-                            name="accountHolderName"
-                            placeholder="Account Holder Name"
-                            value={offlineFormData.accountHolderName || ""}
-                            onChange={handleChange}
-                          />
-                          <label htmlFor="accountHolderName">
-                            Account Holder Name
-                          </label>
-                        </div>
-                        <div
-                          className="form-floating mb-3"
-                          style={{
-                            flex: "1",
-                            display: "flex",
-                            flexDirection: "column",
-                          }}
-                        >
-                          <input
-                            type="text"
-                            className="form-control"
-                            id="branchName"
-                            name="branchName"
-                            placeholder="Branch Name"
-                            value={offlineFormData.branchName || ""}
-                            onChange={handleChange}
-                          />
-                          <label htmlFor="branchName">Branch Name</label>
-                        </div>
-                      </div>
-
-                      {/* Second row with remaining inputs */}
-                      <div
-                        style={{
-                          display: "flex",
-                          flexDirection: "row",
-                          gap: "10px",
-                        }}
-                      >
-                        <div
-                          className="form-floating mb-3"
-                          style={{
-                            flex: "1",
-                            display: "flex",
-                            flexDirection: "column",
-                          }}
-                        >
-                          <input
-                            type="text"
-                            className="form-control"
-                            id="ifscCode"
-                            name="ifscCode"
-                            placeholder="IFSC Code"
-                            value={offlineFormData.ifscCode || ""}
-                            onChange={handleChange}
-                          />
-                          <label htmlFor="ifscCode">IFSC Code</label>
-                        </div>
-                        <div
-                          className="form-floating mb-3"
-                          style={{
-                            flex: "1",
-                            display: "flex",
-                            flexDirection: "column",
-                          }}
-                        >
-                          <input
-                            type="date"
-                            className="form-control"
-                            id="checkGivenDate"
-                            name="checkGivenDate"
-                            placeholder="Check Given Date"
-                            value={offlineFormData.checkGivenDate || ""}
-                            onChange={handleChange}
-                          />
-                          <label htmlFor="checkGivenDate">
-                            Check Given Date
-                          </label>
-                        </div>
-                        <div
-                          className="form-floating mb-3"
-                          style={{
-                            flex: "1",
-                            display: "flex",
-                            flexDirection: "column",
-                          }}
-                        >
-                          <input
-                            type="text"
-                            className="form-control"
-                            id="bankName"
-                            name="bankName"
-                            placeholder="Bank Name"
-                            value={offlineFormData.bankName || ""}
-                            onChange={handleChange}
-                          />
-                          <label htmlFor="bankName">Bank Name</label>
-                        </div>
-                      </div>
-
+                    {/* Second row with remaining inputs */}
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        gap: "10px",
+                      }}
+                    >
                       <div
                         className="form-floating mb-3"
                         style={{
+                          flex: "1",
                           display: "flex",
                           flexDirection: "column",
-                          marginTop: "10px",
+                        }}
+                      >
+                        <input
+                          type="date"
+                          className="form-control"
+                          id="transferDate"
+                          name="transferDate"
+                          placeholder="Transfer Date"
+                          value={offlineFormData.transferDate || ""}
+                          onChange={handleChange}
+                        />
+                        <label htmlFor="transferDate">Transfer Date</label>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {offlineFormData.paymentMode === "demand_draft" && (
+                  <div className="fv-row mb-10">
+                    {/* First row with 3 inputs */}
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        gap: "10px",
+                        marginBottom: "23px",
+                      }}
+                    >
+                      <div
+                        className="form-floating mb-3"
+                        style={{
+                          flex: "1",
+                          display: "flex",
+                          flexDirection: "column",
                         }}
                       >
                         <input
                           type="text"
                           className="form-control"
-                          id="transactionRef"
-                          name="transactionRef"
-                          placeholder="Transaction Reference (optional)"
-                          value={offlineFormData.transactionRef || ""}
+                          id="checkNo"
+                          name="checkNo"
+                          placeholder="Check No"
+                          value={offlineFormData.checkNo || ""}
                           onChange={handleChange}
                         />
-                        <label htmlFor="transactionRef">
-                          Transaction Reference (optional)
+                        <label htmlFor="checkNo">Check No</label>
+                      </div>
+                      <div
+                        className="form-floating mb-3"
+                        style={{
+                          flex: "1",
+                          display: "flex",
+                          flexDirection: "column",
+                        }}
+                      >
+                        <input
+                          type="text"
+                          className="form-control"
+                          id="accountHolderName"
+                          name="accountHolderName"
+                          placeholder="Account Holder Name"
+                          value={offlineFormData.accountHolderName || ""}
+                          onChange={handleChange}
+                        />
+                        <label htmlFor="accountHolderName">
+                          Account Holder Name
                         </label>
                       </div>
+                      <div
+                        className="form-floating mb-3"
+                        style={{
+                          flex: "1",
+                          display: "flex",
+                          flexDirection: "column",
+                        }}
+                      >
+                        <input
+                          type="text"
+                          className="form-control"
+                          id="branchName"
+                          name="branchName"
+                          placeholder="Branch Name"
+                          value={offlineFormData.branchName || ""}
+                          onChange={handleChange}
+                        />
+                        <label htmlFor="branchName">Branch Name</label>
+                      </div>
                     </div>
-                  )}
-                </div>
-                <button type="submit" className="btn btn-primary">
-                  Submit
-                </button>
-              </form>
-            </div>
-          )}
-        </div>
 
-        {selectedGroup && (
-          <div className="modal-footer border-0 d-flex justify-content-end">
-            <Button
-              onClick={handleSubmit}
-              variant="success"
-              disabled={detailedData.every(
-                (item) =>
-                  item.status === "paid" ||
-                  disableonlinebutton === "disable" ||
-                  showTransactionDetails === true
-              )}
-            >
-              {loading ? "Sending..." : "Send Payment Link"}
-            </Button>
-            <Button
-              onClick={handleOfflineClick}
-              variant="secondary"
-              disabled={detailedData.every(
-                (item) =>
-                  item.status === "paid" || showTransactionDetails === true
-              )}
-            >
-              {offlineButtonText}
-            </Button>
+                    {/* Second row with remaining inputs */}
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        gap: "10px",
+                      }}
+                    >
+                      <div
+                        className="form-floating mb-3"
+                        style={{
+                          flex: "1",
+                          display: "flex",
+                          flexDirection: "column",
+                        }}
+                      >
+                        <input
+                          type="text"
+                          className="form-control"
+                          id="ifscCode"
+                          name="ifscCode"
+                          placeholder="IFSC Code"
+                          value={offlineFormData.ifscCode || ""}
+                          onChange={handleChange}
+                        />
+                        <label htmlFor="ifscCode">IFSC Code</label>
+                      </div>
+                      <div
+                        className="form-floating mb-3"
+                        style={{
+                          flex: "1",
+                          display: "flex",
+                          flexDirection: "column",
+                        }}
+                      >
+                        <input
+                          type="date"
+                          className="form-control"
+                          id="checkGivenDate"
+                          name="checkGivenDate"
+                          placeholder="Check Given Date"
+                          value={offlineFormData.checkGivenDate || ""}
+                          onChange={handleChange}
+                        />
+                        <label htmlFor="checkGivenDate">Check Given Date</label>
+                      </div>
+                      <div
+                        className="form-floating mb-3"
+                        style={{
+                          flex: "1",
+                          display: "flex",
+                          flexDirection: "column",
+                        }}
+                      >
+                        <input
+                          type="text"
+                          className="form-control"
+                          id="bankName"
+                          name="bankName"
+                          placeholder="Bank Name"
+                          value={offlineFormData.bankName || ""}
+                          onChange={handleChange}
+                        />
+                        <label htmlFor="bankName">Bank Name</label>
+                      </div>
+                    </div>
+
+                    <div
+                      className="form-floating mb-3"
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        marginTop: "10px",
+                      }}
+                    >
+                      <input
+                        type="text"
+                        className="form-control"
+                        id="transactionRef"
+                        name="transactionRef"
+                        placeholder="Transaction Reference (optional)"
+                        value={offlineFormData.transactionRef || ""}
+                        onChange={handleChange}
+                      />
+                      <label htmlFor="transactionRef">
+                        Transaction Reference (optional)
+                      </label>
+                    </div>
+                  </div>
+                )}
+              </div>
+              <button type="submit" className="btn btn-primary">
+                Submit
+              </button>
+            </form>
           </div>
         )}
       </div>

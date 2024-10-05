@@ -13,8 +13,8 @@ import {
   TablesWidget14,
 } from "../../../../_metronic/partials/widgets";
 import { Content } from "../../../../_metronic/layout/components/content";
-import { ToolbarFeeMaster } from "../../../../_metronic/layout/components/toolbar/toolbars";
-import { HeaderWrapper } from "../../../../_metronic/layout/components/header_staff";
+// import { ToolbarFeeMaster } from "../../../../_metronic/layout/components/toolbar/toolbars";
+// import { HeaderWrapper } from "../../../../_metronic/layout/components/header_staff";
 
 const FeeMasterPage: FC = () => {
   const [displayComponent, setDisplayComponent] = useState("chart");

@@ -215,48 +215,65 @@ const DashboardPage: FC = () => {
       )}
       {userRole === "Teacher" && (
         <Content>
-          <div className="row g-5 g-xl-5 mb-10" style={{ maxHeight: "160px" }}>
-            <div className="col-xxl-3">
-              <EngageWidget10
-                title={"No. of Students"}
-                number={850}
-                image={"students"}
+        <div className="row g-5 g-xl-5" style={{ maxHeight: "160px" }}>
+          <div className="col-xxl-3">
+            <EngageWidget10
+              title={"No. of Students"}
+              number={850}
+              image={"students"}
+              backgroundColor={"#1F3259"}
+              titlecolor={"#fff"}
+              textcolor={"#fff"}
               />
-            </div>
-
-            <div className="col-xxl-3">
-              <EngageWidget10
-                title={"No. of Teacher"}
-                number={150}
-                image={"teachers"}
-              />
-            </div>
-
-            <div className="col-xxl-3">
-              <EngageWidget10
-                title={"Monthly Expense"}
-                number={"₹5,32,200"}
-                image={"expense"}
-              />
-            </div>
           </div>
 
-          <div className="row">
-            <div className="col-xxl-8 mb-5 mb-xl-10">
-              <Calendar
-                localizer={localizer}
-                // events={myEventsList}
-                startAccessor="start"
-                endAccessor="end"
-                style={{ height: 620 }}
+          <div className="col-xxl-3">
+            <EngageWidget10
+              title={"No. of Teacher"}
+              number={150}
+              image={"teachers"}
+              backgroundColor={"#DFFFB6"}
+              titlecolor={"#1F3259"}
+              textcolor={"#29B837"}
               />
-            </div>
-
-            <div className="col-xxl-4 mb-5 mb-xl-10">
-              <TablesWidget52 />
-            </div>
           </div>
-        </Content>
+          <div className="col-xxl-3">
+            <EngageWidget10
+              title={"Monthly Fees Collection"}
+              number={"₹24,30,800"}
+              image={"fees"}
+              backgroundColor={"#FFE7E1"}
+              titlecolor={"#1F3259"}
+              textcolor={"#FF5B5B"}
+              />
+          </div>
+
+          <div className="col-xxl-3">
+            <EngageWidget10
+              title={"Monthly Expense"}
+              number={"₹5,32,200"}
+              image={"expense"}
+              backgroundColor={"#F2F6FF"}
+              titlecolor={"#1F3259"}
+              textcolor={"#1F3259"}
+            />
+          </div>
+        </div>
+
+        <div className="row">
+          <div className="col-xxl-8 mb-xl-10">
+            <SchoolEventsCalendar />
+          </div>
+          <div className="col-xxl-4 mb-5 mb-xl-10">
+            <TablesWidget52 />
+          </div>
+        </div>
+        <div className="row">
+          <div className="col-xxl-12 mb-5 mb-xl-10">
+            <ChartsWidget19 />
+          </div>
+        </div>
+      </Content>
       )}
       {userRole === "Super Admin" && (
         <Content>

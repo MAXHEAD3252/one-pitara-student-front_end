@@ -3,6 +3,8 @@ import { createPortal } from "react-dom";
 import { Modal, Form, Row, Col, InputGroup } from "react-bootstrap";
 import { useAuth } from "../../../../app/modules/auth/core/Auth";
 import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 type Props = {
   show: boolean;
@@ -110,10 +112,12 @@ const CreateEnquiryAction = ({ show, handleClose, enqId, setRefresh }: Props) =>
 
       const data = await response.json();
       console.log("Follow-up updated successfully:", data);
+      toast.success("follow-up updated successfully!");
       handleClose();
       setRefresh(true);
     } catch (error) {
       console.error("Error updating follow-up:", error);
+      toast.error("Error updating follow-up. Please try again.");
     }
   };
 

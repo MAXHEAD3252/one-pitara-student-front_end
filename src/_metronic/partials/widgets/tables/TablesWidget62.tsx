@@ -13,8 +13,8 @@ interface DataItem {
   name: string;
 }
 interface FilterData {
- id:string;
- class :string;
+  id: string;
+  class: string;
 }
 
 const TablesWidget62: React.FC = () => {
@@ -22,7 +22,6 @@ const TablesWidget62: React.FC = () => {
   const Navigate = useNavigate();
 
   const [filteredData, setFilteredData] = useState<FilterData[]>([]);
-  
 
   const [searchQuery, setSearchQuery] = useState(0);
   const { currentUser } = useAuth();
@@ -31,9 +30,8 @@ const TablesWidget62: React.FC = () => {
   // const [showModal, setShowModal] = useState(false);
   const [showActionModal, setShowActionModal] = useState(false);
   const [feeGroup_id, setFeeGroup_id] = useState("");
-  const [class_id, setClass_id] = useState('');
+  const [class_id, setClass_id] = useState("");
   const [referesh, setRefresh] = useState(false);
-  
 
   // const handleModal = () => {
   //   setShowModal(true);
@@ -45,12 +43,11 @@ const TablesWidget62: React.FC = () => {
   const handleActionModal = (classId: string) => {
     setClass_id(classId);
     Navigate(`/fee-collect/assigned-students?classId=${classId}`);
-};
+  };
 
   const handleActionModalClose = () => {
     setShowActionModal(false);
   };
-
 
   useEffect(() => {
     const fetchEnquiries = async () => {
@@ -71,7 +68,7 @@ const TablesWidget62: React.FC = () => {
 
     fetchEnquiries();
     setRefresh(false);
-  }, [schoolId,referesh]);
+  }, [schoolId, referesh]);
 
   const handleSearch = (e: any) => {
     const query = e.target.value.toLowerCase();
@@ -81,7 +78,8 @@ const TablesWidget62: React.FC = () => {
       (item) =>
         item.status.toLowerCase().includes(query) ||
         item.name.toLowerCase().includes(query)
-    );q
+    );
+    q;
     /* @ts-ignore */
     setFilteredData(filtered);
   };
@@ -93,331 +91,220 @@ const TablesWidget62: React.FC = () => {
     return date.toLocaleDateString("en-GB", options);
   };
 
-
-
-
   return (
     <div
-      className="col-xxl-12"
+      className="card-style"
       style={{
+        width: "100%",
         borderRadius: "16px",
-        border: "1px solid #5D637A",
-        overflowX: "hidden",
-        minHeight: "100%",
-        marginBottom: "20px",
-        height: "770px",
-        display: "flex",
-        flexDirection: "column",
-        fontFamily: "Manrope",
-        maxWidth: "100%",
+        backgroundColor: "rgb(242, 246, 255)",
+        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
         overflow: "hidden",
+        marginTop: "20px",
+        padding: "20px",
       }}
     >
-      <div style={{ width: "auto", height: "100%", overflow: "hidden" }}>
-        <table
-          //   className="col-xxl-12"
+      <div
+        className="card-header"
+        style={{
+          backgroundColor: "rgb(242, 246, 255)",
+          padding: "16px 20px",
+          borderBottom: "1px solid #E0E4F0",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <span
           style={{
-            top: "223px",
-            height: "612px",
-            maxHeight: "100%",
-            borderCollapse: "collapse",
-            // tableLayout: "fixed",
-            overflowX: "hidden",
-            overflowY: "auto",
-            whiteSpace: "nowrap",
-            width: "100%",
-            // border:'8px solid black'
+            fontSize: "20px",
+            fontWeight: "600",
+            color: "#1C335C",
+            fontFamily: "Manrope",
           }}
         >
-          <thead
-            className=""
-            style={{
-              height: "123px",
-              maxHeight: "100%",
-              display: "flex",
-              flexDirection: "column",
-              backgroundColor: "#1C335C",
-              //   width:'fit-content',
-              // overflowY: "auto",
-              // overflowX: "hidden",
-              justifyContent: "space-between",
-              zIndex: 999,
-            }}
+          Fee Collect
+        </span>
+        <div
+          className="input-group flex-nowrap"
+          style={{
+            width: "300px",
+            height: "36px",
+            borderRadius: "8px",
+            border: "1px solid #D9D9D9",
+          }}
+        >
+          <span
+            className="input-group-text border-0 pe-1 pr-0"
+            style={{ backgroundColor: "transparent" }}
+            id="addon-wrapping"
           >
-            <div>
-              <caption
-                style={{
-                  backgroundColor: "#1C335C",
-                  padding: "20px",
-                  display: "flex",
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  // tableLayout: "fixed",
-                  // borderCollapse: "collapse",
-
-                  // border:'1px solid'
-                  width: "98%",
-                }}
-                className="col-xxl-12 col-lg-6"
-              >
-                <div>
-                  <span
-                    style={{
-                      color: "#FFF",
-                      fontSize: "16px",
-                      fontWeight: "700",
-                      fontFamily: "Manrope",
-                    }}
-                  >
-                    Fee Collect
-                  </span>
-                </div>
-                <div
-                  style={{ display: "flex", alignItems: "center", gap: "10px" }}
-                >
-                  <div
-                    className="input-group flex-nowrap"
-                    style={{
-                      width: "300px",
-                      height: "36px",
-                      borderRadius: "8px",
-                      border: "1px solid #D9D9D9",
-                    }}
-                  >
-                    <span
-                      className="input-group-text border-0 pe-1 pr-0"
-                      style={{ backgroundColor: "transparent" }}
-                      id="addon-wrapping"
-                    >
-                      <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 17 16"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <g clip-path="url(#clip0_582_4295)">
-                          <circle
-                            cx="8.50002"
-                            cy="7.66665"
-                            r="6.33333"
-                            stroke="white"
-                            stroke-width="1.5"
-                          />
-                          <path
-                            d="M14.1667 13.3333L15.5 14.6666"
-                            stroke="white"
-                            stroke-width="1.5"
-                            stroke-linecap="round"
-                          />
-                        </g>
-                        <defs>
-                          <clipPath id="clip0_582_4295">
-                            <rect
-                              width="16"
-                              height="16"
-                              fill="white"
-                              transform="translate(0.833374)"
-                            />
-                          </clipPath>
-                        </defs>
-                      </svg>
-                    </span>
-                    <input
-                      type="text"
-                      style={{
-                        backgroundColor: "transparent",
-                        color: "#FFFFFF",
-                      }}
-                      className="form-control border-0"
-                      placeholder="Search ...."
-                      aria-label="Search"
-                      aria-describedby="addon-wrapping"
-                      onChange={handleSearch}
-                      value={searchQuery}
-                    />
-                  </div>
-                </div>
-              </caption>
-            </div>
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 17 16"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <g clip-path="url(#clip0_582_4295)">
+                <circle
+                  cx="8.50002"
+                  cy="7.66665"
+                  r="6.33333"
+                  stroke="white"
+                  stroke-width="1.5"
+                />
+                <path
+                  d="M14.1667 13.3333L15.5 14.6666"
+                  stroke="white"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                />
+              </g>
+              <defs>
+                <clipPath id="clip0_582_4295">
+                  <rect
+                    width="16"
+                    height="16"
+                    fill="white"
+                    transform="translate(0.833374)"
+                  />
+                </clipPath>
+              </defs>
+            </svg>
+          </span>
+          <input
+            type="text"
+            style={{
+              backgroundColor: "transparent",
+              color: "#FFFFFF",
+            }}
+            className="form-control border-0"
+            placeholder="Search ...."
+            aria-label="Search"
+            aria-describedby="addon-wrapping"
+            onChange={handleSearch}
+            value={searchQuery}
+          />
+        </div>
+      </div>
+      <div
+        style={{
+          height: "650px", // Fixed height for the table container
+          overflowY: "auto", // Enable vertical scrolling
+          padding: "16px 0", // Optional: adds some padding around the table
+        }}
+      >
+        <table
+          className="table"
+          style={{
+            width: "100%",
+            borderCollapse: "collapse",
+            marginTop: "10px",
+            backgroundColor: "#FFFFFF", // White background for the table
+            borderRadius: "12px", // Round corners for the table
+            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.05)", // Light shadow for the table
+          }}
+        >
+          <thead>
             <tr
               style={{
-                height: "61px",
-                gap: "40px",
-                display: "flex",
-                paddingTop: "10px",
-                paddingLeft: "55px",
-                paddingRight:'50px',
-                // position: "sticky",
-                // top: 0,
-                width: "auto",
-                // border:'1px solid white',
-                justifyContent:'space-between',
-                overflowY: "auto",
-                overflowX: "hidden",
-                backgroundColor: "#1C335C",
-                // zIndex: 100,
+                backgroundColor: "rgb(242, 246, 255)", // Header background color
+                borderBottom: "1px solid #E0E4F0",
+                fontFamily: "Manrope",
+                fontWeight: "600",
+                color: "#1C335C",
+                fontSize: "14px",
               }}
             >
-              <th>
-                <div style={{ width: "500px" }}>
-                  <span
-                    style={{
-                      fontSize: "13px",
-                      fontWeight: "600",
-                      lineHeight: "18px",
-                      color: "#FFFFFF",
-                    }}
-                  >
-                    Class
-                  </span>
-                </div>
+              <th
+                style={{
+                  padding: "12px 20px",
+                  textAlign: "left",
+                }}
+              >
+                Class
               </th>
-              {/* <th>
-                <div style={{ width: "700px" }}>
-                  <span
-                    style={{
-                      fontSize: "13px",
-                      fontWeight: "600",
-                      lineHeight: "18px",
-                      color: "#FFFFFF",
-                      fontFamily: "Manrope",
-                    }}
-                  >
-                    Fee Group
-                  </span>
-                </div>
-              </th> */}
-              
-
-              <th>
-                <div
-                  style={{
-                    width: "200px",
-                    // textAlign:'left'
-                    // border:'1px solid',
-                    display: "flex",
-                    justifyContent: "end",
-                    fontFamily: "Manrope",
-                  }}
-                >
-                  <span
-                    style={{
-                      fontSize: "13px",
-                      fontWeight: "600",
-                      lineHeight: "18px",
-                      color: "#FFFFFF",
-                    }}
-                  >
-                    Action
-                  </span>
-                </div>
+              <th
+                style={{
+                  padding: "12px 20px",
+                  textAlign: "right",
+                }}
+              >
+                Action
               </th>
             </tr>
           </thead>
 
-          <tbody
-            className="col-xxl-12 h-[s]"
-            style={{
-              height: "105%",
-              // maxHeight: "100%",
-              display: "flex",
-              flexDirection: "column",
-              minHeight: "calc(100vh - 550px)",
-              overflowY: "auto",
-            }}
-          >
+          <tbody>
             {filteredData.map((item, index) => (
               <tr
                 key={index}
                 style={{
-                  height: "61px",
-                  gap: "40px",
-                  paddingLeft: "55px",
-                  paddingRight: "0px",
-                  paddingTop: "16px",
-                  width: "100%",          
-                  display: "flex",
-                  backgroundColor: index % 2 === 0 ? "#F5F5F5" : "#FFF",
-                  // border:'1px solid'
-                  justifyContent:'space-between'
+                  backgroundColor:
+                    index % 2 === 0 ? "rgb(242, 246, 255)" : "#FFFFFF",
+                  borderBottom: "1px solid #E0E4F0",
+                  fontFamily: "Manrope",
+                  fontSize: "14px",
+                  color: "#1C335C",
                 }}
               >
-                <td>
-                  <div
-                    style={{
-                      width: "400px",
-                      display: "flex",
-                      justifyContent: "start",
-                      flexDirection: "column",
-                      // border:'1px solid'
-                    }}
-                  >
-                    <span
-                      style={{
-                        fontSize: "14px",
-                        fontWeight: "600",
-                        lineHeight: "18px",
-                        color: "#000000",
-                        fontFamily: "Manrope",
-                        // border:'1px solid'
-                      }}
-                    >
-                      {item.class}
-                    </span>
-                  </div>
+                <td
+                  style={{
+                    padding: "12px 20px",
+                  }}
+                >
+                  {item.class}
                 </td>
-                {/* <td>
-                  <div
+                <td
                     style={{
-                      width: "890px",
                       display: "flex",
-                      justifyContent: "start",
-                      flexDirection: "column",
+                      gap: "10px", // Adds space between the buttons
+                      justifyContent: "right", // Aligns buttons horizontally in the center
+                      alignItems: "center", // Vertically centers the buttons
+                      padding: "12px 20px",
                     }}
                   >
-                    <span
-                      style={{
-                        fontSize: "14px",
-                        fontWeight: "500",
-                        lineHeight: "18px",
-                        color: "#1F1F1F",
-                        fontFamily: "Manrope",
+                    <div
+                       style={{
+                        display: "flex",
+                        alignItems: "center",
+                        padding: "8px 12px",
+                        backgroundColor: "#1C335C",
+                        borderRadius: "8px",
+                        cursor: "pointer",
+                        transition: "background-color 0.3s",
                       }}
-                    >
-                      {item.fee_group_name}
-                    </span>
-                  </div>
-                </td> */}
-                
-                <td>
-                  <div
-                    style={{
-                      width: "200px",
-                      display: "flex",
-                      justifyContent: "space-around ",
-                      flexDirection: "row",
-                      gap: "6px",
-                      marginTop: "-8px",
-                      // border:'1px solid'
-                    }}
-                  >
-                    <button
-                      type="button"
-                      className="btn"
-                      style={{
-                        backgroundColor: "#1F3259",
-                        fontFamily: "Manrope",
-                        fontSize: "12px",
-                        fontWeight: "600",
-                        color: "#FFF",
-                      }}
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.backgroundColor = "#16294D")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.backgroundColor = "#1C335C")
+                      }
                       onClick={() => handleActionModal(item.id)}
                     >
+                      <span
+                        style={{
+                          marginRight: "8px",
+                          color: "white",
+                          fontSize: "14px",
+                          fontWeight: "700",
+                          fontFamily: "Manrope",
+                        }}
+                      >
                       Collect
-                    </button>
-                    
-                  </div>
+                      </span>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        width="16px"
+                        height="16px"
+                        fill="#ffffff"
+                      >
+                        <path d="M0 0h24v24H0V0z" fill="none" />
+                        <path d="M3 17.25V21h3.75l11-11.03-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
+                      </svg>
+                    </div>
                 </td>
               </tr>
             ))}

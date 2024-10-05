@@ -96,7 +96,6 @@
 //     setFineAmount(e.target.value);
 //   };
 
- 
 //   const formatDate = (dateString: string) => {
 //     const date = new Date(dateString);
 //     const year = date.getFullYear();
@@ -104,7 +103,6 @@
 //     const day = String(date.getDate()).padStart(2, '0');
 //     return `${year}-${month}-${day}`;
 //   };
-
 
 //   // Function to handle date change
 //   const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -616,11 +614,14 @@ const AddFeesMasterModal = ({ show, onHide }: Props) => {
   const [feeGroups, setFeeGroups] = useState<FeeGroup[]>([]);
   const [feeTypes, setFeeTypes] = useState<FeeType[]>([]);
   const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
-  const [selectedGroupName, setSelectedGroupName] = useState<string>("Select Group");
+  const [selectedGroupName, setSelectedGroupName] =
+    useState<string>("Select Group");
   const [feeGroupSessionId, setFeeGroupSessionId] = useState<number>(0);
   const [session, setSession] = useState<number | null>(0);
 
-  const [selectedFeeTypes, setSelectedFeeTypes] = useState<{ id: string; type: string; amount: number }[]>([]);
+  const [selectedFeeTypes, setSelectedFeeTypes] = useState<
+    { id: string; type: string; amount: number }[]
+  >([]);
   const [dueDate, setDueDate] = useState<string | null>(null);
   const [dueType, setDueType] = useState<string | null>(null);
   const [dueTypeName, setDueTypeName] = useState<string>("Select Due Type");
@@ -636,10 +637,12 @@ const AddFeesMasterModal = ({ show, onHide }: Props) => {
   };
 
   const handleSelectFeeType = (type: FeeType) => {
-    setSelectedFeeTypes(prev => {
-      const existingType = prev.find(t => t.id === type.id);
+    setSelectedFeeTypes((prev) => {
+      const existingType = prev.find((t) => t.id === type.id);
       if (existingType) {
-        return prev.map(t => t.id === type.id ? { ...t, amount: t.amount } : t);
+        return prev.map((t) =>
+          t.id === type.id ? { ...t, amount: t.amount } : t
+        );
       } else {
         return [...prev, { id: type.id, type: type.type, amount: 0 }];
       }
@@ -647,11 +650,13 @@ const AddFeesMasterModal = ({ show, onHide }: Props) => {
   };
 
   const handleAmountChange = (id: string, amount: number) => {
-    setSelectedFeeTypes(prev => prev.map(t => t.id === id ? { ...t, amount } : t));
+    setSelectedFeeTypes((prev) =>
+      prev.map((t) => (t.id === id ? { ...t, amount } : t))
+    );
   };
 
   const handleDeleteFeeType = (id: string) => {
-    setSelectedFeeTypes(prev => prev.filter(t => t.id !== id));
+    setSelectedFeeTypes((prev) => prev.filter((t) => t.id !== id));
   };
 
   const handleDueType = (type: { id: string; type: string }) => {
@@ -662,8 +667,8 @@ const AddFeesMasterModal = ({ show, onHide }: Props) => {
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
     return `${year}-${month}-${day}`;
   };
 
@@ -675,15 +680,13 @@ const AddFeesMasterModal = ({ show, onHide }: Props) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-  
+
     // Validation check
     if (!selectedGroup || !session || !schoolId) {
       console.error("Required fields are missing.");
       return;
     }
-  
-    
-  
+
     try {
       const response = await fetch(`${DOMAIN}/api/school/add-feegroupfeetype`, {
         method: "POST",
@@ -693,7 +696,7 @@ const AddFeesMasterModal = ({ show, onHide }: Props) => {
         body: JSON.stringify({
           feeGroupSessionId,
           selectedGroup,
-          feeTypes: selectedFeeTypes,  
+          feeTypes: selectedFeeTypes,
           fineType,
           dueDate,
           percentage,
@@ -703,11 +706,11 @@ const AddFeesMasterModal = ({ show, onHide }: Props) => {
           schoolId,
         }),
       });
-  
+
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
-  
+
       const data = await response.json();
       console.log("Success:", data);
       onHide(); // Hide the modal on successful submission
@@ -716,7 +719,6 @@ const AddFeesMasterModal = ({ show, onHide }: Props) => {
       // Optional: Provide user feedback here
     }
   };
-  
 
   useEffect(() => {
     const fetchFeeGroups = async () => {
@@ -767,36 +769,136 @@ const AddFeesMasterModal = ({ show, onHide }: Props) => {
       backdrop="static"
     >
       <div
-        className="modal-content"
-        style={{ padding: "23px 5px", borderRadius: "17px" }}
+        className="modal-header"
+        style={{
+          backgroundColor: "#F2F6FF",
+          borderBottom: "1px solid lightgray",
+          fontFamily: "Manrope",
+        }}
       >
+        <h2>Add Fees Master : 2023-24</h2>
         <div
-          className="modal-header border-0"
-          style={{ width: "100%", height: "17px" }}
+          className="btn btn-sm btn-icon btn-active-color-primary"
+          onClick={onHide}
         >
-          <span
-            className=""
-            id="staticBackdropLabel"
-            style={{
-              fontSize: "24px",
-              fontWeight: "600",
-              fontFamily: "Manrope",
-            }}
-          >
-            Add Fees Master : 2023-24
-          </span>
-          <button
-            type="button"
-            className="btn-close"
-            onClick={onHide}
-            aria-label="Close"
-          ></button>
+          <i className="fas fa-times"></i>
         </div>
+      </div>
+
+ 
+      <div
+        className="modal-body py-lg-10 px-lg-10"
+        style={{
+          backgroundColor: "#F2F6FF",
+        }}
+      >
         <form onSubmit={handleSubmit}>
-          <div className="modal-body">
+          <div style={{ marginBottom: "23px" }}>
+            <label
+              htmlFor="feeGroupDropdown"
+              className="form-label"
+              style={{
+                fontSize: "12px",
+                color: "#434343",
+                fontWeight: "500",
+              }}
+            >
+              Fees Group
+            </label>
+
+            <div className="dropdown" id="feeGroupDropdown">
+              <button
+                className="btn btn-secondary dropdown-toggle"
+                style={{
+                  width: "100%",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  backgroundColor: "transparent",
+                  border: "1px solid #ECEDF1",
+                  borderRadius: "8px",
+                  overflow: "hidden",
+                }}
+                type="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                {selectedGroupName}
+              </button>
+              <ul
+                className="dropdown-menu"
+                style={{ width: "100%", height: "300px", overflow: "auto" }}
+              >
+                {feeGroups.map((group) => (
+                  <li key={group.fee_groups_id}>
+                    <a
+                      className="dropdown-item"
+                      href="#"
+                      onClick={() => handleSelectGroup(group)}
+                    >
+                      {group.fee_group_name}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+          <div style={{ marginBottom: "23px" }}>
+            <label
+              htmlFor="feeTypeDropdown"
+              className="form-label"
+              style={{
+                fontSize: "12px",
+                color: "#434343",
+                fontWeight: "500",
+              }}
+            >
+              Fees Type
+            </label>
+
+            <div className="dropdown" id="feeTypeDropdown">
+              <button
+                className="btn btn-secondary dropdown-toggle"
+                style={{
+                  width: "100%",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  backgroundColor: "transparent",
+                  border: "1px solid #ECEDF1",
+                  borderRadius: "8px",
+                  overflow: "hidden",
+                }}
+                type="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                {selectedFeeTypes.length > 0
+                  ? selectedFeeTypes.map((ft) => ft.type).join(", ")
+                  : "Select Fee Type"}
+              </button>
+              <ul
+                className="dropdown-menu"
+                style={{ width: "100%", height: "300px", overflow: "auto" }}
+              >
+                {feeTypes.map((type) => (
+                  <li key={type.id}>
+                    <a
+                      className="dropdown-item"
+                      href="#"
+                      onClick={() => handleSelectFeeType(type)}
+                    >
+                      {type.type}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+          {selectedFeeTypes.length > 0 && (
             <div style={{ marginBottom: "23px" }}>
               <label
-                htmlFor="feeGroupDropdown"
+                htmlFor="feeAmounts"
                 className="form-label"
                 style={{
                   fontSize: "12px",
@@ -804,151 +906,206 @@ const AddFeesMasterModal = ({ show, onHide }: Props) => {
                   fontWeight: "500",
                 }}
               >
-                Fees Group
+                Fee Amounts
               </label>
-
-              <div className="dropdown" id="feeGroupDropdown">
-                <button
-                  className="btn btn-secondary dropdown-toggle"
-                  style={{
-                    width: "100%",
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    backgroundColor: "transparent",
-                    border: "1px solid #ECEDF1",
-                    borderRadius: "8px",
-                    overflow: "hidden",
-                  }}
-                  type="button"
-                  data-bs-toggle="dropdown"
-                  aria-expanded="false"
-                >
-                  {selectedGroupName}
-                </button>
-                <ul
-                  className="dropdown-menu"
-                  style={{ width: "100%", height: "300px", overflow: "auto" }}
-                >
-                  {feeGroups.map((group) => (
-                    <li key={group.fee_groups_id}>
-                      <a
-                        className="dropdown-item"
-                        href="#"
-                        onClick={() => handleSelectGroup(group)}
-                      >
-                        {group.fee_group_name}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-            <div style={{ marginBottom: "23px" }}>
-              <label
-                htmlFor="feeTypeDropdown"
-                className="form-label"
-                style={{
-                  fontSize: "12px",
-                  color: "#434343",
-                  fontWeight: "500",
-                }}
-              >
-                Fees Type
-              </label>
-
-              <div className="dropdown" id="feeTypeDropdown">
-                <button
-                  className="btn btn-secondary dropdown-toggle"
-                  style={{
-                    width: "100%",
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    backgroundColor: "transparent",
-                    border: "1px solid #ECEDF1",
-                    borderRadius: "8px",
-                    overflow: "hidden",
-                  }}
-                  type="button"
-                  data-bs-toggle="dropdown"
-                  aria-expanded="false"
-                >
-                  {selectedFeeTypes.length > 0
-                    ? selectedFeeTypes.map(ft => ft.type).join(", ")
-                    : "Select Fee Type"}
-                </button>
-                <ul
-                  className="dropdown-menu"
-                  style={{ width: "100%", height: "300px", overflow: "auto" }}
-                >
-                  {feeTypes.map((type) => (
-                    <li key={type.id}>
-                      <a
-                        className="dropdown-item"
-                        href="#"
-                        onClick={() => handleSelectFeeType(type)}
-                      >
-                        {type.type}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-            {selectedFeeTypes.length > 0 && (
-              <div style={{ marginBottom: "23px" }}>
-                <label
-                  htmlFor="feeAmounts"
-                  className="form-label"
-                  style={{
-                    fontSize: "12px",
-                    color: "#434343",
-                    fontWeight: "500",
-                  }}
-                >
-                  Fee Amounts
-                </label>
-                <table className="table table-striped">
-                  <thead>
-                    <tr>
-                      <th>Fee Type</th>
-                      <th>Amount</th>
-                      <th>Actions</th>
+              <table className="table table-striped">
+                <thead>
+                  <tr>
+                    <th>Fee Type</th>
+                    <th>Amount</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {selectedFeeTypes.map((feeType) => (
+                    <tr key={feeType.id}>
+                      <td>{feeType.type}</td>
+                      <td>
+                        <input
+                          type="number"
+                          value={feeType.amount}
+                          onChange={(e) =>
+                            handleAmountChange(
+                              feeType.id,
+                              parseFloat(e.target.value)
+                            )
+                          }
+                          style={{ width: "100%" }}
+                        />
+                      </td>
+                      <td>
+                        <button
+                          type="button"
+                          className="btn btn-danger btn-sm"
+                          onClick={() => handleDeleteFeeType(feeType.id)}
+                        >
+                          Delete
+                        </button>
+                      </td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {selectedFeeTypes.map((feeType) => (
-                      <tr key={feeType.id}>
-                        <td>{feeType.type}</td>
-                        <td>
-                          <input
-                            type="number"
-                            value={feeType.amount}
-                            onChange={(e) =>
-                              handleAmountChange(feeType.id, parseFloat(e.target.value))
-                            }
-                            style={{ width: "100%" }}
-                          />
-                        </td>
-                        <td>
-                          <button
-                            type="button"
-                            className="btn btn-danger btn-sm"
-                            onClick={() => handleDeleteFeeType(feeType.id)}
-                          >
-                            Delete
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+          <div style={{ marginBottom: "23px" }}>
+            <label
+              htmlFor="dueDate"
+              className="form-label"
+              style={{
+                fontSize: "12px",
+                color: "#434343",
+                fontWeight: "500",
+              }}
+            >
+              Due Date
+            </label>
+            <input
+              type="date"
+              className="form-control"
+              id="dueDate"
+              value={dueDate || ""}
+              onChange={handleDateChange}
+            />
+          </div>
+          <div style={{ marginBottom: "23px" }}>
+            <label
+              htmlFor="dueTypeDropdown"
+              className="form-label"
+              style={{
+                fontSize: "12px",
+                color: "#434343",
+                fontWeight: "500",
+              }}
+            >
+              Due Type
+            </label>
+
+            <div className="dropdown" id="dueTypeDropdown">
+              <button
+                className="btn btn-secondary dropdown-toggle"
+                style={{
+                  width: "100%",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  backgroundColor: "transparent",
+                  border: "1px solid #ECEDF1",
+                  borderRadius: "8px",
+                  overflow: "hidden",
+                }}
+                type="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                {dueTypeName}
+              </button>
+              <ul
+                className="dropdown-menu"
+                style={{ width: "100%", height: "300px", overflow: "auto" }}
+              >
+                <li>
+                  <a
+                    className="dropdown-item"
+                    href="#"
+                    onClick={() => handleDueType({ id: "1", type: "Monthly" })}
+                  >
+                    Monthly
+                  </a>
+                </li>
+                <li>
+                  <a
+                    className="dropdown-item"
+                    href="#"
+                    onClick={() =>
+                      handleDueType({ id: "2", type: "Quarterly" })
+                    }
+                  >
+                    Quarterly
+                  </a>
+                </li>
+                <li>
+                  <a
+                    className="dropdown-item"
+                    href="#"
+                    onClick={() => handleDueType({ id: "3", type: "Annually" })}
+                  >
+                    Annually
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div style={{ marginBottom: "23px" }}>
+            <label
+              htmlFor="fineTypeDropdown"
+              className="form-label"
+              style={{
+                fontSize: "12px",
+                color: "#434343",
+                fontWeight: "500",
+              }}
+            >
+              Fine Type
+            </label>
+
+            <div className="dropdown" id="fineTypeDropdown">
+              <button
+                className="btn btn-secondary dropdown-toggle"
+                style={{
+                  width: "100%",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  backgroundColor: "transparent",
+                  border: "1px solid #ECEDF1",
+                  borderRadius: "8px",
+                  overflow: "hidden",
+                }}
+                type="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                {fineType}
+              </button>
+              <ul
+                className="dropdown-menu"
+                style={{ width: "100%", height: "300px", overflow: "auto" }}
+              >
+                <li>
+                  <a
+                    className="dropdown-item"
+                    href="#"
+                    onClick={() => setFineType("none")}
+                  >
+                    None
+                  </a>
+                </li>
+                <li>
+                  <a
+                    className="dropdown-item"
+                    href="#"
+                    onClick={() => setFineType("fixed")}
+                  >
+                    Fixed
+                  </a>
+                </li>
+                <li>
+                  <a
+                    className="dropdown-item"
+                    href="#"
+                    onClick={() => setFineType("percentage")}
+                  >
+                    Percentage
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+          {fineType !== "none" && (
             <div style={{ marginBottom: "23px" }}>
               <label
-                htmlFor="dueDate"
+                htmlFor="fineAmount"
                 className="form-label"
                 style={{
                   fontSize: "12px",
@@ -956,175 +1113,22 @@ const AddFeesMasterModal = ({ show, onHide }: Props) => {
                   fontWeight: "500",
                 }}
               >
-                Due Date
+                {fineType === "percentage" ? "Percentage" : "Fine Amount"}
               </label>
               <input
-                type="date"
+                type="number"
                 className="form-control"
-                id="dueDate"
-                value={dueDate || ""}
-                onChange={handleDateChange}
+                id="fineAmount"
+                value={fineType === "percentage" ? percentage : fineAmount}
+                onChange={(e) =>
+                  fineType === "percentage"
+                    ? setPercentage(parseFloat(e.target.value))
+                    : setFineAmount(parseFloat(e.target.value))
+                }
               />
             </div>
-            <div style={{ marginBottom: "23px" }}>
-              <label
-                htmlFor="dueTypeDropdown"
-                className="form-label"
-                style={{
-                  fontSize: "12px",
-                  color: "#434343",
-                  fontWeight: "500",
-                }}
-              >
-                Due Type
-              </label>
+          )}
 
-              <div className="dropdown" id="dueTypeDropdown">
-                <button
-                  className="btn btn-secondary dropdown-toggle"
-                  style={{
-                    width: "100%",
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    backgroundColor: "transparent",
-                    border: "1px solid #ECEDF1",
-                    borderRadius: "8px",
-                    overflow: "hidden",
-                  }}
-                  type="button"
-                  data-bs-toggle="dropdown"
-                  aria-expanded="false"
-                >
-                  {dueTypeName}
-                </button>
-                <ul
-                  className="dropdown-menu"
-                  style={{ width: "100%", height: "300px", overflow: "auto" }}
-                >
-                  <li>
-                    <a
-                      className="dropdown-item"
-                      href="#"
-                      onClick={() => handleDueType({ id: "1", type: "Monthly" })}
-                    >
-                      Monthly
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      className="dropdown-item"
-                      href="#"
-                      onClick={() => handleDueType({ id: "2", type: "Quarterly" })}
-                    >
-                      Quarterly
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      className="dropdown-item"
-                      href="#"
-                      onClick={() => handleDueType({ id: "3", type: "Annually" })}
-                    >
-                      Annually
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </div>
-            <div style={{ marginBottom: "23px" }}>
-              <label
-                htmlFor="fineTypeDropdown"
-                className="form-label"
-                style={{
-                  fontSize: "12px",
-                  color: "#434343",
-                  fontWeight: "500",
-                }}
-              >
-                Fine Type
-              </label>
-
-              <div className="dropdown" id="fineTypeDropdown">
-                <button
-                  className="btn btn-secondary dropdown-toggle"
-                  style={{
-                    width: "100%",
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    backgroundColor: "transparent",
-                    border: "1px solid #ECEDF1",
-                    borderRadius: "8px",
-                    overflow: "hidden",
-                  }}
-                  type="button"
-                  data-bs-toggle="dropdown"
-                  aria-expanded="false"
-                >
-                  {fineType}
-                </button>
-                <ul
-                  className="dropdown-menu"
-                  style={{ width: "100%", height: "300px", overflow: "auto" }}
-                >
-                  <li>
-                    <a
-                      className="dropdown-item"
-                      href="#"
-                      onClick={() => setFineType("none")}
-                    >
-                      None
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      className="dropdown-item"
-                      href="#"
-                      onClick={() => setFineType("fixed")}
-                    >
-                      Fixed
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      className="dropdown-item"
-                      href="#"
-                      onClick={() => setFineType("percentage")}
-                    >
-                      Percentage
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </div>
-            {fineType !== "none" && (
-              <div style={{ marginBottom: "23px" }}>
-                <label
-                  htmlFor="fineAmount"
-                  className="form-label"
-                  style={{
-                    fontSize: "12px",
-                    color: "#434343",
-                    fontWeight: "500",
-                  }}
-                >
-                  {fineType === "percentage" ? "Percentage" : "Fine Amount"}
-                </label>
-                <input
-                  type="number"
-                  className="form-control"
-                  id="fineAmount"
-                  value={fineType === "percentage" ? percentage : fineAmount}
-                  onChange={(e) =>
-                    fineType === "percentage"
-                      ? setPercentage(parseFloat(e.target.value))
-                      : setFineAmount(parseFloat(e.target.value))
-                  }
-                />
-              </div>
-            )}
-          </div>
           <div className="modal-footer">
             <button
               type="button"
@@ -1133,10 +1137,7 @@ const AddFeesMasterModal = ({ show, onHide }: Props) => {
             >
               Close
             </button>
-            <button
-              type="submit"
-              className="btn btn-primary"
-            >
+            <button type="submit" className="btn btn-primary">
               Save changes
             </button>
           </div>
@@ -1147,4 +1148,4 @@ const AddFeesMasterModal = ({ show, onHide }: Props) => {
   );
 };
 
-export { AddFeesMasterModal};
+export { AddFeesMasterModal };

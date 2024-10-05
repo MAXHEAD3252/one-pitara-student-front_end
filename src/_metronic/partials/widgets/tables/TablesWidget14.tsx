@@ -17,7 +17,6 @@ interface FeeItem {
 }
 
 interface GroupedData {
-  fee_group_type_id: any;
   fee_group_session_id: any;
   fee_group_id: any;
   name: string;
@@ -27,6 +26,9 @@ interface GroupedData {
 
 const TablesWidget14: React.FC = () => {
   const [feeData, setFeeData] = useState<GroupedData[]>([]);
+  console.log(feeData);
+  
+  
   const { currentUser } = useAuth();
   const schoolId = currentUser?.school_id;
   const [showEditModal, setShowEditModal] = useState<boolean>(false);
@@ -39,26 +41,22 @@ const TablesWidget14: React.FC = () => {
   const [feeId, setFeeId] = useState<number | null>(null);
   const [classId, setClassId] = useState<string | null>(null);
   const [groupName, setSetGroupName] = useState<string | null>(null);
-
-  
+  const [refresh, setRefresh] = useState(false);
 
   const handleShowEditModal = (fee_group_type_id: number) => {
     setFeeId(fee_group_type_id);
     setShowEditModal(true);
   };
 
-
   const handleShowDeleteModal = (fee_group_type_id: number) => {
     setFeeId(fee_group_type_id);
     setShowDeleteModal(true);
   };
 
-
-  const handleShowAssignModal = (name: string,classId: string) => {
+  const handleShowAssignModal = (name: string, classId: string) => {
     // Find the group with the matching classId
     const selectedGroup = feeData.find((group) => group.name === name);
     if (selectedGroup) {
-
       // Extract fee group ID from the selected group
       const feeGroupId = selectedGroup.fee_group_id; // Assuming fee_group_id is directly on selectedGroup
       const feeGroupSessionId = selectedGroup.fee_group_session_id; // Assuming fee_group_id is directly on selectedGroup
@@ -72,7 +70,7 @@ const TablesWidget14: React.FC = () => {
         fee_group_id: feeGroupId,
         fee_amount: fee.fee_amount,
         fee_group_session_id: feeGroupSessionId, // Set fee_group_id to the extracted value
-        fee_group_type_id: fee_group_type_id, 
+        fee_group_type_id: fee_group_type_id,
       }));
 
       // Extract fee IDs from fee details
@@ -81,7 +79,7 @@ const TablesWidget14: React.FC = () => {
       // Update state
       // setSelectedFeeGroupId(feeGroupId); // Store fee group ID
       setClassId(classId);
-      setSetGroupName(fee_group_name)
+      setSetGroupName(fee_group_name);
       setSelectedFeeDetails(feeDetails); // Store fee IDs as an array
       setShowAssignModal(true);
     } else {
@@ -92,8 +90,6 @@ const TablesWidget14: React.FC = () => {
   const handleShowCreateModal = () => {
     setShowCreateModal(true);
   };
-
-
 
   // Handlers to hide modals
   const handleCloseEditModal = () => {
@@ -111,8 +107,6 @@ const TablesWidget14: React.FC = () => {
     setShowAssignModal(false);
   };
 
-
-
   const handleCloseCreateModal = () => {
     setShowCreateModal(false);
   };
@@ -129,7 +123,6 @@ const TablesWidget14: React.FC = () => {
         const data = await response.json();
         setData(data);
         console.log(data);
-        
 
         // Grouping fee data by fee_group_id
         const groupedData: GroupedData[] = Object.values(
@@ -142,7 +135,7 @@ const TablesWidget14: React.FC = () => {
               fee_amount,
               feetype_id,
               class_id,
-              fee_group_type_id
+              fee_group_type_id,
             } = item;
 
             // Create a unique key combining class_id and fee_group_id
@@ -154,15 +147,14 @@ const TablesWidget14: React.FC = () => {
                 class_id: class_id,
                 fee_group_id: fee_group_id,
                 fee_group_session_id: fee_group_session_id,
-                fee_group_type_id : fee_group_type_id, 
-                fees: [{ fee_type, fee_amount, feetype_id
-                }],
+                fees: [{ fee_type, fee_amount, feetype_id ,fee_group_type_id}],
               };
             } else {
               acc[key].fees.push({
                 fee_type,
                 fee_amount,
                 feetype_id,
+                fee_group_type_id: fee_group_type_id
               });
             }
 
@@ -175,329 +167,243 @@ const TablesWidget14: React.FC = () => {
         console.error("Error fetching fee data:", error);
       }
     };
-
+    
+    setRefresh(false)
     fetchData();
-  }, [schoolId]);
-
-
+  }, [schoolId,refresh]);
 
   return (
     <div
-      className="col-xxl-12"
+      className="card-style"
       style={{
+        width: "100%",
         borderRadius: "16px",
-        border: "1px solid #5D637A",
-        overflowX: "hidden",
-        minHeight: "100%",
-        marginBottom: "20px",
-        height: "770px",
-        display: "flex",
-        flexDirection: "column",
-        fontFamily: "Manrope",
-        maxWidth: "100%",
+        backgroundColor: "rgb(242, 246, 255)",
+        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
         overflow: "hidden",
+        marginTop: "20px",
+        padding: "20px",
       }}
     >
-      <div style={{ overflow: "auto", width: "100%", height: "100%" }}>
-        <table
+      <div
+        className="card-header"
+        style={{
+          backgroundColor: "rgb(242, 246, 255)",
+          padding: "16px 20px",
+          borderBottom: "1px solid #E0E4F0",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <span
           style={{
-            top: "223px",
-            height: "812px",
-            maxHeight: "100%",
-            borderCollapse: "collapse",
-            // tableLayout: "fixed",
-            overflowX: "hidden",
-            overflowY: "auto",
-            whiteSpace: "nowrap",
-            width: "100%",
+            fontSize: "20px",
+            fontWeight: "600",
+            color: "#1C335C",
+            fontFamily: "Manrope",
           }}
         >
-          <thead
-            className="col-xxl-12"
+          Fee Master List: 2022- 2023
+        </span>
+        <div style={{ display: "flex", gap: "8px" }}>
+          <div
+            className="input-group flex-nowrap"
             style={{
-              position: "sticky",
-              top: "0",
-              zIndex: "1",
-              height: "133px",
-              maxHeight: "100%",
-              width: "100%",
-              display: "flex",
-              flexDirection: "column",
-              backgroundColor: "#1C335C",
-              justifyContent: "space-between",
-              gap: "0px",
-              padding: "9px 24px 9px 24px",
+              width: "300px",
+              height: "36px",
+              borderRadius: "8px",
+              border: "1px solid #1C335C",
             }}
           >
-            <caption
-              className="col-xxl-12"
-              style={{
-                width: "100%",
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "space-between",
-                position: "relative",
-              }}
+            <span
+              className="input-group-text border-0 pe-1 pr-0"
+              style={{ backgroundColor: "transparent" }}
+              id="addon-wrapping"
             >
-              <div style={{ width: "224px", height: "12px" }}>
-                <span
-                  style={{
-                    fontSize: "16px",
-                    fontWeight: "700",
-                    lineHeight: "21.86px",
-                    color: "#FFFFFF",
-                    fontFamily: "Manrope",
-                  }}
-                >
-                  Fee Master List: 2022- 2023{" "}
-                </span>
-              </div>
-              <div
-                className="card-header"
-                style={{
-                  width: "497px",
-                  height: "37px",
-                  display: "flex",
-                  gap: "8px",
-                  justifyContent: "end",
-                }}
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 17 16"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
               >
-                <div
-                  className="input-group flex-nowrap"
-                  style={{
-                    width: "300px",
-                    height: "36px",
-                    borderRadius: "8px",
-                    border: "1px solid #D9D9D9",
-                  }}
-                >
-                  <span
-                    className="input-group-text border-0 pe-1 pr-0"
-                    style={{ backgroundColor: "transparent" }}
-                    id="addon-wrapping"
-                  >
-                    <svg
+                <g clip-path="url(#clip0_582_4295)">
+                  <circle
+                    cx="8.50002"
+                    cy="7.66665"
+                    r="6.33333"
+                    stroke="#1C335C"
+                    stroke-width="1.5"
+                  />
+                  <path
+                    d="M14.1667 13.3333L15.5 14.6666"
+                    stroke="#1C335C"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                  />
+                </g>
+                <defs>
+                  <clipPath id="clip0_582_4295">
+                    <rect
                       width="16"
                       height="16"
-                      viewBox="0 0 17 16"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <g clip-path="url(#clip0_582_4295)">
-                        <circle
-                          cx="8.50002"
-                          cy="7.66665"
-                          r="6.33333"
-                          stroke="white"
-                          stroke-width="1.5"
-                        />
-                        <path
-                          d="M14.1667 13.3333L15.5 14.6666"
-                          stroke="white"
-                          stroke-width="1.5"
-                          stroke-linecap="round"
-                        />
-                      </g>
-                      <defs>
-                        <clipPath id="clip0_582_4295">
-                          <rect
-                            width="16"
-                            height="16"
-                            fill="white"
-                            transform="translate(0.833374)"
-                          />
-                        </clipPath>
-                      </defs>
-                    </svg>
-                  </span>
-                  <input
-                    type="text"
-                    style={{ backgroundColor: "transparent", color: "#FFFFFF" }}
-                    className="form-control border-0 "
-                    placeholder="Search ...."
-                    aria-label="Username"
-                    aria-describedby="addon-wrapping"
-                  />
-                </div>
-
-                <span
-                  // onClick={handlePrimaryButtonClick}
-                  style={{
-                    // width: "137px",
-                    height: "36px",
-                    borderRadius: "8px",
-                    padding: "8px 10px 8px 10px",
-                    gap: "5px",
-                    backgroundColor: "#FFFFFF",
-                    display: "flex",
-                    flexDirection: "row",
-                    cursor: "pointer",
-                  }}
-                  onClick={() => handleShowCreateModal()}
-                  data-bs-toggle="modal"
-                  data-bs-target="#staticBackdrop"
-                >
-                  <svg
-                    width="20"
-                    height="20"
-                    viewBox="0 0 20 20"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <g clip-path="url(#clip0_103_1850)">
-                      <path
-                        d="M1.66663 10C1.66663 6.07165 1.66663 4.10746 2.88701 2.88708C4.1074 1.66669 6.07159 1.66669 9.99996 1.66669C13.9283 1.66669 15.8925 1.66669 17.1129 2.88708C18.3333 4.10746 18.3333 6.07165 18.3333 10C18.3333 13.9284 18.3333 15.8926 17.1129 17.113C15.8925 18.3334 13.9283 18.3334 9.99996 18.3334C6.07159 18.3334 4.1074 18.3334 2.88701 17.113C1.66663 15.8926 1.66663 13.9284 1.66663 10Z"
-                        stroke="black"
-                        stroke-width="1.5"
-                      />
-                      <path
-                        d="M12.5 10L10 10M10 10L7.5 10M10 10L10 7.5M10 10L10 12.5"
-                        stroke="black"
-                        stroke-width="1.5"
-                        stroke-linecap="round"
-                      />
-                    </g>
-                    <defs>
-                      <clipPath id="clip0_103_1850">
-                        <rect width="20" height="20" fill="white" />
-                      </clipPath>
-                    </defs>
-                  </svg>
-                  <div style={{ width: "97px", height: "9px" }}>
-                    <span
-                      style={{
-                        fontSize: "12px",
-                        fontWeight: "500",
-                        color: "#000000",
-                        lineHeight: "16.39px",
-                      }}
-                    >
-                      Add Fee Master
-                    </span>
-                  </div>
-                </span>
-              </div>
-            </caption>
-
-            <tr
+                      fill="#1C335C"
+                      transform="translate(0.833374)"
+                    />
+                  </clipPath>
+                </defs>
+              </svg>
+            </span>
+            <input
+              type="text"
+              style={{ backgroundColor: "transparent", color: "#1C335C" }}
+              className="form-control border-0 "
+              placeholder="Search ...."
+              aria-label="Username"
+              aria-describedby="addon-wrapping"
+            />
+          </div>
+          <div
+            onClick={() => handleShowCreateModal()}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              padding: "8px 12px",
+              backgroundColor: "#1C335C",
+              borderRadius: "8px",
+              cursor: "pointer",
+              transition: "background-color 0.3s",
+            }}
+            onMouseEnter={(e) =>
+              (e.currentTarget.style.backgroundColor = "#16294D")
+            }
+            onMouseLeave={(e) =>
+              (e.currentTarget.style.backgroundColor = "#1C335C")
+            }
+          >
+            <span
               style={{
-                // gap: "40px",
-                display: "flex",
-                paddingTop: "15px",
-                justifyContent: "space-between",
-                paddingLeft: "40px",
-                paddingRight: "85px",
-                // border:'1px solid black',
-                // width: "100%",
-
-                backgroundColor: "#1C335C",
+                marginRight: "8px",
+                color: "white",
+                fontSize: "14px",
+                fontWeight: "700",
+                fontFamily: "Manrope",
               }}
             >
-              <th>
-                <div
-                  style={{ flex: "1", maxWidth: "365px", minWidth: "370px" }}
-                >
-                  <span
-                    style={{
-                      fontSize: "12px",
-                      fontWeight: "700",
-                      lineHeight: "18px",
-                      color: "#FFFFFF",
-                      position: "sticky",
-                      top: "0",
-                      zIndex: "1",
-                    }}
-                  >
-                    Fees Group
-                  </span>
-                </div>
+              Add Fee Master
+            </span>
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 20 20"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <g clip-path="url(#clip0_103_1850)">
+                <path
+                  d="M1.66663 10C1.66663 6.07165 1.66663 4.10746 2.88701 2.88708C4.1074 1.66669 6.07159 1.66669 9.99996 1.66669C13.9283 1.66669 15.8925 1.66669 17.1129 2.88708C18.3333 4.10746 18.3333 6.07165 18.3333 10C18.3333 13.9284 18.3333 15.8926 17.1129 17.113C15.8925 18.3334 13.9283 18.3334 9.99996 18.3334C6.07159 18.3334 4.1074 18.3334 2.88701 17.113C1.66663 15.8926 1.66663 13.9284 1.66663 10Z"
+                  stroke="#fff"
+                  stroke-width="1.5"
+                />
+                <path
+                  d="M12.5 10L10 10M10 10L7.5 10M10 10L10 7.5M10 10L10 12.5"
+                  stroke="#fff"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                />
+              </g>
+              <defs>
+                <clipPath id="clip0_103_1850">
+                  <rect width="20" height="20" fill="white" />
+                </clipPath>
+              </defs>
+            </svg>
+          </div>
+        </div>
+      </div>
+      <div
+        style={{
+          height: "630px", // Fixed height for the table container
+          overflowY: "auto", // Enable vertical scrolling
+          padding: "16px 0", // Optional: adds some padding around the table
+        }}
+      >
+        <table
+          className="table"
+          style={{
+            width: "100%",
+            borderCollapse: "collapse",
+            marginTop: "10px",
+            backgroundColor: "#FFFFFF", // White background for the table
+            borderRadius: "12px", // Round corners for the table
+            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.05)", // Light shadow for the table
+          }}
+        >
+          <thead>
+            <tr
+              style={{
+                backgroundColor: "rgb(242, 246, 255)", // Header background color
+                borderBottom: "1px solid #E0E4F0",
+                fontFamily: "Manrope",
+                fontWeight: "600",
+                color: "#1C335C",
+                fontSize: "14px",
+              }}
+            >
+              <th
+                style={{
+                  padding: "12px 20px",
+                  textAlign: "left",
+                }}
+              >
+                Fees Group
               </th>
-              <th>
-                <div
-                  style={{ flex: "1", maxWidth: "700px", minWidth: "520px" }}
-                >
-                  <span
-                    style={{
-                      fontSize: "12px",
-                      fontWeight: "700",
-                      lineHeight: "18px",
-                      color: "#FFFFFF",
-                    }}
-                  >
-                    Fee Code
-                  </span>
-                </div>
+              <th
+                style={{
+                  padding: "12px 20px",
+                  textAlign: "left",
+                }}
+              >
+                Fee Code
               </th>
-              <th>
-                <div
-                  style={{ flex: "1", maxWidth: "115px", minWidth: "100px" }}
-                >
-                  <span
-                    style={{
-                      fontSize: "12px",
-                      fontWeight: "700",
-                      lineHeight: "18px",
-                      color: "#FFFFFF",
-                    }}
-                  >
-                    Actions
-                  </span>
-                </div>
+              <th
+                style={{
+                  padding: "12px 20px",
+                  textAlign: "right",
+                }}
+              >
+                Actions
               </th>
             </tr>
           </thead>
 
-          <tbody
-            className="col-xxl-12"
-            style={{
-              height: "100%",
-              display: "flex",
-              flexDirection: "column",
-              // width:'100%',
-              // border: "1px solid #CCCCCC",
-            }}
-          >
+          <tbody>
             {feeData.map((group, index) => (
               <tr
                 key={index}
                 style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  height: "fit-content",
-                  paddingTop: "20px",
-                  paddingLeft: "60px",
-                  paddingRight: "75px",
-                  paddingBottom: "20px",
+                  backgroundColor:
+                    index % 2 === 0 ? "rgb(242, 246, 255)" : "#FFFFFF",
+                  borderBottom: "1px solid #E0E4F0",
+                  fontFamily: "Manrope",
+                  fontSize: "14px",
+                  color: "#1C335C",
                 }}
               >
                 <td
                   style={{
-                    maxWidth: "345px",
-                    minWidth: "235px",
-                    height: "9px",
+                    padding: "12px 20px",
                   }}
                 >
-                  <div className="d-flex align-items-center">
-                    <span
-                      style={{
-                        fontSize: "14px",
-                        fontWeight: "600",
-                        lineHeight: "18px",
-                        color: "#000000",
-                        fontFamily: "Manrope",
-                      }}
-                    >
-                      {group.name}
-                    </span>
-                  </div>
+                  {group.name}
                 </td>
 
-                <td style={{ maxWidth: "670px", minWidth: "500px" }}>
-                  <div
+                <td
                     style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: "10px",
+                      padding: "12px 20px",
+                      display:'flex',
+                      flexDirection:'column',gap:'5px'
                     }}
                   >
                     {group.fees.map((fee, idx) => (
@@ -538,7 +444,9 @@ const TablesWidget14: React.FC = () => {
                               //  onClick={() => handleOpenModal(fee.fid)} // Replace fee.id with the actual id
                               /* @ts-ignore */
 
-                              onClick={() => handleShowEditModal(group.fee_group_type_id)} // Replace fee.id with the actual id
+                              onClick={() =>
+                                handleShowEditModal(fee.fee_group_type_id)
+                              } // Replace fee.id with the actual id
                               style={{
                                 background: "none",
                                 border: "none",
@@ -573,7 +481,9 @@ const TablesWidget14: React.FC = () => {
                           </div>
                         </div>
                         <div
-                      onClick={() =>handleShowDeleteModal(group.fee_group_type_id)}
+                          onClick={() =>
+                            handleShowDeleteModal(group.fee_group_type_id)
+                          }
                         >
                           <svg
                             width="14"
@@ -593,35 +503,42 @@ const TablesWidget14: React.FC = () => {
                         </div>
                       </div>
                     ))}
-                  </div>
                 </td>
 
-                <td style={{ maxWidth: "135px", minWidth: "75px" }}>
+                <td
+                   style={{
+                    padding: "12px 20px",
+                    textAlign: "start",
+                    // display:'block',
+                    // flexDirection:'row'
+                  }}
+                  >
                   <div
                     style={{
-                      width: "135px",
-                      height: "40px",
                       display: "flex",
-                      flexDirection: "row",
-                      gap: "6px",
+                      gap: "10px", // Adds space between the buttons
+                      justifyContent: "right", // Aligns buttons horizontally in the center
                       alignItems: "center",
                     }}
                   >
                     <div
                       style={{
-                        width: "35px",
-                        height: "40px",
-                        borderRadius: "6px",
-                        padding: "10px 6px 10px 6px",
-                        gap: "10px",
-                        backgroundColor: "#1C335C",
                         display: "flex",
                         alignItems: "center",
-                        justifyContent: "center",
+                        padding: "8px 8px",
+                        backgroundColor: "#1C335C",
+                        borderRadius: "8px",
                         cursor: "pointer",
+                        transition: "background-color 0.3s",
                       }}
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.backgroundColor = "#16294D")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.backgroundColor = "#1C335C")
+                      }
                       onClick={() =>
-                        handleShowAssignModal(group.name,group.class_id)
+                        handleShowAssignModal(group.name, group.class_id)
                       }
                     >
                       <svg
@@ -659,7 +576,7 @@ const TablesWidget14: React.FC = () => {
                     </div>
                     <div
                       style={{
-                        width: "35px",
+                        width: "34px",
                         height: "40px",
                         borderRadius: "6px",
                         padding: "10px 6px 10px 6px",
@@ -715,6 +632,7 @@ const TablesWidget14: React.FC = () => {
           show={showEditModal}
           onHide={handleCloseEditModal}
           feeId={feeId}
+          setRefresh={setRefresh}
         />
 
         <DeleteFeeMasterModal

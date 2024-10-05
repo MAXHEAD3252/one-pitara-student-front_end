@@ -3,8 +3,8 @@ import { FC, SetStateAction, useState } from "react";
 import { useIntl } from "react-intl";
 import { PageTitle } from "../../../../_metronic/layout/core";
 import { Content } from "../../../../_metronic/layout/components/content";
-import { ToolbarFeeMaster } from "../../../../_metronic/layout/components/toolbar/toolbars";
-import { HeaderWrapper } from "../../../../_metronic/layout/components/header_staff";
+// import { ToolbarFeeMaster } from "../../../../_metronic/layout/components/toolbar/toolbars";
+// import { HeaderWrapper } from "../../../../_metronic/layout/components/header_staff";
 import { TablesWidget63 } from "../../../../_metronic/partials/widgets/tables/TablesWidget63";
 import { useSearchParams } from "react-router-dom";
 
@@ -16,9 +16,7 @@ const AssignedStudentPage = () => {
     
   return (
     <div className="bg-white">
-      <HeaderWrapper toggleView={undefined} />
         <div>
-        <ToolbarFeeMaster onSelectValue={undefined} />
           <Content>
             <div className="col-xxl-12"
               style={{

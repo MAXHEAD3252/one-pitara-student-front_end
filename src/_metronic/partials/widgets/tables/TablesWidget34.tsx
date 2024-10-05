@@ -445,7 +445,7 @@ const TablesWidget34: React.FC = () => {
                     textAlign: "start",
                   }}
                 >
-                  {item.enquiry_type !== "" ? (
+                  {item.enquiry_type === "admission" ? (
                     <span
                       style={{
                         display: "inline-block",

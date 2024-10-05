@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
-import { Modal } from "react-bootstrap";
-import './AssignFeesMaster.css'; // Ensure you import the CSS file
+import { Button, Form, Modal, Table } from "react-bootstrap";
+import "./AssignFeesMaster.css"; // Ensure you import the CSS file
 import { useAuth } from "../../../../app/modules/auth/core/Auth";
 import Feedback from "react-bootstrap/esm/Feedback";
 
@@ -20,7 +20,7 @@ interface FeeDetail {
   fee_name: string;
   fee_group_id: number;
   fee_amount: string;
-  fee_group_session_id:string;
+  fee_group_session_id: string;
 }
 
 interface Student {
@@ -35,15 +35,15 @@ const AssignFeesMaster: React.FC<AssignFeesMasterProps> = ({
   classId,
   groupName,
   schoolId,
-  feeDetails
+  feeDetails,
 }) => {
-  
   const [students, setStudents] = useState<Student[]>([]);
-  const [checkedStudents, setCheckedStudents] = useState<{ [key: string]: { checked: boolean, session_id: string | null } }>({});
+  const [checkedStudents, setCheckedStudents] = useState<{
+    [key: string]: { checked: boolean; session_id: string | null };
+  }>({});
   const [selectAll, setSelectAll] = useState(false);
   const { currentUser } = useAuth();
   const userId = currentUser?.id;
-
 
   useEffect(() => {
     if (classId && schoolId) {
@@ -58,7 +58,7 @@ const AssignFeesMaster: React.FC<AssignFeesMasterProps> = ({
       );
       const data = await response.json();
       console.log(data);
-      
+
       setStudents(data);
     } catch (error) {
       console.error("Error fetching students:", error);
@@ -66,11 +66,11 @@ const AssignFeesMaster: React.FC<AssignFeesMasterProps> = ({
   };
 
   const handleCheck = (studentId: string, studentSessionId: string) => {
-    setCheckedStudents(prevState => ({
+    setCheckedStudents((prevState) => ({
       ...prevState,
       [studentId]: {
         checked: !prevState[studentId]?.checked,
-        session_id: !prevState[studentId]?.checked ? studentSessionId : null
+        session_id: !prevState[studentId]?.checked ? studentSessionId : null,
       },
     }));
   };
@@ -82,190 +82,155 @@ const AssignFeesMaster: React.FC<AssignFeesMasterProps> = ({
     const newCheckedStudents = students.reduce((acc, student) => {
       acc[student.student_id] = {
         checked: newSelectAll,
-        session_id: newSelectAll ? student.student_session_id : null
+        session_id: newSelectAll ? student.student_session_id : null,
       };
       return acc;
-    }, {} as { [key: string]: { checked: boolean, session_id: string | null } });
+    }, {} as { [key: string]: { checked: boolean; session_id: string | null } });
 
     setCheckedStudents(newCheckedStudents);
   };
 
   const handleSubmit = async () => {
     const selectedStudents = students
-      .filter(student => checkedStudents[student.student_id]?.checked)
-      .map(student => ({
+      .filter((student) => checkedStudents[student.student_id]?.checked)
+      .map((student) => ({
         studentId: student.student_id,
         studentSessionId: checkedStudents[student.student_id]?.session_id,
       }));
 
-    const entries = selectedStudents.flatMap(({ studentId, studentSessionId}) =>
-      feeDetails.map(feeDetail => ({
-        studentId,
-        studentSessionId,
-        feeGroupId: feeDetail.fee_group_id,
-        feeTypeId: feeDetail.fee_type_id,
-        fee_group_session_id:feeDetail.fee_group_session_id,
-        fee_group_type_id:feeDetail.fee_group_type_id,
-        amount: feeDetail.fee_amount,
-        userId: userId,
-        session_id:studentSessionId,
-        schoolId
-      }))
+    const entries = selectedStudents.flatMap(
+      ({ studentId, studentSessionId }) =>
+        feeDetails.map((feeDetail) => ({
+          studentId,
+          studentSessionId,
+          feeGroupId: feeDetail.fee_group_id,
+          feeTypeId: feeDetail.fee_type_id,
+          fee_group_session_id: feeDetail.fee_group_session_id,
+          fee_group_type_id: feeDetail.fee_group_type_id,
+          amount: feeDetail.fee_amount,
+          userId: userId,
+          session_id: studentSessionId,
+          schoolId,
+        }))
     );
 
     // console.log(entries);
-    
+
     // return;
 
     try {
       await fetch(`${DOMAIN}/api/school/add-studentfeesmaster`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(entries)
+        body: JSON.stringify(entries),
       });
-      console.log('Data saved successfully');
+      console.log("Data saved successfully");
       onHide(); // Close modal after saving
     } catch (error) {
-      console.error('Error saving data:', error);
+      console.error("Error saving data:", error);
     }
   };
 
   return (
     <Modal
-      id="kt_modal_create_app"
-      tabIndex={-1}
-      aria-hidden="true"
-      dialogClassName="modal-dialog modal-dialog-centered mw-1000px"
-      show={show}
-      onHide={onHide}
-      backdrop="static"
+    id="kt_modal_create_app"
+    tabIndex={-1}
+    aria-hidden="true"
+    dialogClassName="modal-dialog modal-dialog-centered mw-1000px"
+    show={show}
+    onHide={onHide}
+    backdrop="static"
+    className="custom-modal"
+  >
+    {/* Modal Header */}
+    <Modal.Header
+      style={{
+        backgroundColor: "#F2F6FF",
+        borderBottom: "1px solid lightgray",
+        fontFamily: "Manrope",
+      }}
+      closeButton
     >
-      <div
-        className="modal-content"
-        style={{ padding: "23px 5px", borderRadius: "17px" }}
-      >
-        <div
-          className="modal-header border-0"
-          style={{ width: "100%", height: "17px" }}
-        >
-          <span
-            className=""
-            id="staticBackdropLabel"
-            style={{
-              fontSize: "24px",
-              fontWeight: "600",
-              fontFamily: "Manrope",
-            }}
-          >
-            Assign Fees Master : 2023-24
-          </span>
-          <span data-bs-dismiss="modal" onClick={onHide} aria-label="Close">
-            <svg
-              width="32"
-              height="32"
-              viewBox="0 0 32 32"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <circle cx="16" cy="16" r="16" fill="#ECECEC" />
-              <path
-                d="M22.8572 9.14294L9.14288 22.8572M9.14288 9.14294L22.8572 22.8572"
-                stroke="#464646"
-                strokeWidth="2"
-                strokeLinecap="square"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </span>
-        </div>
-        <div className="modal-body" style={{ overflow: 'auto' }}>
-          <form>
-            <span style={{fontSize:'12px',}}> <strong>Group Name: </strong> {groupName}</span>
-            <br/>
-            <strong>Fee Type: </strong>
+      <Modal.Title style={{ fontWeight: "600", fontSize: "20px", color: "#273B63" }}>
+        Assign Fees Master : 2023-24
+      </Modal.Title>
+    </Modal.Header>
 
-              {feeDetails.map((fee, idx) => (
-                
-                      <div
-                        key={idx}
-                        style={{
-                          height: "30px",
-                          width: "fit-content",
-                          display: "inline-flex",
-                          flexDirection: "row",
-                          padding: "0px 6px",
-                          gap: "0px",
-                          alignItems: "center",
-                        }}
-                      >
-                        <div
-                          style={{
-                            width: "fit-content",
-                            height: "36px",
-                            display: "flex",
-                            flexDirection: "row",
-                            gap: "10px",
-                            padding: "10px 6px 10px 6px",
-                            alignItems: "center",
-                            textAlign: "start",
-                          }}
-                        >
-                          <span className="text-gray-900" style={{marginRight:'2px',}}>
-                            {
-                              /* @ts-ignore */
-                              ` ${fee.fee_name},`
-                            }
-                          </span>
-                          </div>
-                          </div>))}
-            <div className="table-container">
-              <table className="table table-striped">
-                <thead>
-                  <tr>
-                    <th>Student ID</th>
-                    <th>Student Name</th>
-                    <th>
-                      <input
-                        style={{marginRight:'8px',}}
-                        type="checkbox"
-                        checked={selectAll}
-                        onChange={handleSelectAll}
-                      />
-                      Select All
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {students.map(student => (
-                    <tr key={student.student_id}>
-                      <td>{student.student_id}</td>
-                      <td>{student.student_name}</td>
-                      <td>
-                        <input
-                          type="checkbox"
-                          checked={!!checkedStudents[student.student_id]?.checked}
-                          onChange={() => handleCheck(student.student_id, student.student_session_id)}
-                        />
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            <button
-              type="button"
-              className="btn btn-primary"
-              onClick={handleSubmit}
-              style={{ marginTop: '20px' }}
-            >
-              Save
-            </button>
-          </form>
+    {/* Modal Body */}
+    <Modal.Body style={{ backgroundColor: "#F9FBFF", padding: "30px",maxHeight: "680px", // Limit the height of the modal body
+          overflowY: "auto"}}>
+      <div style={{ fontFamily: "Manrope" }}>
+        <div style={{ marginBottom: "20px", fontSize: "14px", color: "#4A4A4A" }}>
+          <strong>Group Name: </strong> {groupName}
+        </div>
+        <div style={{ marginBottom: "20px", fontSize: "14px", color: "#4A4A4A" }}>
+          <strong>Fee Type: </strong>
+          {feeDetails.map((fee, idx) => (
+            <span key={idx} style={{ marginRight: "10px" }}>
+              {fee.fee_name},
+            </span>
+          ))}
         </div>
       </div>
-    </Modal>
+
+      {/* Student List Table */}
+      <div className="table-responsive">
+        <Table bordered hover className="table-striped" style={{ border: "1px solid #DEE2E6" }}>
+          <thead style={{ backgroundColor: "#E8F0FF", color: "#273B63" }}>
+            <tr>
+              <th>Student ID</th>
+              <th>Student Name</th>
+              <th>
+                <Form.Check
+                  type="checkbox"
+                  label="Select All"
+                  checked={selectAll}
+                  onChange={handleSelectAll}
+                  style={{ marginLeft: "10px" }}
+                />
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {students.map((student) => (
+              <tr key={student.student_id}>
+                <td>{student.student_id}</td>
+                <td>{student.student_name}</td>
+                <td>
+                  <Form.Check
+                    type="checkbox"
+                    checked={!!checkedStudents[student.student_id]?.checked}
+                    onChange={() =>
+                      handleCheck(student.student_id, student.student_session_id)
+                    }
+                  />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+      </div>
+
+      {/* Save Button */}
+      <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "20px" }}>
+        <Button
+          variant="primary"
+          onClick={handleSubmit}
+          style={{
+            backgroundColor: "#273B63",
+            borderColor: "#273B63",
+            padding: "10px 20px",
+            borderRadius: "8px",
+            fontWeight: "500",
+          }}
+        >
+          Save
+        </Button>
+      </div>
+    </Modal.Body>
+  </Modal>
   );
 };
 

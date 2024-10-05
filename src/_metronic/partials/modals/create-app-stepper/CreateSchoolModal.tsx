@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { createPortal } from 'react-dom';
-import { Modal, Button, Form, Row, Col, InputGroup } from 'react-bootstrap';
+import React, { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
+import { Modal, Button, Form, Row, Col, InputGroup } from "react-bootstrap";
 import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
-import './CreateSchoolModal.css'; 
-import { useAuth } from '../../../../app/modules/auth';
+import "./CreateSchoolModal.css";
+import { useAuth } from "../../../../app/modules/auth";
 
 type Props = {
   show: boolean;
@@ -11,28 +11,28 @@ type Props = {
   refresh: (refreshState: boolean) => void;
 };
 
-const modalsRoot = document.getElementById('root-modals') || document.body;
+const modalsRoot = document.getElementById("root-modals") || document.body;
 
 const CreateSchoolModal = ({ show, handleClose, refresh }: Props) => {
-  const {currentUser} = useAuth();
-  
-  const [schoolName, setSchoolName] = useState('');
+  const { currentUser } = useAuth();
+
+  const [schoolName, setSchoolName] = useState("");
   // const [tagline, setTagline] = useState('');
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
-  const [address, setAddress] = useState('');
-  const [state, setState] = useState('');
-  const [country, setCountry] = useState('');
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [address, setAddress] = useState("");
+  const [state, setState] = useState("");
+  const [country, setCountry] = useState("");
   // const [educationalBoard, setEducationalBoard] = useState('');
-  const [dateFormat, setDateFormat] = useState('dd/mm/yyyy');
-  const [timeFormat, setTimeFormat] = useState('hh:mm');
-  const [currency, setCurrency] = useState('Rs');
-  const [currencySymbol, setCurrencySymbol] = useState('₹');
+  const [dateFormat, setDateFormat] = useState("dd/mm/yyyy");
+  const [timeFormat, setTimeFormat] = useState("hh:mm");
+  const [currency, setCurrency] = useState("Rs");
+  const [currencySymbol, setCurrencySymbol] = useState("₹");
   // const [bankAccountNo, setBankAccountNo] = useState('');
   // const [ifscCode, setIfscCode] = useState('');
   // const [bankName, setBankName] = useState('');
-  const [subscriptionType, setSubscriptionType] = useState('');
-  const [academicType, setAcademicType] = useState('');
+  const [subscriptionType, setSubscriptionType] = useState("");
+  const [academicType, setAcademicType] = useState("");
   const [subscriptionOptions, setSubscriptionOptions] = useState([]);
   const [academicYear, setAcademicYear] = useState([]);
   // const [schoolLogo, setSchoolLogo] = useState<File | null>(null);
@@ -52,63 +52,61 @@ const CreateSchoolModal = ({ show, handleClose, refresh }: Props) => {
   // };
 
   const validateForm = () => {
-    if (!schoolName || !email || !phone || !subscriptionType ) {
+    if (!schoolName || !email || !phone || !subscriptionType) {
       return false;
     }
     return true;
   };
 
-
-
-   // Fetch subscription options from the backend
-   useEffect(() => {
+  // Fetch subscription options from the backend
+  useEffect(() => {
     const fetchSubscriptionOptions = async () => {
       try {
-        const response = await fetch(`${DOMAIN}/api/superadmin/get-allsubscriptions`);
+        const response = await fetch(
+          `${DOMAIN}/api/superadmin/get-allsubscriptions`
+        );
         if (!response.ok) {
-          throw new Error('Failed to fetch subscription types');
+          throw new Error("Failed to fetch subscription types");
         }
         const data = await response.json();
         console.log(data);
-        
+
         setSubscriptionOptions(data); // Assuming the response has this structure
       } catch (error) {
-        console.error('Error fetching subscription types:', error);
+        console.error("Error fetching subscription types:", error);
       }
     };
 
     fetchSubscriptionOptions();
     const fetchAcademicYear = async () => {
       try {
-        const response = await fetch(`${DOMAIN}/api/superadmin/get_academicyear`);
+        const response = await fetch(
+          `${DOMAIN}/api/superadmin/get_academicyear`
+        );
         if (!response.ok) {
-          throw new Error('Failed to fetch subscription types');
+          throw new Error("Failed to fetch subscription types");
         }
         const data = await response.json();
         console.log(data);
-        
+
         setAcademicYear(data); // Assuming the response has this structure
       } catch (error) {
-        console.error('Error fetching subscription types:', error);
+        console.error("Error fetching subscription types:", error);
       }
     };
 
     fetchAcademicYear();
   }, []);
 
-
-
-
-
   const handleSubmit = async () => {
     // Validate form input
     if (!validateForm()) {
-      alert('Please fill in all required fields.');
+      alert("Please fill in all required fields.");
       return;
     }
-  
+
     setIsSubmitting(true);
-  
+
     // Prepare JSON data
     const formData = {
       name: schoolName,
@@ -125,70 +123,88 @@ const CreateSchoolModal = ({ show, handleClose, refresh }: Props) => {
       subscription_type: subscriptionType,
       userId: currentUser?.id,
     };
-  
+
     try {
       const response = await fetch(`${DOMAIN}/api/superadmin/create_school`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json', // Set header for JSON
+          "Content-Type": "application/json", // Set header for JSON
         },
         body: JSON.stringify(formData), // Convert formData object to JSON string
       });
-  
+
       if (!response.ok) {
-        throw new Error('Failed to create school');
+        throw new Error("Failed to create school");
       }
-  
+
       const result = await response.json();
-      console.log('School created successfully:', result);
+      console.log("School created successfully:", result);
       handleClose();
       refresh(true);
     } catch (error) {
-      console.error('Error creating school:', error);
+      console.error("Error creating school:", error);
     } finally {
       setIsSubmitting(false);
     }
   };
-  
 
   return createPortal(
     <Modal
-      id='kt_modal_create_school'
+      id="kt_modal_create_school"
       tabIndex={-1}
-      aria-hidden='true'
-      dialogClassName='modal-dialog modal-dialog-centered mw-1000px'
+      aria-hidden="true"
+      dialogClassName="modal-dialog modal-dialog-centered mw-1000px"
       show={show}
       onHide={handleClose}
       backdrop={true}
     >
-      <div className='modal-header' style={{
-        backgroundColor: "#F2F6FF", borderBottom:'1px solid lightgray'}}>
+      <div
+        className="modal-header"
+        style={{
+          backgroundColor: "#F2F6FF",
+          borderBottom: "1px solid lightgray",
+          fontFamily: "Manrope",
+          color:'#'
+        }}
+      >
         <h2>Create School</h2>
-        <div className='btn btn-sm btn-icon btn-active-color-primary' onClick={handleClose}>
-          <i className='fas fa-times'></i>
+        <div
+          className="btn btn-sm btn-icon btn-active-color-primary"
+          onClick={handleClose}
+        >
+          <i className="fas fa-times"></i>
         </div>
       </div>
 
-      <div className='modal-body py-lg-10 px-lg-10' style={{
-        backgroundColor: "#F2F6FF",}}>
+      <div
+        className="modal-body py-lg-10 px-lg-10"
+        style={{
+          backgroundColor: "#F2F6FF",
+        }}
+      >
         <Form>
           <Row>
             <Col md={4}>
-              <Form.Group className='mb-3 custom-input' controlId='formSchoolName'>
+              <Form.Group
+                className="mb-3 custom-input"
+                controlId="formSchoolName"
+              >
                 <Form.Label>School Name *</Form.Label>
                 <InputGroup>
                   <InputGroup.Text>
-                    <i className='fas fa-school'></i>
+                    <i className="fas fa-school"></i>
                   </InputGroup.Text>
                   <Form.Control
-                    type='text'
-                    placeholder='Enter school name'
+                    type="text"
+                    placeholder="Enter school name"
                     value={schoolName}
                     onChange={(e) => setSchoolName(e.target.value)}
                     required
                   />
                 </InputGroup>
-                <Form.Text className='text-muted'>This is an input helper text.</Form.Text>
+                <Form.Text className="text-muted">
+                  This is an input helper text.
+                </Form.Text>
               </Form.Group>
             </Col>
             {/* <Col md={4}>
@@ -209,94 +225,104 @@ const CreateSchoolModal = ({ show, handleClose, refresh }: Props) => {
               </Form.Group>
             </Col> */}
             <Col md={4}>
-              <Form.Group className='mb-3 custom-input' controlId='formEmail'>
+              <Form.Group className="mb-3 custom-input" controlId="formEmail">
                 <Form.Label>School Email *</Form.Label>
                 <InputGroup>
                   <InputGroup.Text>
-                    <i className='fas fa-envelope'></i>
+                    <i className="fas fa-envelope"></i>
                   </InputGroup.Text>
                   <Form.Control
-                    type='email'
-                    placeholder='Enter school email'
+                    type="email"
+                    placeholder="Enter school email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
                   />
                 </InputGroup>
-                <Form.Text className='text-muted'>This is an input helper text.</Form.Text>
+                <Form.Text className="text-muted">
+                  This is an input helper text.
+                </Form.Text>
               </Form.Group>
             </Col>
             <Col md={4}>
-              <Form.Group className='mb-3 custom-input' controlId='formPhone'>
+              <Form.Group className="mb-3 custom-input" controlId="formPhone">
                 <Form.Label>School Phone *</Form.Label>
                 <InputGroup>
                   <InputGroup.Text>
-                    <i className='fas fa-phone'></i>
+                    <i className="fas fa-phone"></i>
                   </InputGroup.Text>
                   <Form.Control
-                    type='text'
-                    placeholder='Enter school phone'
+                    type="text"
+                    placeholder="Enter school phone"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     required
                   />
                 </InputGroup>
-                <Form.Text className='text-muted'>This is an input helper text.</Form.Text>
+                <Form.Text className="text-muted">
+                  This is an input helper text.
+                </Form.Text>
               </Form.Group>
             </Col>
           </Row>
           <Row>
             <Col md={8}>
-              <Form.Group className='mb-3 custom-input' controlId='formAddress'>
+              <Form.Group className="mb-3 custom-input" controlId="formAddress">
                 <Form.Label>School Address</Form.Label>
                 <InputGroup>
                   <InputGroup.Text>
-                    <i className='fas fa-map-marker-alt'></i>
+                    <i className="fas fa-map-marker-alt"></i>
                   </InputGroup.Text>
                   <Form.Control
-                    type='text'
-                    placeholder='Enter school address'
+                    type="text"
+                    placeholder="Enter school address"
                     value={address}
                     onChange={(e) => setAddress(e.target.value)}
                   />
                 </InputGroup>
-                <Form.Text className='text-muted'>This is an input helper text.</Form.Text>
+                <Form.Text className="text-muted">
+                  This is an input helper text.
+                </Form.Text>
               </Form.Group>
             </Col>
             <Col md={4}>
-              <Form.Group className='mb-3 custom-input' controlId='formState'>
+              <Form.Group className="mb-3 custom-input" controlId="formState">
                 <Form.Label>State</Form.Label>
                 <InputGroup>
                   <InputGroup.Text>
-                    <i className='fas fa-location-arrow'></i>
+                    <i className="fas fa-location-arrow"></i>
                   </InputGroup.Text>
                   <Form.Control
-                    type='text'
-                    placeholder='Enter state'
+                    type="text"
+                    placeholder="Enter state"
                     value={state}
                     onChange={(e) => setState(e.target.value)}
                   />
                 </InputGroup>
-                <Form.Text className='text-muted'>This is an input helper text.</Form.Text>
+                <Form.Text className="text-muted">
+                  This is an input helper text.
+                </Form.Text>
               </Form.Group>
             </Col>
           </Row>
           <Row>
             <Col md={4}>
-              <Form.Group className='mb-3 custom-input' controlId='formCountry'>
+              <Form.Group className="mb-3 custom-input" controlId="formCountry">
                 <Form.Label>Country</Form.Label>
                 <InputGroup>
                   <InputGroup.Text>
-                    <i className='fas fa-globe'></i>
+                    <i className="fas fa-globe"></i>
                   </InputGroup.Text>
                   <Form.Control
-                    type='text'
-                    placeholder='Enter country'
+                    type="text"
+                    placeholder="Enter country"
                     value={country}
                     onChange={(e) => setCountry(e.target.value)}
                   />
                 </InputGroup>
-                <Form.Text className='text-muted'>This is an input helper text.</Form.Text>
+                <Form.Text className="text-muted">
+                  This is an input helper text.
+                </Form.Text>
               </Form.Group>
             </Col>
             {/* <Col md={4}>
@@ -317,75 +343,82 @@ const CreateSchoolModal = ({ show, handleClose, refresh }: Props) => {
               </Form.Group>
             </Col> */}
             <Col md={4}>
-              <Form.Group className='mb-3 custom-input' controlId='formCountry'>
+              <Form.Group className="mb-3 custom-input" controlId="formCountry">
                 <Form.Label>Date Formate</Form.Label>
                 <InputGroup>
                   <InputGroup.Text>
-                    <i className='fas fa-calendar'></i>
+                    <i className="fas fa-calendar"></i>
                   </InputGroup.Text>
                   <Form.Control
-                    type='text'
-                    placeholder='Enter Date Formate'
+                    type="text"
+                    placeholder="Enter Date Formate"
                     value={dateFormat}
                     onChange={(e) => setDateFormat(e.target.value)}
                   />
                 </InputGroup>
-                <Form.Text className='text-muted'>This is an input helper text.</Form.Text>
+                <Form.Text className="text-muted">
+                  This is an input helper text.
+                </Form.Text>
               </Form.Group>
             </Col>
             <Col md={4}>
-              <Form.Group className='mb-3 custom-input' controlId='formState'>
+              <Form.Group className="mb-3 custom-input" controlId="formState">
                 <Form.Label>Time Format</Form.Label>
                 <InputGroup>
                   <InputGroup.Text>
-                    <i className='fas fa-clock'></i>
+                    <i className="fas fa-clock"></i>
                   </InputGroup.Text>
                   <Form.Control
-                    type='text' 
-                    placeholder='Enter Time Format'
+                    type="text"
+                    placeholder="Enter Time Format"
                     value={timeFormat}
                     onChange={(e) => setTimeFormat(e.target.value)}
                   />
                 </InputGroup>
-                <Form.Text className='text-muted'>This is an input helper text.</Form.Text>
+                <Form.Text className="text-muted">
+                  This is an input helper text.
+                </Form.Text>
               </Form.Group>
             </Col>
-           
-            </Row>
-            <Row>
+          </Row>
+          <Row>
             <Col md={8}>
-              <Form.Group className='mb-3' controlId='formAcademicYear'>
+              <Form.Group className="mb-3" controlId="formAcademicYear">
                 <Form.Label>Academic Year *</Form.Label>
                 <Form.Select
                   value={academicType}
                   onChange={(e) => setAcademicType(e.target.value)}
                   required
                 >
-                  <option value=''>Select Academic Year</option>
+                  <option value="">Select Academic Year</option>
                   {academicYear.map((option) => (
                     <option key={option.id} value={option.id}>
                       {option.session}
                     </option>
                   ))}
                 </Form.Select>
-                <Form.Text className='text-muted'>Choose the type of subscription for the school.</Form.Text>
+                <Form.Text className="text-muted">
+                  Choose the type of subscription for the school.
+                </Form.Text>
               </Form.Group>
             </Col>
             <Col md={4}>
-              <Form.Group className='mb-3 custom-input' controlId='formCountry'>
+              <Form.Group className="mb-3 custom-input" controlId="formCountry">
                 <Form.Label>Currency</Form.Label>
                 <InputGroup>
                   <InputGroup.Text>
-                    <i className='fas fa-money-bill'></i>
+                    <i className="fas fa-money-bill"></i>
                   </InputGroup.Text>
                   <Form.Control
-                    type='text'
-                    placeholder='Enter Curreny'
+                    type="text"
+                    placeholder="Enter Curreny"
                     value={currency}
                     onChange={(e) => setCurrency(e.target.value)}
                   />
                 </InputGroup>
-                <Form.Text className='text-muted'>Enter the Short form of the currency.</Form.Text>
+                <Form.Text className="text-muted">
+                  Enter the Short form of the currency.
+                </Form.Text>
               </Form.Group>
             </Col>
             {/* <Col md={4}>
@@ -422,8 +455,8 @@ const CreateSchoolModal = ({ show, handleClose, refresh }: Props) => {
                 <Form.Text className='text-muted'>Enter the Short form of the currency.</Form.Text>
               </Form.Group>
             </Col> */}
-            </Row>
-            <Row>
+          </Row>
+          <Row>
             {/* <Col md={4}>
               <Form.Group className='mb-3 custom-input' controlId='formCountry'>
                 <Form.Label>Bank Name</Form.Label>
@@ -442,38 +475,42 @@ const CreateSchoolModal = ({ show, handleClose, refresh }: Props) => {
               </Form.Group>
             </Col> */}
             <Col md={8}>
-              <Form.Group className='mb-3' controlId='formSubscriptionType'>
+              <Form.Group className="mb-3" controlId="formSubscriptionType">
                 <Form.Label>Subscription Type *</Form.Label>
                 <Form.Select
                   value={subscriptionType}
                   onChange={(e) => setSubscriptionType(e.target.value)}
                   required
                 >
-                  <option value=''>Select Subscription Type</option>
+                  <option value="">Select Subscription Type</option>
                   {subscriptionOptions.map((option) => (
                     <option key={option.id} value={option.id}>
                       {option.name}
                     </option>
                   ))}
                 </Form.Select>
-                <Form.Text className='text-muted'>Choose the type of subscription for the school.</Form.Text>
+                <Form.Text className="text-muted">
+                  Choose the type of subscription for the school.
+                </Form.Text>
               </Form.Group>
             </Col>
             <Col md={4}>
-              <Form.Group className='mb-3 custom-input' controlId='formCountry'>
+              <Form.Group className="mb-3 custom-input" controlId="formCountry">
                 <Form.Label>Currency Symbol</Form.Label>
                 <InputGroup>
                   <InputGroup.Text>
-                    <i className='fas fa-indian-rupee'></i>
+                    <i className="fas fa-indian-rupee"></i>
                   </InputGroup.Text>
                   <Form.Control
-                    type='text'
-                    placeholder='Enter Curreny Symbol'
+                    type="text"
+                    placeholder="Enter Curreny Symbol"
                     value={currencySymbol}
                     onChange={(e) => setCurrencySymbol(e.target.value)}
                   />
                 </InputGroup>
-                <Form.Text className='text-muted'>Enter the Short form of the currency.</Form.Text>
+                <Form.Text className="text-muted">
+                  Enter the Short form of the currency.
+                </Form.Text>
               </Form.Group>
             </Col>
           </Row>
@@ -503,12 +540,16 @@ const CreateSchoolModal = ({ show, handleClose, refresh }: Props) => {
               </Form.Group>
             </Col>
           </Row> */}
-          <div className='d-flex justify-content-end'>
-            <Button variant='secondary' onClick={handleClose} className='me-2'>
+          <div className="d-flex justify-content-end">
+            <Button variant="secondary" onClick={handleClose} className="me-2">
               Cancel
             </Button>
-            <Button variant='primary' onClick={handleSubmit} disabled={isSubmitting}>
-              {isSubmitting ? 'Submitting...' : 'Submit'}
+            <Button
+              variant="primary"
+              onClick={handleSubmit}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? "Submitting..." : "Submit"}
             </Button>
           </div>
         </Form>

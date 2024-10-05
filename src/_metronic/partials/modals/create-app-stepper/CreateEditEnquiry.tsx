@@ -3,6 +3,8 @@ import { createPortal } from "react-dom";
 import { Col, Form, InputGroup, Modal, Row } from "react-bootstrap";
 import { useAuth } from "../../../../app/modules/auth/core/Auth";
 import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 // import "./Style.css";
 
 type Props = {
@@ -53,7 +55,7 @@ interface FormData {
   gender: string;
   date_of_birth: Date;
   current_school: string;
-  academic_year: string;
+  session_id: string;
   father_name: string;
   father_phone: string;
   mother_name: string;
@@ -72,7 +74,7 @@ const CreateEditEnquiry = ({ show, handleClose, enqId, setRefresh }: Props) => {
   const [sessions, setSessions] = useState<Session[]>([]);
   const [changedFields, setChangedFields] = useState({});
 
-  const [formData, setFormData] = useState<FormData>({
+  const initialFormData: FormData = {
     enquiry_type: "",
     student_name: "",
     student_phone: "",
@@ -95,9 +97,12 @@ const CreateEditEnquiry = ({ show, handleClose, enqId, setRefresh }: Props) => {
     father_phone: "",
     mother_name: "",
     mother_phone: "",
-    academic_year: "",
+    session_id: "",
     reference: "",
-  });
+  };
+
+  const [formData, setFormData] = useState<FormData>(initialFormData);
+  console.log(formData);
 
   useEffect(() => {
     const fetchClasses = async () => {
@@ -177,7 +182,7 @@ const CreateEditEnquiry = ({ show, handleClose, enqId, setRefresh }: Props) => {
     };
 
     fetchSessions();
-  }, [currentUser]);
+  }, [currentUser, enqId]);
 
   const formatDateToYYYYMMDD = (dateString: string | number | Date) => {
     if (!dateString) return "";
@@ -233,16 +238,18 @@ const CreateEditEnquiry = ({ show, handleClose, enqId, setRefresh }: Props) => {
           student_address: data[0]?.student_address || "",
           date: data[0]?.date || "",
           reference: data[0]?.reference || "",
+          reference_id: data[0]?.reference_id || "",
           status: data[0]?.status || "",
           date_of_birth: dateOfBirth,
           father_phone: data[0]?.father_phone || "",
           current_school: data[0]?.current_school || "",
           gender: data[0]?.gender || "",
-          academic_year: data[0]?.academic_year || "",
+          session_id: data[0]?.session_id || "",
           father_name: data[0]?.father_name || "",
           student_email: data[0]?.student_email || "",
           class_id: data[0]?.class_id || "",
           source: data[0]?.source || "",
+          source_id: data[0]?.source_id || 0,
           follow_up_date: followUpDate,
           enquiry_type: data[0]?.enquiry_type,
         });
@@ -290,11 +297,24 @@ const CreateEditEnquiry = ({ show, handleClose, enqId, setRefresh }: Props) => {
       }
 
       const data = await response.json();
+      toast.success("Enquiry updated successfully!");
       setRefresh(true);
       handleClose();
     } catch (error) {
       console.error("Error editing info:", error);
+      toast.error("Error editing Enquiry. Please try again.");
     }
+  };
+
+  const handleCloseModal = () => {
+    // Reset all useState hooks to their initial or default values
+    setSource([]);
+    setReference([]);
+    setClasses([]);
+    setSessions([]);
+    setFormData(initialFormData);
+    setChangedFields({});
+    handleClose();
   };
 
   return createPortal(
@@ -305,7 +325,7 @@ const CreateEditEnquiry = ({ show, handleClose, enqId, setRefresh }: Props) => {
       aria-hidden="true"
       dialogClassName="modal-dialog modal-dialog-centered mw-1000px"
       show={show}
-      onHide={handleClose}
+      onHide={handleCloseModal}
     >
       <div
         className="modal-header"
@@ -317,361 +337,371 @@ const CreateEditEnquiry = ({ show, handleClose, enqId, setRefresh }: Props) => {
         <h2>Edit Enquiry</h2>
         <div
           className="btn btn-sm btn-icon btn-active-color-primary"
-          onClick={handleClose}
+          onClick={handleCloseModal}
         >
           <i className="fas fa-times"></i>
         </div>
       </div>
-        <div className="modal-body"    style={{ backgroundColor: "#F2F6FF" }}>
-          <Form onSubmit={handleSubmit}>
-            <Row className="mb-3">
-              <Col md={4}>
-                <Form.Group controlId="student_name">
-                  <Form.Label>Student Name</Form.Label>
-                  <InputGroup>
-                    <InputGroup.Text>
-                      <i className="fas fa-user"></i>
-                    </InputGroup.Text>
-                    <Form.Control
-                      type="text"
-                      name="student_name"
-                      value={formData.student_name}
-                      onChange={handleChange}
-                    />
-                  </InputGroup>
-                </Form.Group>
-              </Col>
-              <Col md={4}>
-                <Form.Group controlId="student_phone">
-                  <Form.Label>Contact Number</Form.Label>
-                  <InputGroup>
-                    <InputGroup.Text>
-                      <i className="fas fa-phone"></i>
-                    </InputGroup.Text>
-                    <Form.Control
-                      type="tel"
-                      name="student_phone"
-                      value={formData.student_phone}
-                      onChange={handleChange}
-                    />
-                  </InputGroup>
-                </Form.Group>
-              </Col>
-              <Col md={4}>
-                <Form.Group controlId="student_address">
-                  <Form.Label>Address</Form.Label>
-                  <InputGroup>
-                    <InputGroup.Text>
-                      <i className="fas fa-map-marker-alt"></i>
-                    </InputGroup.Text>
-                    <Form.Control
-                      type="text"
-                      name="student_address"
-                      value={formData.student_address}
-                      onChange={handleChange}
-                    />
-                  </InputGroup>
-                </Form.Group>
-              </Col>
-            </Row>
+      <div className="modal-body" style={{ backgroundColor: "#F2F6FF" }}>
+        <Form onSubmit={handleSubmit}>
+          <Row className="mb-3">
+            <Col md={4}>
+              <Form.Group controlId="enquiry_type">
+                <Form.Label style={{ fontWeight: "800" }}>
+                  Enquiry Type *
+                </Form.Label>
+                <Form.Select
+                  name="enquiry_type"
+                  value={formData.enquiry_type}
+                  onChange={handleChange}
+                  style={{
+                    backgroundColor: "#f0f8ff", // Light blue background to highlight
+                    border: "1px solid #007bff", // Blue border to make it pop
+                    boxShadow: "0 0 4px rgba(0, 123, 255, 0.5)", // Add shadow to create depth
+                    // fontSize: "16px", // Slightly increase font size
+                    // fontWeight: "600", // Make the font bolder
+                  }}
+                >
+                  <option value="general">General</option>
+                  <option value="admission">Admission</option>
+                </Form.Select>
+              </Form.Group>
+            </Col>
 
-            <Row className="mb-3">
-              <Col md={4}>
-                <Form.Group controlId="student_email">
-                  <Form.Label>Email</Form.Label>
-                  <InputGroup>
-                    <InputGroup.Text>
-                      <i className="fas fa-envelope"></i>
-                    </InputGroup.Text>
-                    <Form.Control
-                      type="email"
-                      name="student_email"
-                      value={formData.student_email}
-                      onChange={handleChange}
-                    />
-                  </InputGroup>
-                </Form.Group>
-              </Col>
-              <Col md={4}>
-                <Form.Group controlId="reference">
-                  <Form.Label>Select Reference</Form.Label>
-                  <Form.Select
-                    name="reference"
-                    value={formData.reference}
+            <Col md={4}>
+              <Form.Group controlId="student_name">
+                <Form.Label>Student Name</Form.Label>
+                <InputGroup>
+                  <InputGroup.Text>
+                    <i className="fas fa-user"></i>
+                  </InputGroup.Text>
+                  <Form.Control
+                    type="text"
+                    name="student_name"
+                    value={formData.student_name}
                     onChange={handleChange}
-                  >
-                    <option value="">Select Reference</option>
-                    {reference.map((ref) => (
-                      <option key={ref.id} value={ref.reference}>
-                        {ref.reference}
-                      </option>
-                    ))}
-                  </Form.Select>
-                </Form.Group>
-              </Col>
-              <Col md={4}>
-                <Form.Group controlId="source">
-                  <Form.Label>Select Source</Form.Label>
-                  <Form.Select
-                    name="source"
-                    value={formData.source}
+                  />
+                </InputGroup>
+              </Form.Group>
+            </Col>
+            <Col md={4}>
+              <Form.Group controlId="student_phone">
+                <Form.Label>Contact Number</Form.Label>
+                <InputGroup>
+                  <InputGroup.Text>
+                    <i className="fas fa-phone"></i>
+                  </InputGroup.Text>
+                  <Form.Control
+                    type="tel"
+                    name="student_phone"
+                    value={formData.student_phone}
                     onChange={handleChange}
-                  >
-                    <option value="">Select Source</option>
-                    {source.map((src) => (
-                      <option key={src.id} value={src.source}>
-                        {src.source}
-                      </option>
-                    ))}
-                  </Form.Select>
-                </Form.Group>
-              </Col>
-            </Row>
+                  />
+                </InputGroup>
+              </Form.Group>
+            </Col>
+          </Row>
 
-            <Row className="mb-3">
-              <Col md={4}>
-                <Form.Group controlId="status">
-                  <Form.Label>Status</Form.Label>
-                  <Form.Select
-                    name="status"
-                    value={formData.status}
+          <Row className="mb-3">
+            <Col md={4}>
+              <Form.Group controlId="student_address">
+                <Form.Label>Address</Form.Label>
+                <InputGroup>
+                  <InputGroup.Text>
+                    <i className="fas fa-map-marker-alt"></i>
+                  </InputGroup.Text>
+                  <Form.Control
+                    type="text"
+                    name="student_address"
+                    value={formData.student_address}
                     onChange={handleChange}
-                  >
-                    <option value="active">Active</option>
-                    <option value="dead">Dead</option>
-                    <option value="lost">Lost</option>
-                  </Form.Select>
-                </Form.Group>
-              </Col>
-              <Col md={4}>
-                <Form.Group controlId="follow_up_date">
-                  <Form.Label>Follow Up Date</Form.Label>
-                  <InputGroup>
-                    <InputGroup.Text>
-                      <i className="fas fa-calendar-alt"></i>
-                    </InputGroup.Text>
-                    <Form.Control
-                      type="date"
-                      name="follow_up_date"
-                      value={formData.follow_up_date}
-                      onChange={handleChange}
-                    />
-                  </InputGroup>
-                </Form.Group>
-              </Col>
-              <Col md={4}>
-                <Form.Group controlId="enquiry_type">
-                  <Form.Label>Enquiry Type</Form.Label>
-                  <Form.Select
-                    name="enquiry_type"
-                    value={formData.enquiry_type}
+                  />
+                </InputGroup>
+              </Form.Group>
+            </Col>
+            <Col md={4}>
+              <Form.Group controlId="student_email">
+                <Form.Label>Email</Form.Label>
+                <InputGroup>
+                  <InputGroup.Text>
+                    <i className="fas fa-envelope"></i>
+                  </InputGroup.Text>
+                  <Form.Control
+                    type="email"
+                    name="student_email"
+                    value={formData.student_email}
                     onChange={handleChange}
-                  >
-                    <option value="general">General</option>
-                    <option value="admission">Admission</option>
-                  </Form.Select>
-                </Form.Group>
-              </Col>
-            </Row>
+                  />
+                </InputGroup>
+              </Form.Group>
+            </Col>
+            <Col md={4}>
+              <Form.Group controlId="reference">
+                <Form.Label>Select Reference</Form.Label>
+                <Form.Select
+                  name="reference_id"
+                  value={formData.reference_id}
+                  onChange={handleChange}
+                >
+                  <option value="">Select Reference</option>
+                  {reference.map((ref) => (
+                    <option key={ref.id} value={ref.id}>
+                      {ref.reference}
+                    </option>
+                  ))}
+                </Form.Select>
+              </Form.Group>
+            </Col>
+          </Row>
 
-            <Row className="mb-3">
-              <Col md={6}>
-                <Form.Group controlId="description">
-                  <Form.Label>Description</Form.Label>
-                  <InputGroup>
-                    <InputGroup.Text>
-                      <i className="fas fa-info-circle"></i>
-                    </InputGroup.Text>
-                    <Form.Control
-                      type="text"
-                      name="description"
-                      value={formData.description}
-                      onChange={handleChange}
-                    />
-                  </InputGroup>
-                </Form.Group>
-              </Col>
-              <Col md={6}>
-                <Form.Group controlId="note">
-                  <Form.Label>Note</Form.Label>
-                  <InputGroup>
-                    <InputGroup.Text>
-                      <i className="fas fa-sticky-note"></i>
-                    </InputGroup.Text>
-                    <Form.Control
-                      type="text"
-                      name="note"
-                      value={formData.note}
-                      onChange={handleChange}
-                    />
-                  </InputGroup>
-                </Form.Group>
-              </Col>
-            </Row>
+          <Row className="mb-3">
+            <Col md={4}>
+              <Form.Group controlId="source">
+                <Form.Label>Select Source</Form.Label>
+                <Form.Select
+                  name="source_id"
+                  value={formData.source_id}
+                  onChange={handleChange}
+                >
+                  <option value="">Select Source</option>
+                  {source.map((src) => (
+                    <option key={src.id} value={src.id}>
+                      {src.source}
+                    </option>
+                  ))}
+                </Form.Select>
+              </Form.Group>
+            </Col>
+            <Col md={4}>
+              <Form.Group controlId="status">
+                <Form.Label>Status</Form.Label>
+                <Form.Select
+                  name="status"
+                  value={formData.status}
+                  onChange={handleChange}
+                >
+                  <option value="active">Active</option>
+                  <option value="dead">Dead</option>
+                  <option value="lost">Lost</option>
+                </Form.Select>
+              </Form.Group>
+            </Col>
+            <Col md={4}>
+              <Form.Group controlId="follow_up_date">
+                <Form.Label>Follow Up Date</Form.Label>
+                <InputGroup>
+                  <InputGroup.Text>
+                    <i className="fas fa-calendar-alt"></i>
+                  </InputGroup.Text>
+                  <Form.Control
+                    type="date"
+                    name="follow_up_date"
+                    value={formData.follow_up_date}
+                    onChange={handleChange}
+                  />
+                </InputGroup>
+              </Form.Group>
+            </Col>
+          </Row>
 
-            {formData.enquiry_type === "admission" && (
-              <>
-                <Row className="mb-3">
-                  <Col md={4}>
-                    <Form.Group controlId="class_id">
-                      <Form.Label>Select Class</Form.Label>
-                      <Form.Select
-                        name="class_id"
-                        value={formData.class_id}
+          <Row className="mb-3">
+            <Col md={6}>
+              <Form.Group controlId="description">
+                <Form.Label>Description</Form.Label>
+                <InputGroup>
+                  <InputGroup.Text>
+                    <i className="fas fa-info-circle"></i>
+                  </InputGroup.Text>
+                  <Form.Control
+                    type="text"
+                    name="description"
+                    value={formData.description}
+                    onChange={handleChange}
+                  />
+                </InputGroup>
+              </Form.Group>
+            </Col>
+            <Col md={6}>
+              <Form.Group controlId="note">
+                <Form.Label>Note</Form.Label>
+                <InputGroup>
+                  <InputGroup.Text>
+                    <i className="fas fa-sticky-note"></i>
+                  </InputGroup.Text>
+                  <Form.Control
+                    type="text"
+                    name="note"
+                    value={formData.note}
+                    onChange={handleChange}
+                  />
+                </InputGroup>
+              </Form.Group>
+            </Col>
+          </Row>
+
+          {formData.enquiry_type === "admission" && (
+            <>
+              <Row className="mb-3">
+                <Col md={4}>
+                  <Form.Group controlId="class_id">
+                    <Form.Label>Select Class</Form.Label>
+                    <Form.Select
+                      name="class_id"
+                      value={formData.class_id}
+                      onChange={handleChange}
+                    >
+                      <option value="">Select Class</option>
+                      {classes.map((cls) => (
+                        <option key={cls.id} value={cls.id}>
+                          {cls.class}
+                        </option>
+                      ))}
+                    </Form.Select>
+                  </Form.Group>
+                </Col>
+                <Col md={4}>
+                  <Form.Group controlId="date_of_birth">
+                    <Form.Label>Date of Birth</Form.Label>
+                    <InputGroup>
+                      <InputGroup.Text>
+                        <i className="fas fa-birthday-cake"></i>
+                      </InputGroup.Text>
+                      <Form.Control
+                        type="date"
+                        name="date_of_birth"
+                        value={formData.date_of_birth}
                         onChange={handleChange}
-                      >
-                        <option value="">Select Class</option>
-                        {classes.map((cls) => (
-                          <option key={cls.id} value={cls.id}>
-                            {cls.class}
-                          </option>
-                        ))}
-                      </Form.Select>
-                    </Form.Group>
-                  </Col>
-                  <Col md={4}>
-                    <Form.Group controlId="date_of_birth">
-                      <Form.Label>Date of Birth</Form.Label>
-                      <InputGroup>
-                        <InputGroup.Text>
-                          <i className="fas fa-birthday-cake"></i>
-                        </InputGroup.Text>
-                        <Form.Control
-                          type="date"
-                          name="date_of_birth"
-                          value={formData.date_of_birth}
-                          onChange={handleChange}
-                        />
-                      </InputGroup>
-                    </Form.Group>
-                  </Col>
-                  <Col md={4}>
-                    <Form.Group controlId="gender">
-                      <Form.Label>Select Gender</Form.Label>
-                      <Form.Select
-                        name="gender"
-                        value={formData.gender}
+                      />
+                    </InputGroup>
+                  </Form.Group>
+                </Col>
+                <Col md={4}>
+                  <Form.Group controlId="gender">
+                    <Form.Label>Select Gender</Form.Label>
+                    <Form.Select
+                      name="gender"
+                      value={formData.gender}
+                      onChange={handleChange}
+                    >
+                      <option value="male">Male</option>
+                      <option value="female">Female</option>
+                    </Form.Select>
+                  </Form.Group>
+                </Col>
+              </Row>
+
+              <Row className="mb-3">
+                <Col md={4}>
+                  <Form.Group controlId="session_id">
+                    <Form.Label>Academic Year</Form.Label>
+                    <Form.Select
+                      name="session_id"
+                      value={formData.session_id}
+                      onChange={handleChange}
+                    >
+                      <option value="">Select Academic Year</option>
+                      {sessions.map((sess) => (
+                        <option key={sess.id} value={sess.session}>
+                          {sess.session}
+                        </option>
+                      ))}
+                    </Form.Select>
+                  </Form.Group>
+                </Col>
+                <Col md={4}>
+                  <Form.Group controlId="father_name">
+                    <Form.Label>Father's Name</Form.Label>
+                    <InputGroup>
+                      <InputGroup.Text>
+                        <i className="fas fa-user-tie"></i>
+                      </InputGroup.Text>
+                      <Form.Control
+                        type="text"
+                        name="father_name"
+                        value={formData.father_name}
                         onChange={handleChange}
-                      >
-                        <option value="male">Male</option>
-                        <option value="female">Female</option>
-                      </Form.Select>
-                    </Form.Group>
-                  </Col>
-                </Row>
-
-                <Row className="mb-3">
-                  <Col md={4}>
-                    <Form.Group controlId="academic_year">
-                      <Form.Label>Academic Year</Form.Label>
-                      <Form.Select
-                        name="academic_year"
-                        value={formData.academic_year}
+                      />
+                    </InputGroup>
+                  </Form.Group>
+                </Col>
+                <Col md={4}>
+                  <Form.Group controlId="father_phone">
+                    <Form.Label>Father's Contact Number</Form.Label>
+                    <InputGroup>
+                      <InputGroup.Text>
+                        <i className="fas fa-phone"></i>
+                      </InputGroup.Text>
+                      <Form.Control
+                        type="tel"
+                        name="father_phone"
+                        value={formData.father_phone}
                         onChange={handleChange}
-                      >
-                        <option value="">Select Academic Year</option>
-                        {sessions.map((sess) => (
-                          <option key={sess.id} value={sess.session}>
-                            {sess.session}
-                          </option>
-                        ))}
-                      </Form.Select>
-                    </Form.Group>
-                  </Col>
-                  <Col md={4}>
-                    <Form.Group controlId="father_name">
-                      <Form.Label>Father's Name</Form.Label>
-                      <InputGroup>
-                        <InputGroup.Text>
-                          <i className="fas fa-user-tie"></i>
-                        </InputGroup.Text>
-                        <Form.Control
-                          type="text"
-                          name="father_name"
-                          value={formData.father_name}
-                          onChange={handleChange}
-                        />
-                      </InputGroup>
-                    </Form.Group>
-                  </Col>
-                  <Col md={4}>
-                    <Form.Group controlId="father_phone">
-                      <Form.Label>Father's Contact Number</Form.Label>
-                      <InputGroup>
-                        <InputGroup.Text>
-                          <i className="fas fa-phone"></i>
-                        </InputGroup.Text>
-                        <Form.Control
-                          type="tel"
-                          name="father_phone"
-                          value={formData.father_phone}
-                          onChange={handleChange}
-                        />
-                      </InputGroup>
-                    </Form.Group>
-                  </Col>
-                </Row>
+                      />
+                    </InputGroup>
+                  </Form.Group>
+                </Col>
+              </Row>
 
-                <Row className="mb-3">
-                  <Col md={4}>
-                    <Form.Group controlId="mother_name">
-                      <Form.Label>Mother's Name</Form.Label>
-                      <InputGroup>
-                        <InputGroup.Text>
-                          <i className="fas fa-user-tie"></i>
-                        </InputGroup.Text>
-                        <Form.Control
-                          type="text"
-                          name="mother_name"
-                          value={formData.mother_name}
-                          onChange={handleChange}
-                        />
-                      </InputGroup>
-                    </Form.Group>
-                  </Col>
-                  <Col md={4}>
-                    <Form.Group controlId="mother_phone">
-                      <Form.Label>Mother's Contact Number</Form.Label>
-                      <InputGroup>
-                        <InputGroup.Text>
-                          <i className="fas fa-phone"></i>
-                        </InputGroup.Text>
-                        <Form.Control
-                          type="tel"
-                          name="mother_phone"
-                          value={formData.mother_phone}
-                          onChange={handleChange}
-                        />
-                      </InputGroup>
-                    </Form.Group>
-                  </Col>
-                  <Col md={4}>
-                    <Form.Group controlId="current_school">
-                      <Form.Label>Current School</Form.Label>
-                      <InputGroup>
-                        <InputGroup.Text>
-                          <i className="fas fa-school"></i>
-                        </InputGroup.Text>
-                        <Form.Control
-                          type="text"
-                          name="current_school"
-                          value={formData.current_school}
-                          onChange={handleChange}
-                        />
-                      </InputGroup>
-                    </Form.Group>
-                  </Col>
-                </Row>
-              </>
-            )}
+              <Row className="mb-3">
+                <Col md={4}>
+                  <Form.Group controlId="mother_name">
+                    <Form.Label>Mother's Name</Form.Label>
+                    <InputGroup>
+                      <InputGroup.Text>
+                        <i className="fas fa-user-tie"></i>
+                      </InputGroup.Text>
+                      <Form.Control
+                        type="text"
+                        name="mother_name"
+                        value={formData.mother_name}
+                        onChange={handleChange}
+                      />
+                    </InputGroup>
+                  </Form.Group>
+                </Col>
+                <Col md={4}>
+                  <Form.Group controlId="mother_phone">
+                    <Form.Label>Mother's Contact Number</Form.Label>
+                    <InputGroup>
+                      <InputGroup.Text>
+                        <i className="fas fa-phone"></i>
+                      </InputGroup.Text>
+                      <Form.Control
+                        type="tel"
+                        name="mother_phone"
+                        value={formData.mother_phone}
+                        onChange={handleChange}
+                      />
+                    </InputGroup>
+                  </Form.Group>
+                </Col>
+                <Col md={4}>
+                  <Form.Group controlId="current_school">
+                    <Form.Label>Current School</Form.Label>
+                    <InputGroup>
+                      <InputGroup.Text>
+                        <i className="fas fa-school"></i>
+                      </InputGroup.Text>
+                      <Form.Control
+                        type="text"
+                        name="current_school"
+                        value={formData.current_school}
+                        onChange={handleChange}
+                      />
+                    </InputGroup>
+                  </Form.Group>
+                </Col>
+              </Row>
+            </>
+          )}
 
-            <div className="d-flex justify-content-end">
-              <button type="submit" className="btn btn-primary">
-                Submit
-              </button>
-            </div>
-          </Form>
-        </div>
+          <div className="d-flex justify-content-end">
+            <button type="submit" className="btn btn-primary">
+              Submit
+            </button>
+          </div>
+        </Form>
+      </div>
     </Modal>,
     modalsRoot
   );

@@ -3,6 +3,8 @@ import { createPortal } from "react-dom";
 import { Col, Form, InputGroup, Modal, Row } from "react-bootstrap";
 import { useAuth } from "../../../../app/modules/auth/core/Auth";
 import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 type Props = {
   show: boolean;
@@ -26,7 +28,7 @@ interface ClassDetails {
 
 interface Sessions {
   id: string;
-  session: string;
+  session_id: string;
 }
 
 interface FormData {
@@ -48,7 +50,7 @@ interface FormData {
   gender: string;
   date_of_birth: Date;
   current_school: string;
-  academic_year: string;
+  session_id: number;
   father_name: string;
   father_phone: string;
   mother_name: string;
@@ -59,6 +61,8 @@ const modalsRoot = document.getElementById("root-modals") || document.body;
 
 const CreateWalkinEnquiry = ({ show, handleClose, setRefresh }: Props) => {
   const { currentUser } = useAuth();
+  console.log(currentUser);
+  
 
   const schoolId = currentUser?.school_id;
   /* @ts-ignore */
@@ -91,7 +95,7 @@ const CreateWalkinEnquiry = ({ show, handleClose, setRefresh }: Props) => {
     father_phone: "",
     mother_name: "",
     mother_phone: "",
-    academic_year: "",
+    session_id:0,
     reference: "",
   });
   /* @ts-ignore */
@@ -101,7 +105,7 @@ const CreateWalkinEnquiry = ({ show, handleClose, setRefresh }: Props) => {
     if (
       name === "reference" ||
       name === "source" ||
-      name === "academic_year" ||
+      name === "session_id" ||
       name === "class"
     ) {
       const [id, text] = value.split(":");
@@ -131,7 +135,7 @@ const CreateWalkinEnquiry = ({ show, handleClose, setRefresh }: Props) => {
         father_phone: "",
         mother_name: "",
         mother_phone: "",
-        academic_year: "",
+        session_id: 0,
       }));
     }
   }, [formData.enquiry_type]);
@@ -217,32 +221,34 @@ const CreateWalkinEnquiry = ({ show, handleClose, setRefresh }: Props) => {
   }, [currentUser]);
 
   /* @ts-ignore */
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await fetch(
-        `${DOMAIN}/api/school/walkinEnquiry/${schoolId}/${userId}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formData),
+    const handleSubmit = async (e) => {
+      e.preventDefault();
+      try {
+        const response = await fetch(
+          `${DOMAIN}/api/school/walkinEnquiry/${schoolId}/${userId}`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(formData),
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to create student");
         }
-      );
 
-      if (!response.ok) {
-        throw new Error("Failed to create student");
+        const data = await response.json();
+        console.log("Student created successfully:", data);
+        toast.success("Enquiry created successfully!");
+        handleClose();
+        setRefresh(true);
+      } catch (error) {
+        console.error("Error creating Enquiry:", error);
+        toast.error("Error creating Enquiry. Please try again.");
       }
-
-      const data = await response.json();
-      console.log("Student created successfully:", data);
-      handleClose();
-      setRefresh(true);
-    } catch (error) {
-      console.error("Error creating Enquiry:", error);
-    }
-  };
+    };
 
   return createPortal(
     <Modal
@@ -647,21 +653,21 @@ const CreateWalkinEnquiry = ({ show, handleClose, setRefresh }: Props) => {
                         <i className="fas fa-calendar"></i>
                       </InputGroup.Text>
                       <Form.Select
-                        value={formData.academic_year}
+                        value={formData.session_id}
                         onChange={handleChange}
-                        name="academic_year"
+                        name="session_id"
                       >
-                        <option value="academic_year">
-                          {formData.academic_year
-                            ? formData.academic_year
+                        <option value="session_id">
+                          {formData.session_id
+                            ? formData.session_id
                             : "Select Session"}
                         </option>
                         {sessions.map((value) => (
                           <option
                             key={value.id}
-                            value={`${value.id}:${value.session}`}
+                            value={`${value.id}:${value.session_id}`}
                           >
-                            {value.session}
+                            {value.session_id}
                           </option>
                         ))}
                       </Form.Select>
