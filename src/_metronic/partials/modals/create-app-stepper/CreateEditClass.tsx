@@ -8,6 +8,9 @@ type Props = {
   show: boolean;
   handleClose: () => void;
   setRefresh: any;
+  classId: string;
+  classname: string;
+  editsections: string[]; // assuming this is an array of section names like ['A', 'B', 'C']
 };
 
 interface SectionData {
@@ -17,13 +20,23 @@ interface SectionData {
 
 const modalsRoot = document.getElementById("root-modals") || document.body;
 
-const AddClasses = ({ show, handleClose, setRefresh }: Props) => {
-  const [selectedSections, setSelectedSections] = useState<string[]>([]); // Updated to store multiple sections
+const CreateEditClass = ({
+  show,
+  handleClose,
+  setRefresh,
+  classId,
+  classname,
+  editsections,
+}: Props) => {
+  const [selectedSections, setSelectedSections] = useState<string[]>(
+    editsections || []
+  ); // Initialize with editsections
   const [sections, setSections] = useState<SectionData[]>([]);
-  const [className, setClassName] = useState(""); // State for class name
+  const [className, setClassName] = useState(classname); // Initialize with classname
   const { currentUser } = useAuth();
   const school_id = currentUser?.school_id;
 
+  // Fetch available sections for the school
   useEffect(() => {
     const fetchSections = async () => {
       try {
@@ -39,11 +52,13 @@ const AddClasses = ({ show, handleClose, setRefresh }: Props) => {
         console.log(error);
       }
     };
+
     if (school_id) {
       fetchSections();
     }
   }, [school_id]);
 
+  // Handle selection of sections
   const handleSectionSelect = (selectedId: any) => {
     setSelectedSections((prevSections) =>
       prevSections.includes(selectedId)
@@ -58,17 +73,20 @@ const AddClasses = ({ show, handleClose, setRefresh }: Props) => {
       alert("Please enter class name and select at least one section.");
       return;
     }
+
+    console.log(className, school_id, selectedSections, classId);
     try {
       const response = await fetch(
-        `${DOMAIN}/api/school/add-class/${school_id}`,
+        `${DOMAIN}/api/school/edit-class/${school_id}`,
         {
-          method: "POST",
+          method: "PUT",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
             className,
             selectedSections,
+            classId,
           }),
         }
       );
@@ -103,7 +121,7 @@ const AddClasses = ({ show, handleClose, setRefresh }: Props) => {
           borderBottom: "1px solid lightgray",
         }}
       >
-        <h2>Add Classes</h2>
+        <h2>Edit Class</h2>
         <div
           className="btn btn-sm btn-icon btn-active-color-primary"
           onClick={handleClose}
@@ -123,6 +141,7 @@ const AddClasses = ({ show, handleClose, setRefresh }: Props) => {
                   </InputGroup.Text>
                   <Form.Control
                     type="text"
+                    name="class_name"
                     placeholder="Enter Class Name"
                     value={className}
                     onChange={(e) => setClassName(e.target.value)}
@@ -131,7 +150,6 @@ const AddClasses = ({ show, handleClose, setRefresh }: Props) => {
               </Form.Group>
             </Col>
           </Row>
-
           <Row>
           <Col md={6}>
               <Form.Group className="mb-3 custom-input" controlId="formSource">
@@ -144,10 +162,11 @@ const AddClasses = ({ show, handleClose, setRefresh }: Props) => {
                     value={selectedSections}
                     onChange={(e) => handleSectionSelect(e.target.value)}
                     name="section"
+                    multiple
                   >
-                    <option value="">
-                      {className ? className : "Select Section"}
-                    </option>
+                    {/* <option value="">
+                      {"Select Section"}
+                    </option> */}
                     {sections.map((item) => (
                     <option
                       key={item.id}
@@ -175,4 +194,4 @@ const AddClasses = ({ show, handleClose, setRefresh }: Props) => {
   );
 };
 
-export { AddClasses };
+export { CreateEditClass };

@@ -8,6 +8,9 @@ import { useAuth } from "../../../../app/modules/auth/core/Auth";
 // import { UploadsFilter } from "../../modals/create-app-stepper/UploadsFilter";
 import { AddClasses } from "../../modals/create-app-stepper/AddClasses";
 import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
+import { DeleteConfirmationModal } from "../../modals/create-app-stepper/DeleteConfirmationModal";
+import { toast } from "react-toastify";
+import { CreateEditClass } from "../../modals/create-app-stepper/CreateEditClass";
 
 interface TablesWidgetProps {
   classId: string;
@@ -17,675 +20,490 @@ interface TablesWidgetProps {
   topicId?: string;
 }
 
-
-
 interface ClassData {
   class: string;
   sections: string[];
 }
 
-// interface DataItem {
-//   class: string;
-//   section: string;
-//   subject: string;
-//   type: string;
-//   lesson: string;
-//   topic: string;
-//   title: string;
-//   upload_type: string;
-//   staff_name: string;
-//   created_at: Date;
-//   updated_at: Date;
-// }
 
 interface CurrentUser {
   school_id: string; // Adjust type as per your actual data type for school_id
   // Add other properties if `currentUser` has more properties
 }
 
-
 const TablesWidget48: React.FC<TablesWidgetProps> = () => {
   const [data, setData] = useState<ClassData[]>([]);
   const { currentUser } = useAuth();
   const school_id = (currentUser as unknown as CurrentUser)?.school_id;
   const [showModal, setShowModal] = useState(false);
-  //   const [showActionModal, setShowActionModal] = useState(false);
-  //   const [showEditModal, setShowEditModal] = useState(false);
+  const [refresh, setRefresh] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [classId, setClassId] = useState("");
+  const [classname, setclassname] = useState("");
+  const [editsections, setEditSections] = useState([]);
 
   const handleModal = () => {
     setShowModal(true);
   };
-  const handleModalClose = () => {
-    setShowModal(false);
+  const handleShowDeleteModal = (class_id: string) => {
+    setClassId(class_id);
+    setShowDeleteModal(true);
   };
 
-  //   const handleActionModal = (value) => {
-  //     setEnqId(value)
-  //     setShowActionModal(true);
-  //   };
-  //   const handleActionModalClose = () => {
-  //     setShowActionModal(false);
-  //   };
+  const handleModalClose = () => {
+    setShowModal(false);
+    setClassId('')
+  };
 
-  //   const handleModalEdit=(value)=>{
-  //     setEnqId(value)
-  //     setShowEditModal(true)
-  //       }
+  const handleCloseDeleteModal = () => {
+    setClassId("");
+    setShowDeleteModal(false);
+  };
 
-  //       const handleModalEditClose=()=>{
-  //         setShowEditModal(false)
-  //           }
+  const handleModalEdit = (class_id: string, classname: string , sections : any) => {
+    setClassId(class_id);
+    setclassname(classname);
+    setEditSections(sections);
+    // setClassId('');
+    // setclassname('');
+    // setEditSections([]);
+    setShowEditModal(true);
+  };
+
+  const handleModalEditClose = () => {
+    setShowEditModal(false);
+    setClassId('')
+  };
 
   useEffect(() => {
     const fetchClasses = async () => {
       try {
-        
-          const response = await fetch(
-            `${DOMAIN}/api/school/get-classes/${school_id}`
-          );
+        const response = await fetch(
+          `${DOMAIN}/api/school/get-classes/${school_id}`
+        );
 
         if (!response.ok) {
           throw new Error("Failed to fetch data");
         }
 
         const responseData = await response.json();
-        
+        console.log(responseData);
         setData(responseData);
+        setRefresh(false);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
 
     fetchClasses();
-  }, [school_id]);
-  
+  }, [school_id, refresh]);
+
+  const handleDelete = async () => {
+    try {
+      const response = await fetch(
+        `${DOMAIN}/api/school/delete-class/${classId}`,
+        {
+          method: "DELETE",
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Failed to delete the Class");
+      }
+      // Optionally, you can refresh the list or update the state to remove the deleted item
+      setRefresh(true); // Assuming you have a way to refresh the list of designations
+      toast.success("Class deleted successfully.", { autoClose: 3000 });
+      handleCloseDeleteModal();
+    } catch (error) {
+      console.error("Error deleting Class:", error);
+      toast.error("Failed to delete Class!", { autoClose: 3000 });
+    }
+  };
+
   return (
     <div
-      className="col-xxl-12"
+      className="card-style"
       style={{
+        width: "100%",
         borderRadius: "16px",
-        border: "1px solid #5D637A",
-        overflowX: "hidden",
-        minHeight: "100%",
-        marginBottom: "20px",
-        height: "850px",
-        display: "flex",
-        flexDirection: "column",
-        fontFamily: "Manrope",
-        maxWidth: "100%",
+        backgroundColor: "rgb(242, 246, 255)",
+        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
         overflow: "hidden",
+        marginTop: "20px",
+        padding: "20px",
       }}
     >
-      <div style={{ width: "auto", height: "100%", overflow: "hidden" }}>
-        <table
-          //   className="col-xxl-12"
+      <div
+        className="card-header"
+        style={{
+          backgroundColor: "rgb(242, 246, 255)",
+          padding: "16px 20px",
+          borderBottom: "1px solid #E0E4F0",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <span
           style={{
-            top: "223px",
-            height: "612px",
-            maxHeight: "100%",
-            borderCollapse: "collapse",
-            // tableLayout: "fixed",
-            overflowX: "hidden",
-            overflowY: "auto",
-            whiteSpace: "nowrap",
-            width: "100%",
-            // border:'8px solid black'
+            fontSize: "20px",
+            fontWeight: "600",
+            color: "#1C335C",
+            fontFamily: "Manrope",
           }}
         >
-          <thead
-            className=""
+          Manage Classes
+        </span>
+        <div
+          className="input-group flex-nowrap"
+          style={{
+            width: "300px",
+            height: "36px",
+            borderRadius: "8px",
+            border: "1px solid #D9D9D9",
+          }}
+        >
+          <span
+            className="input-group-text border-0 pe-1 pr-0"
+            style={{ backgroundColor: "transparent" }}
+            id="addon-wrapping"
+          >
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 17 16"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <g clip-path="url(#clip0_582_4295)">
+                <circle
+                  cx="8.50002"
+                  cy="7.66665"
+                  r="6.33333"
+                  stroke="white"
+                  stroke-width="1.5"
+                />
+                <path
+                  d="M14.1667 13.3333L15.5 14.6666"
+                  stroke="white"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                />
+              </g>
+              <defs>
+                <clipPath id="clip0_582_4295">
+                  <rect
+                    width="16"
+                    height="16"
+                    fill="white"
+                    transform="translate(0.833374)"
+                  />
+                </clipPath>
+              </defs>
+            </svg>
+          </span>
+          <input
+            type="text"
             style={{
-              height: "123px",
-              maxHeight: "100%",
-              display: "flex",
-              flexDirection: "column",
-              backgroundColor: "#1C335C",
-              //   width:'fit-content',
-              // overflowY: "auto",
-              // overflowX: "hidden",
-              justifyContent: "space-between",
-              zIndex: 999,
+              backgroundColor: "transparent",
+              color: "black",
+            }}
+            className="form-control border-0"
+            placeholder="Search ...."
+            aria-label="Search"
+            aria-describedby="addon-wrapping"
+          />
+        </div>
+        <div
+          onClick={handleModal}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            padding: "8px 12px",
+            backgroundColor: "#1C335C",
+            borderRadius: "8px",
+            cursor: "pointer",
+            transition: "background-color 0.3s",
+          }}
+          onMouseEnter={(e) =>
+            (e.currentTarget.style.backgroundColor = "#16294D")
+          }
+          onMouseLeave={(e) =>
+            (e.currentTarget.style.backgroundColor = "#1C335C")
+          }
+        >
+          <span
+            style={{
+              marginRight: "8px",
+              color: "white",
+              fontSize: "14px",
+              fontWeight: "700",
+              fontFamily: "Manrope",
             }}
           >
-            <div>
-              <caption
-                style={{
-                  backgroundColor: "#1C335C",
-                  padding: "20px",
-                  display: "flex",
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  // tableLayout: "fixed",
-                  // borderCollapse: "collapse",
-
-                  // border:'1px solid'
-                  width: "100%",
-                }}
-                className="col-xxl-12 col-lg-6"
-              >
-                <div>
-                  <span
-                    style={{
-                      color: "#FFF",
-                      fontSize: "16px",
-                      fontWeight: "700",
-                      fontFamily: "Manrope",
-                    }}
-                  >
-                    All Classes
-                  </span>
-                </div>
-                <div
-                  style={{ display: "flex", alignItems: "center", gap: "10px" }}
-                >
-                  <div
-                    className="input-group flex-nowrap"
-                    style={{
-                      width: "300px",
-                      height: "36px",
-                      borderRadius: "8px",
-                      border: "1px solid #D9D9D9",
-                    }}
-                  >
-                    <span
-                      className="input-group-text border-0 pe-1 pr-0"
-                      style={{ backgroundColor: "transparent" }}
-                      id="addon-wrapping"
-                    >
-                      <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 17 16"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <g clip-path="url(#clip0_582_4295)">
-                          <circle
-                            cx="8.50002"
-                            cy="7.66665"
-                            r="6.33333"
-                            stroke="white"
-                            stroke-width="1.5"
-                          />
-                          <path
-                            d="M14.1667 13.3333L15.5 14.6666"
-                            stroke="white"
-                            stroke-width="1.5"
-                            stroke-linecap="round"
-                          />
-                        </g>
-                        <defs>
-                          <clipPath id="clip0_582_4295">
-                            <rect
-                              width="16"
-                              height="16"
-                              fill="white"
-                              transform="translate(0.833374)"
-                            />
-                          </clipPath>
-                        </defs>
-                      </svg>
-                    </span>
-                    <input
-                      type="text"
-                      style={{
-                        backgroundColor: "transparent",
-                        color: "#FFFFFF",
-                      }}
-                      className="form-control border-0"
-                      placeholder="Search ...."
-                      aria-label="Search"
-                      aria-describedby="addon-wrapping"
-                    />
-                  </div>
-                  <div>
-                    <span
-                      className=""
-                      style={{
-                        height: "36px",
-                        border: "1px solid #D9D9D9",
-                        width: "100px",
-                        borderRadius: "8px",
-                        padding: "8px 10px 8px 10px",
-                        gap: "10px",
-                        display: "flex",
-                        alignItems: "center",
-                        color: "#FFF",
-                        cursor: "pointer",
-                      }}
-                        onClick={handleModal}
-                      
-                    >
-                      <svg
-                        width="17"
-                        height="16"
-                        viewBox="0 0 17 16"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M7.16672 9.3333C8.27129 9.3333 9.16672 10.2287 9.16672 11.3333C9.16672 12.4379 8.27129 13.3333 7.16672 13.3333C6.06215 13.3333 5.16672 12.4379 5.16672 11.3333C5.16672 10.2287 6.06215 9.3333 7.16672 9.3333Z"
-                          stroke="white"
-                        />
-                        <path
-                          d="M10.5 2.66667C9.39546 2.66667 8.50003 3.5621 8.50003 4.66667C8.50003 5.77124 9.39546 6.66667 10.5 6.66667C11.6046 6.66667 12.5 5.77124 12.5 4.66667C12.5 3.5621 11.6046 2.66667 10.5 2.66667Z"
-                          stroke="white"
-                        />
-                        <path
-                          d="M10.8334 11.3057L15.5 11.3057"
-                          stroke="white"
-                          stroke-linecap="round"
-                        />
-                        <path
-                          d="M6.83337 4.63898L2.16671 4.63898"
-                          stroke="white"
-                          stroke-linecap="round"
-                        />
-                        <path
-                          d="M2.16672 11.3057L3.50005 11.3057"
-                          stroke="white"
-                          stroke-linecap="round"
-                        />
-                        <path
-                          d="M15.5 4.63898L14.1667 4.63898"
-                          stroke="white"
-                          stroke-linecap="round"
-                        />
-                      </svg>
-                      Add Class
-                    </span>
-                  </div>
-                </div>
-              </caption>
-            </div>
-
+            Add Class
+          </span>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            width="16px"
+            height="16px"
+            fill="#ffffff"
+          >
+            <path d="M0 0h24v24H0V0z" fill="none" />
+            <path d="M3 17.25V21h3.75l11-11.03-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
+          </svg>
+        </div>
+      </div>
+      <div
+        style={{
+          height: "650px", // Fixed height for the table container
+          overflowY: "auto", // Enable vertical scrolling
+          padding: "16px 0", // Optional: adds some padding around the table
+        }}
+      >
+        <table
+          className="table"
+          style={{
+            width: "100%",
+            borderCollapse: "collapse",
+            marginTop: "10px",
+            backgroundColor: "#FFFFFF", // White background for the table
+            borderRadius: "12px", // Round corners for the table
+            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.05)", // Light shadow for the table
+          }}
+        >
+          <thead>
             <tr
               style={{
-                height: "61px",
-                // gap: "40px",
-                display: "flex",
-                // paddingTop: "10px",
-                paddingLeft: "30px",
-                justifyContent:'space-between',
-                // paddingBottom:'10px',
-                // position: "sticky",
-                // top: 0,
-                width: "95%",
-                // border:'1px solid white',
-                overflowY: "auto",
-                overflowX: "hidden",
-                backgroundColor: "#1C335C",
-                // zIndex: 100,
+                backgroundColor: "rgb(242, 246, 255)", // Header background color
+                borderBottom: "1px solid #E0E4F0",
+                fontFamily: "Manrope",
+                fontWeight: "600",
+                color: "#1C335C",
+                fontSize: "14px",
               }}
             >
-              <th>
-                <div style={{ width: "40px" }}>
-                  <span
-                    style={{
-                      fontSize: "13px",
-                      fontWeight: "600",
-                      lineHeight: "18px",
-                      color: "#FFFFFF",
-                    }}
-                  >
-                    Class
-                  </span>
-                </div>
+              <th
+                style={{
+                  padding: "12px 20px",
+                  textAlign: "left",
+                }}
+              >
+                Class
               </th>
-                <th>
-                  <div style={{ width: "60px" }}>
-                    <span
-                      style={{
-                        fontSize: "13px",
-                        fontWeight: "600",
-                        lineHeight: "18px",
-                        color: "#FFFFFF",
-                        fontFamily: "Manrope",
-                      }}
-                    >
-                      Section(s)
-                    </span>
-                  </div>
-                </th>
-             
+              <th
+                style={{
+                  padding: "12px 20px",
+                  textAlign: "center",
+                }}
+              >
+                Section(s)
+              </th>
 
-              <th>
-                <div
-                  style={{
-                    width: "60px",
-                    // textAlign:'left'
-                    // border:'1px solid',
-                    display: "flex",
-                    justifyContent: "end",
-                    fontFamily: "Manrope",
-                  }}
-                >
-                  <span
-                    style={{
-                      fontSize: "13px",
-                      fontWeight: "600",
-                      lineHeight: "18px",
-                      color: "#FFFFFF",
-                    }}
-                  >
-                    Action
-                  </span>
-                </div>
+              <th
+                style={{
+                  padding: "12px 20px",
+                  textAlign: "center",
+                }}
+              >
+                Action
               </th>
             </tr>
           </thead>
 
-          <tbody
-  className="col-xxl-12 h-[s]"
-  style={{
-    height: "105%",
-    display: "flex",
-    flexDirection: "column",
-    minHeight: "calc(100vh - 550px)",
-    overflowY: "auto",
-    backgroundColor: "#F5F5F5",
-  }}
->
-  {data.map((item, index) => (
-    <tr
-      key={index}
-      style={{
-        height: "80px",
-        paddingLeft: "30px",
-        paddingTop:"25px",
-        marginBottom:'5px',
-        justifyContent: 'space-between',
-        width: "94%",
-        display: "flex",
-        // borderBottom:'1px solid grey'
-      }}
-    >
-      <td>
-        <div
-          style={{
-            width: "55px",
-            display: "flex",
-            justifyContent: "center",
-            flexDirection: "column",
-          }}
-        >
-          <span
-            style={{
-              fontSize: "14px",
-              fontWeight: "500",
-              lineHeight: "18px",
-              color: "#1F1F1F",
-              fontFamily: "Manrope",
-            }}
-          >
-            {item.class}
-          </span>
-        </div>
-      </td>
-      <td>
-        <div
-          className="overflow-hidden whitespace-nowrap"
-          style={{
-            display: "flex",
-            flexDirection: "column",
-          }}
-        >
-          {item.sections.map((section, sectionIndex) => (
-            <span
-              key={sectionIndex}
-              data-tooltip-id={`tooltip-${index}-${sectionIndex}`}
-              style={{
-                fontSize: "14px",
-                fontWeight: "500",
-                lineHeight: "18px",
-                color: "#1F1F1F",
-                fontFamily: "Manrope",
-              }}
-            >
+          <tbody>
+            {data.map((item, index) => (
+              <tr
+                key={index}
+                style={{
+                  backgroundColor:
+                    index % 2 === 0 ? "rgb(242, 246, 255)" : "#FFFFFF",
+                  borderBottom: "1px solid #E0E4F0",
+                  fontFamily: "Manrope",
+                  fontSize: "14px",
+                  color: "#1C335C",
+                }}
+              >
+                <td
+                  style={{
+                    padding: "12px 20px",
+                  }}
+                >
+                  {item.class}
+                </td>
+                <td
+                  style={{
+                    textAlign: "center",
+                    padding: "12px 20px",
+                  }}
+                >
+                  <div
+                    className="overflow-hidden whitespace-nowrap"
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                    }}
+                  >
+                    {item.sections.map((section, sectionIndex) => (
+                      <span
+                        key={sectionIndex}
+                        data-tooltip-id={`tooltip-${index}-${sectionIndex}`}
+                        style={{
+                          fontSize: "14px",
+                          fontWeight: "500",
+                          lineHeight: "18px",
+                          color: "#1F1F1F",
+                          fontFamily: "Manrope",
+                        }}
+                      >
+                        Section
+                        <span
+                          style={{ fontWeight: "600", paddingLeft: "10px" }}
+                        >
+                          {" "}
+                          {section}
+                        </span>
+                      </span>
+                    ))}
+                  </div>
+                </td>
+                <td
+                  style={{
+                    height: "100px",
+                    display: "flex",
+                    gap: "10px", // Adds space between the buttons
+                    justifyContent: "center", // Aligns buttons horizontally in the center
+                    alignItems: "center", // Vertically centers the buttons
+                    padding: "12px 20px",
+                  }}
+                >
+                  <div
+                    onClick={() => handleModalEdit(item.class_id,item.class,item.sections)}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      padding: "8px 12px",
+                      backgroundColor: "#1C335C",
+                      borderRadius: "8px",
+                      cursor: "pointer",
+                      transition: "background-color 0.3s",
+                    }}
+                    onMouseEnter={(e) =>
+                      (e.currentTarget.style.backgroundColor = "#16294D")
+                    }
+                    onMouseLeave={(e) =>
+                      (e.currentTarget.style.backgroundColor = "#1C335C")
+                    }
+                  >
+                    <span
+                      style={{
+                        marginRight: "8px",
+                        color: "white",
+                        fontSize: "14px",
+                        fontWeight: "700",
+                        fontFamily: "Manrope",
+                      }}
+                    >
+                      Edit
+                    </span>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      width="16px"
+                      height="16px"
+                      fill="#ffffff"
+                    >
+                      <path d="M0 0h24v24H0V0z" fill="none" />
+                      <path d="M3 17.25V21h3.75l11-11.03-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
+                    </svg>
+                  </div>
 
-               Section
-               <span style={{fontWeight:'600',paddingLeft:'10px'}}> {section}</span>
-            </span>
-          ))}
-        </div>
-      </td>
-      <td>
-        <div
-          style={{
-            width: "60px",
-            display: "flex",
-            justifyContent: "space-around",
-            flexDirection: "row",
-            gap: "6px",
-            marginTop: "-8px",
-          }}
-        >
-          <button
-            type="button"
-            className="btn"
-            style={{
-              backgroundColor: "#1F3259",
-              fontFamily: "Manrope",
-              fontSize: "12px",
-              fontWeight: "600",
-              color: "#FFF",
-            }}
-            // onClick={() => handleModalEdit(item.id)}
-          >
-            Edit
-          </button>
-          <button
-            type="button"
-            className="btn"
-            style={{
-              border: "1px solid #1F3259",
-              fontFamily: "Manrope",
-              fontSize: "12px",
-              fontWeight: "600",
-              color: "#1F3259",
-            }}
-            // onClick={() => handleActionModal(item.id)}
-          >
-            Delete
-          </button>
-        </div>
-      </td>
-    </tr>
-  ))}
-</tbody>
+                  <div
+                    onClick={() => handleShowDeleteModal(item.class_id)}
+                    style={{
+                      width: "32px",
+                      height: "40px",
+                      borderRadius: "6px",
+                      padding: "10px 6px 10px 6px",
+                      gap: "10px",
+                      backgroundColor: "#FFE7E1",
+                      cursor: "pointer",
+                    }}
+                  >
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 20 20"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M17.0834 5H2.91663"
+                        stroke="#ED5578"
+                        stroke-width="1.5"
+                        stroke-linecap="round"
+                      />
+                      <path
+                        d="M15.6944 7.08331L15.3111 12.8326C15.1637 15.045 15.0899 16.1512 14.3691 16.8256C13.6482 17.5 12.5396 17.5 10.3222 17.5H9.67775C7.46042 17.5 6.35175 17.5 5.63091 16.8256C4.91007 16.1512 4.83632 15.045 4.68883 12.8326L4.30554 7.08331"
+                        stroke="#ED5578"
+                        stroke-width="1.5"
+                        stroke-linecap="round"
+                      />
+                      <path
+                        d="M7.91663 9.16669L8.33329 13.3334"
+                        stroke="#ED5578"
+                        stroke-width="1.5"
+                        stroke-linecap="round"
+                      />
+                      <path
+                        d="M12.0833 9.16669L11.6666 13.3334"
+                        stroke="#ED5578"
+                        stroke-width="1.5"
+                        stroke-linecap="round"
+                      />
+                      <path
+                        d="M5.41663 5C5.46319 5 5.48648 5 5.50758 4.99947C6.19379 4.98208 6.79915 4.54576 7.03264 3.90027C7.03982 3.88041 7.04719 3.85832 7.06191 3.81415L7.14282 3.57143C7.21188 3.36423 7.24642 3.26063 7.29222 3.17267C7.47497 2.82173 7.81308 2.57803 8.2038 2.51564C8.30173 2.5 8.41094 2.5 8.62934 2.5H11.3706C11.589 2.5 11.6982 2.5 11.7961 2.51564C12.1868 2.57803 12.525 2.82173 12.7077 3.17267C12.7535 3.26063 12.788 3.36423 12.8571 3.57143L12.938 3.81415C12.9527 3.85826 12.9601 3.88042 12.9673 3.90027C13.2008 4.54576 13.8061 4.98208 14.4923 4.99947C14.5134 5 14.5367 5 14.5833 5"
+                        stroke="#ED5578"
+                        stroke-width="1.5"
+                      />
+                    </svg>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
 
-{/* 
-          <UploadsFilter
+         
+          <AddClasses
             show={showModal}
             handleClose={handleModalClose}
-            filterData={applyfilters}
-          /> */}
-          {/* <CreateEnquiryAction show={showActionModal} handleClose={handleActionModalClose} enqId={enqId}/> */}
-          <AddClasses show={showModal} handleClose={handleModalClose}  />
+            setRefresh={setRefresh}
+          />
+          <CreateEditClass
+            show={showEditModal}
+            handleClose={handleModalEditClose}
+            setRefresh={setRefresh}
+            classId={classId}
+            classname={classname}
+            editsections={editsections}
+          />
 
+
+          <DeleteConfirmationModal
+            show={showDeleteModal}
+            handleClose={handleCloseDeleteModal}
+            handleDelete={handleDelete}
+            title="Confirm Deletion"
+            description={`Are you sure you want to delete the Designation ?  \n This action cannot be undone.`}
+            confirmButtonText="Delete"
+            cancelButtonText="Cancel"
+          />
           {/* end::Table body */}
         </table>
 
         {/* modal */}
-
-        {/* <div
-          className="modal fade"
-          id="staticBackdrop"
-          data-bs-backdrop="static"
-          data-bs-keyboard="false"
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-expect-error
-          tabIndex="-1"
-          aria-labelledby="staticBackdropLabel"
-          aria-hidden="true"
-        >
-          <div
-            className="modal-dialog "
-            style={{
-              display: "flex",
-              width: "505px",
-              height: "521px",
-              padding: "0px",
-              // borderRadius:'18px'
-            }}
-          >
-            <div
-              className="modal-content"
-              style={{ padding: "23px 5px", borderRadius: "17px" }}
-            >
-              <div
-                className="modal-header border-0"
-                style={{ width: "100%", height: "17px" }}
-              >
-                <span
-                  className=""
-                  id="staticBackdropLabel"
-                  style={{
-                    fontSize: "24px",
-                    fontWeight: "600",
-                    fontFamily: "Manrope",
-                  }}
-                >
-                  Filters
-                </span>
-                <span data-bs-dismiss="modal" aria-label="Close">
-                  <svg
-                    width="32"
-                    height="32"
-                    viewBox="0 0 32 32"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <circle cx="16" cy="16" r="16" fill="#ECECEC" />
-                    <path
-                      d="M22.8572 9.14294L9.14288 22.8572M9.14288 9.14294L22.8572 22.8572"
-                      stroke="#464646"
-                      stroke-width="2"
-                      stroke-linecap="square"
-                      stroke-linejoin="round"
-                    />
-                  </svg>
-                </span>
-              </div>
-              <div className="modal-body">
-                <div className="mb-3">
-                  <label
-                    htmlFor="exampleFormControlInput1"
-                    className="form-label"
-                    style={{
-                      fontSize: "12px",
-                      color: "#434343",
-                      fontWeight: "500",
-                    }}
-                  >
-                    By Payment Status
-                  </label>
-                  <div
-                    style={{
-                      display: "flex",
-                      padding: "13px 12px",
-                      gap: "12px",
-                      border: "1px solid #ECEDF1",
-                      borderRadius: "8px",
-                    }}
-                  >
-                    <div
-                      className="form-check"
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "8px",
-                      }}
-                    >
-                      <input
-                        className="form-check-input"
-                        type="radio"
-                        name="gridRadios"
-                        id="gridRadios1"
-                        value="option1"
-                        defaultChecked
-                        style={{ width: "15px", height: "15px" }}
-                      />
-                      <label className="form-check-label" htmlFor="gridRadios1">
-                        None
-                      </label>
-                    </div>
-                    <div
-                      className="form-check"
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "8px",
-                      }}
-                    >
-                      <input
-                        className="form-check-input"
-                        type="radio"
-                        name="gridRadios"
-                        id="gridRadios1"
-                        value="option1"
-                        defaultChecked
-                        style={{ width: "15px", height: "15px" }}
-                      />
-                      <label className="form-check-label" htmlFor="gridRadios1">
-                        Percentage
-                      </label>
-                    </div>
-                    <div
-                      className="form-check"
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "8px",
-                      }}
-                    >
-                      <input
-                        className="form-check-input"
-                        type="radio"
-                        name="gridRadios"
-                        id="gridRadios1"
-                        value="option1"
-                        defaultChecked
-                        style={{ width: "15px", height: "15px" }}
-                      />
-                      <label className="form-check-label" htmlFor="gridRadios1">
-                        Fixed Amount
-                      </label>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="modal-footer border-0">
-                <button
-                  type="button"
-                  className="btn btn-secondary"
-                  data-bs-dismiss="modal"
-                  style={{
-                    width: "118px",
-                    height: "36px",
-                    padding: "8px 10px",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    gap: "10px",
-                    flexShrink: "0",
-                    backgroundColor: "rgba(39, 59, 99, 0.76)",
-                  }}
-                >
-                  <span
-                    style={{
-                      color: "#FFF",
-                      fontFamily: "Manrope",
-                      fontSize: "12px",
-                      fontWeight: "500",
-                    }}
-                  >
-                    Confirm
-                  </span>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div> */}
+        
       </div>
       {/* end::Table */}
     </div>

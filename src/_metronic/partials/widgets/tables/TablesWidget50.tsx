@@ -8,744 +8,561 @@ import { useAuth } from "../../../../app/modules/auth/core/Auth";
 // import { UploadsFilter } from "../../modals/create-app-stepper/UploadsFilter";
 // import { AddClasses } from "../../modals/create-app-stepper/AddClasses";
 import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
-
+import { AddSubjectGroup } from "../../modals/create-app-stepper/AddSubjectGroup";
+import { DeleteConfirmationModal } from "../../modals/create-app-stepper/DeleteConfirmationModal";
+import Subject from "../../../../app/pages/StaffPages/AcademicManagement/Subject";
+import { toast } from "react-toastify";
 
 interface CurrentUser {
   school_id: string; // Adjust type as per your actual data type for school_id
   // Add other properties if `currentUser` has more properties
 }
 
-interface HandleSectionSelectedParams {
-  section: string; 
-  event: React.MouseEvent<HTMLButtonElement, MouseEvent>; 
-}
-interface HandleSectionSubjectParams {
-  subject: string; 
-  event:  React.MouseEvent<HTMLButtonElement, MouseEvent>; 
-}
-interface ClassData {
-  id: number;
-  className: string;
-}
-interface Subject {
+interface Data {
   id: string;
   name: string;
-  // Add more properties as needed
 }
-
-interface Class {
-  class_id : number;
-  id: number;
-  name: string;
-  class : string;
-
-  // Add more properties as needed
-}
-
-interface Section {
-  id: number;
-  name: string;
-  section:string;
-  // Add more properties as needed
-}
-
 
 const TablesWidget50 = () => {
-  const [getClass, setClass] = useState<Class[]>([]);
-const [getSection, setSection] = useState<Section[]>([]);
-  const [getSubject, setSubject] = useState<Subject[]>([]);
-
+  const [filteredData, setFilteredData] = useState<Data[]>([]);
 
   const { currentUser } = useAuth();
 
   const school_id = (currentUser as unknown as CurrentUser)?.school_id;
+  const [showModal, setShowModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  // const [showEditModal, setShowEditModal] = useState(false);
+  const [subjectId, setSubjectId] = useState(0);
+  const [classId, setClassId] = useState(0);
+  // const [subjectname, setSubjectname] = useState('');
+  // const [subjectcode, setSubjectcode] = useState('');
+  // const [subjecttype, setSubjecttype] = useState('');
+  const [refresh, setRefresh] = useState(false);
 
-  // const [showModal, setShowModal] = useState(false);
+  const handleModal = () => {
+    setShowModal(true);
+  };
+  const handleShowDeleteModal = (subject_id: number,class_id: number) => {
+    setSubjectId(subject_id);
+    setClassId(class_id);
+    setShowDeleteModal(true);
+  };
 
-  const [selectedClass, setSelectedClass] = useState({
-    id: 0,
-    className: "",
-  }); // State to hold selected section
-  // const [selectedSection, setSelectedSection] = useState(null); // State to hold selected section
-  const [selectedSubjects, setSelectedSubjects] = useState([]);
-  const [selectedSections, setSelectedSections] = useState([]);
+  const handleModalClose = () => {
+    setShowModal(false);
+  };
 
-  // const handleModal = () => {
-  //   setShowModal(true);
+  const handleCloseDeleteModal = () => {
+    setSubjectId(0);
+    setShowDeleteModal(false);
+  };
+
+  // const handleModalEdit = (subject_id: number, subjectname: string, subjecttype: string, subjectcode: string) => {
+  //   setSubjectId(subject_id);
+  //   setSubjectname(subjectname);
+  //   setSubjectcode(subjectcode);
+  //   setSubjecttype(subjecttype);
+  //   setShowEditModal(true);
   // };
-  // const handleModalClose = () => {
-  //   setShowModal(false);
+
+  // const handleModalEditClose = () => {
+  //   setShowEditModal(false);
+  //   setSubjectId(0);
   // };
-
-  useEffect(() => {
-    const fetchClasses = async () => {
-      try {
-        const response = await fetch(
-          `${DOMAIN}/api/school/get-onlyclasses/${school_id}`
-        );
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch data");
-        }
-        const responseData = await response.json();
-        setClass(responseData);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-
-    fetchClasses();
-  }, [school_id]);
-
-
-  useEffect(() => {
-    const fetchSections = async () => {
-      try {
-        const class_id = selectedClass?.id;
-        const response = await fetch(
-          `${DOMAIN}/api/school/get-classwise-section/${class_id}/${school_id}`
-        );
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        const data = await response.json();
-
-        setSection(data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchSections();
-  }, [selectedClass?.id]);
 
   useEffect(() => {
     const fetchSubjects = async () => {
       try {
         const response = await fetch(
-          `${DOMAIN}/api/school/get-onlysubjects/${school_id}`
+          `${DOMAIN}/api/school/get-subjects-with-mapping/${school_id}`
         );
 
         if (!response.ok) {
           throw new Error("Failed to fetch data");
         }
+
         const responseData = await response.json();
-        setSubject(responseData);
+
+        // Group the data based on subject, class, and session
+        const groupedData = responseData.reduce((acc, curr) => {
+          const key = `${curr.subject_id}-${curr.class_id}-${curr.session_id}`;
+
+          // Check if the group already exists, if so, push the section into the array
+          if (!acc[key]) {
+            acc[key] = {
+              subject_id: curr.subject_id,
+              subject_name: curr.subject_name,
+              subject_code: curr.subject_code,
+              subject_type: curr.subject_type,
+              session_id: curr.session_id,
+              session_name: curr.session_name,
+              class_id: curr.class_id,
+              class_name: curr.class_name,
+              sections: [], // Initialize sections array
+            };
+          }
+          // Add section information to the existing entry
+          acc[key].sections.push({
+            section_id: curr.section_id,
+            section_name: curr.section_name,
+          });
+
+          return acc;
+        }, {});
+
+        // Convert the object back to an array
+        setFilteredData(Object.values(groupedData));
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
 
     fetchSubjects();
-  }, [school_id]);
+  }, [school_id, refresh]);
 
-  const handleSectionSelected = ({ section, event }: HandleSectionSelectedParams) => {
-    event.stopPropagation();
-    /* @ts-ignore */
-    setSelectedSections((prevSelected) => {
-      /* @ts-ignore */
-      if (prevSelected.includes(section)) {
-        return prevSelected.filter((s) => s !== section);
-      } else {
-        return [...prevSelected, section];
+  console.log(filteredData)
+
+  const handleDelete = async () => {
+    try {
+      const response = await fetch(
+        `${DOMAIN}/api/school/delete-subject-group/${subjectId}/${school_id}`,
+        {
+          method: "DELETE",
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Failed to delete the Subject");
       }
-    });
+      // Optionally, you can refresh the list or update the state to remove the deleted item
+      setRefresh(true); // Assuming you have a way to refresh the list of designations
+      toast.success("Subject deleted successfully.", { autoClose: 3000 });
+      handleCloseDeleteModal();
+    } catch (error) {
+      console.error("Error deleting Subject:", error);
+      toast.error("Failed to delete Subject!", { autoClose: 3000 });
+    }
   };
-
-  const handleSubjectSelected = ({subject, event}:HandleSectionSubjectParams) => {
-    event.stopPropagation(); // Prevent the dropdown from closing
-    /* @ts-ignore */
-    setSelectedSubjects((prevSelected) => {
-      /* @ts-ignore */
-      if (prevSelected.includes(subject)) {
-        return prevSelected.filter((s) => s !== subject);
-      } else {
-        return [...prevSelected, subject];
-      }
-    });
-  };
- /* @ts-ignore */
-  const isSelectedSection = (section: string): boolean => selectedSections.includes(section);
- /* @ts-ignore */
-  const isSelectedSubject = (subject: string): boolean => selectedSubjects.includes(subject);
-
-  const handleClassSelected = ({ id, className }: ClassData) => {
-    setSelectedClass({ id, className });
-  };
-
-  // const handleSubjectSelected = (subjectName: React.SetStateAction<null>) => {
-  //   setSelectedSubject(subjectName); // Update selected section state
-  // };
 
   return (
-    <div className="d-flex" style={{ gap: "10px" }}>
+    <div
+      className="card-style"
+      style={{
+        width: "100%",
+        borderRadius: "16px",
+        backgroundColor: "rgb(242, 246, 255)",
+        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+        overflow: "hidden",
+        marginTop: "20px",
+        padding: "20px",
+      }}
+    >
       <div
-        className="col-xxl-8"
+        className="card-header"
         style={{
-          borderRadius: "16px",
-          border: "1px solid #5D637A",
-          overflowX: "hidden",
-          minHeight: "100%",
-          marginBottom: "20px",
-          height: "770px",
+          backgroundColor: "rgb(242, 246, 255)",
+          padding: "16px 20px",
+          borderBottom: "1px solid #E0E4F0",
           display: "flex",
-          flexDirection: "column",
-          fontFamily: "Manrope",
-          maxWidth: "100%",
-          overflow: "hidden",
+          justifyContent: "space-between",
+          alignItems: "center",
         }}
       >
-        <div style={{ width: "auto", height: "100%", overflow: "hidden" }}>
-          <table
-            //   className="col-xxl-12"
+        <span
+          style={{
+            fontSize: "20px",
+            fontWeight: "600",
+            color: "#1C335C",
+            fontFamily: "Manrope",
+          }}
+        >
+          Manage Subject Groups
+        </span>
+        <div
+          className="input-group flex-nowrap"
+          style={{
+            width: "300px",
+            height: "36px",
+            borderRadius: "8px",
+            border: "1px solid #D9D9D9",
+          }}
+        >
+          <span
+            className="input-group-text border-0 pe-1 pr-0"
+            style={{ backgroundColor: "transparent" }}
+            id="addon-wrapping"
+          >
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 17 16"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <g clip-path="url(#clip0_582_4295)">
+                <circle
+                  cx="8.50002"
+                  cy="7.66665"
+                  r="6.33333"
+                  stroke="white"
+                  stroke-width="1.5"
+                />
+                <path
+                  d="M14.1667 13.3333L15.5 14.6666"
+                  stroke="white"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                />
+              </g>
+              <defs>
+                <clipPath id="clip0_582_4295">
+                  <rect
+                    width="16"
+                    height="16"
+                    fill="white"
+                    transform="translate(0.833374)"
+                  />
+                </clipPath>
+              </defs>
+            </svg>
+          </span>
+          <input
+            type="text"
             style={{
-              top: "223px",
-              height: "612px",
-              maxHeight: "100%",
-              borderCollapse: "collapse",
-              // tableLayout: "fixed",
-              overflowX: "hidden",
-              overflowY: "auto",
-              whiteSpace: "nowrap",
-              width: "100%",
-              // border:'8px solid black'
+              backgroundColor: "transparent",
+              color: "black",
+            }}
+            className="form-control border-0"
+            placeholder="Search ...."
+            aria-label="Search"
+            aria-describedby="addon-wrapping"
+          />
+        </div>
+        <div
+          onClick={handleModal}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            padding: "8px 12px",
+            backgroundColor: "#1C335C",
+            borderRadius: "8px",
+            cursor: "pointer",
+            transition: "background-color 0.3s",
+          }}
+          onMouseEnter={(e) =>
+            (e.currentTarget.style.backgroundColor = "#16294D")
+          }
+          onMouseLeave={(e) =>
+            (e.currentTarget.style.backgroundColor = "#1C335C")
+          }
+        >
+          <span
+            style={{
+              marginRight: "8px",
+              color: "white",
+              fontSize: "14px",
+              fontWeight: "700",
+              fontFamily: "Manrope",
             }}
           >
-            <thead
+            Add Subject Group
+          </span>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            width="16px"
+            height="16px"
+            fill="#ffffff"
+          >
+            <path d="M0 0h24v24H0V0z" fill="none" />
+            <path d="M3 17.25V21h3.75l11-11.03-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
+          </svg>
+        </div>
+      </div>
+      <div
+        style={{
+          height: "650px", // Fixed height for the table container
+          overflowY: "auto", // Enable vertical scrolling
+          padding: "16px 0", // Optional: adds some padding around the table
+        }}
+      >
+        <table
+          className="table"
+          style={{
+            width: "100%",
+            borderCollapse: "collapse",
+            marginTop: "10px",
+            backgroundColor: "#FFFFFF", // White background for the table
+            borderRadius: "12px", // Round corners for the table
+            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.05)", // Light shadow for the table
+          }}
+        >
+          <thead>
+            <tr
               style={{
-                height: "123px",
-                maxHeight: "100%",
-                display: "flex",
-                flexDirection: "column",
-                backgroundColor: "#1C335C",
-                //   width:'fit-content',
-                // overflowY: "auto",
-                // overflowX: "hidden",
-                justifyContent: "space-between",
-                zIndex: 999,
+                backgroundColor: "rgb(242, 246, 255)", // Header background color
+                borderBottom: "1px solid #E0E4F0",
+                fontFamily: "Manrope",
+                fontWeight: "600",
+                color: "#1C335C",
+                fontSize: "14px",
               }}
-              className="col-xxl-12 col-lg-6"
             >
-              <div>
-                <caption
-                  style={{
-                    backgroundColor: "#1C335C",
-                    padding: "20px",
-                    display: "flex",
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    // tableLayout: "fixed",
-                    // borderCollapse: "collapse",
+              <th
+                style={{
+                  padding: "12px 20px",
+                  textAlign: "center",
+                }}
+              >
+                Subject ID
+              </th>
+              <th
+                style={{
+                  padding: "12px 20px",
+                  textAlign: "center",
+                }}
+              >
+                Subject Name
+              </th>
+              <th
+                style={{
+                  padding: "12px 20px",
+                  textAlign: "center",
+                }}
+              >
+                Class
+              </th>
+              <th
+                style={{
+                  padding: "12px 20px",
+                  textAlign: "center",
+                }}
+              >
+                Session
+              </th>
+              <th
+                style={{
+                  padding: "12px 20px",
+                  textAlign: "center",
+                }}
+              >
+                Sections
+              </th>
+              <th
+                style={{
+                  padding: "12px 20px",
+                  textAlign: "center",
+                }}
+              >
+                Actions
+              </th>
+            </tr>
+          </thead>
 
-                    // border:'1px solid'
-                    width: "100%",
+          <tbody>
+            {filteredData.map((item, index) => (
+              <tr
+                key={index}
+                style={{
+                  alignItems: "center",
+                  backgroundColor:
+                    index % 2 === 0 ? "rgb(242, 246, 255)" : "#FFFFFF",
+                  borderBottom: "1px solid #E0E4F0",
+                  fontFamily: "Manrope",
+                  fontSize: "14px",
+                  color: "#1C335C",
+                }}
+              >
+                {/* Subject ID */}
+                <td
+                  style={{
+                    padding: "12px 20px",
+                    textAlign: "center",
                   }}
                 >
-                  <div>
+                  {item.subject_id}
+                </td>
+                {/* Subject Name */}
+                <td
+                  style={{
+                    padding: "12px 20px",
+                    textAlign: "center",
+                  }}
+                >
+                  {item.subject_name}
+                </td>
+
+                {/* Class Name */}
+                <td
+                  style={{
+                    padding: "12px 20px",
+                    textAlign: "center",
+                  }}
+                >
+                  {item.class_name}
+                </td>
+
+                {/* Session Name */}
+                <td
+                  style={{
+                    padding: "12px 20px",
+                    textAlign: "center",
+                  }}
+                >
+                  {item.session_name}
+                </td>
+
+                {/* Sections */}
+                <td
+                  style={{
+                    padding: "12px 20px",
+                    textAlign: "center",
+                  }}
+                >
+                  {item.sections
+                    .map((section) => section.section_name)
+                    .join(", ")}
+                </td>
+
+                {/* Actions */}
+                <td
+                  style={{
+                    height: "80px",
+                    display: "flex",
+                    gap: "10px",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    padding: "12px 20px",
+                  }}
+                >
+                  <div
+                    // onClick={() =>
+                    //   handleModalEdit(
+                    //     subject.subject_id,
+                    //     subject.subject_name,
+                    //     subject.subject_type,
+                    //     subject.subject_code
+                    //   )
+                    // }
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      padding: "8px 12px",
+                      backgroundColor: "#1C335C",
+                      borderRadius: "8px",
+                      cursor: "pointer",
+                      transition: "background-color 0.3s",
+                    }}
+                    onMouseEnter={(e) =>
+                      (e.currentTarget.style.backgroundColor = "#16294D")
+                    }
+                    onMouseLeave={(e) =>
+                      (e.currentTarget.style.backgroundColor = "#1C335C")
+                    }
+                  >
                     <span
                       style={{
-                        color: "#FFF",
-                        fontSize: "16px",
+                        marginRight: "8px",
+                        color: "white",
+                        fontSize: "14px",
                         fontWeight: "700",
                         fontFamily: "Manrope",
                       }}
                     >
-                      Subjects List
+                      Edit
                     </span>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      width="16px"
+                      height="16px"
+                      fill="#ffffff"
+                    >
+                      <path d="M0 0h24v24H0V0z" fill="none" />
+                      <path d="M3 17.25V21h3.75l11-11.03-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
+                    </svg>
                   </div>
+
                   <div
+                    onClick={() => handleShowDeleteModal(item.subject_id, item.class_id)}
                     style={{
-                      display: "flex",
-                      alignItems: "center",
+                      width: "32px",
+                      height: "40px",
+                      borderRadius: "6px",
+                      padding: "10px 6px",
                       gap: "10px",
+                      backgroundColor: "#FFE7E1",
+                      cursor: "pointer",
                     }}
                   >
-                    <div
-                      className="input-group flex-nowrap"
-                      style={{
-                        width: "300px",
-                        height: "36px",
-                        borderRadius: "8px",
-                        border: "1px solid #D9D9D9",
-                      }}
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 20 20"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
                     >
-                      <span
-                        className="input-group-text border-0 pe-1 pr-0"
-                        style={{ backgroundColor: "transparent" }}
-                        id="addon-wrapping"
-                      >
-                        <svg
-                          width="16"
-                          height="16"
-                          viewBox="0 0 17 16"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <g clip-path="url(#clip0_582_4295)">
-                            <circle
-                              cx="8.50002"
-                              cy="7.66665"
-                              r="6.33333"
-                              stroke="white"
-                              stroke-width="1.5"
-                            />
-                            <path
-                              d="M14.1667 13.3333L15.5 14.6666"
-                              stroke="white"
-                              stroke-width="1.5"
-                              stroke-linecap="round"
-                            />
-                          </g>
-                          <defs>
-                            <clipPath id="clip0_582_4295">
-                              <rect
-                                width="16"
-                                height="16"
-                                fill="white"
-                                transform="translate(0.833374)"
-                              />
-                            </clipPath>
-                          </defs>
-                        </svg>
-                      </span>
-                      <input
-                        type="text"
-                        style={{
-                          backgroundColor: "transparent",
-                          color: "#FFFFFF",
-                        }}
-                        className="form-control border-0"
-                        placeholder="Search ...."
-                        aria-label="Search"
-                        aria-describedby="addon-wrapping"
+                      <path
+                        d="M17.0834 5H2.91663"
+                        stroke="#ED5578"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
                       />
-                    </div>
+                      <path
+                        d="M15.6944 7.08331L15.3111 12.8326C15.1637 15.045 15.0899 16.1512 14.3691 16.8256C13.6482 17.5 12.5396 17.5 10.3222 17.5H9.67775C7.46042 17.5 6.35175 17.5 5.63091 16.8256C4.91007 16.1512 4.83632 15.045 4.68883 12.8326L4.30554 7.08331"
+                        stroke="#ED5578"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                      />
+                      <path
+                        d="M7.91663 9.16669L8.33329 13.3334"
+                        stroke="#ED5578"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                      />
+                      <path
+                        d="M12.0833 9.16669L11.6666 13.3334"
+                        stroke="#ED5578"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                      />
+                      <path
+                        d="M5.41663 5C5.46319 5 5.48648 5 5.50758 4.99947C6.19379 4.98208 6.79915 4.54576 7.03264 3.90027C7.03982 3.88041 7.04719 3.85832 7.06191 3.81415L7.14282 3.57143C7.21188 3.36423 7.24642 3.26063 7.29222 3.17267C7.47497 2.82173 7.81308 2.57803 8.2038 2.51564C8.30173 2.5 8.41094 2.5 8.62934 2.5H11.3706C11.589 2.5 11.6982 2.5 11.7961 2.51564C12.1868 2.57803 12.525 2.82173 12.7077 3.17267C12.7535 3.26063 12.788 3.36423 12.8571 3.57143L12.938 3.81415C12.9527 3.85826 12.9601 3.88042 12.9673 3.90027C13.2008 4.54576 13.8061 4.98208 14.4923 4.99947C14.5134 5 14.5367 5 14.5833 5"
+                        stroke="#ED5578"
+                        strokeWidth="1.5"
+                      />
+                    </svg>
                   </div>
-                </caption>
-              </div>
-
-              <tr
-                style={{
-                  height: "61px",
-                  display: "flex",
-                  paddingLeft: "30px",
-                  justifyContent: "space-between",
-                  width: "95%",
-                  overflowY: "auto",
-                  overflowX: "hidden",
-                  backgroundColor: "#1C335C",
-                }}
-              >
-                <th>
-                  <div style={{ width: "40px" }}>
-                    <span
-                      style={{
-                        fontSize: "13px",
-                        fontWeight: "600",
-                        lineHeight: "18px",
-                        color: "#FFFFFF",
-                      }}
-                    >
-                      Subjects
-                    </span>
-                  </div>
-                </th>
-                <th>
-                  <div
-                    style={{
-                      width: "60px",
-                      // textAlign:'left'
-                      // border:'1px solid',
-                      display: "flex",
-                      justifyContent: "end",
-                      fontFamily: "Manrope",
-                    }}
-                  >
-                    <span
-                      style={{
-                        fontSize: "13px",
-                        fontWeight: "600",
-                        lineHeight: "18px",
-                        color: "#FFFFFF",
-                      }}
-                    >
-                      Action
-                    </span>
-                  </div>
-                </th>
+                </td>
               </tr>
-            </thead>
-
-            <tbody
-              className="col-xxl-12 col-lg-6"
-              style={{
-                height: "105%",
-                display: "flex",
-                flexDirection: "column",
-                minHeight: "calc(100vh - 550px)",
-                overflowY: "auto",
-                backgroundColor: "#F5F5F5",
-              }}
-            >
-              {getSubject.map((item, index) => (
-                <tr
-                  key={index}
-                  style={{
-                    height: "80px",
-                    paddingLeft: "30px",
-                    paddingTop: "25px",
-                    marginBottom: "5px",
-                    justifyContent: "space-between",
-                    width: "90%",
-                    display: "flex",
-                    // borderBottom:'1px solid grey'
-                  }}
-                >
-                  <td>
-                    <div
-                      style={{
-                        width: "55px",
-                        display: "flex",
-                        justifyContent: "center",
-                        flexDirection: "column",
-                      }}
-                    >
-                      <span
-                        style={{
-                          fontSize: "14px",
-                          fontWeight: "500",
-                          lineHeight: "18px",
-                          color: "#1F1F1F",
-                          fontFamily: "Manrope",
-                        }}
-                      >
-                        {item.name}
-                      </span>
-                    </div>
-                  </td>
-                  <td>
-                    <div
-                      style={{
-                        width: "60px",
-                        display: "flex",
-                        justifyContent: "space-around",
-                        flexDirection: "row",
-                        gap: "6px",
-                        marginTop: "-8px",
-                      }}
-                    >
-                      <button
-                        type="button"
-                        className="btn"
-                        style={{
-                          backgroundColor: "#1F3259",
-                          fontFamily: "Manrope",
-                          fontSize: "12px",
-                          fontWeight: "600",
-                          color: "#FFF",
-                        }}
-                        // onClick={() => handleModalEdit(item.id)}
-                      >
-                        Edit
-                      </button>
-                      <button
-                        type="button"
-                        className="btn"
-                        style={{
-                          border: "1px solid #1F3259",
-                          fontFamily: "Manrope",
-                          fontSize: "12px",
-                          fontWeight: "600",
-                          color: "#1F3259",
-                        }}
-                        // onClick={() => handleActionModal(item.id)}
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-
-            {/* 
-          <UploadsFilter
-            show={showModal}
-            handleClose={handleModalClose}
-            filterData={applyfilters}
-          /> */}
-            {/* <CreateEnquiryAction show={showActionModal} handleClose={handleActionModalClose} enqId={enqId}/> */}
-            {/* <AddClasses show={showModal} handleClose={handleModalClose} /> */}
-
-            {/* end::Table body */}
-          </table>
-        </div>
+            ))}
+          </tbody>
+        </table>
       </div>
-      <div
-        className="col-xxl-4"
-        style={{
-          borderRadius: "16px",
-          border: "1px solid #5D637A",
-          overflowX: "hidden",
-          minHeight: "100%",
-          marginBottom: "20px",
-          height: "480px",
-          display: "flex",
-          flexDirection: "column",
-          fontFamily: "Manrope",
-          maxWidth: "100%",
-          overflow: "hidden",
-        }}
-      >
-        <div
-          style={{
-            padding: "20px",
-            backgroundColor: "#1C335C",
-            height: "80px",
-            display: "flex",
-            alignItems: "center",
-          }}
-        >
-          <span
-            className=""
-            id="staticBackdropLabel"
-            style={{
-              fontSize: "18px",
-              fontWeight: "600",
-              fontFamily: "Manrope",
-              color: "white",
-            }}
-          >
-            Add Subjects Group :
-          </span>
-        </div>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            padding: "20px",
-            flexDirection: "column",
-            marginTop: "10px",
-          }}
-        >
-          <div style={{ marginBottom: "23px", width: "100%" }}>
-            <label
-              htmlFor="materialtitle"
-              className="form-label"
-              style={{
-                fontSize: "12px",
-                color: "#434343",
-                fontWeight: "500",
-              }}
-            >
-              Subject Name
-            </label>
+      <AddSubjectGroup
+        show={showModal}
+        handleClose={handleModalClose}
+        setRefresh={setRefresh}
+      />
 
-            <div id="materialtitle">
-              <input
-                className=""
-                style={{
-                  height: "46px",
-                  width: "100%",
-                  paddingLeft: "10px",
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  backgroundColor: "transparent",
-                  border: "1px solid #ECEDF1",
-                  borderRadius: "8px",
-                }}
-                // onChange={(e) =>
-                //   // handleMaterialChange("title", e.target.value)
-                // }
-                type="text"
-                placeholder="Enter Name"
-                aria-expanded="false"
-              />
-            </div>
-          </div>
-          <div style={{ marginBottom: "23px", width: "100%" }}>
-            <div className="dropdown" id="selectClass">
-              <button
-                className="btn btn-secondary dropdown-toggle"
-                style={{
-                  width: "100%",
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  backgroundColor: "transparent",
-                  border: "1px solid #ECEDF1",
-                  borderRadius: "8px",
-                }}
-                type="button"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-              >
-                {selectedClass.className
-                  ? selectedClass.className
-                  : "Select Class"}
-              </button>
-              <ul
-                className="dropdown-menu"
-                style={{
-                  width: "100%",
-                  maxHeight: "150px",
-                  overflowY: "scroll",
-                }}
-              >
-                {getClass.map((item) => (
-                  <li key={item.class_id}>
-                    <button
-                      className="dropdown-item"
-                      onClick={() =>
-                        handleClassSelected({
-                          id: item.class_id,
-                          className: item.class,
-                        })
-                      } // Pass section class to handler
-                    >
-                      {item.class}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-          <div style={{ marginBottom: "23px", width: "100%" }}>
-            <div className="dropdown" id="selectClass">
-              <button
-                className="btn btn-secondary dropdown-toggle"
-                style={{
-                  width: "100%",
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  backgroundColor: "transparent",
-                  border: "1px solid #ECEDF1",
-                  borderRadius: "8px",
-                }}
-                type="button"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-              >
-                {selectedSections.length > 0
-                  ? selectedSections.join(", ")
-                  : "Select Sections"}
-              </button>
-              <ul
-                className="dropdown-menu"
-                style={{
-                  width: "100%",
-                  maxHeight: "150px",
-                  overflowY: "scroll",
-                }}
-              >
-                {getSection.map((item) => (
-                  <li key={item.id}>
-                    <button
-                      className={`dropdown-item ${
-                        isSelectedSection(item.section) ? "selected" : ""
-                      }`}
-                      onClick={(event) => handleSectionSelected({ section: item.section, event })}
-                    >
-                      {item.section}
-                      {isSelectedSection(item.section) && (
-                        <span style={{ marginLeft: "8px", color: "green" }}>
-                          ✓
-                        </span>
-                      )}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-          <div style={{ marginBottom: "23px", width: "100%" }}>
-            <div className="dropdown" id="selectClass">
-              <button
-                className="btn btn-secondary dropdown-toggle"
-                style={{
-                  width: "100%",
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  backgroundColor: "transparent",
-                  border: "1px solid #ECEDF1",
-                  borderRadius: "8px",
-                }}
-                type="button"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-              >
-                {selectedSubjects.length > 0
-                  ? selectedSubjects.join(", ")
-                  : "Select Subjects"}
-              </button>
-              <ul
-                className="dropdown-menu"
-                style={{
-                  width: "100%",
-                  maxHeight: "150px",
-                  overflowY: "scroll",
-                }}
-              >
-                {getSubject.map((item) => (
-                  <li key={item.id}>
-                    <button
-                      className={`dropdown-item ${
-                        isSelectedSubject(item.name) ? "selected" : ""
-                      }`}
-                      onClick={(event) => handleSubjectSelected({ subject: item.name, event })}
-                    >
-                      {item.name}
-                      {isSelectedSubject(item.name) && (
-                        <span style={{ marginLeft: "8px", color: "green" }}>
-                          ✓
-                        </span>
-                      )}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
+      {/* <CreateEditSubject
+        show={showEditModal}
+        handleClose={handleModalEditClose}
+        setRefresh={setRefresh}
+        subjectId={subjectId}
+        subjectname={subjectname}
+        subjectcode={subjectcode}
+        subjecttype={subjecttype}
+      /> */}
 
-          <div
-            style={{
-              width: "100%",
-              justifyContent: "right",
-              display: "flex",
-            }}
-          >
-            <button
-              type="button"
-              className="btn btn-secondary"
-              data-bs-dismiss="modal"
-              style={{
-                width: "118px",
-                height: "36px",
-                padding: "8px 10px",
-                justifyContent: "center",
-                alignItems: "center",
-                gap: "10px",
-                flexShrink: "0",
-                backgroundColor: "rgba(39, 59, 99, 0.76)",
-              }}
-              // onClick={handleSubmit}
-            >
-              <span
-                style={{
-                  color: "#FFF",
-                  fontFamily: "Manrope",
-                  fontSize: "12px",
-                  fontWeight: "500",
-                }}
-              >
-                Add
-              </span>
-            </button>
-          </div>
-        </div>
-      </div>
+      <DeleteConfirmationModal
+        show={showDeleteModal}
+        handleClose={handleCloseDeleteModal}
+        handleDelete={handleDelete}
+        title="Confirm Deletion"
+        description={`Are you sure you want to delete the Designation ?  \n This action cannot be undone.`}
+        confirmButtonText="Delete"
+        cancelButtonText="Cancel"
+      />
     </div>
   );
 };
