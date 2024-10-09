@@ -27,14 +27,16 @@ interface ClassDetails {
 }
 
 interface Sessions {
+  academic_year: string | number | readonly string[] | undefined;
   id: string;
   session_id: string;
 }
 
 interface FormData {
+  academic_year: string | number | readonly string[] | undefined;
   student_name: string;
-  student_phone: string;
-  student_address: string;
+  contact_number: string;
+  address: string;
   reference_id: number;
   reference: string;
   description: string;
@@ -46,7 +48,6 @@ interface FormData {
   status: string;
   enquiry_type: string;
   class_id: number;
-  class: string;
   gender: string;
   date_of_birth: Date;
   current_school: string;
@@ -59,34 +60,31 @@ interface FormData {
 
 const modalsRoot = document.getElementById("root-modals") || document.body;
 
-const CreateWalkinEnquiry = ({ show, handleClose, setRefresh }: Props) => {
+const CreateWalkinAdmission = ({ show, handleClose, setRefresh }: Props) => {
   const { currentUser } = useAuth();
-  console.log(currentUser);
   
-
   const schoolId = currentUser?.school_id;
+  const sessionId = currentUser?.session_id;
   /* @ts-ignore */
   const userId = currentUser?.id;
 
   const [classes, setClasses] = useState<ClassDetails[]>([]);
-  const [sessions, setSessions] = useState<Sessions[]>([]);
+  const [academicYear, setAcademicYear] = useState<Sessions[]>([]);
   const [source, setSource] = useState<Source[]>([]);
   const [reference, setReference] = useState<Reference[]>([]);
   const [formData, setFormData] = useState<FormData>({
-    enquiry_type: "General",
+    enquiry_type: "Admission",
     student_name: "",
-    student_phone: "",
-    student_address: "",
+    contact_number: "",
+    address: "",
     reference_id: 0,
     description: "",
     follow_up_date: new Date(),
     note: "",
     source_id: 0,
-    source: "",
     student_email: "",
     class_id: 0,
-    class: "",
-    status: "Active",
+    status: "New",
     /* @ts-ignore */
     date_of_birth: "",
     gender: "",
@@ -95,25 +93,18 @@ const CreateWalkinEnquiry = ({ show, handleClose, setRefresh }: Props) => {
     father_phone: "",
     mother_name: "",
     mother_phone: "",
-    session_id:0,
-    reference: "",
+    session_id: sessionId,
+    academic_year:""
   });
   /* @ts-ignore */
   const handleChange = (e) => {
     const { name, value } = e.target;
-
-    if (
-      name === "reference" ||
-      name === "source" ||
-      name === "session_id" ||
-      name === "class"
-    ) {
+    if (["reference", "source", "class"].includes(name)) {
       const [id, text] = value.split(":");
-
       setFormData((prevState) => ({
         ...prevState,
-        [`${name}_id`]: id,
-        [name]: text,
+        [`${name}_id`]: id, // session_id or class_id
+        [name]: text, // display value like session or class name
       }));
     } else {
       setFormData((prevState) => ({
@@ -122,23 +113,6 @@ const CreateWalkinEnquiry = ({ show, handleClose, setRefresh }: Props) => {
       }));
     }
   };
-
-  useEffect(() => {
-    if (formData.enquiry_type === "general") {
-      /* @ts-ignore */
-      setFormData((prevState) => ({
-        ...prevState,
-        date_of_birth: null,
-        gender: "",
-        current_school: "",
-        father_name: "",
-        father_phone: "",
-        mother_name: "",
-        mother_phone: "",
-        session_id: 0,
-      }));
-    }
-  }, [formData.enquiry_type]);
 
   useEffect(() => {
     const fetchClasses = async () => {
@@ -153,6 +127,8 @@ const CreateWalkinEnquiry = ({ show, handleClose, setRefresh }: Props) => {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
+        console.log(data);
+        
         setClasses(data);
       } catch (error) {
         console.error("Error fetching classes:", error);
@@ -211,7 +187,7 @@ const CreateWalkinEnquiry = ({ show, handleClose, setRefresh }: Props) => {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
-        setSessions(data);
+        setAcademicYear(data);
       } catch (error) {
         console.error("Error fetching classes:", error);
       }
@@ -221,34 +197,34 @@ const CreateWalkinEnquiry = ({ show, handleClose, setRefresh }: Props) => {
   }, [currentUser]);
 
   /* @ts-ignore */
-    const handleSubmit = async (e) => {
-      e.preventDefault();
-      try {
-        const response = await fetch(
-          `${DOMAIN}/api/school/walkinEnquiry/${schoolId}/${userId}`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(formData),
-          }
-        );
-
-        if (!response.ok) {
-          throw new Error("Failed to create student");
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    try {
+      const response = await fetch(
+        `${DOMAIN}/api/school/admissionEnquiry/${schoolId}/${userId}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
         }
+      );
+      console.log(response);
+      
 
-        const data = await response.json();
-        console.log("Student created successfully:", data);
-        toast.success("Enquiry created successfully!");
-        handleClose();
-        setRefresh(true);
-      } catch (error) {
-        console.error("Error creating Enquiry:", error);
-        toast.error("Error creating Enquiry. Please try again.");
+      if (!response.ok) {
+        throw new Error("Failed to create student");
       }
-    };
+      toast.success("Enquiry created successfully!");
+      handleClose();
+      setRefresh(true);
+    } catch (error) {
+      console.error("Error creating Enquiry:", error);
+      toast.error("Error creating Enquiry. Please try again.");
+    }
+  };
 
   return createPortal(
     <Modal
@@ -267,7 +243,7 @@ const CreateWalkinEnquiry = ({ show, handleClose, setRefresh }: Props) => {
           borderBottom: "1px solid lightgray",
         }}
       >
-        <h2>WalkIn Enquiry</h2> 
+        <h2>WalkIn Admission Enquiry</h2>
         <div
           className="btn btn-sm btn-icon btn-active-color-primary"
           onClick={handleClose}
@@ -312,7 +288,7 @@ const CreateWalkinEnquiry = ({ show, handleClose, setRefresh }: Props) => {
                 className="mb-3 custom-input"
                 controlId="formStudentPhone"
               >
-                <Form.Label>Phone Number *</Form.Label>
+                <Form.Label>Phone Number*</Form.Label>
                 <InputGroup>
                   <InputGroup.Text>
                     <i className="fas fa-phone"></i>
@@ -320,9 +296,9 @@ const CreateWalkinEnquiry = ({ show, handleClose, setRefresh }: Props) => {
                   <Form.Control
                     type="tel"
                     placeholder="Enter phone number"
-                    value={formData.student_phone}
+                    value={formData.contact_number}
                     onChange={handleChange}
-                    name="student_phone"
+                    name="contact_number"
                     required
                   />
                 </InputGroup>
@@ -344,9 +320,9 @@ const CreateWalkinEnquiry = ({ show, handleClose, setRefresh }: Props) => {
                   <Form.Control
                     type="text"
                     placeholder="Enter address"
-                    value={formData.student_address}
+                    value={formData.address}
                     onChange={handleChange}
-                    name="student_address"
+                    name="address"
                     required
                   />
                 </InputGroup>
@@ -445,27 +421,25 @@ const CreateWalkinEnquiry = ({ show, handleClose, setRefresh }: Props) => {
             {/* Status */}
             <Col md={4}>
               <Form.Group className="mb-3 custom-input" controlId="formStatus">
-                <Form.Label>Status</Form.Label>
+                <Form.Label style={{ color: "#1C335C" }}>Status</Form.Label>
                 <InputGroup>
                   <InputGroup.Text>
-                    <i className="fas fa-flag"></i>
+                    <i className="fas fa-flag" style={{ color: "#1C335C" }}></i>
                   </InputGroup.Text>
                   <Form.Select
                     value={formData.status}
                     onChange={handleChange}
                     name="status"
                   >
-                    <option value="active">Active</option>
-                    <option value="dead">Dead</option>
-                    <option value="lost">Lost</option>
-                    <option value="won">Won</option>
+                    <option value="New">New</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Closed">Closed</option>
+                    <option value="Deferred">Deferred</option>
                   </Form.Select>
                 </InputGroup>
-                <Form.Text className="text-muted">
-                  Select the current status.
-                </Form.Text>
               </Form.Group>
             </Col>
+
             <Col md={4}>
               <Form.Group
                 className="mb-3 custom-input"
@@ -488,28 +462,253 @@ const CreateWalkinEnquiry = ({ show, handleClose, setRefresh }: Props) => {
                 </Form.Text>
               </Form.Group>
             </Col>
-
             <Col md={4}>
-              <Form.Group
-                className="mb-3 custom-input"
-                controlId="formEnquiryType"
-              >
-                <Form.Label>Enquiry Type</Form.Label>
+              <Form.Group className="mb-3 custom-input" controlId="formClass">
+                <Form.Label>Select Class</Form.Label>
                 <InputGroup>
                   <InputGroup.Text>
-                    <i className="fas fa-info-circle"></i>
+                    <i className="fas fa-chalkboard"></i>
                   </InputGroup.Text>
                   <Form.Select
-                    value={formData.enquiry_type}
+                    value={formData.class_id}
                     onChange={handleChange}
-                    name="enquiry_type"
+                    name="class_id"
                   >
-                    <option value="general">General</option>
-                    <option value="admission">Admission</option>
+                    <option value="">
+                      Select Class
+                    </option>
+                    {classes.map((value) => (
+                      <option
+                        key={value.id}
+                        value={value.id}
+                      >
+                        {value.class}
+                      </option>
+                    ))}
                   </Form.Select>
                 </InputGroup>
                 <Form.Text className="text-muted">
-                  Select the type of enquiry.
+                  Select the class for admission.
+                </Form.Text>
+              </Form.Group>
+            </Col>
+          </Row>
+
+          <Row className="mb-3">
+            {/* Class */}
+
+            {/* Date of Birth */}
+            <Col md={4}>
+              <Form.Group
+                className="mb-3 custom-input"
+                controlId="formDateOfBirth"
+              >
+                <Form.Label>Date of Birth</Form.Label>
+                <InputGroup>
+                  <InputGroup.Text>
+                    <i className="fas fa-calendar-alt"></i>
+                  </InputGroup.Text>
+                  <Form.Control
+                    type="date"
+                    value={formData.date_of_birth}
+                    onChange={handleChange}
+                    name="date_of_birth"
+                  />
+                </InputGroup>
+                <Form.Text className="text-muted">
+                  Enter the student's date of birth.
+                </Form.Text>
+              </Form.Group>
+            </Col>
+
+            {/* Gender */}
+            <Col md={4}>
+              <Form.Group className="mb-3 custom-input" controlId="formGender">
+                <Form.Label>Select Gender</Form.Label>
+                <InputGroup>
+                  <InputGroup.Text>
+                    <i className="fas fa-venus-mars"></i>
+                  </InputGroup.Text>
+                  <Form.Select
+                    value={formData.gender}
+                    onChange={handleChange}
+                    name="gender"
+                  >
+                    <option defaultChecked disabled>
+                      Gender
+                    </option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                  </Form.Select>
+                </InputGroup>
+                <Form.Text className="text-muted">
+                  Select the student's gender.
+                </Form.Text>
+              </Form.Group>
+            </Col>
+            <Col md={4}>
+              <Form.Group
+                className="mb-3 custom-input"
+                controlId="formAcademicYear"
+              >
+                <Form.Label>Academic Year</Form.Label>
+                <InputGroup>
+                  <InputGroup.Text>
+                    <i className="fas fa-calendar"></i>
+                  </InputGroup.Text>
+                  <Form.Select
+                    value={formData.academic_year}
+                    onChange={handleChange}
+                    name="academic_year"
+                  >
+                    <option value="academic_year">
+                      {formData.academic_year
+                        ? formData.academic_year
+                        : "Select Academic Year"}
+                    </option>
+                    {academicYear.map((value) => (
+                      <option
+                        key={value.id}
+                        value={value.academic_year}
+                      >
+                        {value.academic_year}
+                      </option>
+                    ))}
+                  </Form.Select>
+                </InputGroup>
+                <Form.Text className="text-muted">
+                  Select the academic year.
+                </Form.Text>
+              </Form.Group>
+            </Col>
+          </Row>
+
+          <Row className="mb-3">
+            {/* Academic Year */}
+
+            {/* Father Name */}
+            <Col md={4}>
+              <Form.Group
+                className="mb-3 custom-input"
+                controlId="formFatherName"
+              >
+                <Form.Label>Father Name</Form.Label>
+                <InputGroup>
+                  <InputGroup.Text>
+                    <i className="fas fa-user-tie"></i>
+                  </InputGroup.Text>
+                  <Form.Control
+                    type="text"
+                    placeholder="Enter father's name"
+                    value={formData.father_name}
+                    onChange={handleChange}
+                    name="father_name"
+                  />
+                </InputGroup>
+                <Form.Text className="text-muted">
+                  Enter the father's name.
+                </Form.Text>
+              </Form.Group>
+            </Col>
+
+            {/* Father Contact Number */}
+            <Col md={4}>
+              <Form.Group
+                className="mb-3 custom-input"
+                controlId="formFatherPhone"
+              >
+                <Form.Label>Father Contact Number</Form.Label>
+                <InputGroup>
+                  <InputGroup.Text>
+                    <i className="fas fa-phone"></i>
+                  </InputGroup.Text>
+                  <Form.Control
+                    type="tel"
+                    placeholder="Enter father's contact number"
+                    value={formData.father_phone}
+                    onChange={handleChange}
+                    name="father_phone"
+                  />
+                </InputGroup>
+                <Form.Text className="text-muted">
+                  Enter the father's contact number.
+                </Form.Text>
+              </Form.Group>
+            </Col>
+            <Col md={4}>
+              <Form.Group
+                className="mb-3 custom-input"
+                controlId="formMotherName"
+              >
+                <Form.Label>Mother Name</Form.Label>
+                <InputGroup>
+                  <InputGroup.Text>
+                    <i className="fas fa-user-tie"></i>
+                  </InputGroup.Text>
+                  <Form.Control
+                    type="text"
+                    placeholder="Enter mother's name"
+                    value={formData.mother_name}
+                    onChange={handleChange}
+                    name="mother_name"
+                  />
+                </InputGroup>
+                <Form.Text className="text-muted">
+                  Enter the mother's name.
+                </Form.Text>
+              </Form.Group>
+            </Col>
+          </Row>
+
+          <Row className="mb-3">
+            {/* Mother Name */}
+
+            {/* Mother Contact Number */}
+            <Col md={4}>
+              <Form.Group
+                className="mb-3 custom-input"
+                controlId="formMotherPhone"
+              >
+                <Form.Label>Mother Contact Number</Form.Label>
+                <InputGroup>
+                  <InputGroup.Text>
+                    <i className="fas fa-phone"></i>
+                  </InputGroup.Text>
+                  <Form.Control
+                    type="tel"
+                    placeholder="Enter mother's contact number"
+                    value={formData.mother_phone}
+                    onChange={handleChange}
+                    name="mother_phone"
+                  />
+                </InputGroup>
+                <Form.Text className="text-muted">
+                  Enter the mother's contact number.
+                </Form.Text>
+              </Form.Group>
+            </Col>
+
+            {/* Current School */}
+            <Col md={4}>
+              <Form.Group
+                className="mb-3 custom-input"
+                controlId="formCurrentSchool"
+              >
+                <Form.Label>Current School</Form.Label>
+                <InputGroup>
+                  <InputGroup.Text>
+                    <i className="fas fa-school"></i>
+                  </InputGroup.Text>
+                  <Form.Control
+                    type="text"
+                    placeholder="Enter current school"
+                    value={formData.current_school}
+                    onChange={handleChange}
+                    name="current_school"
+                  />
+                </InputGroup>
+                <Form.Text className="text-muted">
+                  Enter the current school of the student.
                 </Form.Text>
               </Form.Group>
             </Col>
@@ -536,7 +735,7 @@ const CreateWalkinEnquiry = ({ show, handleClose, setRefresh }: Props) => {
             {/* Note */}
             <Col md={6}>
               <Form.Group className="mb-3 custom-input" controlId="formNote">
-                <Form.Label>Note</Form.Label>
+                <Form.Label style={{ color: "#1C335C" }}>Note</Form.Label>
                 <Form.Control
                   as="textarea"
                   rows={3}
@@ -548,266 +747,6 @@ const CreateWalkinEnquiry = ({ show, handleClose, setRefresh }: Props) => {
               </Form.Group>
             </Col>
           </Row>
-          {formData.enquiry_type === "admission" && (
-            <>
-              <Row className="mb-3">
-                {/* Class */}
-                <Col md={4}>
-                  <Form.Group
-                    className="mb-3 custom-input"
-                    controlId="formClass"
-                  >
-                    <Form.Label>Select Class</Form.Label>
-                    <InputGroup>
-                      <InputGroup.Text>
-                        <i className="fas fa-chalkboard"></i>
-                      </InputGroup.Text>
-                      <Form.Select
-                        value={formData.class}
-                        onChange={handleChange}
-                        name="class"
-                      >
-                        <option value="class">
-                          {formData.class ? formData.class : "Select Class"}
-                        </option>
-                        {classes.map((value) => (
-                          <option
-                            key={value.id}
-                            value={`${value.id}:${value.class}`}
-                          >
-                            {value.class}
-                          </option>
-                        ))}
-                      </Form.Select>
-                    </InputGroup>
-                    <Form.Text className="text-muted">
-                      Select the class for admission.
-                    </Form.Text>
-                  </Form.Group>
-                </Col>
-
-                {/* Date of Birth */}
-                <Col md={4}>
-                  <Form.Group
-                    className="mb-3 custom-input"
-                    controlId="formDateOfBirth"
-                  >
-                    <Form.Label>Date of Birth</Form.Label>
-                    <InputGroup>
-                      <InputGroup.Text>
-                        <i className="fas fa-calendar-alt"></i>
-                      </InputGroup.Text>
-                      <Form.Control
-                        type="date"
-                        value={formData.date_of_birth}
-                        onChange={handleChange}
-                        name="date_of_birth"
-                      />
-                    </InputGroup>
-                    <Form.Text className="text-muted">
-                      Enter the student's date of birth.
-                    </Form.Text>
-                  </Form.Group>
-                </Col>
-
-                {/* Gender */}
-                <Col md={4}>
-                  <Form.Group
-                    className="mb-3 custom-input"
-                    controlId="formGender"
-                  >
-                    <Form.Label>Select Gender</Form.Label>
-                    <InputGroup>
-                      <InputGroup.Text>
-                        <i className="fas fa-venus-mars"></i>
-                      </InputGroup.Text>
-                      <Form.Select
-                        value={formData.gender}
-                        onChange={handleChange}
-                        name="gender"
-                      >
-                        <option defaultChecked disabled>
-                          Gender
-                        </option>
-                        <option value="male">Male</option>
-                        <option value="female">Female</option>
-                      </Form.Select>
-                    </InputGroup>
-                    <Form.Text className="text-muted">
-                      Select the student's gender.
-                    </Form.Text>
-                  </Form.Group>
-                </Col>
-              </Row>
-
-              <Row className="mb-3">
-                {/* Academic Year */}
-                <Col md={4}>
-                  <Form.Group
-                    className="mb-3 custom-input"
-                    controlId="formAcademicYear"
-                  >
-                    <Form.Label>Academic Year</Form.Label>
-                    <InputGroup>
-                      <InputGroup.Text>
-                        <i className="fas fa-calendar"></i>
-                      </InputGroup.Text>
-                      <Form.Select
-                        value={formData.session_id}
-                        onChange={handleChange}
-                        name="session_id"
-                      >
-                        <option value="session_id">
-                          {formData.session_id
-                            ? formData.session_id
-                            : "Select Session"}
-                        </option>
-                        {sessions.map((value) => (
-                          <option
-                            key={value.id}
-                            value={`${value.id}:${value.session_id}`}
-                          >
-                            {value.session_id}
-                          </option>
-                        ))}
-                      </Form.Select>
-                    </InputGroup>
-                    <Form.Text className="text-muted">
-                      Select the academic year.
-                    </Form.Text>
-                  </Form.Group>
-                </Col>
-
-                {/* Father Name */}
-                <Col md={4}>
-                  <Form.Group
-                    className="mb-3 custom-input"
-                    controlId="formFatherName"
-                  >
-                    <Form.Label>Father Name</Form.Label>
-                    <InputGroup>
-                      <InputGroup.Text>
-                        <i className="fas fa-user-tie"></i>
-                      </InputGroup.Text>
-                      <Form.Control
-                        type="text"
-                        placeholder="Enter father's name"
-                        value={formData.father_name}
-                        onChange={handleChange}
-                        name="father_name"
-                      />
-                    </InputGroup>
-                    <Form.Text className="text-muted">
-                      Enter the father's name.
-                    </Form.Text>
-                  </Form.Group>
-                </Col>
-
-                {/* Father Contact Number */}
-                <Col md={4}>
-                  <Form.Group
-                    className="mb-3 custom-input"
-                    controlId="formFatherPhone"
-                  >
-                    <Form.Label>Father Contact Number</Form.Label>
-                    <InputGroup>
-                      <InputGroup.Text>
-                        <i className="fas fa-phone"></i>
-                      </InputGroup.Text>
-                      <Form.Control
-                        type="tel"
-                        placeholder="Enter father's contact number"
-                        value={formData.father_phone}
-                        onChange={handleChange}
-                        name="father_phone"
-                      />
-                    </InputGroup>
-                    <Form.Text className="text-muted">
-                      Enter the father's contact number.
-                    </Form.Text>
-                  </Form.Group>
-                </Col>
-              </Row>
-
-              <Row className="mb-3">
-                {/* Mother Name */}
-                <Col md={4}>
-                  <Form.Group
-                    className="mb-3 custom-input"
-                    controlId="formMotherName"
-                  >
-                    <Form.Label>Mother Name</Form.Label>
-                    <InputGroup>
-                      <InputGroup.Text>
-                        <i className="fas fa-user-tie"></i>
-                      </InputGroup.Text>
-                      <Form.Control
-                        type="text"
-                        placeholder="Enter mother's name"
-                        value={formData.mother_name}
-                        onChange={handleChange}
-                        name="mother_name"
-                      />
-                    </InputGroup>
-                    <Form.Text className="text-muted">
-                      Enter the mother's name.
-                    </Form.Text>
-                  </Form.Group>
-                </Col>
-
-                {/* Mother Contact Number */}
-                <Col md={4}>
-                  <Form.Group
-                    className="mb-3 custom-input"
-                    controlId="formMotherPhone"
-                  >
-                    <Form.Label>Mother Contact Number</Form.Label>
-                    <InputGroup>
-                      <InputGroup.Text>
-                        <i className="fas fa-phone"></i>
-                      </InputGroup.Text>
-                      <Form.Control
-                        type="tel"
-                        placeholder="Enter mother's contact number"
-                        value={formData.mother_phone}
-                        onChange={handleChange}
-                        name="mother_phone"
-                      />
-                    </InputGroup>
-                    <Form.Text className="text-muted">
-                      Enter the mother's contact number.
-                    </Form.Text>
-                  </Form.Group>
-                </Col>
-
-                {/* Current School */}
-                <Col md={4}>
-                  <Form.Group
-                    className="mb-3 custom-input"
-                    controlId="formCurrentSchool"
-                  >
-                    <Form.Label>Current School</Form.Label>
-                    <InputGroup>
-                      <InputGroup.Text>
-                        <i className="fas fa-school"></i>
-                      </InputGroup.Text>
-                      <Form.Control
-                        type="text"
-                        placeholder="Enter current school"
-                        value={formData.current_school}
-                        onChange={handleChange}
-                        name="current_school"
-                      />
-                    </InputGroup>
-                    <Form.Text className="text-muted">
-                      Enter the current school of the student.
-                    </Form.Text>
-                  </Form.Group>
-                </Col>
-              </Row>
-            </>
-          )}
-
           <div style={{ display: "flex", justifyContent: "end" }}>
             <button className="btn btn-primary" type="submit">
               Submit
@@ -820,4 +759,4 @@ const CreateWalkinEnquiry = ({ show, handleClose, setRefresh }: Props) => {
   );
 };
 
-export { CreateWalkinEnquiry };
+export { CreateWalkinAdmission };

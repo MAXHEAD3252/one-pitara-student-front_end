@@ -1,6 +1,7 @@
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { Button, Col, Form, InputGroup, Modal, Row } from "react-bootstrap";
+import { toast } from "react-toastify"; // Assuming you're using react-toastify for toast notifications
 import { useAuth } from "../../../../app/modules/auth";
 import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
 
@@ -27,8 +28,6 @@ interface DataItem {
 
 interface Class {
   class_id: number;
-  id: number;
-  name: string;
   class: string;
 }
 
@@ -41,6 +40,7 @@ interface ClassData {
   id: number;
   className: string;
 }
+
 interface SessionData {
   id: number;
   session: number;
@@ -50,6 +50,7 @@ interface Session {
   id: number;
   session: number;
 }
+
 const modalsRoot = document.getElementById("root-modals") || document.body;
 
 const CreateEditFeeGroup = ({
@@ -77,23 +78,12 @@ const CreateEditFeeGroup = ({
     id: class_id || 0,
     className: "",
   });
-  const [selectedSession, setSelectedSession] = useState<SessionData>({
-    id: session || 0,
-    session: session || 0,
-  });
-  const [selectedSections, setSelectedSections] = useState<Section[]>([]);
-  const [isAllSectionsSelected, setIsAllSectionsSelected] = useState(false);
+
   const [getSession, setSession] = useState<Session[]>([]);
+  const [changedFields, setChangedFields] = useState<Record<string, any>>({});
 
   const { currentUser } = useAuth();
   const schoolId = (currentUser as CurrentUser)?.school_id;
-
-  // console.log(fee_group_id);
-  // console.log(fee_group_session_id);
-  // console.log(fee_group_name);
-  // console.log(session);
-  // console.log(class_id);
-  // console.log(section_id);
 
   useEffect(() => {
     setFormData({
@@ -104,30 +94,7 @@ const CreateEditFeeGroup = ({
       fee_group_session_id: fee_group_session_id || 0,
     });
     setSelectedClass({ id: class_id || 0, className: "" });
-    setSelectedSession({ id: session || 0, session: session || 0 });
   }, [fee_group_name, session, class_id, section_id, fee_group_session_id]);
-
-  useEffect(() => {
-    if (class_id && getClass.length > 0) {
-      const selected = getClass.find((item) => item.class_id === class_id);
-      if (selected) {
-        setSelectedClass({ id: selected.class_id, className: selected.class });
-        setFormData((prevFormData) => ({
-          ...prevFormData,
-          class_id: selected.class_id,
-        }));
-      }
-    }
-  }, [class_id, getClass]);
-
-  useEffect(() => {
-    if (section_id && getSection.length > 0) {
-      const selected = getSection.filter((section) =>
-        section_id.includes(section.id)
-      );
-      setSelectedSections(selected);
-    }
-  }, [section_id, getSection]);
 
   useEffect(() => {
     const fetchClasses = async () => {
@@ -139,7 +106,8 @@ const CreateEditFeeGroup = ({
         const responseData = await response.json();
         setClass(responseData);
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.error("Error fetching classes:", error);
+        toast.error("Error fetching classes!");
       }
     };
 
@@ -156,7 +124,8 @@ const CreateEditFeeGroup = ({
         const responseData = await response.json();
         setSession(responseData);
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.error("Error fetching sessions:", error);
+        toast.error("Error fetching sessions!");
       }
     };
 
@@ -167,6 +136,8 @@ const CreateEditFeeGroup = ({
     const fetchSections = async () => {
       try {
         const class_id = selectedClass.id;
+        if (!class_id) return;
+
         const response = await fetch(
           `${DOMAIN}/api/school/get-classwise-section/${class_id}/${schoolId}`
         );
@@ -175,62 +146,42 @@ const CreateEditFeeGroup = ({
         setSection(data);
       } catch (error) {
         console.error("Error fetching sections:", error);
+        toast.error("Error fetching sections!");
       }
     };
 
     if (selectedClass.id) fetchSections();
   }, [selectedClass.id, schoolId]);
 
-  const handleClassSelected = ({ id, className }: ClassData) => {
-    setSelectedClass({ id, className });
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      class_id: id,
-    }));
-  };
-
-  const handleSessionSelected = ({ id, session }: SessionData) => {
-    setSelectedSession({ id, session });
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      session_id: id,
-    }));
-  };
-
-  const handleSelectAllSections = () => {
-    if (isAllSectionsSelected) {
-      setSelectedSections([]); // Deselect all sections
-    } else {
-      setSelectedSections(getSection); // Select all sections
-    }
-    setIsAllSectionsSelected(!isAllSectionsSelected);
-  };
-
-  const handleSectionSelected = (section) => {
-    if (isSelectedSection(section)) {
-      setSelectedSections(selectedSections.filter((s) => s.id !== section.id));
-    } else {
-      setSelectedSections([...selectedSections, section]);
-    }
-  };
-
-  const isSelectedSection = (section) => {
-    return selectedSections.some((s) => s.id === section.id);
-  };
-
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
+
+    setFormData((prevFormData) => ({
+      ...prevFormData,
       [name]: value,
     }));
+
+    // Update changedFields state only if the field value is different from the initial value
+    if (formData[name] !== value) {
+      setChangedFields((prevChangedFields) => ({
+        ...prevChangedFields,
+        [name]: value,
+      }));
+    } else {
+      // If value is reset to the original, remove it from changedFields
+      const { [name]: removed, ...rest } = changedFields;
+      setChangedFields(rest);
+    }
   };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    if (Object.keys(changedFields).length === 0) {
+      toast.info("No changes detected.");
+      return;
+    }
 
     try {
-      console.log(formData)
       const response = await fetch(
         `${DOMAIN}/api/school/edit-feegroup/${fee_group_id}/${schoolId}`,
         {
@@ -238,21 +189,25 @@ const CreateEditFeeGroup = ({
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({
-            ...formData,
-            section_id: selectedSections.map((s) => s.id).join(","),
-          }),
+          body: JSON.stringify(changedFields),
         }
       );
       if (!response.ok)
         throw new Error(`HTTP error! status: ${response.status}`);
+
       const data = await response.json();
       setReferesh(true);
       handleClose();
+      toast.success("Fee group updated successfully!");
       console.log("Response:", data);
     } catch (error) {
       console.error("Error:", error);
+      toast.error("Failed to update fee group!");
     }
+  };
+
+  const handleModalClose = () => {
+    handleClose();
   };
 
   return createPortal(
@@ -262,7 +217,7 @@ const CreateEditFeeGroup = ({
       aria-hidden="true"
       dialogClassName="modal-dialog modal-dialog-centered mw-800px"
       show={show}
-      onHide={handleClose}
+      onHide={handleModalClose}
       backdrop={true}
     >
       <div
@@ -275,7 +230,7 @@ const CreateEditFeeGroup = ({
         <h2>Edit Fee Group</h2>
         <div
           className="btn btn-sm btn-icon btn-active-color-primary"
-          onClick={handleClose}
+          onClick={handleModalClose}
         >
           <i className="fas fa-times"></i>
         </div>
@@ -288,7 +243,7 @@ const CreateEditFeeGroup = ({
           style={{ padding: "20px", marginTop: "10px" }}
         >
           <Row style={{ width: "100%" }}>
-            <Col md={12} style={{ marginBottom: "23px" }}>
+            <Col md={6} style={{ marginBottom: "23px" }}>
               <Form.Group controlId="formName">
                 <Form.Label
                   style={{
@@ -305,12 +260,11 @@ const CreateEditFeeGroup = ({
                     placeholder="Enter Name"
                     name="name"
                     value={formData.name}
-                    onChange={handleInputChange}
+                    onChange={handleChange}
                     required
                     style={{
                       height: "46px",
                       paddingLeft: "10px",
-                      backgroundColor: "transparent",
                       border: "1px solid #ECEDF1",
                       borderRadius: "8px",
                     }}
@@ -320,203 +274,63 @@ const CreateEditFeeGroup = ({
             </Col>
 
             {/* Select Class Dropdown */}
-            <Col md={12}>
-              <Form.Group controlId="formSelectClass">
-                <Form.Label>Select Class</Form.Label>
-                <div style={{ marginBottom: "23px", width: "100%" }}>
-                  <div className="dropdown" id="selectClass">
-                    <div
-                      className="btn btn-secondary dropdown-toggle"
-                      style={{
-                        width: "100%",
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        backgroundColor: "transparent",
-                        border: "1px solid #ECEDF1",
-                        borderRadius: "8px",
-                      }}
-                      data-bs-toggle="dropdown"
-                      aria-expanded="false"
-                    >
-                      {selectedClass.className
-                        ? selectedClass.className
-                        : "Select Class"}
-                    </div>
-                    <ul
-                      className="dropdown-menu"
-                      style={{
-                        width: "100%",
-                        maxHeight: "150px",
-                        overflowY: "scroll",
-                      }}
-                    >
-                      {getClass.map((item) => (
-                        <li key={item.class_id}>
-                          <div
-                            className="dropdown-item"
-                            onClick={(e) => {
-                              e.preventDefault();
-                              handleClassSelected({
-                                id: item.class_id,
-                                className: item.class,
-                              });
-                            }}
-                          >
-                            {item.class}
-                          </div>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-              </Form.Group>
-            </Col>
-
-            {/* Select Section Dropdown */}
-            <Col md={12} style={{ marginBottom: "23px" }}>
-              <Form.Group controlId="formSelectSection">
-                <Form.Label>Select Section</Form.Label>
-                <div className="dropdown" id="selectSection">
-                  <button
-                    className="btn btn-secondary dropdown-toggle"
-                    style={{
-                      width: "100%",
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      backgroundColor: "transparent",
-                      border: "1px solid #ECEDF1",
-                      borderRadius: "8px",
-                    }}
-                    data-bs-toggle="dropdown"
-                    aria-expanded="false"
-                  >
-                    {selectedSections.length
-                      ? selectedSections
-                          .map((section) => section.section)
-                          .join(", ")
-                      : "Select Section"}
-                  </button>
-                  <ul
-                    className="dropdown-menu"
-                    style={{
-                      width: "100%",
-                      maxHeight: "150px",
-                      overflowY: "scroll",
-                    }}
-                  >
-                    <li>
-                      <button
-                        className="dropdown-item"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          handleSelectAllSections();
-                        }}
-                      >
-                        <input
-                          type="checkbox"
-                          checked={isAllSectionsSelected}
-                          readOnly
-                          style={{ marginRight: "8px" }}
-                        />
-                        Select All
-                      </button>
-                    </li>
-                    {getSection.map((section) => (
-                      <li key={section.id}>
-                        <button
-                          className="dropdown-item"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            handleSectionSelected(section);
-                          }}
-                        >
-                          <input
-                            type="checkbox"
-                            checked={isSelectedSection(section)}
-                            readOnly
-                            style={{ marginRight: "8px" }}
-                          />
-                          {section.section}
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </Form.Group>
-            </Col>
-
             <Col md={6}>
-              <div className="mb-2">
-                <span>Select Session</span>
-              </div>
-              <div style={{ marginBottom: "23px", width: "100%" }}>
-                <div className="dropdown" id="selectSession">
-                  <div
-                    className="btn btn-secondary dropdown-toggle"
-                    style={{
-                      width: "100%",
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      backgroundColor: "transparent",
-                      border: "1px solid #ECEDF1",
-                      borderRadius: "8px",
-                    }}
-                    data-bs-toggle="dropdown"
-                    aria-expanded="false"
-                  >
-                    {selectedSession.session
-                      ? selectedSession.session
-                      : "Select Session"}
-                  </div>
-                  <ul
-                    className="dropdown-menu"
-                    style={{
-                      width: "100%",
-                      maxHeight: "150px",
-                      overflowY: "scroll",
-                    }}
-                  >
-                    {getSession.map((item) => (
-                      <li key={item.id}>
-                        <div
-                          className="dropdown-item"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            handleSessionSelected({
-                              id: item.id,
-                              session: item.session,
-                            });
-                          }}
-                        >
-                          {item.session}
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
+              <Form.Group controlId="class">
+                <Form.Label>Select Class</Form.Label>
+                <Form.Select
+                  name="class_id"
+                  value={formData.class_id}
+                  onChange={handleChange}
+                >
+                  <option value="">Select Class</option>
+                  {getClass.map((item) => (
+                    <option key={item.class_id} value={item.class_id}>
+                      {item.class}
+                    </option>
+                  ))}
+                </Form.Select>
+              </Form.Group>
             </Col>
-
-            {/* Submit Button */}
-            <Col md={12}>
-              <Button
-                type="submit"
-                variant="primary"
-                className="w-100"
-                style={{
-                  borderRadius: "8px",
-                  padding: "10px",
-                  fontSize: "16px",
-                  fontWeight: "600",
-                }}
-              >
-                Submit
-              </Button>
+            <Col md={6}>
+              <Form.Group controlId="section">
+                <Form.Label>Select Section</Form.Label>
+                <Form.Select
+                  name="section_id"
+                  value={formData.section_id}
+                  onChange={handleChange}
+                >
+                  <option value="">Select Section</option>
+                  {getSection.map((item) => (
+                    <option key={item.id} value={item.id}>
+                      {item.section}
+                    </option>
+                  ))}
+                </Form.Select>
+              </Form.Group>
+            </Col>
+            <Col md={6}>
+              <Form.Group controlId="session">
+                <Form.Label>Select Session</Form.Label>
+                <Form.Select
+                  name="session_id"
+                  value={formData.session_id}
+                  onChange={handleChange}
+                >
+                  <option value="">Select Session</option>
+                  {getSession.map((item) => (
+                    <option key={item.id} value={item.id}>
+                      {item.session}
+                    </option>
+                  ))}
+                </Form.Select>
+              </Form.Group>
             </Col>
           </Row>
+          <div className="d-flex justify-content-end mt-8">
+            <Button type="submit" className="btn btn-primary">
+              Update
+            </Button>
+          </div>
         </Form>
       </div>
     </Modal>,

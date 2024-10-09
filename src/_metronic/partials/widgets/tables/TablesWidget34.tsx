@@ -1,12 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from "react";
-import { Tooltip as ReactTooltip } from "react-tooltip";
+// import { Tooltip as ReactTooltip } from "react-tooltip";
 import "../../../../app/pages/StaffPages/FinancialManagement/style.css";
-import { CreateWalkinEnquiry } from "../../modals/create-app-stepper/CreateWalkinEnquiry";
+import { CreateGeneralEnquiry } from "../../modals/create-app-stepper/CreateGeneralEnquiry";
 import { CreateEnquiryAction } from "../../modals/create-app-stepper/CreateEnquiryAction";
-import { CreateEditEnquiry } from "../../modals/create-app-stepper/CreateEditEnquiry";
+import {  CreateEditGeneral } from "../../modals/create-app-stepper/CreateEditGeneral";
 import { useAuth } from "../../../../app/modules/auth/core/Auth";
 import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
+import { CreateWalkinAdmission } from "../../modals/create-app-stepper/CreateWalkinAdmission";
+import { CreateEditAdmission } from "../../modals/create-app-stepper/CreateEditAdmission";
 
 interface DataItem {
   status: string;
@@ -27,28 +29,35 @@ interface FilterData {
   enquiry_type: string;
   // Add other properties as needed
 }
-
+  
 const TablesWidget34: React.FC = () => {
   const [data, setData] = useState<DataItem[]>([]);
 
   const [filteredData, setFilteredData] = useState<FilterData[]>([]);
-  console.log(filteredData);
 
   const [searchQuery, setSearchQuery] = useState("");
   const { currentUser } = useAuth();
   const schoolId = currentUser?.school_id;
 
-  const [showModal, setShowModal] = useState(false);
+  const [showGeneralModal, setShowGeneralModal] = useState(false);
+  const [showAdmissionModal, setShowAdmissionModal] = useState(false);
   const [showActionModal, setShowActionModal] = useState(false);
-  const [showEditModal, setShowEditModal] = useState(false);
+  const [showGeneralEditModal, setShowGeneralEditModal] = useState(false);
+  const [showAdmissionEditModal, setShowAdmissionEditModal] = useState(false);
   const [enqId, setEnqId] = useState("");
 
   const [referesh, setRefresh] = useState(false);
-  const handleModal = () => {
-    setShowModal(true);
+  const handleGeneralModal = () => {
+    setShowGeneralModal(true);
   };
-  const handleModalClose = () => {
-    setShowModal(false);
+  const handleGeneralModalClose = () => {
+    setShowGeneralModal(false);
+  };
+  const handleAdmissionModal = () => {
+    setShowAdmissionModal(true);
+  };
+  const handleAdmissionModalClose = () => {
+    setShowAdmissionModal(false);
   };
 
   const handleActionModal = (value: string) => {
@@ -56,16 +65,27 @@ const TablesWidget34: React.FC = () => {
     setShowActionModal(true);
   };
   const handleActionModalClose = () => {
+    setEnqId('');
     setShowActionModal(false);
   };
 
-  const handleModalEdit = (value: string) => {
+  const handleModalGeneralEdit = (value: string) => {
     setEnqId(value);
-    setShowEditModal(true);
+    setShowGeneralEditModal(true);
   };
 
-  const handleModalEditClose = () => {
-    setShowEditModal(false);
+  const handleModalGeneralEditClose = () => {
+    setEnqId('');
+    setShowGeneralEditModal(false);
+  };
+  const handleModalAdmissionEdit = (value: string) => {
+    setEnqId(value);
+    setShowAdmissionEditModal(true);
+  };
+
+  const handleModalAdmissionEditClose = () => {
+    setEnqId('');
+    setShowAdmissionEditModal(false);
   };
 
   useEffect(() => {
@@ -210,7 +230,7 @@ const TablesWidget34: React.FC = () => {
             />
           </div>
           <div
-            onClick={handleModal}
+            onClick={handleGeneralModal}
             style={{
               display: "flex",
               alignItems: "center",
@@ -236,7 +256,73 @@ const TablesWidget34: React.FC = () => {
                 fontFamily: "Manrope",
               }}
             >
-              WalkIn Enquiry
+              WalkIn General
+            </span>
+            <svg
+              width="17"
+              height="16"
+              viewBox="0 0 17 16"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M7.16672 9.3333C8.27129 9.3333 9.16672 10.2287 9.16672 11.3333C9.16672 12.4379 8.27129 13.3333 7.16672 13.3333C6.06215 13.3333 5.16672 12.4379 5.16672 11.3333C5.16672 10.2287 6.06215 9.3333 7.16672 9.3333Z"
+                stroke="white"
+              />
+              <path
+                d="M10.5 2.66667C9.39546 2.66667 8.50003 3.5621 8.50003 4.66667C8.50003 5.77124 9.39546 6.66667 10.5 6.66667C11.6046 6.66667 12.5 5.77124 12.5 4.66667C12.5 3.5621 11.6046 2.66667 10.5 2.66667Z"
+                stroke="white"
+              />
+              <path
+                d="M10.8334 11.3057L15.5 11.3057"
+                stroke="white"
+                stroke-linecap="round"
+              />
+              <path
+                d="M6.83337 4.63898L2.16671 4.63898"
+                stroke="white"
+                stroke-linecap="round"
+              />
+              <path
+                d="M2.16672 11.3057L3.50005 11.3057"
+                stroke="white"
+                stroke-linecap="round"
+              />
+              <path
+                d="M15.5 4.63898L14.1667 4.63898"
+                stroke="white"
+                stroke-linecap="round"
+              />
+            </svg>
+          </div>
+          <div
+            onClick={handleAdmissionModal}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              padding: "8px 12px",
+              backgroundColor: "#1C335C",
+              borderRadius: "8px",
+              cursor: "pointer",
+              transition: "background-color 0.3s",
+            }}
+            onMouseEnter={(e) =>
+              (e.currentTarget.style.backgroundColor = "#16294D")
+            }
+            onMouseLeave={(e) =>
+              (e.currentTarget.style.backgroundColor = "#1C335C")
+            }
+          >
+            <span
+              style={{
+                marginRight: "8px",
+                color: "white",
+                fontSize: "14px",
+                fontWeight: "700",
+                fontFamily: "Manrope",
+              }}
+            >
+              WalkIn Admission
             </span>
             <svg
               width="17"
@@ -312,7 +398,7 @@ const TablesWidget34: React.FC = () => {
                   textAlign: "left",
                 }}
               >
-                Date
+                Enquiry Id
               </th>
               <th
                 style={{
@@ -320,7 +406,7 @@ const TablesWidget34: React.FC = () => {
                   textAlign: "left",
                 }}
               >
-                Class
+                Full Name
               </th>
               <th
                 style={{
@@ -328,15 +414,7 @@ const TablesWidget34: React.FC = () => {
                   textAlign: "left",
                 }}
               >
-                Student Name
-              </th>
-              <th
-                style={{
-                  padding: "12px 20px",
-                  textAlign: "left",
-                }}
-              >
-                Source
+                Enquiry Type
               </th>
               <th
                 style={{
@@ -352,16 +430,39 @@ const TablesWidget34: React.FC = () => {
                   textAlign: "left",
                 }}
               >
-                FollowUp-Date
+                Phone No
               </th>
-
+                <th
+                  style={{
+                    padding: "12px 20px",
+                    textAlign: "left",
+                  }}
+                >
+                  Student Name
+                </th>
               <th
                 style={{
                   padding: "12px 20px",
                   textAlign: "left",
                 }}
               >
-                Enquiry Type
+                Father Name
+              </th>
+              <th
+                style={{
+                  padding: "12px 20px",
+                  textAlign: "left",
+                }}
+              >
+                Father Phone
+              </th>
+              <th
+                style={{
+                  padding: "12px 20px",
+                  textAlign: "left",
+                }}
+              >
+                FollowUp-Date
               </th>
               <th
                 style={{
@@ -401,43 +502,14 @@ const TablesWidget34: React.FC = () => {
                     padding: "12px 20px",
                   }}
                 >
-                  {formatDate(item.date)}
+                  {item.enquiry_id}
                 </td>
                 <td
                   style={{
                     padding: "12px 20px",
                   }}
                 >
-                  {item.class}
-                </td>
-                <td
-                  style={{
-                    padding: "12px 20px",
-                  }}
-                >
-                  {item.student_name}
-                </td>
-                <td
-                  style={{
-                    padding: "12px 20px",
-                  }}
-                >
-                  {item.source}
-                </td>
-                <td
-                  style={{
-                    padding: "12px 20px",
-                  }}
-                >
-                  {item.student_email}
-                </td>
-
-                <td
-                  style={{
-                    padding: "12px 20px",
-                  }}
-                >
-                  {formatDate(item.follow_up_date)}
+                  {item.full_name ? item.full_name : "-"}
                 </td>
                 <td
                   style={{
@@ -445,7 +517,7 @@ const TablesWidget34: React.FC = () => {
                     textAlign: "start",
                   }}
                 >
-                  {item.enquiry_type === "admission" ? (
+                  {item.enquiry_type === "Admission" ? (
                     <span
                       style={{
                         display: "inline-block",
@@ -478,6 +550,49 @@ const TablesWidget34: React.FC = () => {
                 <td
                   style={{
                     padding: "12px 20px",
+                  }}
+                >
+                  {item.email ? item.email : item.student_email}
+                </td>
+                  <td
+                    style={{
+                      padding: "12px 20px",
+                    }}
+                  >
+                    {item.contact_number}
+                  </td>
+                <td
+                  style={{
+                    padding: "12px 20px",
+                  }}
+                >
+                  {item.student_name ? item.student_name : "-" }
+                </td>
+                <td
+                  style={{
+                    padding: "12px 20px",
+                  }}
+                >
+                  {item.father_name ? item.father_name : '-'}
+                </td>
+                <td
+                  style={{
+                    padding: "12px 20px",
+                  }}
+                >
+                  {item.father_phone ? item.father_phone : '-'}
+                </td>
+
+                <td
+                  style={{
+                    padding: "12px 20px",
+                  }}
+                >
+                  {formatDate(item.follow_up_date)}
+                </td>
+                <td
+                  style={{
+                    padding: "12px 20px",
                     textAlign: "start",
                   }}
                 >
@@ -487,19 +602,19 @@ const TablesWidget34: React.FC = () => {
                       padding: "5px",
                       borderRadius: "5px",
                       backgroundColor:
-                        item.status === "active"
+                        item.status === "New"
                           ? "#E7FFEA"
-                          : item.status === "lost"
+                          : item.status === "Deferred"
                           ? "#FFF8B6"
-                          : item.status === "won"
+                          : item.status === "Converted"
                           ? "#E3F2FD"
                           : "#FFEAEA", // for dead
                       color:
-                        item.status === "active"
+                        item.status === "New"
                           ? "#4BCD60"
-                          : item.status === "lost"
+                          : item.status === "Deferred"
                           ? "#D4840C"
-                          : item.status === "won"
+                          : item.status === "Converted"
                           ? "#1976D2"
                           : "#D32F2F", // for dead
                       fontSize: "12px",
@@ -513,13 +628,17 @@ const TablesWidget34: React.FC = () => {
                   style={{
                     display: "flex",
                     gap: "10px", // Adds space between the buttons
-                    justifyContent: "center", // Aligns buttons horizontally in the center
+                    justifyContent: "right", // Aligns buttons horizontally in the center
                     alignItems: "center", // Vertically centers the buttons
                     padding: "12px 20px",
                   }}
                 >
                   <div
-                    onClick={() => handleModalEdit(item.enquiry_id)}
+                    onClick={() =>
+                      item.enquiry_type === "Admission"
+                        ? handleModalAdmissionEdit(item.enquiry_id)
+                        : handleModalGeneralEdit(item.enquiry_id)
+                    }
                     style={{
                       display: "flex",
                       alignItems: "center",
@@ -622,9 +741,14 @@ const TablesWidget34: React.FC = () => {
               </tr>
             ))}
           </tbody>
-          <CreateWalkinEnquiry
-            show={showModal}
-            handleClose={handleModalClose}
+          <CreateGeneralEnquiry
+            show={showGeneralModal}
+            handleClose={handleGeneralModalClose}
+            setRefresh={setRefresh}
+          />
+          <CreateWalkinAdmission
+            show={showAdmissionModal}
+            handleClose={handleAdmissionModalClose}
             setRefresh={setRefresh}
           />
           <CreateEnquiryAction
@@ -633,9 +757,15 @@ const TablesWidget34: React.FC = () => {
             enqId={enqId}
             setRefresh={setRefresh}
           />
-          <CreateEditEnquiry
-            show={showEditModal}
-            handleClose={handleModalEditClose}
+          <CreateEditGeneral
+            show={showGeneralEditModal}
+            handleClose={handleModalGeneralEditClose}
+            enqId={enqId}
+            setRefresh={setRefresh}
+          />
+          <CreateEditAdmission
+            show={showAdmissionEditModal}
+            handleClose={handleModalAdmissionEditClose}
             enqId={enqId}
             setRefresh={setRefresh}
           />

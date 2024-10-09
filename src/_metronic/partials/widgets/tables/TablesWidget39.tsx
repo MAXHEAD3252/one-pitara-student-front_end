@@ -1,9 +1,9 @@
 import React, { ChangeEvent,useEffect, useState } from "react";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import "../../../../app/pages/StaffPages/FinancialManagement/style.css";
-import { CreateWalkinEnquiry } from "../../modals/create-app-stepper/CreateWalkinEnquiry";
+import { CreateWalkinEnquiry } from "../../modals/create-app-stepper/CreateGeneralEnquiry";
 import { CreateEnquiryAction } from "../../modals/create-app-stepper/CreateEnquiryAction";
-import { CreateEditEnquiry } from "../../modals/create-app-stepper/CreateEditEnquiry";
+import { CreateEditEnquiry } from "../../modals/create-app-stepper/CreateEditGeneral";
 import { useAuth } from "../../../../app/modules/auth/core/Auth";
 import { UploadsFilter } from "../../modals/create-app-stepper/UploadsFilter";
 import { UploadAssignmentModal } from "../../modals/create-app-stepper/UploadAssignmentModal";

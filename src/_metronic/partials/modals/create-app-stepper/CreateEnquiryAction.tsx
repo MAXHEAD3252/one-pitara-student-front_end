@@ -15,110 +15,152 @@ type Props = {
 
 const modalsRoot = document.getElementById("root-modals") || document.body;
 
-const CreateEnquiryAction = ({ show, handleClose, enqId, setRefresh }: Props) => {
+const CreateEnquiryAction = ({
+  show,
+  handleClose,
+  enqId,
+  setRefresh,
+}: Props) => {
+  console.log("Enquiry ID:", enqId); // Added for debugging
+
   const { currentUser } = useAuth();
   const schoolId = currentUser?.school_id;
-  
-  const [enqdata, setEnqdata] = useState({
-    follow_up_date: "",
-    status: "",
-    name: "",
-    father_name: "",
-    father_phone: "",
-  });
 
-  const [formData, setFormData] = useState({
+  const [enqdata, setEnqdata] = useState({
+    student_name: "",
+    father_phone: "",
+    father_name: "",
+    contact_number: "",
+    email: "",
+    enquiry_id: "",
+    enquiry_type: "",
     status: "",
     is_move_to_adm: false,
-    school_id: schoolId,
-    follow_up_date: "",
+    full_name: "",
+    id: "",
   });
 
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData((prevState) => ({
-      ...prevState,
-      [name]: type === "checkbox" ? checked : value,
-    }));
-    setEnqdata((prevState) => ({
-      ...prevState,
-      [name]: type === "checkbox" ? checked : value,
-    }));
-  };
-
-  const formatDateToYYYYMMDD = (dateString: string | null | undefined): string => {
-    if (!dateString) return "";
-
-    const date = new Date(dateString);
-    if (isNaN(date.getTime())) return ""; // Use getTime() to check if date is valid
-
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
-    const year = date.getFullYear();
-
-    return `${year}-${month}-${day}`;
-  };
+  const [latestHistory, setLatestHistory] = useState<any>(null); // To store the most recent history entry
 
   useEffect(() => {
-    const fetchEnquiryById = async () => {
-      if (!schoolId || !enqId) return;
+    if (!schoolId || !enqId) {
+      console.log("schoolId or enqId missing");
+      return;
+    }
 
+    // Function to fetch enquiry details
+    const fetchEnquiryDetails = async () => {
       try {
+        console.log("Fetching Enquiry Details...");
         const response = await fetch(
-          `${DOMAIN}/api/school/getEnquiryById/${schoolId}/${enqId}`
+          `${DOMAIN}/api/school/get-actionEnquiryById/${schoolId}/${enqId}`
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
-
-        const follow_up_date = data?.[0]?.follow_up_date
-          ? formatDateToYYYYMMDD(data[0].follow_up_date)
-          : "";
-
+        console.log("Enquiry Details Fetched:", data); // Added for debugging
         setEnqdata({
-          name: data[0]?.student_name || "",
+          student_name: data[0]?.student_name || "",
+          id: data[0]?.id || "",
+          full_name: data[0]?.full_name || "",
           father_phone: data[0]?.father_phone || "",
           father_name: data[0]?.father_name || "",
-          follow_up_date: follow_up_date || "",
-          status: data[0]?.status || "",
+          contact_number: data[0]?.contact_number || "",
+          email: data[0]?.email || "",
+          enquiry_id: data[0]?.enquiry_id || "",
+          enquiry_type: data[0]?.enquiry_type || "",
+          status: data[0]?.status || "Pending",
+          is_move_to_adm: data[0]?.is_move_to_adm === "1",
         });
       } catch (error) {
-        console.error("Error fetching Enquiry:", error);
+        console.error("Error fetching Enquiry Details:", error);
       }
     };
-    fetchEnquiryById();
-  }, [schoolId, enqId]);
+
+    // Function to fetch the latest enquiry history
+    const fetchLatestHistory = async () => {
+      try {
+        console.log("Fetching Latest History...");
+        const historyResponse = await fetch(
+          `${DOMAIN}/api/school/get-enquiry-history/${schoolId}/${enqId}`
+        );
+        if (!historyResponse.ok) {
+          throw new Error(`HTTP error! status: ${historyResponse.status}`);
+        }
+        const historyData = await historyResponse.json();
+
+        setLatestHistory(historyData); // Only take the latest entry
+      } catch (error) {
+        console.error("Error fetching Enquiry History:", error);
+      }
+    };
+
+    // Call both functions
+    fetchEnquiryDetails();
+    fetchLatestHistory();
+  }, [enqId, schoolId]);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setEnqdata((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
-      const response = await fetch(
-        `${DOMAIN}/api/school/update-followup/${schoolId}/${enqId}`,
+      // Create a new follow-up entry in the database
+      const addEnquiryResponse = await fetch(
+        `${DOMAIN}/api/school/addEnquiryAction/${schoolId}/${enqId}`,
         {
-          method: "PUT",
+          method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            formData,
+            follow_up_date: enqdata.follow_up_date,
+            status: enqdata.status,
+            notes: enqdata.notes,
           }),
         }
       );
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+      if (!addEnquiryResponse.ok) {
+        throw new Error(
+          `Error adding enquiry action: ${addEnquiryResponse.status}`
+        );
       }
 
-      const data = await response.json();
-      console.log("Follow-up updated successfully:", data);
-      toast.success("follow-up updated successfully!");
-      handleClose();
+      toast.success("New enquiry action added successfully!");
       setRefresh(true);
+      handleCloseModal();
     } catch (error) {
-      console.error("Error updating follow-up:", error);
-      toast.error("Error updating follow-up. Please try again.");
+      console.error("Error adding new enquiry action:", error);
+      toast.error("Error adding new enquiry action. Please try again.");
     }
+  };
+
+  const handleCloseModal = () => {
+    setEnqdata({
+      student_name: "",
+      father_phone: "",
+      father_name: "",
+      contact_number: "",
+      email: "",
+      enquiry_id: "",
+      enquiry_type: "",
+      status: "",
+      is_move_to_adm: false,
+      full_name: "",
+      id: "",
+    });
+
+    setLatestHistory(null);
+    handleClose();
   };
 
   return createPortal(
@@ -129,100 +171,181 @@ const CreateEnquiryAction = ({ show, handleClose, enqId, setRefresh }: Props) =>
       aria-hidden="true"
       dialogClassName="modal-dialog modal-dialog-centered mw-1000px"
       show={show}
-      onHide={handleClose}
+      onHide={handleCloseModal}
     >
       <div
         className="modal-header"
         style={{
           backgroundColor: "#F2F6FF",
           borderBottom: "1px solid lightgray",
-          fontFamily:'Manrope'
+          fontFamily: "Manrope",
         }}
       >
-        <h2>WalkIn Enquiry</h2>
+        <h2>Walk-In Enquiry Action</h2>
         <div
           className="btn btn-sm btn-icon btn-active-color-primary"
-          onClick={handleClose}
+          onClick={handleCloseModal}
         >
           <i className="fas fa-times"></i>
         </div>
       </div>
       <div
         className="modal-body py-lg-10 px-lg-10"
-        style={{ backgroundColor: "#F2F6FF",fontFamily:'Manrope' }}
+        style={{ backgroundColor: "#F2F6FF", fontFamily: "Manrope" }}
       >
-          <Form onSubmit={handleSubmit}>
-            {/* Enquiry Info */}
-            <Row className="mb-4">
-              <Col>
-                <strong>Name: </strong>{enqdata.name}
-              </Col>
-              <Col>
-                <strong>Father’s Name: </strong>{enqdata.father_name}
-              </Col>
-              <Col>
-                <strong>Father’s Contact: </strong>{enqdata.father_phone}
-              </Col>
-            </Row>
+        <Form onSubmit={handleSubmit}>
+          {/* Enquiry Info */}
+          <Row className="mb-10">
+            <Col>
+              {enqdata.full_name ? (
+                <>
+                  <strong>Name: </strong>
+                  {enqdata.full_name}
+                </>
+              ) : (
+                <>
+                  <strong>Student Name: </strong>
+                  {enqdata.student_name}
+                </>
+              )}
+            </Col>
 
-            {/* Follow Up Date and Status */}
-            <Row className="mb-4">
-              <Col md={6}>
-                <Form.Group controlId="formFollowUpDate">
-                  <Form.Label>Follow Up Date</Form.Label>
-                  <InputGroup>
-                    <Form.Control
-                      type="date"
-                      name="follow_up_date"
-                      value={enqdata.follow_up_date}
-                      onChange={handleChange}
-                      required
-                    />
-                    <InputGroup.Text>
-                      <i className="fas fa-calendar"></i>
-                    </InputGroup.Text>
-                  </InputGroup>
-                </Form.Group>
-              </Col>
-              <Col md={6}>
-                <Form.Group controlId="formStatus">
-                  <Form.Label>Status</Form.Label>
-                  <Form.Select
-                    name="status"
-                    value={enqdata.status}
+            <Col>
+              {enqdata.father_name ? (
+                <>
+                  <strong>Father’s Name: </strong>
+                  {enqdata.father_name}
+                </>
+              ) : (
+                <>
+                  <strong>Email: </strong>
+                  {enqdata.email}
+                </>
+              )}
+            </Col>
+
+            <Col>
+              {enqdata.father_phone ? (
+                <>
+                  <strong>Father’s Contact: </strong>
+                  {enqdata.father_phone}
+                </>
+              ) : (
+                <>
+                  <strong>Contact Number: </strong>
+                  {enqdata.contact_number}
+                </>
+              )}
+            </Col>
+          </Row>
+          <Row className="mb-10">
+            <Col>
+              <h5>Latest Enquiry History</h5>
+              {latestHistory ? (
+                <table className="table table-striped table-bordered">
+                  <thead>
+                    <tr>
+                      <th scope="col">Last Follow Up Date</th>
+                      <th scope="col">Previous Status</th>
+                      <th scope="col">Previous Note</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>{new Date(latestHistory.follow_up_date).toLocaleString()}</td>
+                      <td>{latestHistory.status}</td>
+                      <td>{latestHistory.notes}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              ) : (
+                <p>No history available for this enquiry.</p>
+              )}
+            </Col>
+          </Row>
+          {/* Follow Up Date and Status */}
+          <Row className="mb-4">
+            <Col md={6}>
+              <Form.Group controlId="formFollowUpDate">
+                <Form.Label>Next Follow Up Date</Form.Label>
+                <InputGroup>
+                  <Form.Control
+                    type="date"
+                    name="follow_up_date"
+                    value={enqdata.follow_up_date}
                     onChange={handleChange}
                     required
-                  >
-                    <option value="active">Active</option>
-                    <option value="dead">Dead</option>
-                    <option value="lost">Lost</option>
-                    <option value="won">Won</option>
-                  </Form.Select>
-                </Form.Group>
-              </Col>
-            </Row>
+                  />
+                  <InputGroup.Text>
+                    <i className="fas fa-calendar"></i>
+                  </InputGroup.Text>
+                </InputGroup>
+              </Form.Group>
+            </Col>
+            <Col md={6}>
+              <Form.Group controlId="formStatus">
+                <Form.Label>Current Follow-Up Status</Form.Label>
+                <Form.Select
+                  name="status"
+                  value={enqdata.status}
+                  onChange={handleChange}
+                  required
+                >
+                  <option value="New">New</option>
+                  <option value="In Progress">In Progress</option>
+                  <option value="Closed">Closed</option>
+                  <option value="Deferred">Deferred</option>
+                  <option value="Converted">Converted</option>
+                </Form.Select>
+              </Form.Group>
+            </Col>
+          </Row>
 
-            {/* Move to Admission Toggle */}
-            <Form.Group controlId="formMoveToAdm" className="d-flex align-items-center mb-4">
-              <Form.Label className="me-2">Move to Admission</Form.Label>
-              <Form.Check
-                type="switch"
-                id="is_move_to_adm"
-                name="is_move_to_adm"
-                checked={formData.is_move_to_adm}
-                onChange={handleChange}
-                disabled={enqdata.status !== "won"}
-              />
-            </Form.Group>
+          {/* Move to Admission Toggle */}
+          <Form.Group
+            controlId="formMoveToAdm"
+            className="d-flex align-items-center mb-4"
+          >
+            <Form.Label className="me-2">Move to Admission ?</Form.Label>
+            <Form.Check
+              type="switch"
+              id="is_move_to_adm"
+              name="is_move_to_adm"
+              checked={enqdata.is_move_to_adm}
+              onChange={(e) =>
+                setEnqdata({ ...enqdata, is_move_to_adm: e.target.checked })
+              }
+            />
+          </Form.Group>
 
-            {/* Submit Button */}
-            <div className="d-flex justify-content-end">
-              <button type="submit" className="btn btn-primary">
-                Submit
-              </button>
-            </div>
-          </Form>
-        </div>
+          {/* Notes */}
+          <Row className="mb-4">
+            <Col>
+              <Form.Group controlId="formNotes">
+                <Form.Label>Latest Notes</Form.Label>
+                <Form.Control
+                  as="textarea"
+                  name="notes"
+                  rows={3}
+                  value={enqdata.notes}
+                  onChange={handleChange}
+                  required
+                />
+              </Form.Group>
+            </Col>
+          </Row>
+
+          {/* Latest History Section */}
+         
+
+          {/* Submit Button */}
+          <div className="d-flex justify-content-end">
+            <button type="submit" className="btn btn-primary">
+              Submit
+            </button>
+          </div>
+        </Form>
+      </div>
     </Modal>,
     modalsRoot
   );
