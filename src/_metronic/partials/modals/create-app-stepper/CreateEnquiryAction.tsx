@@ -35,7 +35,7 @@ const CreateEnquiryAction = ({
     enquiry_id: "",
     enquiry_type: "",
     status: "",
-    is_move_to_adm: false,
+    is_move_to_adm: 0,
     full_name: "",
     id: "",
   });
@@ -71,7 +71,7 @@ const CreateEnquiryAction = ({
           enquiry_id: data[0]?.enquiry_id || "",
           enquiry_type: data[0]?.enquiry_type || "",
           status: data[0]?.status || "Pending",
-          is_move_to_adm: data[0]?.is_move_to_adm === "1",
+          is_move_to_adm: data[0]?.is_move_to_adm,
         });
       } catch (error) {
         console.error("Error fetching Enquiry Details:", error);
@@ -108,6 +108,15 @@ const CreateEnquiryAction = ({
       [name]: value,
     }));
   };
+  const getFormattedCurrentDate = () => {
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+    const dd = String(today.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
+  };
+  
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -122,9 +131,10 @@ const CreateEnquiryAction = ({
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            follow_up_date: enqdata.follow_up_date,
+            follow_up_date: enqdata.follow_up_date || getFormattedCurrentDate() ,
             status: enqdata.status,
             notes: enqdata.notes,
+            is_move_to_adm: enqdata.is_move_to_adm
           }),
         }
       );
@@ -154,7 +164,7 @@ const CreateEnquiryAction = ({
       enquiry_id: "",
       enquiry_type: "",
       status: "",
-      is_move_to_adm: false,
+      is_move_to_adm: 0,
       full_name: "",
       id: "",
     });
@@ -274,7 +284,7 @@ const CreateEnquiryAction = ({
                     name="follow_up_date"
                     value={enqdata.follow_up_date}
                     onChange={handleChange}
-                    required
+                    disabled={latestHistory?.status === "Converted"}
                   />
                   <InputGroup.Text>
                     <i className="fas fa-calendar"></i>
@@ -290,18 +300,22 @@ const CreateEnquiryAction = ({
                   value={enqdata.status}
                   onChange={handleChange}
                   required
+                  disabled={latestHistory?.status === "Converted"}
                 >
                   <option value="New">New</option>
                   <option value="In Progress">In Progress</option>
                   <option value="Closed">Closed</option>
                   <option value="Deferred">Deferred</option>
+                  {enqdata.enquiry_type === 'Admission' && 
                   <option value="Converted">Converted</option>
+                  }
                 </Form.Select>
               </Form.Group>
             </Col>
           </Row>
 
           {/* Move to Admission Toggle */}
+          {enqdata.enquiry_type === 'Admission'  &&
           <Form.Group
             controlId="formMoveToAdm"
             className="d-flex align-items-center mb-4"
@@ -311,12 +325,15 @@ const CreateEnquiryAction = ({
               type="switch"
               id="is_move_to_adm"
               name="is_move_to_adm"
-              checked={enqdata.is_move_to_adm}
+              checked={enqdata.is_move_to_adm === 1}
               onChange={(e) =>
-                setEnqdata({ ...enqdata, is_move_to_adm: e.target.checked })
+                setEnqdata({ ...enqdata, is_move_to_adm: 1 })
               }
+              disabled={latestHistory?.status === "Converted"}
             />
           </Form.Group>
+          
+          }
 
           {/* Notes */}
           <Row className="mb-4">
@@ -329,7 +346,7 @@ const CreateEnquiryAction = ({
                   rows={3}
                   value={enqdata.notes}
                   onChange={handleChange}
-                  required
+                  disabled={latestHistory?.status === "Converted"}
                 />
               </Form.Group>
             </Col>

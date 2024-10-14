@@ -22,6 +22,7 @@ interface TablesWidgetProps {
 
 interface ClassData {
   class: string;
+  class_id:number;
   sections: string[];
 }
 
@@ -39,41 +40,38 @@ const TablesWidget48: React.FC<TablesWidgetProps> = () => {
   const [refresh, setRefresh] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
-  const [classId, setClassId] = useState("");
+  const [classId, setClassId] = useState(0);
   const [classname, setclassname] = useState("");
-  const [editsections, setEditSections] = useState([]);
+  // const [editsections, setEditSections] = useState([]);
 
   const handleModal = () => {
     setShowModal(true);
   };
-  const handleShowDeleteModal = (class_id: string) => {
+  const handleShowDeleteModal = (class_id: number) => {
     setClassId(class_id);
     setShowDeleteModal(true);
   };
 
   const handleModalClose = () => {
     setShowModal(false);
-    setClassId('')
+    setClassId(0)
   };
 
   const handleCloseDeleteModal = () => {
-    setClassId("");
+    setClassId(0);
     setShowDeleteModal(false);
   };
 
-  const handleModalEdit = (class_id: string, classname: string , sections : any) => {
+  const handleModalEdit = (class_id: number, classname: string) => {
     setClassId(class_id);
     setclassname(classname);
-    setEditSections(sections);
-    // setClassId('');
-    // setclassname('');
-    // setEditSections([]);
     setShowEditModal(true);
   };
 
   const handleModalEditClose = () => {
+    setClassId(0)
+    setclassname('');
     setShowEditModal(false);
-    setClassId('')
   };
 
   useEffect(() => {
@@ -88,14 +86,12 @@ const TablesWidget48: React.FC<TablesWidgetProps> = () => {
         }
 
         const responseData = await response.json();
-        console.log(responseData);
         setData(responseData);
-        setRefresh(false);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
-
+    setRefresh(false)
     fetchClasses();
   }, [school_id, refresh]);
 
@@ -154,6 +150,7 @@ const TablesWidget48: React.FC<TablesWidgetProps> = () => {
         >
           Manage Classes
         </span>
+        <div style={{ display: "flex", gap: "10px" }}>
         <div
           className="input-group flex-nowrap"
           style={{
@@ -254,6 +251,7 @@ const TablesWidget48: React.FC<TablesWidgetProps> = () => {
             <path d="M3 17.25V21h3.75l11-11.03-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
           </svg>
         </div>
+        </div>
       </div>
       <div
         style={{
@@ -295,7 +293,7 @@ const TablesWidget48: React.FC<TablesWidgetProps> = () => {
               <th
                 style={{
                   padding: "12px 20px",
-                  textAlign: "center",
+                  textAlign: "right",
                 }}
               >
                 Section(s)
@@ -304,7 +302,7 @@ const TablesWidget48: React.FC<TablesWidgetProps> = () => {
               <th
                 style={{
                   padding: "12px 20px",
-                  textAlign: "center",
+                  textAlign: "right",
                 }}
               >
                 Action
@@ -334,7 +332,7 @@ const TablesWidget48: React.FC<TablesWidgetProps> = () => {
                 </td>
                 <td
                   style={{
-                    textAlign: "center",
+                    textAlign: "right",
                     padding: "12px 20px",
                   }}
                 >
@@ -362,7 +360,7 @@ const TablesWidget48: React.FC<TablesWidgetProps> = () => {
                           style={{ fontWeight: "600", paddingLeft: "10px" }}
                         >
                           {" "}
-                          {section}
+                          {section.section_name}
                         </span>
                       </span>
                     ))}
@@ -373,13 +371,53 @@ const TablesWidget48: React.FC<TablesWidgetProps> = () => {
                     height: "100px",
                     display: "flex",
                     gap: "10px", // Adds space between the buttons
-                    justifyContent: "center", // Aligns buttons horizontally in the center
+                    justifyContent: "right", // Aligns buttons horizontally in the center
                     alignItems: "center", // Vertically centers the buttons
                     padding: "12px 20px",
                   }}
                 >
                   <div
-                    onClick={() => handleModalEdit(item.class_id,item.class,item.sections)}
+                    onClick={() => handleModalEdit(item.class_id,item.class)}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      padding: "8px 12px",
+                      backgroundColor: "#1C335C",
+                      borderRadius: "8px",
+                      cursor: "pointer",
+                      transition: "background-color 0.3s",
+                    }}
+                    onMouseEnter={(e) =>
+                      (e.currentTarget.style.backgroundColor = "#16294D")
+                    }
+                    onMouseLeave={(e) =>
+                      (e.currentTarget.style.backgroundColor = "#1C335C")
+                    }
+                  >
+                    <span
+                      style={{
+                        marginRight: "8px",
+                        color: "white",
+                        fontSize: "14px",
+                        fontWeight: "700",
+                        fontFamily: "Manrope",
+                      }}
+                    >
+                      Manage Sections
+                    </span>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      width="16px"
+                      height="16px"
+                      fill="#ffffff"
+                    >
+                      <path d="M0 0h24v24H0V0z" fill="none" />
+                      <path d="M3 17.25V21h3.75l11-11.03-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
+                    </svg>
+                  </div>
+                  <div
+                    onClick={() => handleModalEdit(item.class_id,item.class)}
                     style={{
                       display: "flex",
                       alignItems: "center",
@@ -486,7 +524,6 @@ const TablesWidget48: React.FC<TablesWidgetProps> = () => {
             setRefresh={setRefresh}
             classId={classId}
             classname={classname}
-            editsections={editsections}
           />
 
 

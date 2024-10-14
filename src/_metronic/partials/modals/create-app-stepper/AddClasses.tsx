@@ -11,19 +11,31 @@ type Props = {
 };
 
 interface SectionData {
-  id: string;
+  section_id: string;
   section: string;
+}
+
+interface FormData {
+  class_name: string;
+  section_ids: string[]; // Store selected section IDs directly in formData
 }
 
 const modalsRoot = document.getElementById("root-modals") || document.body;
 
 const AddClasses = ({ show, handleClose, setRefresh }: Props) => {
-  const [selectedSections, setSelectedSections] = useState<string[]>([]); // Updated to store multiple sections
-  const [sections, setSections] = useState<SectionData[]>([]);
-  const [className, setClassName] = useState(""); // State for class name
   const { currentUser } = useAuth();
   const school_id = currentUser?.school_id;
 
+  const initialFormData: FormData = {
+    class_name: "",
+    section_ids: [], // Initialize as an empty array
+  };
+  const [formData, setFormData] = useState<FormData>(initialFormData);
+  console.log(formData);
+  
+  const [sections, setSections] = useState<SectionData[]>([]);
+
+  // Fetch sections from API
   useEffect(() => {
     const fetchSections = async () => {
       try {
@@ -44,17 +56,41 @@ const AddClasses = ({ show, handleClose, setRefresh }: Props) => {
     }
   }, [school_id]);
 
-  const handleSectionSelect = (selectedId: any) => {
-    setSelectedSections((prevSections) =>
-      prevSections.includes(selectedId)
-        ? prevSections.filter((id) => id !== selectedId) // remove if already selected
-        : [...prevSections, selectedId] // add if not selected
-    );
+  // Handle form input and checkbox changes
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value, type } = e.target;
+
+    if (type === "checkbox") {
+      const sectionId = value; // Use the value of the checkbox (section ID)
+      setFormData((prevState) => {
+        // Toggle section ID selection
+        if (prevState.section_ids.includes(sectionId)) {
+          // If the section is already selected, remove it
+          return {
+            ...prevState,
+            section_ids: prevState.section_ids.filter((id) => id !== sectionId),
+          };
+        } else {
+          // If it's not selected, add it
+          return {
+            ...prevState,
+            section_ids: [...prevState.section_ids, sectionId],
+          };
+        }
+      });
+    } else {
+      // For regular text input (e.g., class name)
+      setFormData((prevState) => ({
+        ...prevState,
+        [name]: value,
+      }));
+    }
   };
 
+  // Handling form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!className || selectedSections.length === 0) {
+    if (!formData.class_name || formData.section_ids.length === 0) {
       alert("Please enter class name and select at least one section.");
       return;
     }
@@ -66,10 +102,7 @@ const AddClasses = ({ show, handleClose, setRefresh }: Props) => {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({
-            className,
-            selectedSections,
-          }),
+          body: JSON.stringify(formData),
         }
       );
 
@@ -86,6 +119,15 @@ const AddClasses = ({ show, handleClose, setRefresh }: Props) => {
     }
   };
 
+
+  const handleCloseModal = () =>{
+    setFormData(initialFormData);
+    handleClose();
+  }
+
+
+
+
   return createPortal(
     <Modal
       id="kt_modal_create_app"
@@ -94,7 +136,7 @@ const AddClasses = ({ show, handleClose, setRefresh }: Props) => {
       aria-hidden="true"
       dialogClassName="modal-dialog modal-dialog-centered mw-500px"
       show={show}
-      onHide={handleClose}
+      onHide={handleCloseModal}
     >
       <div
         className="modal-header"
@@ -106,7 +148,7 @@ const AddClasses = ({ show, handleClose, setRefresh }: Props) => {
         <h2>Add Classes</h2>
         <div
           className="btn btn-sm btn-icon btn-active-color-primary"
-          onClick={handleClose}
+          onClick={handleCloseModal}
         >
           <i className="fas fa-times"></i>
         </div>
@@ -114,7 +156,7 @@ const AddClasses = ({ show, handleClose, setRefresh }: Props) => {
       <div className="modal-body" style={{ backgroundColor: "#F2F6FF" }}>
         <Form onSubmit={handleSubmit}>
           <Row className="mb-3">
-            <Col md={6}>
+            <Col md={12}>
               <Form.Group controlId="class_name">
                 <Form.Label>Class Name</Form.Label>
                 <InputGroup>
@@ -124,8 +166,9 @@ const AddClasses = ({ show, handleClose, setRefresh }: Props) => {
                   <Form.Control
                     type="text"
                     placeholder="Enter Class Name"
-                    value={className}
-                    onChange={(e) => setClassName(e.target.value)}
+                    name="class_name"
+                    value={formData.class_name}
+                    onChange={handleChange}
                   />
                 </InputGroup>
               </Form.Group>
@@ -133,36 +176,39 @@ const AddClasses = ({ show, handleClose, setRefresh }: Props) => {
           </Row>
 
           <Row>
-          <Col md={6}>
-              <Form.Group className="mb-3 custom-input" controlId="formSource">
-                <Form.Label>Select Section</Form.Label>
-                <InputGroup>
-                  <InputGroup.Text>
-                    <i className="fas fa-globe"></i>
-                  </InputGroup.Text>
-                  <Form.Select
-                    value={selectedSections}
-                    onChange={(e) => handleSectionSelect(e.target.value)}
-                    name="section"
-                  >
-                    <option value="">
-                      {className ? className : "Select Section"}
-                    </option>
-                    {sections.map((item) => (
-                    <option
-                      key={item.id}
-                      value={item.id}
-                      selected={selectedSections.includes(item.id)}
-                    >
-                      {item.section}
-                    </option>
-                  ))}
-                  </Form.Select>
-                </InputGroup>
-                <Form.Text className="text-muted">Select a source.</Form.Text>
+            <Col md={12}>
+              <Form.Group className="mb-3" controlId="formSource">
+                <Form.Label>Select Sections</Form.Label>
+                <Row>
+                  {sections.length > 0 ? (
+                    sections.map((section, index) => (
+                      <Col md={4} key={section.section_id}> {/* 4 columns per row */}
+                        <div className="form-check">
+                          <input
+                            className="form-check-input"
+                            type="checkbox"
+                            value={section.section_id}
+                            id={`section-${section.section_id}`}
+                            checked={formData.section_ids.includes(String(section.section_id))}
+                            onChange={handleChange} // Single handler for both checkbox and input
+                          />
+                          <label
+                            className="form-check-label"
+                            htmlFor={`section-${section.section_id}`}
+                          >
+                            {section.section}
+                          </label>
+                        </div>
+                      </Col>
+                    ))
+                  ) : (
+                    <p>No sections available.</p>
+                  )}
+                </Row>
               </Form.Group>
             </Col>
           </Row>
+
           <div className="d-flex justify-content-end">
             <button type="submit" className="btn btn-primary">
               Submit

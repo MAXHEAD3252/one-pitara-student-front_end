@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import { Col, Form, InputGroup, Modal, Row } from "react-bootstrap";
+import { Col, Form, FormFloating, InputGroup, Modal, Row } from "react-bootstrap";
 import { useAuth } from "../../../../app/modules/auth/core/Auth";
 import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
 import { toast } from "react-toastify";
@@ -53,11 +53,12 @@ interface FormData {
   gender: string;
   date_of_birth: Date;
   current_school: string;
-  session_id: string;
+  session_id: number;
   father_name: string;
   father_phone: string;
   mother_name: string;
   mother_phone: string;
+  academic_year:string;
 }
 
 const CreateEditAdmission = ({ show, handleClose, enqId, setRefresh }: Props) => {
@@ -88,7 +89,8 @@ const CreateEditAdmission = ({ show, handleClose, enqId, setRefresh }: Props) =>
     gender: "",
     date_of_birth: new Date(),
     current_school: "",
-    session_id: "",
+    session_id: 0,
+    academic_year: "",
     father_name: "",
     father_phone: "",
     mother_name: "",
@@ -136,6 +138,8 @@ const CreateEditAdmission = ({ show, handleClose, enqId, setRefresh }: Props) =>
       try {
         const response = await fetch(`${DOMAIN}/api/school/get-session?schoolId=${schoolId}`);
         const data = await response.json();
+        console.log(data);
+        
         setSessions(data);
       } catch (error) {
         console.error("Error fetching sessions:", error);
@@ -160,6 +164,8 @@ const CreateEditAdmission = ({ show, handleClose, enqId, setRefresh }: Props) =>
         
         const followUpDate = data?.[0]?.follow_up_date ? formatDateToYYYYMMDD(data[0].follow_up_date) : "";
         const dateOfBirth = data?.[0]?.date_of_birth ? formatDateToYYYYMMDD(data[0].date_of_birth) : "";
+
+        
         setFormData({
           student_name: data[0]?.student_name || "",
           contact_number: data[0]?.contact_number || 0,
@@ -178,11 +184,12 @@ const CreateEditAdmission = ({ show, handleClose, enqId, setRefresh }: Props) =>
           gender: data[0]?.gender || "",
           date_of_birth: dateOfBirth ? new Date(dateOfBirth) : new Date(),
           current_school: data[0]?.current_school || "",
-          session_id: data[0]?.session_id || "",
+          session_id: data[0]?.session_id || 0,
           father_name: data[0]?.father_name || "",
           father_phone: data[0]?.father_phone || "",
           mother_name: data[0]?.mother_name || "",
           mother_phone: data[0]?.mother_phone || "",
+          academic_year:data[0]?.academic_year || ""
         });
       } catch (error) {
         console.error("Error fetching enquiry details:", error);
@@ -203,19 +210,42 @@ const CreateEditAdmission = ({ show, handleClose, enqId, setRefresh }: Props) =>
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      [name]: value,
-    }));
-
-    setChangedFields((prevChangedFields) => ({
-      ...prevChangedFields,
-      [name]: value,
-    }));
+  
+    if (name === "session_id") {
+      const [sessionId, academicYear] = value.split(":");
+  
+      // Update formData with both session_id and academic_year
+      setFormData((prevState) => ({
+        ...prevState,
+        session_id: sessionId,
+        academic_year: academicYear,
+      }));
+  
+      // Update changedFields with both session_id and academic_year
+      setChangedFields((prevChangedFields) => ({
+        ...prevChangedFields,
+        session_id: sessionId, // session_id as a separate field
+        academic_year: academicYear, // academic_year as a separate field
+      }));
+    } else {
+      // For all other fields, update both formData and changedFields normally
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        [name]: value,
+      }));
+  
+      setChangedFields((prevChangedFields) => ({
+        ...prevChangedFields,
+        [name]: value,
+      }));
+    }
   };
+  
+  
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
     try {
       const response = await fetch(`${DOMAIN}/api/school/updateEnquiryById/${schoolId}/${enqId}`, {
         method: "PUT",
@@ -273,6 +303,7 @@ const CreateEditAdmission = ({ show, handleClose, enqId, setRefresh }: Props) =>
                     name="student_name"
                     value={formData.student_name}
                     onChange={handleChange}
+                    disabled={formData.status === 'Converted'}
                   />
                 </InputGroup>
               </Form.Group>
@@ -289,6 +320,7 @@ const CreateEditAdmission = ({ show, handleClose, enqId, setRefresh }: Props) =>
                     name="contact_number"
                     value={formData.contact_number}
                     onChange={handleChange}
+                    disabled={formData.status === 'Converted'}
                   />
                 </InputGroup>
               </Form.Group>
@@ -305,6 +337,7 @@ const CreateEditAdmission = ({ show, handleClose, enqId, setRefresh }: Props) =>
                     name="address"
                     value={formData.address}
                     onChange={handleChange}
+                    disabled={formData.status === 'Converted'}
                   />
                 </InputGroup>
               </Form.Group>
@@ -324,6 +357,7 @@ const CreateEditAdmission = ({ show, handleClose, enqId, setRefresh }: Props) =>
                     name="student_email"
                     value={formData.student_email}
                     onChange={handleChange}
+                    disabled={formData.status === 'Converted'}
                   />
                 </InputGroup>
               </Form.Group>
@@ -331,7 +365,7 @@ const CreateEditAdmission = ({ show, handleClose, enqId, setRefresh }: Props) =>
             <Col md={4}>
               <Form.Group controlId="reference">
                 <Form.Label>Select Reference</Form.Label>
-                <Form.Select name="reference_id" value={formData.reference_id} onChange={handleChange}>
+                <Form.Select name="reference_id" value={formData.reference_id} onChange={handleChange} disabled={formData.status === 'Converted'}>
                   <option value="">Select Reference</option>
                   {reference.map((ref) => (
                     <option key={ref.id} value={ref.id}>
@@ -344,7 +378,7 @@ const CreateEditAdmission = ({ show, handleClose, enqId, setRefresh }: Props) =>
             <Col md={4}>
               <Form.Group controlId="source">
                 <Form.Label>Select Source</Form.Label>
-                <Form.Select name="source_id" value={formData.source_id} onChange={handleChange}>
+                <Form.Select name="source_id" value={formData.source_id} onChange={handleChange} disabled={formData.status === 'Converted'}>
                   <option value="">Select Source</option>
                   {source.map((src) => (
                     <option key={src.id} value={src.id}>
@@ -360,7 +394,7 @@ const CreateEditAdmission = ({ show, handleClose, enqId, setRefresh }: Props) =>
             <Col md={4}>
               <Form.Group controlId="class_id">
                 <Form.Label>Select Class</Form.Label>
-                <Form.Select name="class_id" value={formData.class_id} onChange={handleChange}>
+                <Form.Select name="class_id" value={formData.class_id} onChange={handleChange} disabled={formData.status === 'Converted'}>
                   <option value="">Select Class</option>
                   {classes.map((cls) => (
                     <option key={cls.id} value={cls.id}>
@@ -382,6 +416,7 @@ const CreateEditAdmission = ({ show, handleClose, enqId, setRefresh }: Props) =>
                     name="date_of_birth"
                     value={formData.date_of_birth ? formatDateToYYYYMMDD(formData.date_of_birth) : ""}
                     onChange={handleChange}
+                    disabled={formData.status === 'Converted'}
                   />
                 </InputGroup>
               </Form.Group>
@@ -389,7 +424,7 @@ const CreateEditAdmission = ({ show, handleClose, enqId, setRefresh }: Props) =>
             <Col md={4}>
               <Form.Group controlId="gender">
                 <Form.Label>Select Gender</Form.Label>
-                <Form.Select name="gender" value={formData.gender} onChange={handleChange}>
+                <Form.Select name="gender" value={formData.gender} onChange={handleChange} disabled={formData.status === 'Converted'}>
                   <option value="male">Male</option>
                   <option value="female">Female</option>
                 </Form.Select>
@@ -401,10 +436,10 @@ const CreateEditAdmission = ({ show, handleClose, enqId, setRefresh }: Props) =>
             <Col md={4}>
               <Form.Group controlId="session_id">
                 <Form.Label>Academic Year</Form.Label>
-                <Form.Select name="session_id" value={formData.session_id} onChange={handleChange}>
+                <Form.Select name="session_id" value={`${formData.session_id}:${formData.academic_year}`} onChange={handleChange} disabled={formData.status === 'Converted'}>
                   <option value="">Select Academic Year</option>
                   {sessions.map((sess) => (
-                    <option key={sess.id} value={sess.session}>
+                    <option key={sess.id} value={`${sess.id}:${sess.session}`}>
                       {sess.session}
                     </option>
                   ))}
@@ -423,6 +458,7 @@ const CreateEditAdmission = ({ show, handleClose, enqId, setRefresh }: Props) =>
                     name="father_name"
                     value={formData.father_name}
                     onChange={handleChange}
+                    disabled={formData.status === 'Converted'}
                   />
                 </InputGroup>
               </Form.Group>
@@ -439,6 +475,7 @@ const CreateEditAdmission = ({ show, handleClose, enqId, setRefresh }: Props) =>
                     name="father_phone"
                     value={formData.father_phone}
                     onChange={handleChange}
+                    disabled={formData.status === 'Converted'}
                   />
                 </InputGroup>
               </Form.Group>
@@ -458,6 +495,7 @@ const CreateEditAdmission = ({ show, handleClose, enqId, setRefresh }: Props) =>
                     name="mother_name"
                     value={formData.mother_name}
                     onChange={handleChange}
+                    disabled={formData.status === 'Converted'}
                   />
                 </InputGroup>
               </Form.Group>
@@ -474,6 +512,7 @@ const CreateEditAdmission = ({ show, handleClose, enqId, setRefresh }: Props) =>
                     name="mother_phone"
                     value={formData.mother_phone}
                     onChange={handleChange}
+                    disabled={formData.status === 'Converted'}
                   />
                 </InputGroup>
               </Form.Group>
@@ -490,6 +529,7 @@ const CreateEditAdmission = ({ show, handleClose, enqId, setRefresh }: Props) =>
                     name="current_school"
                     value={formData.current_school}
                     onChange={handleChange}
+                    disabled={formData.status === 'Converted'}
                   />
                 </InputGroup>
               </Form.Group>
@@ -509,6 +549,7 @@ const CreateEditAdmission = ({ show, handleClose, enqId, setRefresh }: Props) =>
                     name="description"
                     value={formData.description}
                     onChange={handleChange}
+                    disabled={formData.status === 'Converted'}
                   />
                 </InputGroup>
               </Form.Group>
@@ -525,6 +566,7 @@ const CreateEditAdmission = ({ show, handleClose, enqId, setRefresh }: Props) =>
                     name="note"
                     value={formData.note}
                     onChange={handleChange}
+                    disabled={formData.status === 'Converted'}
                   />
                 </InputGroup>
               </Form.Group>
@@ -532,7 +574,7 @@ const CreateEditAdmission = ({ show, handleClose, enqId, setRefresh }: Props) =>
           </Row>
 
           <div className="d-flex justify-content-end">
-            <button type="submit" className="btn btn-primary">
+            <button type="submit" className="btn btn-primary" disabled={formData.status === 'Converted'}>
               Submit
             </button>
           </div>

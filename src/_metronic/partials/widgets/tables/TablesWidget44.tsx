@@ -6,7 +6,7 @@ import {
   getUsersBySchoolId,
 } from "../../../../app/routing/ApiEndpoints";
 
-import { Modal, Button, Form, Row, Col, InputGroup } from "react-bootstrap";
+import { Modal, Form, Row, Col, InputGroup } from "react-bootstrap";
 import { toast } from "react-toastify";
 
 interface TablesWidget44Props {
@@ -81,19 +81,19 @@ const TablesWidget44: React.FC<TablesWidget44Props> = ({ schoolId }: any) => {
   }, []);
 
   const fetchDesignation = async () => {
-    try {
-      const response = await fetch(
-        `${DOMAIN}/api/superadmin/get_designationmodule`
-      );
-      if (!response.ok) {
-        throw new Error("Failed to fetch roles");
-      }
-      const data = await response.json();
-      setDesignations(data);
-    } catch (error) {
-      console.error("Error fetching roles:", error);
-      toast.error("Failed to fetch roles!", { autoClose: 3000 });
-    }
+    // try {
+    //   const response = await fetch(
+    //     `${DOMAIN}/api/superadmin/get_designationmodule`
+    //   );
+    //   if (!response.ok) {
+    //     throw new Error("Failed to fetch roles");
+    //   }
+    //   const data = await response.json();
+    //   setDesignations(data);
+    // } catch (error) {
+    //   console.error("Error fetching roles:", error);
+    //   toast.error("Failed to fetch roles!", { autoClose: 3000 });
+    // }
   };
 
   useEffect(() => {

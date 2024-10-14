@@ -5,20 +5,20 @@ import { useNavigate } from "react-router-dom";
 import { DOMAIN, getStaffRoles } from "../../../../app/routing/ApiEndpoints";
 import { useAuth } from "../../../../app/modules/auth";
 
-
 interface SchoolRole {
   id: string;
   role_name: string;
-  role_id:number;
+  role_id: number;
   is_active: number;
-  username:string;
-  updated_at:string;
+  username: string;
+  updated_at: string;
   // Add more fields as per your role structure
 }
 
 const TablesWidget28 = () => {
   const [schoolRoles, setSchoolRoles] = useState<SchoolRole[]>([]);
   
+
   const { currentUser } = useAuth();
   const schoolId = currentUser?.school_id;
 
@@ -46,285 +46,260 @@ const TablesWidget28 = () => {
   };
 
   return (
-    <div className="d-flex" style={{ gap: "10px" }}>
+    <div
+      className="card-style"
+      style={{
+        width: "100%",
+        borderRadius: "16px",
+        backgroundColor: "rgb(242, 246, 255)",
+        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+        overflow: "hidden",
+        marginTop: "20px",
+        padding: "20px",
+      }}
+    >
       <div
-        className="col-xxl-8"
+        className="card-header"
         style={{
-          borderRadius: "16px",
-          border: "1px solid #5D637A",
-          overflowX: "hidden",
-          minHeight: "100%",
-          marginBottom: "20px",
-          height: "840px",
+          backgroundColor: "rgb(242, 246, 255)",
+          padding: "16px 20px",
+          borderBottom: "1px solid #E0E4F0",
           display: "flex",
-          flexDirection: "column",
-          fontFamily: "Manrope",
-          maxWidth: "100%",
-          overflow: "hidden",
+          justifyContent: "space-between",
+          alignItems: "center",
         }}
       >
-        <div style={{ width: "auto", height: "100%", overflow: "hidden" }}>
-          <table
-            //   className="col-xxl-12"
+        <span
+          style={{
+            fontSize: "20px",
+            fontWeight: "600",
+            color: "#1C335C",
+            fontFamily: "Manrope",
+          }}
+        >
+          Manage Designations and Modules
+        </span>
+        <div 
+        style={{display:'flex', gap:'10px'}}>
+        <div
+          className="input-group flex-nowrap"
+          style={{
+            width: "300px",
+            height: "36px",
+            borderRadius: "8px",
+            border: "1px solid #D9D9D9",
+          }}
+        >
+          <span
+            className="input-group-text border-0 pe-1 pr-0"
+            style={{ backgroundColor: "transparent" }}
+            id="addon-wrapping"
+          >
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 17 16"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <g clip-path="url(#clip0_582_4295)">
+                <circle
+                  cx="8.50002"
+                  cy="7.66665"
+                  r="6.33333"
+                  stroke="white"
+                  stroke-width="1.5"
+                />
+                <path
+                  d="M14.1667 13.3333L15.5 14.6666"
+                  stroke="white"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                />
+              </g>
+              <defs>
+                <clipPath id="clip0_582_4295">
+                  <rect
+                    width="16"
+                    height="16"
+                    fill="white"
+                    transform="translate(0.833374)"
+                  />
+                </clipPath>
+              </defs>
+            </svg>
+          </span>
+          <input
+            type="text"
             style={{
-              top: "223px",
-              height: "612px",
-              maxHeight: "100%",
-              borderCollapse: "collapse",
-              // tableLayout: "fixed",
-              overflowX: "hidden",
-              overflowY: "auto",
-              whiteSpace: "nowrap",
-              width: "100%",
-              // border:'8px solid black'
+              backgroundColor: "transparent",
+              color: "#FFFFFF",
+            }}
+            className="form-control border-0"
+            placeholder="Search ...."
+            aria-label="Search"
+            aria-describedby="addon-wrapping"
+          />
+        </div>
+        <div
+          // onClick={showAddModal}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            padding: "8px 12px",
+            backgroundColor: "#1C335C",
+            borderRadius: "8px",
+            cursor: "pointer",
+            transition: "background-color 0.3s",
+          }}
+          onMouseEnter={(e) =>
+            (e.currentTarget.style.backgroundColor = "#16294D")
+          }
+          onMouseLeave={(e) =>
+            (e.currentTarget.style.backgroundColor = "#1C335C")
+          }
+        >
+          <span
+            style={{
+              marginRight: "8px",
+              color: "white",
+              fontSize: "14px",
+              fontWeight: "700",
+              fontFamily: "Manrope",
             }}
           >
-            <thead
-              style={{
-                height: "123px",
-                maxHeight: "100%",
-                display: "flex",
-                flexDirection: "column",
-                backgroundColor: "#1C335C",
-                //   width:'fit-content',
-                // overflowY: "auto",
-                // overflowX: "hidden",
-                justifyContent: "space-between",
-                zIndex: 999,
-              }}
-              className="col-xxl-12 col-lg-6"
-            >
-              <div>
-                <caption
-                  style={{
-                    backgroundColor: "#1C335C",
-                    padding: "20px",
-                    display: "flex",
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    // tableLayout: "fixed",
-                    // borderCollapse: "collapse",
-
-                    // border:'1px solid'
-                    width: "100%",
-                  }}
-                >
-                  <div>
-                    <span
-                      style={{
-                        color: "#FFF",
-                        fontSize: "16px",
-                        fontWeight: "700",
-                        fontFamily: "Manrope",
-                      }}
-                    >
-                      All User Roles
-                    </span>
-                  </div>
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "10px",
-                    }}
-                  >
-                    <div
-                      className="input-group flex-nowrap"
-                      style={{
-                        width: "300px",
-                        height: "36px",
-                        borderRadius: "8px",
-                        border: "1px solid #D9D9D9",
-                      }}
-                    >
-                      <span
-                        className="input-group-text border-0 pe-1 pr-0"
-                        style={{ backgroundColor: "transparent" }}
-                        id="addon-wrapping"
-                      >
-                        <svg
-                          width="16"
-                          height="16"
-                          viewBox="0 0 17 16"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <g clip-path="url(#clip0_582_4295)">
-                            <circle
-                              cx="8.50002"
-                              cy="7.66665"
-                              r="6.33333"
-                              stroke="white"
-                              stroke-width="1.5"
-                            />
-                            <path
-                              d="M14.1667 13.3333L15.5 14.6666"
-                              stroke="white"
-                              stroke-width="1.5"
-                              stroke-linecap="round"
-                            />
-                          </g>
-                          <defs>
-                            <clipPath id="clip0_582_4295">
-                              <rect
-                                width="16"
-                                height="16"
-                                fill="white"
-                                transform="translate(0.833374)"
-                              />
-                            </clipPath>
-                          </defs>
-                        </svg>
-                      </span>
-                      <input
-                        type="text"
-                        style={{
-                          backgroundColor: "transparent",
-                          color: "#FFFFFF",
-                        }}
-                        className="form-control border-0"
-                        placeholder="Search ...."
-                        aria-label="Search"
-                        aria-describedby="addon-wrapping"
-                      />
-                    </div>
-                  </div>
-                </caption>
-              </div>
-
-              <tr
-                style={{
-                  height: "61px",
-                  display: "flex",
-                  paddingLeft: "30px",
-                  justifyContent: "space-between",
-                  width: "95%",
-                  overflowY: "auto",
-                  overflowX: "hidden",
-                  backgroundColor: "#1C335C",
-                }}
-              >
-                <th>
-                  <div style={{ width: "40px" }}>
-                    <span
-                      style={{
-                        fontSize: "13px",
-                        fontWeight: "600",
-                        lineHeight: "18px",
-                        color: "#FFFFFF",
-                      }}
-                    >
-                      Role Name
-                    </span>
-                  </div>
-                </th>
-                <th>
-                  <div
-                    style={{
-                      width: "60px",
-                      // textAlign:'left'
-                      // border:'1px solid',
-                      display: "flex",
-                      justifyContent: "end",
-                      fontFamily: "Manrope",
-                    }}
-                  >
-                    <span
-                      style={{
-                        fontSize: "13px",
-                        fontWeight: "600",
-                        lineHeight: "18px",
-                        color: "#FFFFFF",
-                      }}
-                    >
-                      Action
-                    </span>
-                  </div>
-                </th>
-              </tr>
-            </thead>
-            <tbody
-              className="col-xxl-12 col-lg-6"
-              style={{
-                height: "105%",
-                display: "flex",
-                flexDirection: "column",
-                minHeight: "calc(100vh - 550px)",
-                overflowY: "auto",
-              }}
-            >
-              {schoolRoles &&
-                schoolRoles.map((role) => (
-                  <tr
-                    key={role.id}
-                    style={{
-                      height: "80px",
-                      paddingLeft: "30px",
-                      paddingTop: "25px",
-                      marginBottom: "5px",
-                      justifyContent: "space-between",
-                      width: "90%",
-                      display: "flex",
-                      // borderBottom:'1px solid grey'
-                    }}
-                  >
-                    <td>
-                      <div
-                        style={{
-                          width: "55px",
-                          display: "flex",
-                          justifyContent: "center",
-                          flexDirection: "column",
-                        }}
-                      >
-                        <span
-                          style={{
-                            fontSize: "14px",
-                            fontWeight: "500",
-                            lineHeight: "18px",
-                            color: "#1F1F1F",
-                            fontFamily: "Manrope",
-                          }}
-                        >
-                          {role.role_name}
-                        </span>
-                      </div>
-                    </td>
-                    <td>
-                      <div
-                        style={{
-                          width: "60px",
-                          display: "flex",
-                          flexDirection: "row",
-                          gap: "6px",
-                          marginTop: "-8px",
-                        }}
-                      >
-                        <button
-                          type="button"
-                          className="btn"
-                          style={{
-                            backgroundColor: "#1F3259",
-                            fontFamily: "Manrope",
-                            fontSize: "12px",
-                            fontWeight: "600",
-                            color: "#FFF",
-                          }}
-                          onClick={() => {
-                            handleClick(role.role_id);
-                          }}
-                        >
-                          Manage Permissions
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-            </tbody>
-          </table>
+            Add Designation
+          </span>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            width="16px"
+            height="16px"
+            fill="#ffffff"
+          >
+            <path d="M0 0h24v24H0V0z" fill="none" />
+            <path d="M3 17.25V21h3.75l11-11.03-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
+          </svg>
+        </div>
         </div>
       </div>
       <div
+        style={{
+          height: "650px", // Fixed height for the table container
+          overflowY: "auto", // Enable vertical scrolling
+          padding: "16px 0", // Optional: adds some padding around the table
+        }}
+      >
+        <table
+          className="table"
+          style={{
+            width: "100%",
+            borderCollapse: "collapse",
+            marginTop: "10px",
+            backgroundColor: "#FFFFFF", // White background for the table
+            borderRadius: "12px", // Round corners for the table
+            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.05)", // Light shadow for the table
+          }}
+        >
+          <thead>
+            <tr
+              style={{
+                backgroundColor: "rgb(242, 246, 255)", // Header background color
+                borderBottom: "1px solid #E0E4F0",
+                fontFamily: "Manrope",
+                fontWeight: "600",
+                color: "#1C335C",
+                fontSize: "14px",
+              }}
+            >
+              <th
+                style={{
+                  padding: "12px 20px",
+                  textAlign: "left",
+                }}
+              >
+                Designation Name
+              </th>
+              <th
+                style={{
+                  padding: "12px 20px",
+                  textAlign: "left",
+                }}
+              >
+                Action
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {schoolRoles &&
+              schoolRoles.map((role) => (
+                <tr
+                  key={role.id}
+                  style={{
+                    backgroundColor:
+                      index % 2 === 0 ? "rgb(242, 246, 255)" : "#FFFFFF",
+                    borderBottom: "1px solid #E0E4F0",
+                    fontFamily: "Manrope",
+                    fontSize: "14px",
+                    color: "#1C335C",
+                  }}
+                >
+                  <td
+                    style={{
+                      padding: "12px 20px",
+                    }}
+                  >
+                    {role.role_name}
+                  </td>
+                  <td
+                    style={{
+                      display: "flex",
+                      gap: "10px", // Adds space between the buttons
+                      justifyContent: "center", // Aligns buttons horizontally in the center
+                      alignItems: "center", // Vertically centers the buttons
+                      padding: "12px 20px",
+                    }}
+                  >
+                      <div
+                        className="btn"
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          padding: "8px 12px",
+                          backgroundColor: "#1C335C",
+                          borderRadius: "8px",
+                          cursor: "pointer",
+                          transition: "background-color 0.3s",
+                        }}
+                        onMouseEnter={(e) =>
+                          (e.currentTarget.style.backgroundColor = "#16294D")
+                        }
+                        onMouseLeave={(e) =>
+                          (e.currentTarget.style.backgroundColor = "#1C335C")
+                        }
+                        onClick={() => {
+                          handleClick(role.role_id);
+                        }}
+                      >
+                        <span
+                        style={{
+                          marginRight: "8px",
+                          color: "white",
+                          fontSize: "14px",
+                          fontWeight: "700",
+                          fontFamily: "Manrope",
+                        }}
+                      >
+                        Manage Permissions
+                      </span>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+          </tbody>
+        </table>
+      </div>
+      {/* <div
         className="col-xxl-4"
         style={{
           borderRadius: "16px",
@@ -368,7 +343,7 @@ const TablesWidget28 = () => {
             alignItems: "center",
             padding: "20px",
             flexDirection: "column",
-            marginTop:'10px'
+            marginTop: "10px",
           }}
         >
           <div style={{ marginBottom: "23px", width: "100%" }}>
@@ -407,7 +382,9 @@ const TablesWidget28 = () => {
               />
             </div>
           </div>
-          <div style={{width:'100%', justifyContent:'right', display:'flex'}}>
+          <div
+            style={{ width: "100%", justifyContent: "right", display: "flex" }}
+          >
             <button
               type="button"
               className="btn btn-secondary"
@@ -437,7 +414,7 @@ const TablesWidget28 = () => {
             </button>
           </div>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };

@@ -222,7 +222,7 @@ const TablesWidget64 = () => {
           padding: "16px 20px",
           borderBottom: "1px solid #E0E4F0",
           display: "flex",
-          justifyContent: "space-between",
+          justifyContent: "space-between",  
           alignItems: "center",
         }}
       >

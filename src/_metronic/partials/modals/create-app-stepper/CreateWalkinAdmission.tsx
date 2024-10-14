@@ -62,9 +62,8 @@ const modalsRoot = document.getElementById("root-modals") || document.body;
 
 const CreateWalkinAdmission = ({ show, handleClose, setRefresh }: Props) => {
   const { currentUser } = useAuth();
-  
+
   const schoolId = currentUser?.school_id;
-  const sessionId = currentUser?.session_id;
   /* @ts-ignore */
   const userId = currentUser?.id;
 
@@ -93,8 +92,8 @@ const CreateWalkinAdmission = ({ show, handleClose, setRefresh }: Props) => {
     father_phone: "",
     mother_name: "",
     mother_phone: "",
-    session_id: sessionId,
-    academic_year:""
+    session_id: 0,
+    academic_year: "",
   });
   /* @ts-ignore */
   const handleChange = (e) => {
@@ -105,6 +104,14 @@ const CreateWalkinAdmission = ({ show, handleClose, setRefresh }: Props) => {
         ...prevState,
         [`${name}_id`]: id, // session_id or class_id
         [name]: text, // display value like session or class name
+      }));
+    } else if (name === "academic_year") {
+      // Handle academic_year and session_id
+      const [session_id, academic_year] = value.split(":");
+      setFormData((prevState) => ({
+        ...prevState,
+        session_id, // session_id from the dropdown
+        academic_year, // academic year from the dropdown
       }));
     } else {
       setFormData((prevState) => ({
@@ -128,7 +135,7 @@ const CreateWalkinAdmission = ({ show, handleClose, setRefresh }: Props) => {
         }
         const data = await response.json();
         console.log(data);
-        
+
         setClasses(data);
       } catch (error) {
         console.error("Error fetching classes:", error);
@@ -199,7 +206,7 @@ const CreateWalkinAdmission = ({ show, handleClose, setRefresh }: Props) => {
   /* @ts-ignore */
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     try {
       const response = await fetch(
         `${DOMAIN}/api/school/admissionEnquiry/${schoolId}/${userId}`,
@@ -212,7 +219,6 @@ const CreateWalkinAdmission = ({ show, handleClose, setRefresh }: Props) => {
         }
       );
       console.log(response);
-      
 
       if (!response.ok) {
         throw new Error("Failed to create student");
@@ -474,14 +480,9 @@ const CreateWalkinAdmission = ({ show, handleClose, setRefresh }: Props) => {
                     onChange={handleChange}
                     name="class_id"
                   >
-                    <option value="">
-                      Select Class
-                    </option>
+                    <option value="">Select Class</option>
                     {classes.map((value) => (
-                      <option
-                        key={value.id}
-                        value={value.id}
-                      >
+                      <option key={value.id} value={value.id}>
                         {value.class}
                       </option>
                     ))}
@@ -557,21 +558,21 @@ const CreateWalkinAdmission = ({ show, handleClose, setRefresh }: Props) => {
                     <i className="fas fa-calendar"></i>
                   </InputGroup.Text>
                   <Form.Select
-                    value={formData.academic_year}
+                    value={`${formData.session_id}:${formData.academic_year}`}
                     onChange={handleChange}
                     name="academic_year"
                   >
-                    <option value="academic_year">
+                    <option value="">
                       {formData.academic_year
                         ? formData.academic_year
                         : "Select Academic Year"}
                     </option>
-                    {academicYear.map((value) => (
+                    {academicYear.map((session) => (
                       <option
-                        key={value.id}
-                        value={value.academic_year}
+                        key={session.id}
+                        value={`${session.id}:${session.academic_year}`}
                       >
-                        {value.academic_year}
+                        {session.academic_year}
                       </option>
                     ))}
                   </Form.Select>

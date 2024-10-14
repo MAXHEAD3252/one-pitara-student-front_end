@@ -379,7 +379,7 @@ const TablesWidget57: React.FC = () => {
                       padding: "12px 20px",
                     }}
                   >
-                      {item.student_phone}
+                      {item.student_phone || item.contact_number}
                 </td>
 
                 <td>
