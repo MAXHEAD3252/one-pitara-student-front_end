@@ -1,180 +1,329 @@
 import React, { useState, useEffect } from "react";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { useLocation } from "react-router-dom";
+import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
 import { useAuth } from "../../../../app/modules/auth";
-import { DOMAIN, getParentModule, storeModuleRequest } from "../../../../app/routing/ApiEndpoints";
 
-type ModuleInfo = [string, string]; // Define type for module info array
-type SelectedModules = Record<string, string[]>; // Define type for selected modules object
+interface Module {
+  module_name: string;
+  module_id: number;
+  module_checked: number;
+  is_assigned: number;
+}
 
-type Props = {
-  className: string;
-  role_id?: number | null;
-};
-
-const TablesWidget29: React.FC<Props> = ({ className, role_id }) => {
-  const { currentUser } = useAuth();
-  const [schoolModules, setSchoolModules] = useState<Record<string, ModuleInfo[]>>({}); // Specify type for schoolModules
-  const [selectedModules, setSelectedModules] = useState<SelectedModules>({}); // Specify type for selectedModules
-
-  const schoolId = currentUser?.school_id || 0; // Ensure schoolId has a default value
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(`${DOMAIN}/${getParentModule}/${schoolId}`);
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
+interface Category {
+  id: number;
+  name: string;
+  modules: Module[];
+}
+const TablesWidget29 = ({school_id, designation_id}:any) => {
+  const {currentUser} = useAuth();
+  
+    const location = useLocation();
+    const params = new URLSearchParams(location.search);
+    const restrict = params.get("restrict");
+    const [schoolModules, setSchoolModules] = useState<Category[]>([]);
+    console.log(schoolModules);
+    
+    const [selectedIds, setSelectedIds] = useState<{ [key: string]: boolean }>(
+      {}
+    );
+    const [initialSelectedIds, setInitialSelectedIds] = useState<{
+      [key: string]: boolean;
+    }>({});
+  
+  
+    const [isEditingDisabled, setIsEditingDisabled] = useState(false);
+  
+    useEffect(() => {
+      if (restrict === "true") {
+        setIsEditingDisabled(true);
+      }
+    }, [restrict]);
+  
+    useEffect(() => {
+      const fetchData = async () => {
+        try {
+          const response = await fetch(
+            `${DOMAIN}/api/superadmin/designation-modules/${school_id}/${designation_id}`
+          );
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          const data: Category[] = await response.json();
+          setSchoolModules(data);
+  
+          // Initialize selectedIds based on fetched data
+          const initialIds: { [key: string]: boolean } = {};
+          data.forEach((category) => {
+            category.modules.forEach((module) => {
+              if (module.is_assigned === 1) {
+                initialIds[`${category.id}:${module.module_id}`] = true;
+              }
+            });
+          });
+          setSelectedIds(initialIds);
+          setInitialSelectedIds(initialIds);
+        } catch (error) {
+          console.error("Error fetching school details:", error);
         }
-        const data = await response.json();
-        setSchoolModules(data);
-      } catch (error) {
-        console.error("Error fetching school details:", error);
+      };
+  
+      if (designation_id) {
+        fetchData();
+      }
+    }, [designation_id]);
+  
+    const handleCheckboxClick = (module_id: number, parentId: number) => {
+      const pairId = `${parentId}:${module_id}`;
+      setSelectedIds((prevIds) => {
+        const updatedIds = { ...prevIds };
+        updatedIds[pairId] = !updatedIds[pairId]; // Toggle the value
+        return updatedIds;
+      });
+    };
+  
+    const handleSubmit = async () => {
+      try {
+        const updatedPermissions = Object.entries(selectedIds)
+          .filter(([pairId, isChecked]) => {
+            return initialSelectedIds[pairId] !== isChecked; // Compare with initial state
+          })
+          .map(([pairId, isChecked]) => {
+            const [parentId, moduleId] = pairId.split(":").map(Number);
+            return {
+              designation_id: designation_id,
+              school_id: school_id,
+              role_id: currentUser?.id,
+              module_id: moduleId,
+              module_checked: isChecked ? 1 : 0,
+            };
+          });
+  
+        if (updatedPermissions.length === 0) {
+          console.log("No changes detected.");
+          return;
+        }
+  
+        const response = await fetch(
+          `${DOMAIN}/api/superadmin/store-designation-permission`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(updatedPermissions),
+          }
+        );
+  
+        if (!response.ok) {
+          console.log("Error occurred while sending data.");
+          toast.error("An error occurred!", { autoClose: 3000 });
+        } else {
+          console.log("Data sent successfully.");
+          toast.success("Data sent successfully.", { autoClose: 3000 });
+        }
+      } catch (err) {
+        console.log(err);
+        toast.error("Failed to communicate with server!", { autoClose: 3000 });
       }
     };
-
-    fetchData();
-  }, [schoolId]);
-
-  const handleCheckbox = (moduleName: string, headerLabel: string) => {
-    setSelectedModules((prevSelectedModules) => {
-      const updatedSelectedModules = { ...prevSelectedModules };
-
-      if (!updatedSelectedModules[moduleName]) {
-        updatedSelectedModules[moduleName] = [];
-      }
-
-      const index = updatedSelectedModules[moduleName].indexOf(headerLabel);
-      if (index !== -1) {
-        updatedSelectedModules[moduleName].splice(index, 1);
-      } else {
-        updatedSelectedModules[moduleName].push(headerLabel);
-      }
-
-      return updatedSelectedModules;
-    });
-  };
-
-  const handleSubmit = async () => {
-    try {
-      const response = await fetch(`${DOMAIN}/${storeModuleRequest}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ school_id: schoolId, role_id, selectedModules }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-
-      const data = await response.json();
-      console.log("Data submitted successfully:", data);
-      // Handle success, if needed
-    } catch (error) {
-      console.error("Error submitting data:", error);
-      // Handle error, if needed
-    }
-  };
-
-  return (
-    <div className={`card ${className}`}>
-      <div className="card-header border-0 pt-5">
-        <h3 className="card-title align-items-start flex-column">
-          <span className="card-label fw-bold fs-3 mb-1">school Module</span>
-        </h3>
-      </div>
-      <div className="card-body py-3">
-        <div className="table-responsive">
-          <table className="table align-middle gs-0 gy-5">
+  
+    return (
+      <div
+        className="card-style"
+        style={{
+          width: "100%",
+          borderRadius: "16px",
+          backgroundColor: "rgb(242, 246, 255)",
+          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+          overflow: "hidden",
+          marginTop: "20px",
+          padding: "20px",
+        }}
+      >
+        <div
+          className="card-header"
+          style={{
+            backgroundColor: "rgb(242, 246, 255)",
+            padding: "16px 20px",
+            borderBottom: "1px solid #E0E4F0",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <span
+            style={{
+              fontSize: "20px",
+              fontWeight: "600",
+              color: "#1C335C",
+              fontFamily: "Manrope",
+            }}
+          >
+            Assign Modules For {designation_id} 
+          </span>
+        </div>
+  
+        <div
+          style={{
+            height: "600px", // Fixed height for the table container
+            overflowY: "auto", // Enable vertical scrolling
+            padding: "16px 0", // Optional: adds some padding around the table
+          }}
+        >
+          <table
+            className="table"
+            style={{
+              width: "100%",
+              borderCollapse: "collapse",
+              marginTop: "10px",
+              backgroundColor: "#FFFFFF", // White background for the table
+              borderRadius: "12px", // Round corners for the table
+              boxShadow: "0 4px 8px rgba(0, 0, 0, 0.05)", // Light shadow for the table
+            }}
+          >
             <thead>
-              <tr style={{ border: "1px solid black" }}>
-                <th className="p-0 w-100px">Module Name</th>
-                <th className="p-0 min-w-100px">Module Feature</th>
-                <th className="p-0 min-w-50px">View</th>
-                <th className="p-0 min-w-50px">Edit</th>
-                <th className="p-0 min-w-50px">Delete</th>
-                <th className="p-0 min-w-50px">Add</th>
+              <tr
+                style={{
+                  backgroundColor: "rgb(242, 246, 255)", // Header background color
+                  borderBottom: "1px solid #E0E4F0",
+                  fontFamily: "Manrope",
+                  fontWeight: "600",
+                  color: "#1C335C",
+                  fontSize: "14px",
+                }}
+              >
+                <th
+                  style={{
+                    padding: "12px 20px",
+                    textAlign: "left",
+                  }}
+                >
+                  Module Name
+                </th>
+                <th
+                  style={{
+                    padding: "12px 20px",
+                    textAlign: "left",
+                  }}
+                >
+                  Module Feature
+                </th>
+                <th
+                  style={{
+                    padding: "12px 20px",
+                    textAlign: "right",
+                  }}
+                >
+                  Module Action
+                </th>
               </tr>
             </thead>
-            <tbody style={{ width: "100%" }}>
-              {Object.keys(schoolModules).length > 0 &&
-                Object.keys(schoolModules).map((key, index) => {
-                  const modules = schoolModules[key];
-
-                  const headerLabels = ["View", "Edit", "Delete", "Add"];
-
-                  return (
-                    <tr key={index}>
-                      <td>
-                        <div style={{ paddingLeft: "15px", paddingBottom: "15px" }}>
-                          <span
-                            className="menu-section"
+            <tbody>
+              {schoolModules && schoolModules.length > 0 && (
+                <>
+                  {schoolModules.map((item) => (
+                    <React.Fragment key={item.id}>
+                      {item.modules.map((module, moduleIndex) => (
+                        <tr
+                          key={module.module_id}
+                          style={{
+                            backgroundColor:
+                              module.module_id % 2 === 0
+                                ? "rgb(242, 246, 255)"
+                                : "#FFFFFF",
+                            borderBottom: "1px solid #E0E4F0",
+                            fontFamily: "Manrope",
+                            fontSize: "14px",
+                            color: "#1C335C",
+                          }}
+                        >
+                          {moduleIndex === 0 && (
+                            <td
+                              rowSpan={item.modules.length}
+                              style={{
+                                padding: "12px 20px",
+                              }}
+                            >
+                              {item.name}
+                            </td>
+                          )}
+                          <td
                             style={{
-                              color: "#000",
-                              fontFamily: "Manrope",
-                              fontSize: "16px",
-                              fontWeight: "600",
+                              padding: "12px 20px",
                             }}
                           >
-                            {key}
-                          </span>
-                        </div>
-                      </td>
-                      <td>
-                        {modules.map((moduleInfo, index) => (
-                          <div key={index}>{moduleInfo[1]}</div>
-                        ))}
-                      </td>
-
-                      {[...Array(headerLabels.length)].map((_, i) => (
-                        <td key={i} className="py-2 px-4">
-                          {modules.map((moduleName, index) => {
-                            const checkboxId = `${moduleName[0]}:${headerLabels[i]}`;
-
-                            return (
-                              <div style={{ display: "flex" }} key={index}>
-                                <div className="form-check">
-                                  <input
-                                    className="form-check-input"
-                                    type="checkbox"
-                                    id={`flexSwitchCheck-${index}`}
-                                    onChange={() =>
-                                      handleCheckbox(moduleName[0], headerLabels[i])
-                                    }
-                                    checked={selectedModules[checkboxId]?.includes(
-                                      headerLabels[i]
-                                    )}
-                                  />
-                                  <label
-                                    className="form-check-label"
-                                    htmlFor={`flexSwitchCheck-${index}`}
-                                  ></label>
-                                </div>
-                              </div>
-                            );
-                          })}
-                        </td>
+                            {module.module_name}
+                          </td>
+                          <td
+                             style={{
+                              display: "flex",
+                              gap: "10px", // Adds space between the buttons
+                              justifyContent: "end", // Aligns buttons horizontally in the center
+                              alignItems: "center", // Vertically centers the buttons
+                              padding: "12px 20px",
+                            }}
+                          >
+                            <div className="form-check form-switch">
+                              <input
+                                className="form-check-input"
+                                type="checkbox"
+                                role="switch"
+                                id={`flexSwitchCheck-${module.module_id}`}
+                                onClick={() =>
+                                  handleCheckboxClick(module.module_id, item.id)
+                                }
+                                /* @ts-ignore */
+  
+                                disabled={
+                                  isEditingDisabled ||
+                                  designation_id === "0" ||
+                                  !designation_id 
+                                }
+                                checked={
+                                  selectedIds[`${item.id}:${module.module_id}`]
+                                }
+                              />
+                              <label
+                                className="form-check-label"
+                                htmlFor={`flexSwitchCheck-${module.module_id}`}
+                              ></label>
+                            </div>
+                          </td>
+                        </tr>
                       ))}
-                    </tr>
-                  );
-                })}
+                    </React.Fragment>
+                  ))}
+                </>
+              )}
             </tbody>
           </table>
-
-          <div className="d-flex justify-content-end" style={{ paddingRight: "30px" }}>
+        </div>
+          <div
+            className="d-flex justify-content-end mt-5"
+            style={{
+              paddingRight: "30px",
+              
+            }}
+          >
             <button
               className="btn btn-primary"
-              style={{ display: "flex", justifyContent: "end" }}
+              style={{
+                display: "flex",
+                justifyContent: "end",
+                backgroundColor: "#1C335C",
+                fontFamily:'Manrope'
+              }}
               onClick={handleSubmit}
-              // disabled={!schoolId || Object.keys(selectedModules).length === 0}
+              disabled={isEditingDisabled || !designation_id}
             >
               Submit
             </button>
           </div>
-        </div>
       </div>
-    </div>
-  );
+    );
 };
 
 export { TablesWidget29 };

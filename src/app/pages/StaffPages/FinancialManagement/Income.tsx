@@ -11,6 +11,7 @@ import {
 import { Content } from "../../../../_metronic/layout/components/content";
 import { ToolbarFeeMaster } from "../../../../_metronic/layout/components/toolbar/toolbars";
 import { HeaderWrapper } from "../../../../_metronic/layout/components/header_staff";
+import { useAuth } from "../../../modules/auth";
 
 const IncomePage: FC = () => {
   const [displayComponent, setDisplayComponent] = useState("chart");
@@ -19,6 +20,8 @@ const IncomePage: FC = () => {
     setDisplayComponent(value);
   };
 
+  const {currentUser} = useAuth();
+  const currency = currentUser.currency_symbol
   return (
     <div className="bg-white">
       <HeaderWrapper toggleView={handleToggle} />
@@ -137,7 +140,7 @@ const IncomePage: FC = () => {
                         bigTextColor={"#29B837"}
                         backgroundColor={"#F2F6FF"}
                         iconColor={"#29B837"}
-                        numberValue={"₹56,256"}
+                        numberValue={currency + " " +"56,256"}
                         textWidth={"126px"}
                       />
                     </div>
@@ -159,8 +162,8 @@ const IncomePage: FC = () => {
                         bigTextColor={"#ED5578"}
                         backgroundColor={"rgba(237, 85, 120, 0.20)"}
                         iconColor={"#ED5578"}
-                        numberValue={"₹5625"}
-                        textWidth={"149px"}
+                        numberValue={currency + " " + "5625"}
+                        textWidth={"149px"} 
                       />
                     </div>
                   </div>

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useAuth } from "../../../../app/modules/auth";
 
 const TablesWidget11: React.FC = () => {
   const [showLastYearValue, setLastYearValue] = useState(false);
@@ -6,8 +7,12 @@ const TablesWidget11: React.FC = () => {
   const handelLastYear = () => {
     setLastYearValue((prevState) => !prevState);
   };
+  const { currentUser } = useAuth();
+  const currency = currentUser.currency_symbol;
+
   return (
-    <div className="" 
+    <div
+      className=""
       style={{
         width: "100%",
         height: "585px",
@@ -113,180 +118,204 @@ const TablesWidget11: React.FC = () => {
         <thead
           style={{
             // border:'1px solid ',
-            backgroundColor:'#F5F5F5',  
+            backgroundColor: "#F5F5F5",
             display: "flex",
             flexDirection: "column",
             // width:'100%',
             height: "120px",
             maxHeight: "100%",
             justifyContent: "space-between",
-            zIndex:999,
-            paddingLeft:'24px',
-            paddingRight:'24px',
+            zIndex: 999,
+            paddingLeft: "24px",
+            paddingRight: "24px",
             // borderBottom: "1px solid #DADADA",
           }}
         >
-          <caption  style={{  
+          <caption
+            style={{
               // backgroundColor: "#1C335C",
               // backgroundColor:'#1C335C',
               // padding: "20px",
-              paddingLeft:'20px',
-              paddingRight:'20px',
+              paddingLeft: "20px",
+              paddingRight: "20px",
               display: "flex",
               flexDirection: "row",
               justifyContent: "space-between",
-              marginTop:'24px',
-              
-              padding:'0px',
+              marginTop: "24px",
+
+              padding: "0px",
               // border:'1px solid'
-            }}><div  style={{display:'flex', gap:'10px'}}>
-            <span
-              style={{ color: "#000", fontSize: "16px", fontWeight: "600",fontFamily:"Manrope", }}
-            >
-       Fee Breakdown by Class
-            </span>
-          </div>
-          <div className="">
-            <div
-              style={{
-                width: "95px",
-                height: "36px",
-                display: "flex",  
-                border: "1px solid #DADADA",
-                borderRadius: "42px",
-                padding: "7px 9px 8px 10px",
-                // alignItems: "center",
-                gap: "10px",
-              }}
-            >
-              <label
-                style={{
-                  fontSize: "12px",
-                  lineHeight: "17px",
-                  fontWeight: "600",
-                  width: "30px",
-                  height: "20px",
-                  color:'#000',
-                paddingTop:'2px',
-                fontFamily:"Manrope",
-                }}
-                htmlFor="googleswitch"
-              >
-                LYSM
-              </label>
-              <div className="form-check  form-switch" style={{paddingTop:'2px'}}>
-                <input
-                  className="form-check-input bg-pink"
-                  type="checkbox"
-                  // id="googleswitch"
-                  style={{
-                    width: "35px",
-                    height: "20px",
-                    gap: "10px",
-                    color: "#1F3259",
-                    // paddingTop:'5px'
-                  }}
-                  onClick={() => handelLastYear()}
-                />
-              </div>
-            </div>
-          </div>
-          </caption>
-          <div style={{display:'flex',justifyContent:'center'}}>   
-          <tr
-            style={{
-              width: "100%",
-              height: "34px",
-              display: "flex",
-              paddingRight:'24px',
-              justifyContent: "space-between",
-              gap: "20px",
-              // backgroundColor:'#1C335C',
-              // backgroundColor:'#F5F5F5',
-              // paddingLeft: "15px",
-              // paddingTop: "15px",   
-              // paddingRight:'35px'
             }}
           >
-            <th style={{ width: "fit-content", height: "18px" }}>
+            <div style={{ display: "flex", gap: "10px" }}>
               <span
                 style={{
-                  fontSize: "14px",
-                  fontWeight: "700",
-                  lineHeight: "18px",
                   color: "#000",
-                  fontFamily:"Manrope",
+                  fontSize: "16px",
+                  fontWeight: "600",
+                  fontFamily: "Manrope",
                 }}
               >
-                Class
+                Fee Breakdown by Class
               </span>
-            </th>
-            <th style={{ width: "fit-content",height: "18px" }}>
-              <span
-                 style={{
-                  fontSize: "14px",
-                  fontWeight: "700",
-                  lineHeight: "18px",
-                  color: "#000",
-                  fontFamily:"Manrope",
+            </div>
+            <div className="">
+              <div
+                style={{
+                  width: "95px",
+                  height: "36px",
+                  display: "flex",
+                  border: "1px solid #DADADA",
+                  borderRadius: "42px",
+                  padding: "7px 9px 8px 10px",
+                  // alignItems: "center",
+                  gap: "10px",
                 }}
               >
-                Expected Fee
-              </span>
-            </th>
-            <th style={{ width: "fit-content", height: "18px" }}>
-              <span
-                 style={{
-                  fontSize: "14px",
-                  fontWeight: "700",
-                  lineHeight: "18px",
-                  color: "#000",
-                  fontFamily:"Manrope",
-                }}
-              >
-              Collected Fee
-              </span>
-            </th>
-            <th style={{ width: "fit-content", height: "18px"  }}>
-              <span
-                 style={{
-                  fontSize: "14px",
-                  fontWeight: "700",
-                  lineHeight: "18px",
-                  color: "#000",
-                  fontFamily:"Manrope",
-                }}
-              >
-              Due Fee
-              </span>
-            </th>
-          </tr>
+                <label
+                  style={{
+                    fontSize: "12px",
+                    lineHeight: "17px",
+                    fontWeight: "600",
+                    width: "30px",
+                    height: "20px",
+                    color: "#000",
+                    paddingTop: "2px",
+                    fontFamily: "Manrope",
+                  }}
+                  htmlFor="googleswitch"
+                >
+                  LYSM
+                </label>
+                <div
+                  className="form-check  form-switch"
+                  style={{ paddingTop: "2px" }}
+                >
+                  <input
+                    className="form-check-input bg-pink"
+                    type="checkbox"
+                    // id="googleswitch"
+                    style={{
+                      width: "35px",
+                      height: "20px",
+                      gap: "10px",
+                      color: "#1F3259",
+                      // paddingTop:'5px'
+                    }}
+                    onClick={() => handelLastYear()}
+                  />
+                </div>
+              </div>
+            </div>
+          </caption>
+          <div style={{ display: "flex", justifyContent: "center" }}>
+            <tr
+              style={{
+                width: "100%",
+                height: "34px",
+                display: "flex",
+                paddingRight: "24px",
+                justifyContent: "space-between",
+                gap: "20px",
+                // backgroundColor:'#1C335C',
+                // backgroundColor:'#F5F5F5',
+                // paddingLeft: "15px",
+                // paddingTop: "15px",
+                // paddingRight:'35px'
+              }}
+            >
+              <th style={{ width: "fit-content", height: "18px" }}>
+                <span
+                  style={{
+                    fontSize: "14px",
+                    fontWeight: "700",
+                    lineHeight: "18px",
+                    color: "#000",
+                    fontFamily: "Manrope",
+                  }}
+                >
+                  Class
+                </span>
+              </th>
+              <th style={{ width: "fit-content", height: "18px" }}>
+                <span
+                  style={{
+                    fontSize: "14px",
+                    fontWeight: "700",
+                    lineHeight: "18px",
+                    color: "#000",
+                    fontFamily: "Manrope",
+                  }}
+                >
+                  Expected Fee
+                </span>
+              </th>
+              <th style={{ width: "fit-content", height: "18px" }}>
+                <span
+                  style={{
+                    fontSize: "14px",
+                    fontWeight: "700",
+                    lineHeight: "18px",
+                    color: "#000",
+                    fontFamily: "Manrope",
+                  }}
+                >
+                  Collected Fee
+                </span>
+              </th>
+              <th style={{ width: "fit-content", height: "18px" }}>
+                <span
+                  style={{
+                    fontSize: "14px",
+                    fontWeight: "700",
+                    lineHeight: "18px",
+                    color: "#000",
+                    fontFamily: "Manrope",
+                  }}
+                >
+                  Due Fee
+                </span>
+              </th>
+            </tr>
           </div>
         </thead>
-        <tbody className=""
+        <tbody
+          className=""
           style={{
-            display: "block", 
-            height: "418px", 
+            display: "block",
+            height: "418px",
             overflowY: "auto",
             flexDirection: "column",
-            flex:1,
+            flex: 1,
             justifyContent: "center",
           }}
         >
-         <div className="tile-shadow" style={{display:'flex',height: "61px", alignItems:'center', justifyContent:'center', width:'100%',backgroundColor:'#F7F9FB'}}>
-          <tr className=""
+          <div
+            className="tile-shadow"
             style={{
-              width: "100%",
+              display: "flex",
               height: "61px",
-              display:'flex',
-              paddingLeft:'24px',
-              paddingRight:'24px',
-              paddingTop: "18px",
-              justifyContent:'space-between',
+              alignItems: "center",
+              justifyContent: "center",
+              width: "100%",
+              backgroundColor: "#F7F9FB",
             }}
           >
+            <tr
+              className=""
+              style={{
+                width: "100%",
+                height: "61px",
+                display: "flex",
+                paddingLeft: "24px",
+                paddingRight: "24px",
+                paddingTop: "18px",
+                justifyContent: "space-between",
+              }}
+            >
               <td>
-                <div className=""
+                <div
+                  className=""
                   style={{
                     width: "fit-content",
                     display: "flex",
@@ -297,18 +326,23 @@ const TablesWidget11: React.FC = () => {
                   <a
                     href="#"
                     className=""
-                    style={{fontFamily:"Manrope",fontSize:'14px', fontWeight:'700', color:'#000'}}
+                    style={{
+                      fontFamily: "Manrope",
+                      fontSize: "14px",
+                      fontWeight: "700",
+                      color: "#000",
+                    }}
                   >
                     Class 1
                   </a>
                 </div>
               </td>
-              <td style={{width:'fit-content'}}>
+              <td style={{ width: "fit-content" }}>
                 <div
                   style={{
                     width: "fit-content",
                     display: "flex",
-                    marginRight:'25px',
+                    marginRight: "25px",
                     justifyContent: "start",
                     flexDirection: "column",
                   }}
@@ -319,10 +353,10 @@ const TablesWidget11: React.FC = () => {
                       fontWeight: "400",
                       lineHeight: "18px",
                       color: "#1F1F1F",
-                      fontFamily:"Manrope",
+                      fontFamily: "Manrope",
                     }}
                   >
-                    ₹200,000
+                    {currency + " " + "200,000"}
                   </span>
                   {showLastYearValue ? (
                     <span
@@ -331,17 +365,17 @@ const TablesWidget11: React.FC = () => {
                         fontWeight: "400",
                         lineHeight: "18px",
                         color: "#737373",
-                        fontFamily:"Manrope",
+                        fontFamily: "Manrope",
                       }}
                     >
-                      ₹200,000
+                      {currency + " " + "200,000"}
                     </span>
                   ) : (
                     ""
                   )}
                 </div>
               </td>
-              <td style={{width:'fit-content'}}>
+              <td style={{ width: "fit-content" }}>
                 <div
                   style={{
                     width: "fit-content",
@@ -356,10 +390,10 @@ const TablesWidget11: React.FC = () => {
                       fontWeight: "400",
                       lineHeight: "18px",
                       color: "#1F1F1F",
-                      fontFamily:"Manrope",
+                      fontFamily: "Manrope",
                     }}
                   >
-                    ₹200,000
+                    {currency + " " + "200,000"}
                   </span>
                   {showLastYearValue ? (
                     <span
@@ -368,72 +402,83 @@ const TablesWidget11: React.FC = () => {
                         fontWeight: "400",
                         lineHeight: "18px",
                         color: "#737373",
-                        fontFamily:"Manrope",
+                        fontFamily: "Manrope",
                       }}
                     >
-                      ₹200,000
+                      {currency + " " + "200,000"}
                     </span>
                   ) : (
                     ""
                   )}
                 </div>
               </td>
-            <td>
-              <div
-                style={{
-                  width: "fit-content",
-                  display: "flex",
-                  marginRight:'25px',
-                  justifyContent: "start",
-                  flexDirection: "column",
-                }}
-              >
-                <span
+              <td>
+                <div
                   style={{
-                    fontSize: "14px",
-                    fontWeight: "400",
-                    lineHeight: "18px",
-                    color: "#1F1F1F",
-                    fontFamily:"Manrope",
+                    width: "fit-content",
+                    display: "flex",
+                    marginRight: "25px",
+                    justifyContent: "start",
+                    flexDirection: "column",
                   }}
                 >
-                  ₹200,000
-                </span>
-                {showLastYearValue ? (
                   <span
                     style={{
-                      fontSize: "12px",
+                      fontSize: "14px",
                       fontWeight: "400",
                       lineHeight: "18px",
-                      color: "#737373",
-                      fontFamily:"Manrope",
+                      color: "#1F1F1F",
+                      fontFamily: "Manrope",
                     }}
                   >
-                    ₹200,000
+                    {currency + " " + "200,000"}
                   </span>
-                ) : (
-                  ""
-                )}
-              </div>
-            </td>
-          </tr>
+                  {showLastYearValue ? (
+                    <span
+                      style={{
+                        fontSize: "12px",
+                        fontWeight: "400",
+                        lineHeight: "18px",
+                        color: "#737373",
+                        fontFamily: "Manrope",
+                      }}
+                    >
+                      {currency + " " + "200,000"}
+                    </span>
+                  ) : (
+                    ""
+                  )}
+                </div>
+              </td>
+            </tr>
           </div>
-          <div className="tile-shadow"  style={{display:'flex',justifyContent:'center',height: "61px", width:'100%', alignItems:'center'}}>
-          <tr className=""
+          <div
+            className="tile-shadow"
             style={{
-              width: "100%",
+              display: "flex",
+              justifyContent: "center",
               height: "61px",
-              display:'flex',
-              paddingLeft:'24px',
-              paddingRight:'24px',
-              paddingTop: "18px",
+              width: "100%",
+              alignItems: "center",
+            }}
+          >
+            <tr
+              className=""
+              style={{
+                width: "100%",
+                height: "61px",
+                display: "flex",
+                paddingLeft: "24px",
+                paddingRight: "24px",
+                paddingTop: "18px",
 
-              justifyContent:'space-between',
-              backgroundColor: "#FFF",
-            }}
-          >
+                justifyContent: "space-between",
+                backgroundColor: "#FFF",
+              }}
+            >
               <td>
-                <div className=""
+                <div
+                  className=""
                   style={{
                     width: "fit-content",
                     display: "flex",
@@ -444,18 +489,23 @@ const TablesWidget11: React.FC = () => {
                   <a
                     href="#"
                     className=""
-                    style={{fontFamily:"Manrope",fontSize:'14px',fontWeight:'700', color:'#000'}}
+                    style={{
+                      fontFamily: "Manrope",
+                      fontSize: "14px",
+                      fontWeight: "700",
+                      color: "#000",
+                    }}
                   >
                     Class 1
                   </a>
                 </div>
               </td>
-              <td style={{width:'fit-content'}}>
+              <td style={{ width: "fit-content" }}>
                 <div
                   style={{
                     width: "fit-content",
                     display: "flex",
-                    marginRight:'25px',
+                    marginRight: "25px",
                     justifyContent: "start",
                     flexDirection: "column",
                   }}
@@ -465,11 +515,11 @@ const TablesWidget11: React.FC = () => {
                       fontSize: "14px",
                       fontWeight: "400",
                       lineHeight: "18px",
-                      fontFamily:"Manrope",
+                      fontFamily: "Manrope",
                       color: "#1F1F1F",
                     }}
                   >
-                    ₹200,000
+                    {currency + " " + "200,000"}
                   </span>
                   {showLastYearValue ? (
                     <span
@@ -477,18 +527,18 @@ const TablesWidget11: React.FC = () => {
                         fontSize: "12px",
                         fontWeight: "400",
                         lineHeight: "18px",
-                        fontFamily:"Manrope",
+                        fontFamily: "Manrope",
                         color: "#737373",
                       }}
                     >
-                      ₹200,000
+                      {currency + " " + "200,000"}
                     </span>
                   ) : (
                     ""
                   )}
                 </div>
               </td>
-              <td style={{width:'fit-content'}}>
+              <td style={{ width: "fit-content" }}>
                 <div
                   style={{
                     width: "fit-content",
@@ -503,10 +553,10 @@ const TablesWidget11: React.FC = () => {
                       fontWeight: "400",
                       lineHeight: "18px",
                       color: "#1F1F1F",
-                      fontFamily:"Manrope",
+                      fontFamily: "Manrope",
                     }}
                   >
-                    ₹200,000
+                    {currency + " " + "200,000"}
                   </span>
                   {showLastYearValue ? (
                     <span
@@ -515,70 +565,82 @@ const TablesWidget11: React.FC = () => {
                         fontWeight: "400",
                         lineHeight: "18px",
                         color: "#737373",
-                        fontFamily:"Manrope",
+                        fontFamily: "Manrope",
                       }}
                     >
-                      ₹200,000
+                      {currency + " " + "200,000"}
                     </span>
                   ) : (
                     ""
                   )}
                 </div>
               </td>
-            <td>
-              <div
-                style={{
-                  width: "fit-content",
-                  marginRight:'25px',
-                  display: "flex",
-                  justifyContent: "start",
-                  flexDirection: "column",
-                }}
-              >
-                <span
+              <td>
+                <div
                   style={{
-                    fontSize: "14px",
-                    fontWeight: "400",
-                    lineHeight: "18px",
-                    color: "#1F1F1F",
-                    fontFamily:"Manrope",
+                    width: "fit-content",
+                    marginRight: "25px",
+                    display: "flex",
+                    justifyContent: "start",
+                    flexDirection: "column",
                   }}
                 >
-                  ₹200,000
-                </span>
-                {showLastYearValue ? (
                   <span
                     style={{
-                      fontSize: "12px",
+                      fontSize: "14px",
                       fontWeight: "400",
                       lineHeight: "18px",
-                      color: "#737373",
-                      fontFamily:"Manrope",
+                      color: "#1F1F1F",
+                      fontFamily: "Manrope",
                     }}
                   >
-                    ₹200,000
+                    {currency + " " + "200,000"}
                   </span>
-                ) : (
-                  ""
-                )}
-              </div>
-            </td>
-          </tr>
+                  {showLastYearValue ? (
+                    <span
+                      style={{
+                        fontSize: "12px",
+                        fontWeight: "400",
+                        lineHeight: "18px",
+                        color: "#737373",
+                        fontFamily: "Manrope",
+                      }}
+                    >
+                      {currency + " " + "200,000"}
+                    </span>
+                  ) : (
+                    ""
+                  )}
+                </div>
+              </td>
+            </tr>
           </div>
-          <div className="tile-shadow" style={{display:'flex',height: "61px", alignItems:'center', justifyContent:'center', width:'100%',backgroundColor:'#F7F9FB'}}>
-          <tr className=""
+          <div
+            className="tile-shadow"
             style={{
+              display: "flex",
+              height: "61px",
+              alignItems: "center",
+              justifyContent: "center",
               width: "100%",
-              height: "59px",
-              display:'flex',
-              paddingLeft:'24px',
-              paddingRight:'24px',
-              paddingTop: "18px",
-              justifyContent:'space-between',
+              backgroundColor: "#F7F9FB",
             }}
           >
+            <tr
+              className=""
+              style={{
+                width: "100%",
+                height: "59px",
+                display: "flex",
+                paddingLeft: "24px",
+                paddingRight: "24px",
+                paddingTop: "18px",
+                justifyContent: "space-between",
+              }}
+            >
               <td>
-                <div className=""
+                <div
+                  className=""
                   style={{
                     width: "fit-content",
                     display: "flex",
@@ -588,18 +650,23 @@ const TablesWidget11: React.FC = () => {
                 >
                   <a
                     href="#"
-                    style={{fontFamily:"Manrope",fontSize:'14px',fontWeight:'700',color:'#000'}}
+                    style={{
+                      fontFamily: "Manrope",
+                      fontSize: "14px",
+                      fontWeight: "700",
+                      color: "#000",
+                    }}
                   >
                     Class 1
                   </a>
                 </div>
               </td>
-              <td style={{width:'fit-content'}}>
+              <td style={{ width: "fit-content" }}>
                 <div
                   style={{
                     width: "fit-content",
                     display: "flex",
-                    marginRight:'25px',
+                    marginRight: "25px",
                     justifyContent: "start",
                     flexDirection: "column",
                   }}
@@ -610,10 +677,10 @@ const TablesWidget11: React.FC = () => {
                       fontWeight: "400",
                       lineHeight: "18px",
                       color: "#1F1F1F",
-                      fontFamily:"Manrope",
+                      fontFamily: "Manrope",
                     }}
                   >
-                    ₹200,000
+                    {currency + " " + "200,000"}
                   </span>
                   {showLastYearValue ? (
                     <span
@@ -622,17 +689,17 @@ const TablesWidget11: React.FC = () => {
                         fontWeight: "400",
                         lineHeight: "18px",
                         color: "#737373",
-                        fontFamily:"Manrope",
+                        fontFamily: "Manrope",
                       }}
                     >
-                      ₹200,000
+                      {currency + " " + "200,000"}
                     </span>
                   ) : (
                     ""
                   )}
                 </div>
               </td>
-              <td style={{width:'fit-content'}}>
+              <td style={{ width: "fit-content" }}>
                 <div
                   style={{
                     width: "fit-content",
@@ -647,10 +714,10 @@ const TablesWidget11: React.FC = () => {
                       fontWeight: "400",
                       lineHeight: "18px",
                       color: "#1F1F1F",
-                      fontFamily:"Manrope",
+                      fontFamily: "Manrope",
                     }}
                   >
-                    ₹200,000
+                    {currency + " " + "200,000"}
                   </span>
                   {showLastYearValue ? (
                     <span
@@ -659,59 +726,56 @@ const TablesWidget11: React.FC = () => {
                         fontWeight: "400",
                         lineHeight: "18px",
                         color: "#737373",
-                        fontFamily:"Manrope",
+                        fontFamily: "Manrope",
                       }}
                     >
-                      ₹200,000
+                      {currency + " " + "200,000"}
                     </span>
                   ) : (
                     ""
                   )}
                 </div>
               </td>
-            <td>
-              <div
-                style={{
-                  width: "fit-content",
-                  display: "flex",
-                  marginRight:'25px',
-                  justifyContent: "start",
-                  flexDirection: "column",
-                }}
-              >
-                <span
+              <td>
+                <div
                   style={{
-                    fontSize: "14px",
-                    fontWeight: "400",
-                    lineHeight: "18px",
-                    color: "#1F1F1F",
-                    fontFamily:"Manrope",
+                    width: "fit-content",
+                    display: "flex",
+                    marginRight: "25px",
+                    justifyContent: "start",
+                    flexDirection: "column",
                   }}
                 >
-                  ₹200,000
-                </span>
-                {showLastYearValue ? (
                   <span
                     style={{
-                      fontSize: "12px",
+                      fontSize: "14px",
                       fontWeight: "400",
                       lineHeight: "18px",
-                      color: "#737373",
-                      fontFamily:"Manrope",
+                      color: "#1F1F1F",
+                      fontFamily: "Manrope",
                     }}
                   >
-                    ₹200,000
+                    {currency + " " + "200,000"}
                   </span>
-                ) : (
-                  ""
-                )}
-              </div>
-            </td>
-          </tr>
+                  {showLastYearValue ? (
+                    <span
+                      style={{
+                        fontSize: "12px",
+                        fontWeight: "400",
+                        lineHeight: "18px",
+                        color: "#737373",
+                        fontFamily: "Manrope",
+                      }}
+                    >
+                      {currency + " " + "200,000"}
+                    </span>
+                  ) : (
+                    ""
+                  )}
+                </div>
+              </td>
+            </tr>
           </div>
-          
-          
-          
         </tbody>
         {/* end::Table body */}
       </table>

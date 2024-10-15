@@ -50,7 +50,7 @@ const CardsWidget29: FC<Props> = ({
             {title}
           </span>
           <div style={{display:'flex',flexDirection:'column',gap:'10px'}}>
-            <div className="d-flex align-items-center" style={{width:'105px',height:'36px', gap:'3px'}}>
+            <div className="d-flex align-items-center" style={{width:'250px',height:'36px', gap:'3px'}}>
               <span
                 style={{
                   color: `${bigTextColor}`,

@@ -20,6 +20,7 @@ import SchoolEventsCalendar from "../../../_metronic/partials/widgets/_new/cards
 
 const DashboardPage: FC = () => {
   const { currentUser } = useAuth();
+  const currency = currentUser.currency_symbol;
 
   const [totalSchools, setTotalSchools] = useState(0);
   const [activeUsers, setActiveUsers] = useState(0);
@@ -178,7 +179,7 @@ const DashboardPage: FC = () => {
             <div className="col-xxl-3">
               <EngageWidget10
                 title={"Monthly Fees Collection"}
-                number={"₹24,30,800"}
+                number={ currency +" "+"24,30,800"}
                 image={"fees"}
                 backgroundColor={"#FFE7E1"}
                 titlecolor={"#1F3259"}
@@ -189,7 +190,7 @@ const DashboardPage: FC = () => {
             <div className="col-xxl-3">
               <EngageWidget10
                 title={"Monthly Expense"}
-                number={"₹5,32,200"}
+                number={currency +" "+ "5,32,200"}
                 image={"expense"}
                 backgroundColor={"#F2F6FF"}
                 titlecolor={"#1F3259"}

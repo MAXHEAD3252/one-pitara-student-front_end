@@ -371,8 +371,8 @@ const TablesWidget48: React.FC<TablesWidgetProps> = () => {
                     height: "100px",
                     display: "flex",
                     gap: "10px", // Adds space between the buttons
-                    justifyContent: "right", // Aligns buttons horizontally in the center
-                    alignItems: "center", // Vertically centers the buttons
+                    justifyContent: "end", // Aligns buttons horizontally in the center
+                    alignItems: "end", // Vertically centers the buttons
                     padding: "12px 20px",
                   }}
                 >

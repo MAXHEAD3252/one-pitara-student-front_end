@@ -10,10 +10,12 @@ type Props = {
   setRefresh: any;
   classId: string;
   classname: string;
+  editsections: string[]; // assuming this is an array of section names like ['A', 'B', 'C']
 };
 
-interface FormData {
-  class_name: string;
+interface SectionData {
+  id: string;
+  section: string;
 }
 
 const modalsRoot = document.getElementById("root-modals") || document.body;
@@ -24,57 +26,82 @@ const CreateEditClass = ({
   setRefresh,
   classId,
   classname,
+  editsections,
 }: Props) => {
+  const [selectedSections, setSelectedSections] = useState<string[]>(
+    editsections || []
+  ); // Initialize with editsections
+  const [sections, setSections] = useState<SectionData[]>([]);
+  const [className, setClassName] = useState(classname); // Initialize with classname
   const { currentUser } = useAuth();
   const school_id = currentUser?.school_id;
 
-  const initialFormData: FormData = {
-    class_name: classname || "",
-  };
-
-  const [formData, setFormData] = useState<FormData>(initialFormData);
-
-  // Sync the classname prop to the form data when it changes
+  // Fetch available sections for the school
   useEffect(() => {
-    setFormData({ class_name: classname });
-  }, [classname]);
+    const fetchSections = async () => {
+      try {
+        const response = await fetch(
+          `${DOMAIN}/api/school/get-onlysections/${school_id}`
+        );
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const data = await response.json();
+        setSections(data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
 
-  // Handler for class name input
-  const handleClassNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = e.target;
-    setFormData((prevState) => ({
-      ...prevState,
-      class_name: value,
-    }));
+    if (school_id) {
+      fetchSections();
+    }
+  }, [school_id]);
+
+  // Handle selection of sections
+  const handleSectionSelect = (selectedId: any) => {
+    setSelectedSections((prevSections) =>
+      prevSections.includes(selectedId)
+        ? prevSections.filter((id) => id !== selectedId) // remove if already selected
+        : [...prevSections, selectedId] // add if not selected
+    );
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.class_name) {
-      alert("Please enter a class name.");
+    if (!className || selectedSections.length === 0) {
+      alert("Please enter class name and select at least one section.");
       return;
     }
 
+    console.log(className, school_id, selectedSections, classId);
     try {
-      const response = await fetch(`${DOMAIN}/api/school/edit-class/${school_id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ class_name: formData.class_name, classId }),
-      });
+      const response = await fetch(
+        `${DOMAIN}/api/school/edit-class/${school_id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            className,
+            selectedSections,
+            classId,
+          }),
+        }
+      );
 
-      if (!response.ok) throw new Error("Network response was not ok");
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
       const result = await response.json();
       console.log("Form submitted successfully!", result);
+      handleClose(); // Close the modal after submission
       setRefresh(true);
-      handleCloseModal();
     } catch (error) {
       console.error("Error submitting form:", error);
     }
-  };
-
-  const handleCloseModal = () => {
-    setFormData(initialFormData); // Reset the form data when modal closes
-    handleClose();
   };
 
   return createPortal(
@@ -85,21 +112,27 @@ const CreateEditClass = ({
       aria-hidden="true"
       dialogClassName="modal-dialog modal-dialog-centered mw-500px"
       show={show}
-      onHide={handleCloseModal}
+      onHide={handleClose}
     >
       <div
         className="modal-header"
-        style={{ backgroundColor: "#F2F6FF", borderBottom: "1px solid lightgray" }}
+        style={{
+          backgroundColor: "#F2F6FF",
+          borderBottom: "1px solid lightgray",
+        }}
       >
-        <h2>Edit Class Name</h2>
-        <div className="btn btn-sm btn-icon btn-active-color-primary" onClick={handleCloseModal}>
+        <h2>Edit Class</h2>
+        <div
+          className="btn btn-sm btn-icon btn-active-color-primary"
+          onClick={handleClose}
+        >
           <i className="fas fa-times"></i>
         </div>
       </div>
       <div className="modal-body" style={{ backgroundColor: "#F2F6FF" }}>
         <Form onSubmit={handleSubmit}>
           <Row className="mb-3">
-            <Col md={12}>
+            <Col md={6}>
               <Form.Group controlId="class_name">
                 <Form.Label>Class Name</Form.Label>
                 <InputGroup>
@@ -110,10 +143,42 @@ const CreateEditClass = ({
                     type="text"
                     name="class_name"
                     placeholder="Enter Class Name"
-                    value={formData.class_name}
-                    onChange={handleClassNameChange}
+                    value={className}
+                    onChange={(e) => setClassName(e.target.value)}
                   />
                 </InputGroup>
+              </Form.Group>
+            </Col>
+          </Row>
+          <Row>
+          <Col md={6}>
+              <Form.Group className="mb-3 custom-input" controlId="formSource">
+                <Form.Label>Select Section</Form.Label>
+                <InputGroup>
+                  <InputGroup.Text>
+                    <i className="fas fa-globe"></i>
+                  </InputGroup.Text>
+                  <Form.Select
+                    value={selectedSections}
+                    onChange={(e) => handleSectionSelect(e.target.value)}
+                    name="section"
+                    multiple
+                  >
+                    {/* <option value="">
+                      {"Select Section"}
+                    </option> */}
+                    {sections.map((item) => (
+                    <option
+                      key={item.id}
+                      value={item.id}
+                      selected={selectedSections.includes(item.id)}
+                    >
+                      {item.section}
+                    </option>
+                  ))}
+                  </Form.Select>
+                </InputGroup>
+                <Form.Text className="text-muted">Select a source.</Form.Text>
               </Form.Group>
             </Col>
           </Row>

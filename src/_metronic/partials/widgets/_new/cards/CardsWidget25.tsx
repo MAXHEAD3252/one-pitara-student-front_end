@@ -1,6 +1,11 @@
 import React, { FC } from "react";
+import { useAuth } from "../../../../../app/modules/auth";
 
 const CardsWidget25: FC = () => {
+
+const { currentUser } = useAuth();
+const currency = currentUser.currency_symbol;
+
   return (
     <div className=" h-md-100 mb-md-5 mb-lg-5"
       style={{
@@ -125,7 +130,7 @@ const CardsWidget25: FC = () => {
                     fontFamily:"Manrope",
                   }}
                 >
-                  ₹200,000
+                  {currency +" "+'200,000'}
                 </span>
               </span>
             </div>
@@ -149,7 +154,7 @@ const CardsWidget25: FC = () => {
                     fontFamily:"Manrope",
                   }}
                 >
-                   ₹200,000
+                {currency +" "+'200,000'}
                 </span>
               </span>
             </div>
@@ -184,7 +189,7 @@ const CardsWidget25: FC = () => {
                     fontFamily:"Manrope",
                   }}
                 >
-                  ₹200,000
+                  {currency +" "+'200,000'}
                 </span>
               </span>
             </div>
@@ -208,7 +213,7 @@ const CardsWidget25: FC = () => {
                     fontFamily:"Manrope",
                   }}
                 >
-                  ₹200,000
+                  {currency +" "+'200,000'}
                 </span>
               </span>
             </div>

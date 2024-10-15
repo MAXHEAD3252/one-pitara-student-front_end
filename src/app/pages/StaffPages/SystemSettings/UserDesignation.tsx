@@ -14,7 +14,7 @@ const Roles: FC = () => {
   );
 };
 
-const UserRoles: FC = () => {
+const UserDesignation: FC = () => {
   const intl = useIntl();
 
   return (
@@ -28,4 +28,4 @@ const UserRoles: FC = () => {
   );
 };
 
-export default UserRoles;
+export default UserDesignation;

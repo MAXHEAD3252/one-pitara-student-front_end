@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useAuth } from "../../../../app/modules/auth";
 
 const TablesWidget24: React.FC = () => {
   const [showLastYearValue, setLastYearValue] = useState(false);
@@ -16,6 +17,10 @@ const TablesWidget24: React.FC = () => {
   const handelLastYear = () => {
     setLastYearValue((prevState) => !prevState);
   };
+
+  const { currentUser } = useAuth();
+  const currency = currentUser.currency_symbol;
+
   return (
     <div
       className="mb-md-5 mb-lg-5"
@@ -478,46 +483,46 @@ const TablesWidget24: React.FC = () => {
               </td>
               <td style={{ width: "fit-content" }}>
                 {selectedFilter1 === "Cost Breakdown" && (
-                <div
-                  style={{
-                    width: "fit-content",
-                    display: "flex",
-                    marginLeft: "70px",
-                    justifyContent: "start",
-                    flexDirection: "column",
-                  }}
-                >
+                  <div
+                    style={{
+                      width: "fit-content",
+                      display: "flex",
+                      marginLeft: "70px",
+                      justifyContent: "start",
+                      flexDirection: "column",
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontSize: "14px",
+                        fontWeight: "400",
+                        lineHeight: "18px",
+                        color: "#1F1F1F",
+                        fontFamily: "Manrope",
+                      }}
+                    >
+                      ₹32581222 (45%)
+                    </span>
+                    {showLastYearValue ? (
                       <span
                         style={{
-                          fontSize: "14px",
+                          fontSize: "12px",
                           fontWeight: "400",
                           lineHeight: "18px",
-                          color: "#1F1F1F",
+                          color: "#737373",
                           fontFamily: "Manrope",
                         }}
                       >
-                        ₹32581222 (45%)
+                        ₹30019909 (55%)
                       </span>
-                      {showLastYearValue ? (
-                        <span
-                          style={{
-                            fontSize: "12px",
-                            fontWeight: "400",
-                            lineHeight: "18px",
-                            color: "#737373",
-                            fontFamily: "Manrope",
-                          }}
-                        >
-                          ₹30019909 (55%)
-                        </span>
-                      ) : (
-                        ""
-                        )}
-                        </div>
-                  )}
+                    ) : (
+                      ""
+                    )}
+                  </div>
+                )}
 
-                  {selectedFilter1 === "Income Breakdown" && (
-                    <div
+                {selectedFilter1 === "Income Breakdown" && (
+                  <div
                     style={{
                       width: "fit-content",
                       display: "flex",
@@ -526,78 +531,78 @@ const TablesWidget24: React.FC = () => {
                       flexDirection: "column",
                     }}
                   >
+                    <span
+                      style={{
+                        fontSize: "14px",
+                        fontWeight: "400",
+                        lineHeight: "18px",
+                        color: "#1F1F1F",
+                        fontFamily: "Manrope",
+                      }}
+                    >
+                      {currency + " " + "42,58,1222"}
+                    </span>
+                    {showLastYearValue ? (
                       <span
                         style={{
-                          fontSize: "14px",
+                          fontSize: "12px",
                           fontWeight: "400",
                           lineHeight: "18px",
-                          color: "#1F1F1F",
+                          color: "#737373",
                           fontFamily: "Manrope",
                         }}
                       >
-                        ₹42581222
+                        {currency + " " + "40,01,9909"}
                       </span>
-                      {showLastYearValue ? (
-                        <span
-                          style={{
-                            fontSize: "12px",
-                            fontWeight: "400",
-                            lineHeight: "18px",
-                            color: "#737373",
-                            fontFamily: "Manrope",
-                          }}
-                        >
-                          ₹40019909
-                        </span>
-                      ) : (
-                        ""
-                      )}
-                    </div>
-                  )}
+                    ) : (
+                      ""
+                    )}
+                  </div>
+                )}
               </td>
               <td style={{ width: "fit-content" }}>
-              {selectedFilter1 === "Cost Breakdown" && (
-                <div
-                  style={{
-                    width: "fit-content",
-                    display: "flex",
-                    // marginRight: "20px",
-                    justifyContent: "end",
-                    flexDirection: "column",
-                  }}
-                >
+                {selectedFilter1 === "Cost Breakdown" && (
+                  <div
+                    style={{
+                      width: "fit-content",
+                      display: "flex",
+                      // marginRight: "20px",
+                      justifyContent: "end",
+                      flexDirection: "column",
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontSize: "14px",
+                        fontWeight: "400",
+                        lineHeight: "18px",
+                        color: "#1F1F1F",
+                        fontFamily: "Manrope",
+                      }}
+                    >
+                      ₹32581222 (45%)
+                    </span>
+                    {showLastYearValue ? (
                       <span
                         style={{
-                          fontSize: "14px",
+                          fontSize: "12px",
                           fontWeight: "400",
                           lineHeight: "18px",
-                          color: "#1F1F1F",
+                          color: "#737373",
                           fontFamily: "Manrope",
+                          textAlign: "end",
                         }}
                       >
-                        ₹32581222 (45%)
+                        ₹30019909 (55%)
                       </span>
-                      {showLastYearValue ? (
-                        <span
-                          style={{
-                            fontSize: "12px",
-                            fontWeight: "400",
-                            lineHeight: "18px",
-                            color: "#737373",
-                            fontFamily: "Manrope",
-                            textAlign:'end'
-                          }}
-                        >
-                          ₹30019909 (55%)
-                        </span>
-                      ) : (
-                        ""
-                        )}
-                        </div>
-                  )}
+                    ) : (
+                      ""
+                    )}
+                  </div>
+                )}
 
-                  {selectedFilter1 === "Income Breakdown" && (
-                    <div
+                {selectedFilter1 === "Income Breakdown" && (
+                  <div
                     style={{
                       width: "fit-content",
                       display: "flex",
@@ -606,34 +611,34 @@ const TablesWidget24: React.FC = () => {
                       flexDirection: "column",
                     }}
                   >
+                    <span
+                      style={{
+                        fontSize: "14px",
+                        fontWeight: "400",
+                        lineHeight: "18px",
+                        color: "#1F1F1F",
+                        fontFamily: "Manrope",
+                      }}
+                    >
+                      34%
+                    </span>
+                    {showLastYearValue ? (
                       <span
                         style={{
-                          fontSize: "14px",
+                          fontSize: "12px",
                           fontWeight: "400",
                           lineHeight: "18px",
-                          color: "#1F1F1F",
+                          color: "#737373",
                           fontFamily: "Manrope",
                         }}
                       >
-                        34%
+                        36%
                       </span>
-                      {showLastYearValue ? (
-                        <span
-                          style={{
-                            fontSize: "12px",
-                            fontWeight: "400",
-                            lineHeight: "18px",
-                            color: "#737373",
-                            fontFamily: "Manrope",
-                          }}
-                        >
-                          36%
-                        </span>
-                      ) : (
-                        ""
-                      )}
-                    </div>
-                  )}
+                    ) : (
+                      ""
+                    )}
+                  </div>
+                )}
               </td>
             </tr>
           </div>
@@ -700,7 +705,7 @@ const TablesWidget24: React.FC = () => {
                 </div>
               </td>
               <td style={{ width: "fit-content" }}>
-                  {selectedFilter1 === "Cost Breakdown" && (
+                {selectedFilter1 === "Cost Breakdown" && (
                   <div
                     style={{
                       width: "fit-content",
@@ -710,117 +715,117 @@ const TablesWidget24: React.FC = () => {
                       flexDirection: "column",
                     }}
                   >
-                        <span
-                          style={{
-                            fontSize: "14px",
-                            fontWeight: "400",
-                            lineHeight: "18px",
-                            color: "#1F1F1F",
-                            fontFamily: "Manrope",
-                          }}
-                        >
-                          ₹32581222 (45%)
-                        </span>
-                        {showLastYearValue ? (
-                          <span
-                            style={{
-                              fontSize: "12px",
-                              fontWeight: "400",
-                              lineHeight: "18px",
-                              color: "#737373",
-                              fontFamily: "Manrope",
-                            }}
-                          >
-                            ₹30019909 (55%)
-                          </span>
-                        ) : (
-                          ""
-                          )}
-                          </div>
-                    )}
-
-                    {selectedFilter1 === "Income Breakdown" && (
-                      <div
+                    <span
                       style={{
-                        width: "fit-content",
-                        display: "flex",
-                        marginRight: "65px",
-                        justifyContent: "start",
-                        flexDirection: "column",
+                        fontSize: "14px",
+                        fontWeight: "400",
+                        lineHeight: "18px",
+                        color: "#1F1F1F",
+                        fontFamily: "Manrope",
                       }}
                     >
-                        <span
-                          style={{
-                            fontSize: "14px",
-                            fontWeight: "400",
-                            lineHeight: "18px",
-                            color: "#1F1F1F",
-                            fontFamily: "Manrope",
-                          }}
-                        >
-                          ₹42581222
-                        </span>
-                        {showLastYearValue ? (
-                          <span
-                            style={{
-                              fontSize: "12px",
-                              fontWeight: "400",
-                              lineHeight: "18px",
-                              color: "#737373",
-                              fontFamily: "Manrope",
-                            }}
-                          >
-                            ₹40019909
-                          </span>
-                        ) : (
-                          ""
-                        )}
-                      </div>
-                    )}
-              </td>
-              <td style={{ width: "fit-content" }}>
-              {selectedFilter1 === "Cost Breakdown" && (
-                <div
-                  style={{
-                    width: "fit-content",
-                    display: "flex",
-                    // marginRight: "20px",
-                    justifyContent: "end",
-                    flexDirection: "column",
-                  }}
-                >
+                      ₹32581222 (45%)
+                    </span>
+                    {showLastYearValue ? (
                       <span
                         style={{
-                          fontSize: "14px",
+                          fontSize: "12px",
                           fontWeight: "400",
                           lineHeight: "18px",
-                          color: "#1F1F1F",
+                          color: "#737373",
                           fontFamily: "Manrope",
                         }}
                       >
-                        ₹32581222 (45%)
+                        ₹30019909 (55%)
                       </span>
-                      {showLastYearValue ? (
-                        <span
-                          style={{
-                            fontSize: "12px",
-                            fontWeight: "400",
-                            lineHeight: "18px",
-                            color: "#737373",
-                            fontFamily: "Manrope",
-                            textAlign:'end'
-                          }}
-                        >
-                          ₹30019909 (55%)
-                        </span>
-                      ) : (
-                        ""
-                        )}
-                        </div>
-                  )}
+                    ) : (
+                      ""
+                    )}
+                  </div>
+                )}
 
-                  {selectedFilter1 === "Income Breakdown" && (
-                    <div
+                {selectedFilter1 === "Income Breakdown" && (
+                  <div
+                    style={{
+                      width: "fit-content",
+                      display: "flex",
+                      marginRight: "65px",
+                      justifyContent: "start",
+                      flexDirection: "column",
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontSize: "14px",
+                        fontWeight: "400",
+                        lineHeight: "18px",
+                        color: "#1F1F1F",
+                        fontFamily: "Manrope",
+                      }}
+                    >
+                      {currency + " " + "42,58,1222"}
+                    </span>
+                    {showLastYearValue ? (
+                      <span
+                        style={{
+                          fontSize: "12px",
+                          fontWeight: "400",
+                          lineHeight: "18px",
+                          color: "#737373",
+                          fontFamily: "Manrope",
+                        }}
+                      >
+                        {currency + " " + "40,01,9909"}
+                      </span>
+                    ) : (
+                      ""
+                    )}
+                  </div>
+                )}
+              </td>
+              <td style={{ width: "fit-content" }}>
+                {selectedFilter1 === "Cost Breakdown" && (
+                  <div
+                    style={{
+                      width: "fit-content",
+                      display: "flex",
+                      // marginRight: "20px",
+                      justifyContent: "end",
+                      flexDirection: "column",
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontSize: "14px",
+                        fontWeight: "400",
+                        lineHeight: "18px",
+                        color: "#1F1F1F",
+                        fontFamily: "Manrope",
+                      }}
+                    >
+                      ₹32581222 (45%)
+                    </span>
+                    {showLastYearValue ? (
+                      <span
+                        style={{
+                          fontSize: "12px",
+                          fontWeight: "400",
+                          lineHeight: "18px",
+                          color: "#737373",
+                          fontFamily: "Manrope",
+                          textAlign: "end",
+                        }}
+                      >
+                        ₹30019909 (55%)
+                      </span>
+                    ) : (
+                      ""
+                    )}
+                  </div>
+                )}
+
+                {selectedFilter1 === "Income Breakdown" && (
+                  <div
                     style={{
                       width: "fit-content",
                       display: "flex",
@@ -829,34 +834,34 @@ const TablesWidget24: React.FC = () => {
                       flexDirection: "column",
                     }}
                   >
+                    <span
+                      style={{
+                        fontSize: "14px",
+                        fontWeight: "400",
+                        lineHeight: "18px",
+                        color: "#1F1F1F",
+                        fontFamily: "Manrope",
+                      }}
+                    >
+                      34%
+                    </span>
+                    {showLastYearValue ? (
                       <span
                         style={{
-                          fontSize: "14px",
+                          fontSize: "12px",
                           fontWeight: "400",
                           lineHeight: "18px",
-                          color: "#1F1F1F",
+                          color: "#737373",
                           fontFamily: "Manrope",
                         }}
                       >
-                        34%
+                        36%
                       </span>
-                      {showLastYearValue ? (
-                        <span
-                          style={{
-                            fontSize: "12px",
-                            fontWeight: "400",
-                            lineHeight: "18px",
-                            color: "#737373",
-                            fontFamily: "Manrope",
-                          }}
-                        >
-                          36%
-                        </span>
-                      ) : (
-                        ""
-                      )}
-                    </div>
-                  )}
+                    ) : (
+                      ""
+                    )}
+                  </div>
+                )}
               </td>
             </tr>
           </div>
@@ -923,7 +928,7 @@ const TablesWidget24: React.FC = () => {
                 </div>
               </td>
               <td style={{ width: "fit-content" }}>
-              {selectedFilter1 === "Cost Breakdown" && (
+                {selectedFilter1 === "Cost Breakdown" && (
                   <div
                     style={{
                       width: "fit-content",
@@ -933,117 +938,117 @@ const TablesWidget24: React.FC = () => {
                       flexDirection: "column",
                     }}
                   >
-                        <span
-                          style={{
-                            fontSize: "14px",
-                            fontWeight: "400",
-                            lineHeight: "18px",
-                            color: "#1F1F1F",
-                            fontFamily: "Manrope",
-                          }}
-                        >
-                          ₹32581222 (35%)
-                        </span>
-                        {showLastYearValue ? (
-                          <span
-                            style={{
-                              fontSize: "12px",
-                              fontWeight: "400",
-                              lineHeight: "18px",
-                              color: "#737373",
-                              fontFamily: "Manrope",
-                            }}
-                          >
-                            ₹30019909 (55%)
-                          </span>
-                        ) : (
-                          ""
-                          )}
-                          </div>
-                    )}
-
-                    {selectedFilter1 === "Income Breakdown" && (
-                      <div
+                    <span
                       style={{
-                        width: "fit-content",
-                        display: "flex",
-                        marginRight: "45px",
-                        justifyContent: "start",
-                        flexDirection: "column",
+                        fontSize: "14px",
+                        fontWeight: "400",
+                        lineHeight: "18px",
+                        color: "#1F1F1F",
+                        fontFamily: "Manrope",
                       }}
                     >
-                        <span
-                          style={{
-                            fontSize: "14px",
-                            fontWeight: "400",
-                            lineHeight: "18px",
-                            color: "#1F1F1F",
-                            fontFamily: "Manrope",
-                          }}
-                        >
-                          ₹42581222
-                        </span>
-                        {showLastYearValue ? (
-                          <span
-                            style={{
-                              fontSize: "12px",
-                              fontWeight: "400",
-                              lineHeight: "18px",
-                              color: "#737373",
-                              fontFamily: "Manrope",
-                            }}
-                          >
-                            ₹40019909
-                          </span>
-                        ) : (
-                          ""
-                        )}
-                      </div>
-                    )}
-              </td>
-              <td style={{ width: "fit-content" }}>
-              {selectedFilter1 === "Cost Breakdown" && (
-                <div
-                  style={{
-                    width: "fit-content",
-                    display: "flex",
-                    // marginRight: "20px",
-                    justifyContent: "end",
-                    flexDirection: "column",
-                  }}
-                >
+                      ₹32581222 (35%)
+                    </span>
+                    {showLastYearValue ? (
                       <span
                         style={{
-                          fontSize: "14px",
+                          fontSize: "12px",
                           fontWeight: "400",
                           lineHeight: "18px",
-                          color: "#1F1F1F",
+                          color: "#737373",
                           fontFamily: "Manrope",
                         }}
                       >
-                        ₹32581222 (45%)
+                        ₹30019909 (55%)
                       </span>
-                      {showLastYearValue ? (
-                        <span
-                          style={{
-                            fontSize: "12px",
-                            fontWeight: "400",
-                            lineHeight: "18px",
-                            color: "#737373",
-                            fontFamily: "Manrope",
-                            textAlign:'end'
-                          }}
-                        >
-                          ₹30019909 (55%)
-                        </span>
-                      ) : (
-                        ""
-                        )}
-                        </div>
-                  )}
+                    ) : (
+                      ""
+                    )}
+                  </div>
+                )}
 
-                  {selectedFilter1 === "Income Breakdown" && (
-                    <div
+                {selectedFilter1 === "Income Breakdown" && (
+                  <div
+                    style={{
+                      width: "fit-content",
+                      display: "flex",
+                      marginRight: "45px",
+                      justifyContent: "start",
+                      flexDirection: "column",
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontSize: "14px",
+                        fontWeight: "400",
+                        lineHeight: "18px",
+                        color: "#1F1F1F",
+                        fontFamily: "Manrope",
+                      }}
+                    >
+                      {currency + " " + "42,58,1222"}
+                    </span>
+                    {showLastYearValue ? (
+                      <span
+                        style={{
+                          fontSize: "12px",
+                          fontWeight: "400",
+                          lineHeight: "18px",
+                          color: "#737373",
+                          fontFamily: "Manrope",
+                        }}
+                      >
+                        {currency + " " + "40,01,9909"}
+                      </span>
+                    ) : (
+                      ""
+                    )}
+                  </div>
+                )}
+              </td>
+              <td style={{ width: "fit-content" }}>
+                {selectedFilter1 === "Cost Breakdown" && (
+                  <div
+                    style={{
+                      width: "fit-content",
+                      display: "flex",
+                      // marginRight: "20px",
+                      justifyContent: "end",
+                      flexDirection: "column",
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontSize: "14px",
+                        fontWeight: "400",
+                        lineHeight: "18px",
+                        color: "#1F1F1F",
+                        fontFamily: "Manrope",
+                      }}
+                    >
+                      ₹32581222 (45%)
+                    </span>
+                    {showLastYearValue ? (
+                      <span
+                        style={{
+                          fontSize: "12px",
+                          fontWeight: "400",
+                          lineHeight: "18px",
+                          color: "#737373",
+                          fontFamily: "Manrope",
+                          textAlign: "end",
+                        }}
+                      >
+                        ₹30019909 (55%)
+                      </span>
+                    ) : (
+                      ""
+                    )}
+                  </div>
+                )}
+
+                {selectedFilter1 === "Income Breakdown" && (
+                  <div
                     style={{
                       width: "fit-content",
                       display: "flex",
@@ -1052,34 +1057,34 @@ const TablesWidget24: React.FC = () => {
                       flexDirection: "column",
                     }}
                   >
+                    <span
+                      style={{
+                        fontSize: "14px",
+                        fontWeight: "400",
+                        lineHeight: "18px",
+                        color: "#1F1F1F",
+                        fontFamily: "Manrope",
+                      }}
+                    >
+                      34%
+                    </span>
+                    {showLastYearValue ? (
                       <span
                         style={{
-                          fontSize: "14px",
+                          fontSize: "12px",
                           fontWeight: "400",
                           lineHeight: "18px",
-                          color: "#1F1F1F",
+                          color: "#737373",
                           fontFamily: "Manrope",
                         }}
                       >
-                        34%
+                        36%
                       </span>
-                      {showLastYearValue ? (
-                        <span
-                          style={{
-                            fontSize: "12px",
-                            fontWeight: "400",
-                            lineHeight: "18px",
-                            color: "#737373",
-                            fontFamily: "Manrope",
-                          }}
-                        >
-                          36%
-                        </span>
-                      ) : (
-                        ""
-                      )}
-                    </div>
-                  )}
+                    ) : (
+                      ""
+                    )}
+                  </div>
+                )}
               </td>
             </tr>
           </div>

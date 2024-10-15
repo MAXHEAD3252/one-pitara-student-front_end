@@ -23,7 +23,7 @@ const Roles: FC = () => {
   );
 };
 
-const UserRolesPermission: FC = () => {
+const UserDesignationPermission: FC = () => {
   const intl = useIntl();
 
   return (
@@ -37,4 +37,4 @@ const UserRolesPermission: FC = () => {
   );
 };
 
-export default UserRolesPermission ;
+export default UserDesignationPermission ;
