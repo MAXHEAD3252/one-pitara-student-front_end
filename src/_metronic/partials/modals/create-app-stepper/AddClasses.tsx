@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 import { useAuth } from "../../../../app/modules/auth";
 import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
 import { Col, Form, InputGroup, Modal, Row } from "react-bootstrap";
+import Select from "react-select";
 
 type Props = {
   show: boolean;
@@ -32,8 +33,11 @@ const AddClasses = ({ show, handleClose, setRefresh }: Props) => {
   };
   const [formData, setFormData] = useState<FormData>(initialFormData);
   console.log(formData);
-  
+
   const [sections, setSections] = useState<SectionData[]>([]);
+  const [selectedSections, setSelectedSections] = useState<number[]>([]);
+  console.log(selectedSections);
+  
 
   // Fetch sections from API
   useEffect(() => {
@@ -58,42 +62,24 @@ const AddClasses = ({ show, handleClose, setRefresh }: Props) => {
 
   // Handle form input and checkbox changes
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type } = e.target;
+    const { name, value } = e.target;
 
-    if (type === "checkbox") {
-      const sectionId = value; // Use the value of the checkbox (section ID)
-      setFormData((prevState) => {
-        // Toggle section ID selection
-        if (prevState.section_ids.includes(sectionId)) {
-          // If the section is already selected, remove it
-          return {
-            ...prevState,
-            section_ids: prevState.section_ids.filter((id) => id !== sectionId),
-          };
-        } else {
-          // If it's not selected, add it
-          return {
-            ...prevState,
-            section_ids: [...prevState.section_ids, sectionId],
-          };
-        }
-      });
-    } else {
       // For regular text input (e.g., class name)
       setFormData((prevState) => ({
         ...prevState,
         [name]: value,
       }));
-    }
   };
 
   // Handling form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.class_name || formData.section_ids.length === 0) {
+    if (!formData.class_name) {
       alert("Please enter class name and select at least one section.");
       return;
     }
+
+
     try {
       const response = await fetch(
         `${DOMAIN}/api/school/add-class/${school_id}`,
@@ -102,7 +88,10 @@ const AddClasses = ({ show, handleClose, setRefresh }: Props) => {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(formData),
+          body: JSON.stringify({
+            class_name: formData.class_name,
+            section_ids: selectedSections,
+          }),
         }
       );
 
@@ -119,14 +108,20 @@ const AddClasses = ({ show, handleClose, setRefresh }: Props) => {
     }
   };
 
-
-  const handleCloseModal = () =>{
+  const handleCloseModal = () => {
     setFormData(initialFormData);
     handleClose();
-  }
+  };
 
+  const handleSectionChange = (selectedOptions: any) => {
+    const selectedIds = selectedOptions.map((option: any) => option.value);
+    setSelectedSections(selectedIds);
+  };
 
-
+  const sectionOptions = sections.map((section) => ({
+    value: section.section_id,
+    label: section.section,
+  }));
 
   return createPortal(
     <Modal
@@ -179,32 +174,14 @@ const AddClasses = ({ show, handleClose, setRefresh }: Props) => {
             <Col md={12}>
               <Form.Group className="mb-3" controlId="formSource">
                 <Form.Label>Select Sections</Form.Label>
-                <Row>
-                  {sections.length > 0 ? (
-                    sections.map((section, index) => (
-                      <Col md={4} key={section.section_id}> {/* 4 columns per row */}
-                        <div className="form-check">
-                          <input
-                            className="form-check-input"
-                            type="checkbox"
-                            value={section.section_id}
-                            id={`section-${section.section_id}`}
-                            checked={formData.section_ids.includes(String(section.section_id))}
-                            onChange={handleChange} // Single handler for both checkbox and input
-                          />
-                          <label
-                            className="form-check-label"
-                            htmlFor={`section-${section.section_id}`}
-                          >
-                            {section.section}
-                          </label>
-                        </div>
-                      </Col>
-                    ))
-                  ) : (
-                    <p>No sections available.</p>
-                  )}
-                </Row>
+                      <Select
+                        options={sectionOptions}
+                        isMulti
+                        onChange={handleSectionChange}
+                        placeholder="Select designations..."
+                        className="basic-multi-select"
+                        classNamePrefix="select"
+                      />
               </Form.Group>
             </Col>
           </Row>

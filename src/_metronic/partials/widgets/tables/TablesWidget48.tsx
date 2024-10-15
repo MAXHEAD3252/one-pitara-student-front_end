@@ -42,7 +42,7 @@ const TablesWidget48: React.FC<TablesWidgetProps> = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [classId, setClassId] = useState(0);
   const [classname, setclassname] = useState("");
-  // const [editsections, setEditSections] = useState([]);
+  const [editsections, setEditSections] = useState([]);
 
   const handleModal = () => {
     setShowModal(true);
@@ -62,9 +62,12 @@ const TablesWidget48: React.FC<TablesWidgetProps> = () => {
     setShowDeleteModal(false);
   };
 
-  const handleModalEdit = (class_id: number, classname: string) => {
+  const handleModalEdit = (class_id: number, classname: string, section_ids: any) => {
+    console.log(section_ids);
+    
     setClassId(class_id);
     setclassname(classname);
+    setEditSections(section_ids)
     setShowEditModal(true);
   };
 
@@ -377,47 +380,7 @@ const TablesWidget48: React.FC<TablesWidgetProps> = () => {
                   }}
                 >
                   <div
-                    onClick={() => handleModalEdit(item.class_id,item.class)}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      padding: "8px 12px",
-                      backgroundColor: "#1C335C",
-                      borderRadius: "8px",
-                      cursor: "pointer",
-                      transition: "background-color 0.3s",
-                    }}
-                    onMouseEnter={(e) =>
-                      (e.currentTarget.style.backgroundColor = "#16294D")
-                    }
-                    onMouseLeave={(e) =>
-                      (e.currentTarget.style.backgroundColor = "#1C335C")
-                    }
-                  >
-                    <span
-                      style={{
-                        marginRight: "8px",
-                        color: "white",
-                        fontSize: "14px",
-                        fontWeight: "700",
-                        fontFamily: "Manrope",
-                      }}
-                    >
-                      Manage Sections
-                    </span>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      width="16px"
-                      height="16px"
-                      fill="#ffffff"
-                    >
-                      <path d="M0 0h24v24H0V0z" fill="none" />
-                      <path d="M3 17.25V21h3.75l11-11.03-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
-                    </svg>
-                  </div>
-                  <div
-                    onClick={() => handleModalEdit(item.class_id,item.class)}
+                    onClick={() => handleModalEdit(item.class_id,item.class, item.sections)}
                     style={{
                       display: "flex",
                       alignItems: "center",

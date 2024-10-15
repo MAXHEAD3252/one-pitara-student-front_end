@@ -25,7 +25,7 @@ const AddDesignationSchool: React.FC<Props> = ({
   assignedDesignationIds = [], // Defaults to empty array if not provided
   schoolId,
 }: Props) => {
-  const [designations, setDesignations] = useState<Designation[]>([]);
+  const [designations, setDesignations] = useState<Designation[]>([]); 
   const [selectedDesignations, setSelectedDesignations] = useState<number[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
