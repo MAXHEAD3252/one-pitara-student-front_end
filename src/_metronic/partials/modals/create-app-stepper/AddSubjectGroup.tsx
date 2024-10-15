@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 import { useAuth } from "../../../../app/modules/auth";
 import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
 import { Col, Form, InputGroup, Modal, Row } from "react-bootstrap";
+import Select from "react-select";
 
 interface Class {
   class_id: number;
@@ -91,7 +92,6 @@ const AddSubjectGroup = ({ show, handleClose, setRefresh }: Props) => {
         if (!response.ok) throw new Error("Failed to fetch sections");
         const data = await response.json();
         setSection(data);
-        console.log(data);
       } catch (error) {
         console.error("Error fetching sections:", error);
       }
@@ -123,21 +123,30 @@ const AddSubjectGroup = ({ show, handleClose, setRefresh }: Props) => {
     setSelectedSession({ id, session });
   };
 
-  const handleSectionSelected = (section: number) => {
-    setSelectedSections((prevSelected) =>
-      prevSelected.includes(section)
-        ? prevSelected.filter((s) => s !== section)
-        : [...prevSelected, section]
-    );
+ 
+  const handleSectionSelected = (selectedOptions: any) => {
+    const selectedIds = selectedOptions.map((option: any) => option.value);
+    setSelectedSections(selectedIds);
   };
 
-  const handleSubjectSelected = (id: number) => {
-    setSelectedSubjects((prevSelected) =>
-      prevSelected.includes(id)
-        ? prevSelected.filter((s) => s !== id)
-        : [...prevSelected, id]
-    );
+
+  const handleSubjectSelected = (selectedOptions: any) => {
+    const selectedIds = selectedOptions.map((option: any) => option.value);
+    setSelectedSubjects(selectedIds);
   };
+
+
+  const sectionOptions = getSection.map((section) => ({
+    value: section.id,
+    label: section.section,
+  }));
+
+  const subjectOptions = getSubject.map((subject) => ({
+    value: subject.id,
+    label: subject.name,
+  }));
+
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -259,44 +268,34 @@ const AddSubjectGroup = ({ show, handleClose, setRefresh }: Props) => {
             </Col>
           </Row>
 
-          <Row className="mb-3">
-            <Col md={6}>
-              <Form.Group controlId="sections">
+          <Row>
+            <Col md={12}>
+              <Form.Group className="mb-3" controlId="formSource">
                 <Form.Label>Select Sections</Form.Label>
-                <InputGroup>
-                  <Form.Select multiple>
-                    {getSection.map((sec) => (
-                      <option
-                        key={sec.id}
-                        value={sec.id}
-                        onClick={() => handleSectionSelected(sec.id)}
-                      >
-                        {sec.section}
-                      </option>
-                    ))}
-                  </Form.Select>
-                </InputGroup>
+                      <Select
+                        options={sectionOptions}
+                        isMulti
+                        onChange={handleSectionSelected}
+                        placeholder="Select Sections..."
+                        className="basic-multi-select"
+                        classNamePrefix="select"
+                      />
               </Form.Group>
             </Col>
           </Row>
 
-          <Row className="mb-3">
-            <Col md={6}>
-              <Form.Group controlId="subjects">
+          <Row>
+            <Col md={12}>
+              <Form.Group className="mb-3" controlId="formSource">
                 <Form.Label>Select Subjects</Form.Label>
-                <InputGroup>
-                  <Form.Select multiple>
-                    {getSubject.map((sub) => (
-                      <option
-                        key={sub.id}
-                        value={sub.id}
-                        onClick={() => handleSubjectSelected(sub.id)}
-                      >
-                        {sub.name}
-                      </option>
-                    ))}
-                  </Form.Select>
-                </InputGroup>
+                      <Select
+                        options={subjectOptions}
+                        isMulti
+                        onChange={handleSubjectSelected}
+                        placeholder="Select Sections..."
+                        className="basic-multi-select"
+                        classNamePrefix="select"
+                      />
               </Form.Group>
             </Col>
           </Row>

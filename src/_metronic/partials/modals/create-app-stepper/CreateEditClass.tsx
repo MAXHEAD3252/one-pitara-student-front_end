@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 import { useAuth } from "../../../../app/modules/auth";
 import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
 import { Col, Form, InputGroup, Modal, Row } from "react-bootstrap";
+import Select from "react-select";
 
 type Props = {
   show: boolean;
@@ -28,9 +29,8 @@ const CreateEditClass = ({
   classname,
   editsections,
 }: Props) => {
-  const [selectedSections, setSelectedSections] = useState<string[]>(
-    editsections || []
-  ); // Initialize with editsections
+  const [selectedSections, setSelectedSections] = useState<number[]>([]);
+
   const [sections, setSections] = useState<SectionData[]>([]);
   const [className, setClassName] = useState(classname); // Initialize with classname
   const { currentUser } = useAuth();
@@ -59,13 +59,16 @@ const CreateEditClass = ({
   }, [school_id]);
 
   // Handle selection of sections
-  const handleSectionSelect = (selectedId: any) => {
-    setSelectedSections((prevSections) =>
-      prevSections.includes(selectedId)
-        ? prevSections.filter((id) => id !== selectedId) // remove if already selected
-        : [...prevSections, selectedId] // add if not selected
-    );
+  const handleSectionSelected = (selectedOptions: any) => {
+    const selectedIds = selectedOptions.map((option: any) => option.value);
+    setSelectedSections(selectedIds);
   };
+
+  const sectionOptions = sections.map((section) => ({
+    value: section.section_id,
+    label: section.section,
+  }));
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -103,6 +106,7 @@ const CreateEditClass = ({
       console.error("Error submitting form:", error);
     }
   };
+
 
   return createPortal(
     <Modal
@@ -150,38 +154,25 @@ const CreateEditClass = ({
               </Form.Group>
             </Col>
           </Row>
+
+
           <Row>
-          <Col md={6}>
-              <Form.Group className="mb-3 custom-input" controlId="formSource">
-                <Form.Label>Select Section</Form.Label>
-                <InputGroup>
-                  <InputGroup.Text>
-                    <i className="fas fa-globe"></i>
-                  </InputGroup.Text>
-                  <Form.Select
-                    value={selectedSections}
-                    onChange={(e) => handleSectionSelect(e.target.value)}
-                    name="section"
-                    multiple
-                  >
-                    {/* <option value="">
-                      {"Select Section"}
-                    </option> */}
-                    {sections.map((item) => (
-                    <option
-                      key={item.id}
-                      value={item.id}
-                      selected={selectedSections.includes(item.id)}
-                    >
-                      {item.section}
-                    </option>
-                  ))}
-                  </Form.Select>
-                </InputGroup>
-                <Form.Text className="text-muted">Select a source.</Form.Text>
+            <Col md={12}>
+              <Form.Group className="mb-3" controlId="formSource">
+                <Form.Label>Select Sections</Form.Label>
+                      <Select
+                        options={sectionOptions}
+                        isMulti
+                        onChange={handleSectionSelected}
+                        placeholder="Select Sections..."
+                        className="basic-multi-select"
+                        classNamePrefix="select"
+                      />
               </Form.Group>
             </Col>
           </Row>
+
+
           <div className="d-flex justify-content-end">
             <button type="submit" className="btn btn-primary">
               Submit

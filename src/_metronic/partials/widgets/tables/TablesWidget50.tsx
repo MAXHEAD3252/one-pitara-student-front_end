@@ -1,17 +1,11 @@
 import React, { useEffect, useState } from "react";
-// import { Tooltip as ReactTooltip } from "react-tooltip";
 import "../../../../app/pages/StaffPages/FinancialManagement/style.css";
-// import { CreateWalkinEnquiry } from "../../modals/create-app-stepper/CreateWalkinEnquiry";
-// import { CreateEnquiryAction } from "../../modals/create-app-stepper/CreateEnquiryAction";
-// import { CreateEditEnquiry } from "../../modals/create-app-stepper/CreateEditEnquiry";
 import { useAuth } from "../../../../app/modules/auth/core/Auth";
-// import { UploadsFilter } from "../../modals/create-app-stepper/UploadsFilter";
-// import { AddClasses } from "../../modals/create-app-stepper/AddClasses";
 import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
 import { AddSubjectGroup } from "../../modals/create-app-stepper/AddSubjectGroup";
 import { DeleteConfirmationModal } from "../../modals/create-app-stepper/DeleteConfirmationModal";
-import Subject from "../../../../app/pages/StaffPages/AcademicManagement/Subject";
 import { toast } from "react-toastify";
+import { CreateEditSubject } from "../../modals/create-app-stepper/CreateEditSubject";
 
 interface CurrentUser {
   school_id: string; // Adjust type as per your actual data type for school_id
@@ -483,7 +477,7 @@ const TablesWidget50 = () => {
                   </div>
 
                   <div
-                    onClick={() => handleShowDeleteModal(item.subject_id, item.class_id)}
+                  onClick={() => handleShowDeleteModal(item.subject_id, item.class_id)}
                     style={{
                       width: "32px",
                       height: "40px",
