@@ -14,7 +14,6 @@ export function MenuInner() {
       if (!schoollogopath) return; // If no logo path is available, exit early
 
       try {
-        console.log('Fetching logo...');
         const response = await fetch(`${DOMAIN}/api/school/get_school_logo`, {
           method: "POST",
           headers: {

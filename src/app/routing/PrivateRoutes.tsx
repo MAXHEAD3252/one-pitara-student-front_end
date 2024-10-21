@@ -21,7 +21,6 @@ const PrivateRoutes = () => {
   const { currentUser } = useAuth();
   const [userRole, setUserRole] = useState<string | null>(null);
   const [routes, setRoutes] = useState<RouteConfig[]>([]);
-  console.log(routes);
   
   const [authorizedPaths, setAuthorizedPaths] = useState<string[]>([]);
   const [subscriptionId, setSubscriptionId] = useState<string | null>(null);
@@ -73,7 +72,6 @@ const PrivateRoutes = () => {
       let componentModule;
       const routesPromises = Object.keys(data).flatMap((group) =>
         data[group].map(async (module: any) => {
-          console.log(module);
           
           try {
             if (module.component_name && module.path) {
@@ -81,8 +79,6 @@ const PrivateRoutes = () => {
                 componentModule = await import(
                   /* @vite-ignore */ `${basePath}/${module.component_name}`
                 );
-                console.log(`${basePath}/${module.component_name}`);
-                
               } else {
                 componentModule = await import(
                   /* @vite-ignore */ `${basePath}${module.parent_module}/${module.component_name}`

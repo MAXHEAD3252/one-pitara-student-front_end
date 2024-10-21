@@ -13,7 +13,7 @@ const Footer = () => {
           {new Date().getFullYear().toString()}&copy;
         </span>
         <a
-          href='https://keenthemes.com/'
+          href='#'
           target='_blank'
           className='text-gray-800 text-hover-primary'
         >
