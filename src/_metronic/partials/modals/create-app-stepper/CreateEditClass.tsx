@@ -9,7 +9,7 @@ type Props = {
   show: boolean;
   handleClose: () => void;
   setRefresh: any;
-  classId: string;
+  classId: number;
   classname: string;
   editsections: string[]; // assuming this is an array of section names like ['A', 'B', 'C']
 };

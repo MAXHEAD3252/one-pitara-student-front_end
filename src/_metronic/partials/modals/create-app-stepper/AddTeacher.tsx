@@ -29,7 +29,6 @@ const AddTeacher = ({ show, handleClose, setRefresh }: Props) => {
   const school_id = currentUser?.school_id;
 
   const [getClass, setClass] = useState<Class[]>([]);
-  const [teacherName, setTeacherName] = useState<Class[]>([]);
   const [getTeachers, setTeachers] = useState<Teacher[]>([]);
   const [getSection, setSection] = useState<Section[]>([]);
 
@@ -100,7 +99,7 @@ const AddTeacher = ({ show, handleClose, setRefresh }: Props) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!teacherName || !selectedClass || !selectedSection || !selectedTeacher) {
+    if (!selectedClass || !selectedSection || !selectedTeacher) {
       alert(
         "Please enter All values"
       );
@@ -115,7 +114,6 @@ const AddTeacher = ({ show, handleClose, setRefresh }: Props) => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            teacherName,
             selectedClass,
             selectedSection,
             selectedTeacher,
@@ -168,24 +166,6 @@ const AddTeacher = ({ show, handleClose, setRefresh }: Props) => {
       </div>
       <div className="modal-body" style={{ backgroundColor: "#F2F6FF" }}>
         <Form onSubmit={handleSubmit}>
-          <Row className="mb-3">
-            <Col md={6}>
-              <Form.Group controlId="teacher_name">
-                <Form.Label>Teacher Name</Form.Label>
-                <InputGroup>
-                  <InputGroup.Text>
-                    <i className="fas fa-user"></i>
-                  </InputGroup.Text>
-                  <Form.Control
-                    type="text"
-                    placeholder="Enter Name"
-                    value={teacherName}
-                    onChange={(e) => setTeacherName(e.target.value)}
-                  />
-                </InputGroup>
-              </Form.Group>
-            </Col>
-          </Row>
           <Row className="mb-3">
             <Col md={6}>
               <Form.Group controlId="class">

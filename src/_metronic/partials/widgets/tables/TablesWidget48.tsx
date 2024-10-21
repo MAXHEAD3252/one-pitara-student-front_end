@@ -22,10 +22,9 @@ interface TablesWidgetProps {
 
 interface ClassData {
   class: string;
-  class_id:number;
+  class_id: number;
   sections: string[];
 }
-
 
 interface CurrentUser {
   school_id: string; // Adjust type as per your actual data type for school_id
@@ -54,7 +53,7 @@ const TablesWidget48: React.FC<TablesWidgetProps> = () => {
 
   const handleModalClose = () => {
     setShowModal(false);
-    setClassId(0)
+    setClassId(0);
   };
 
   const handleCloseDeleteModal = () => {
@@ -62,18 +61,22 @@ const TablesWidget48: React.FC<TablesWidgetProps> = () => {
     setShowDeleteModal(false);
   };
 
-  const handleModalEdit = (class_id: number, classname: string, section_ids: any) => {
+  const handleModalEdit = (
+    class_id: number,
+    classname: string,
+    section_ids: any
+  ) => {
     console.log(section_ids);
-    
+
     setClassId(class_id);
     setclassname(classname);
-    setEditSections(section_ids)
+    setEditSections(section_ids);
     setShowEditModal(true);
   };
 
   const handleModalEditClose = () => {
-    setClassId(0)
-    setclassname('');
+    setClassId(0);
+    setclassname("");
     setShowEditModal(false);
   };
 
@@ -94,7 +97,7 @@ const TablesWidget48: React.FC<TablesWidgetProps> = () => {
         console.error("Error fetching data:", error);
       }
     };
-    setRefresh(false)
+    setRefresh(false);
     fetchClasses();
   }, [school_id, refresh]);
 
@@ -154,106 +157,106 @@ const TablesWidget48: React.FC<TablesWidgetProps> = () => {
           Manage Classes
         </span>
         <div style={{ display: "flex", gap: "10px" }}>
-        <div
-          className="input-group flex-nowrap"
-          style={{
-            width: "300px",
-            height: "36px",
-            borderRadius: "8px",
-            border: "1px solid #D9D9D9",
-          }}
-        >
-          <span
-            className="input-group-text border-0 pe-1 pr-0"
-            style={{ backgroundColor: "transparent" }}
-            id="addon-wrapping"
+          <div
+            className="input-group flex-nowrap"
+            style={{
+              width: "300px",
+              height: "36px",
+              borderRadius: "8px",
+              border: "1px solid #D9D9D9",
+            }}
           >
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 17 16"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
+            <span
+              className="input-group-text border-0 pe-1 pr-0"
+              style={{ backgroundColor: "transparent" }}
+              id="addon-wrapping"
             >
-              <g clip-path="url(#clip0_582_4295)">
-                <circle
-                  cx="8.50002"
-                  cy="7.66665"
-                  r="6.33333"
-                  stroke="white"
-                  stroke-width="1.5"
-                />
-                <path
-                  d="M14.1667 13.3333L15.5 14.6666"
-                  stroke="white"
-                  stroke-width="1.5"
-                  stroke-linecap="round"
-                />
-              </g>
-              <defs>
-                <clipPath id="clip0_582_4295">
-                  <rect
-                    width="16"
-                    height="16"
-                    fill="white"
-                    transform="translate(0.833374)"
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 17 16"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <g clip-path="url(#clip0_582_4295)">
+                  <circle
+                    cx="8.50002"
+                    cy="7.66665"
+                    r="6.33333"
+                    stroke="white"
+                    stroke-width="1.5"
                   />
-                </clipPath>
-              </defs>
+                  <path
+                    d="M14.1667 13.3333L15.5 14.6666"
+                    stroke="white"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                  />
+                </g>
+                <defs>
+                  <clipPath id="clip0_582_4295">
+                    <rect
+                      width="16"
+                      height="16"
+                      fill="white"
+                      transform="translate(0.833374)"
+                    />
+                  </clipPath>
+                </defs>
+              </svg>
+            </span>
+            <input
+              type="text"
+              style={{
+                backgroundColor: "transparent",
+                color: "black",
+              }}
+              className="form-control border-0"
+              placeholder="Search ...."
+              aria-label="Search"
+              aria-describedby="addon-wrapping"
+            />
+          </div>
+          <div
+            onClick={handleModal}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              padding: "8px 12px",
+              backgroundColor: "#1C335C",
+              borderRadius: "8px",
+              cursor: "pointer",
+              transition: "background-color 0.3s",
+            }}
+            onMouseEnter={(e) =>
+              (e.currentTarget.style.backgroundColor = "#16294D")
+            }
+            onMouseLeave={(e) =>
+              (e.currentTarget.style.backgroundColor = "#1C335C")
+            }
+          >
+            <span
+              style={{
+                marginRight: "8px",
+                color: "white",
+                fontSize: "14px",
+                fontWeight: "700",
+                fontFamily: "Manrope",
+              }}
+            >
+              Add Class
+            </span>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              width="16px"
+              height="16px"
+              fill="#ffffff"
+            >
+              <path d="M0 0h24v24H0V0z" fill="none" />
+              <path d="M3 17.25V21h3.75l11-11.03-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
             </svg>
-          </span>
-          <input
-            type="text"
-            style={{
-              backgroundColor: "transparent",
-              color: "black",
-            }}
-            className="form-control border-0"
-            placeholder="Search ...."
-            aria-label="Search"
-            aria-describedby="addon-wrapping"
-          />
-        </div>
-        <div
-          onClick={handleModal}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            padding: "8px 12px",
-            backgroundColor: "#1C335C",
-            borderRadius: "8px",
-            cursor: "pointer",
-            transition: "background-color 0.3s",
-          }}
-          onMouseEnter={(e) =>
-            (e.currentTarget.style.backgroundColor = "#16294D")
-          }
-          onMouseLeave={(e) =>
-            (e.currentTarget.style.backgroundColor = "#1C335C")
-          }
-        >
-          <span
-            style={{
-              marginRight: "8px",
-              color: "white",
-              fontSize: "14px",
-              fontWeight: "700",
-              fontFamily: "Manrope",
-            }}
-          >
-            Add Class
-          </span>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            width="16px"
-            height="16px"
-            fill="#ffffff"
-          >
-            <path d="M0 0h24v24H0V0z" fill="none" />
-            <path d="M3 17.25V21h3.75l11-11.03-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
-          </svg>
-        </div>
+          </div>
         </div>
       </div>
       <div
@@ -380,7 +383,9 @@ const TablesWidget48: React.FC<TablesWidgetProps> = () => {
                   }}
                 >
                   <div
-                    onClick={() => handleModalEdit(item.class_id,item.class, item.sections)}
+                    onClick={() =>
+                      handleModalEdit(item.class_id, item.class, item.sections)
+                    }
                     style={{
                       display: "flex",
                       alignItems: "center",
@@ -475,7 +480,6 @@ const TablesWidget48: React.FC<TablesWidgetProps> = () => {
             ))}
           </tbody>
 
-         
           <AddClasses
             show={showModal}
             handleClose={handleModalClose}
@@ -487,8 +491,8 @@ const TablesWidget48: React.FC<TablesWidgetProps> = () => {
             setRefresh={setRefresh}
             classId={classId}
             classname={classname}
+            editsections={[]}
           />
-
 
           <DeleteConfirmationModal
             show={showDeleteModal}
@@ -503,7 +507,6 @@ const TablesWidget48: React.FC<TablesWidgetProps> = () => {
         </table>
 
         {/* modal */}
-        
       </div>
       {/* end::Table */}
     </div>

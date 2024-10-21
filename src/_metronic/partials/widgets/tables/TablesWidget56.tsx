@@ -9,11 +9,12 @@ import { useAuth } from "../../../../app/modules/auth/core/Auth";
 // import { UploadsFilter } from "../../modals/create-app-stepper/UploadsFilter";
 // import { AddClasses } from "../../modals/create-app-stepper/AddClasses";
 import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
-
+import { useNavigate } from "react-router-dom";
 
 interface FilterData {
   id: number;
-  name: string;
+  staff_id: string;
+  role: string;
   gender: string;
   contact_no: string;
   email: string;
@@ -29,17 +30,20 @@ const TablesWidget56 = () => {
 
   const school_id = (currentUser as any)?.school_id;
 
-  // const [showModal, setShowModal] = useState(false);
+  const [refresh, setRefresh] = useState(false);
 
-  // const handleModal = () => {
-  //   setShowModal(true);
-  // };
-  // const handleModalClose = () => {
-  //   setShowModal(false);
-  // };
+  const Navigate = useNavigate();
+
+  const handleNav = (staff_id : string) => {
+    Navigate(
+      `/employee-profile?staff_id=${staff_id}`
+    );
+  };
+
+
 
   useEffect(() => {
-    const fetchStudents = async () => {
+    const fetchStaff = async () => {
       try {
         const response = await fetch(
           `${DOMAIN}/api/school/get-allstaff/${school_id}`
@@ -50,14 +54,15 @@ const TablesWidget56 = () => {
         }
         const responseData = await response.json();
         setFilteredData(responseData);
+        // console.log(responseData);
+        setRefresh(true)
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
 
-    fetchStudents();
-  }, [school_id]);
-
+    fetchStaff();
+  }, [school_id,refresh]);
 
   //   const formatDate = (dateString: string) => {
   //   const date = new Date(dateString);
@@ -67,484 +72,369 @@ const TablesWidget56 = () => {
   //   return `${year}-${month}-${day}`;
   // };
 
-
   return (
-    <div className="d-flex" style={{ gap: "10px" }}>
+    <div
+      className="card-style"
+      style={{
+        width: "100%",
+        borderRadius: "16px",
+        backgroundColor: "rgb(242, 246, 255)",
+        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+        overflow: "hidden",
+        marginTop: "20px",
+        padding: "20px",
+      }}
+    >
       <div
-        className="col-xxl-12"
+        className="card-header"
         style={{
-          borderRadius: "16px",
-          border: "1px solid #5D637A",
-          overflowX: "hidden",
-          minHeight: "100%",
-          marginBottom: "20px",
-          height: "850px",
+          backgroundColor: "rgb(242, 246, 255)",
+          padding: "16px 20px",
+          borderBottom: "1px solid #E0E4F0",
           display: "flex",
-          flexDirection: "column",
-          fontFamily: "Manrope",
-          maxWidth: "100%",
-          overflow: "hidden",
+          justifyContent: "space-between",
+          alignItems: "center",
         }}
       >
-        <div style={{ width: "auto", height: "100%", overflow: "hidden" }}>
-          <table
-            //   className="col-xxl-12"
+        <span
+          style={{
+            fontSize: "20px",
+            fontWeight: "600",
+            color: "#1C335C",
+            fontFamily: "Manrope",
+          }}
+        >
+          Manage Staff
+        </span>
+        <div style={{ display: "flex", gap: "10px" }}>
+          <div
+            className="input-group flex-nowrap"
             style={{
-              top: "223px",
-              height: "752px",
-              maxHeight: "100%",
-              borderCollapse: "collapse",
-              // tableLayout: "fixed",
-              overflowX: "hidden",
-              overflowY: "auto",
-              whiteSpace: "nowrap",
-              width: "100%",
-              // border:'8px solid black'
+              width: "300px",
+              height: "36px",
+              borderRadius: "8px",
+              border: "1px solid #D9D9D9",
             }}
           >
-            <thead
-              style={{
-                height: "123px",
-                maxHeight: "100%",
-                display: "flex",
-                flexDirection: "column",
-                backgroundColor: "#1C335C",
-                //   width:'fit-content',
-                // overflowY: "auto",
-                // overflowX: "hidden",
-                justifyContent: "space-between",
-                zIndex: 999,
-              }}
-              className="col-xxl-12 col-lg-6"
+            <span
+              className="input-group-text border-0 pe-1 pr-0"
+              style={{ backgroundColor: "transparent" }}
+              id="addon-wrapping"
             >
-              <div>
-                <caption
-                  style={{
-                    backgroundColor: "#1C335C",
-                    padding: "20px",
-                    display: "flex",
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    // tableLayout: "fixed",
-                    // borderCollapse: "collapse",
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 17 16"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <g clip-path="url(#clip0_582_4295)">
+                  <circle
+                    cx="8.50002"
+                    cy="7.66665"
+                    r="6.33333"
+                    stroke="white"
+                    stroke-width="1.5"
+                  />
+                  <path
+                    d="M14.1667 13.3333L15.5 14.6666"
+                    stroke="white"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                  />
+                </g>
+                <defs>
+                  <clipPath id="clip0_582_4295">
+                    <rect
+                      width="16"
+                      height="16"
+                      fill="white"
+                      transform="translate(0.833374)"
+                    />
+                  </clipPath>
+                </defs>
+              </svg>
+            </span>
+            <input
+              type="text"
+              style={{
+                backgroundColor: "transparent",
+                color: "black",
+              }}
+              className="form-control border-0"
+              placeholder="Search ...."
+              aria-label="Search"
+              aria-describedby="addon-wrapping"
+            />
+          </div>
+          {/* <div
+            onClick={handleModal}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              padding: "8px 12px",
+              backgroundColor: "#1C335C",
+              borderRadius: "8px",
+              cursor: "pointer",
+              transition: "background-color 0.3s",
+            }}
+            onMouseEnter={(e) =>
+              (e.currentTarget.style.backgroundColor = "#16294D")
+            }
+            onMouseLeave={(e) =>
+              (e.currentTarget.style.backgroundColor = "#1C335C")
+            }
+          >
+            <span
+              style={{
+                marginRight: "8px",
+                color: "white",
+                fontSize: "14px",
+                fontWeight: "700",
+                fontFamily: "Manrope",
+              }}
+            >
+              Add Class
+            </span>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              width="16px"
+              height="16px"
+              fill="#ffffff"
+            >
+              <path d="M0 0h24v24H0V0z" fill="none" />
+              <path d="M3 17.25V21h3.75l11-11.03-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
+            </svg>
+          </div> */}
+        </div>
+      </div>
+      <div
+        style={{
+          height: "650px", // Fixed height for the table container
+          overflowY: "auto", // Enable vertical scrolling
+          padding: "16px 0", // Optional: adds some padding around the table
+        }}
+      >
+        <table
+          className="table"
+          style={{
+            width: "100%",
+            borderCollapse: "collapse",
+            marginTop: "10px",
+            backgroundColor: "#FFFFFF", // White background for the table
+            borderRadius: "12px", // Round corners for the table
+            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.05)", // Light shadow for the table
+          }}
+        >
+          <thead>
+            <tr
+              style={{
+                backgroundColor: "rgb(242, 246, 255)", // Header background color
+                borderBottom: "1px solid #E0E4F0",
+                fontFamily: "Manrope",
+                fontWeight: "600",
+                color: "#1C335C",
+                fontSize: "14px",
+              }}
+            >
+              <th
+                style={{
+                  padding: "12px 20px",
+                  textAlign: "left",
+                }}
+              >
+                Staff ID
+              </th>
+              <th
+                style={{
+                  padding: "12px 20px",
+                  textAlign: "left",
+                }}
+              >
+                Staff Name
+              </th>
+              <th
+                style={{
+                  padding: "12px 20px",
+                  textAlign: "center",
+                }}
+              >
+                Gender
+              </th>
+              <th
+                style={{
+                  padding: "12px 20px",
+                  textAlign: "center",
+                }}
+              >
+                Mobile No.
+              </th>
+              <th
+                style={{
+                  padding: "12px 20px",
+                  textAlign: "center",
+                }}
+              >
+                Email
+              </th>
+              <th
+                style={{
+                  padding: "12px 20px",
+                  textAlign: "center",
+                }}
+              >
+                Role
+              </th>
+              <th
+                style={{
+                  padding: "12px 20px",
+                  textAlign: "center",
+                }}
+              >
+                Marital Status
+              </th>
+              <th
+                style={{
+                  padding: "12px 20px",
+                  textAlign: "center",
+                }}
+              >
+                Action
+              </th>
+            </tr>
+          </thead>
 
-                    // border:'1px solid'
-                    width: "100%",
+          <tbody>
+            {filteredData.map((item, index) => (
+              <tr
+                key={index}
+                style={{
+                  backgroundColor:
+                    index % 2 === 0 ? "rgb(242, 246, 255)" : "#FFFFFF",
+                  borderBottom: "1px solid #E0E4F0",
+                  fontFamily: "Manrope",
+                  fontSize: "14px",
+                  color: "#1C335C",
+                }}
+              >
+                <td
+                  style={{
+                    padding: "12px 20px",
                   }}
                 >
-                  <div>
+                  {item.staff_id}
+                </td>
+                <td
+                  style={{
+                    padding: "12px 20px",
+                  }}
+                >
+                  {item.staff_name}
+                </td>
+                <td
+                  style={{
+                    textAlign: "center",
+                    padding: "12px 20px",
+                  }}
+                >
+                  {item.gender}
+                </td>
+
+                <td
+                  style={{
+                    textAlign: "center",
+                    padding: "12px 20px",
+                  }}
+                >
+                  {item.contact_no}
+                </td>
+                <td
+                  style={{
+                    textAlign: "center",
+                    padding: "12px 20px",
+                  }}
+                >
+                  {item.email}
+                </td>
+                <td
+                  style={{
+                    textAlign: "center",
+                    padding: "12px 20px",
+                  }}
+                >
+                  {item.role}
+                </td>
+                <td
+                  style={{
+                    textAlign: "center",
+                    padding: "12px 20px",
+                  }}
+                >
+                  {item.marital_status}
+                </td>
+
+                <td
+                  style={{
+                    height: "100px",
+                    display: "flex",
+                    gap: "10px", // Adds space between the buttons
+                    justifyContent: "center", // Aligns buttons horizontally in the center
+                    alignItems:"center", // Vertically centers the buttons
+                    padding: "12px 20px",
+                  }}
+                >
+                  <div
+                    onClick={() => handleNav(item.staff_id)}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      padding: "8px 12px",
+                      backgroundColor: "#1C335C",
+                      borderRadius: "8px",
+                      cursor: "pointer",
+                      transition: "background-color 0.3s",
+                    }}
+                    onMouseEnter={(e) =>
+                      (e.currentTarget.style.backgroundColor = "#16294D")
+                    }
+                    onMouseLeave={(e) =>
+                      (e.currentTarget.style.backgroundColor = "#1C335C")
+                    }
+                  >
                     <span
                       style={{
-                        color: "#FFF",
-                        fontSize: "16px",
+                        marginRight: "8px",
+                        color: "white",
+                        fontSize: "14px",
                         fontWeight: "700",
                         fontFamily: "Manrope",
                       }}
                     >
-                      All Staff
+                      Profile
                     </span>
-                  </div>
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "10px",
-                    }}
-                  >
-                    <div
-                      className="input-group flex-nowrap"
-                      style={{
-                        width: "300px",
-                        height: "36px",
-                        borderRadius: "8px",
-                        border: "1px solid #D9D9D9",
-                      }}
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      width="16px"
+                      height="16px"
+                      fill="#ffffff"
                     >
-                      <span
-                        className="input-group-text border-0 pe-1 pr-0"
-                        style={{ backgroundColor: "transparent" }}
-                        id="addon-wrapping"
-                      >
-                        <svg
-                          width="16"
-                          height="16"
-                          viewBox="0 0 17 16"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <g clip-path="url(#clip0_582_4295)">
-                            <circle
-                              cx="8.50002"
-                              cy="7.66665"
-                              r="6.33333"
-                              stroke="white"
-                              stroke-width="1.5"
-                            />
-                            <path
-                              d="M14.1667 13.3333L15.5 14.6666"
-                              stroke="white"
-                              stroke-width="1.5"
-                              stroke-linecap="round"
-                            />
-                          </g>
-                          <defs>
-                            <clipPath id="clip0_582_4295">
-                              <rect
-                                width="16"
-                                height="16"
-                                fill="white"
-                                transform="translate(0.833374)"
-                              />
-                            </clipPath>
-                          </defs>
-                        </svg>
-                      </span>
-                      <input
-                        type="text"
-                        style={{
-                          backgroundColor: "transparent",
-                          color: "#FFFFFF",
-                        }}
-                        className="form-control border-0"
-                        placeholder="Search ...."
-                        aria-label="Search"
-                        aria-describedby="addon-wrapping"
-                
-                      />
-                    </div>
+                      <path d="M0 0h24v24H0V0z" fill="none" />
+                      <path d="M3 17.25V21h3.75l11-11.03-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
+                    </svg>
                   </div>
-                </caption>
-              </div>
-
-              <tr
-                style={{
-                  height: "61px",
-                  display: "flex",
-                  paddingLeft: "30px",
-                  paddingRight: "30px",
-                  justifyContent: "space-between",
-                // gap:'50px',
-                  width: "95%",
-                  overflowY: "auto",
-                  overflowX: "hidden",
-                  backgroundColor: "#1C335C",
-                }}
-              >
-                <th>
-                  <div style={{ width: "40px" }}>
-                    <span
-                      style={{
-                        fontSize: "13px",
-                        fontWeight: "600",
-                        lineHeight: "18px",
-                        color: "#FFFFFF",
-                      }}
-                    >
-                      Staff Name
-                    </span>
-                  </div>
-                </th>
-                <th>
-                  <div style={{ width: "40px" }}>
-                    <span
-                      style={{
-                        fontSize: "13px",
-                        fontWeight: "600",
-                        lineHeight: "18px",
-                        color: "#FFFFFF",
-                      }}
-                    >
-                      Gender
-                    </span>
-                  </div>
-                </th>
-                <th>
-                  <div style={{ width: "60px" }}>
-                    <span
-                      style={{
-                        fontSize: "13px",
-                        fontWeight: "600",
-                        lineHeight: "18px",
-                        color: "#FFFFFF",
-                      }}
-                    >
-                      Mobile No.
-                    </span>
-                  </div>
-                </th>
-                <th>
-                  <div style={{ width: "40px" }}>
-                    <span
-                      style={{
-                        fontSize: "13px",
-                        fontWeight: "600",
-                        lineHeight: "18px",
-                        color: "#FFFFFF",
-                      }}
-                    >
-                      Email
-                    </span>
-                  </div>
-                </th>
-                <th>
-                  <div style={{ width: "10px" }}>
-                    <span
-                      style={{
-                        fontSize: "13px",
-                        fontWeight: "600",
-                        lineHeight: "18px",
-                        color: "#FFFFFF",
-                      }}
-                    >
-                      Role
-                    </span>
-                  </div>
-                </th>
-                <th>
-                  <div style={{ width: "40px" }}>
-                    <span
-                      style={{
-                        fontSize: "13px",
-                        fontWeight: "600",
-                        lineHeight: "18px",
-                        color: "#FFFFFF",
-                      }}
-                    >
-                      Marital Status
-                    </span>
-                  </div>
-                </th>
-                <th>
-                  <div
-                    style={{
-                      width: "60px",
-                      // textAlign:'left'
-                      // border:'1px solid',
-                      display: "flex",
-                      justifyContent: "end",
-                      fontFamily: "Manrope",
-                    }}
-                  >
-                    <span
-                      style={{
-                        fontSize: "13px",
-                        fontWeight: "600",
-                        lineHeight: "18px",
-                        color: "#FFFFFF",
-                      }}
-                    >
-                      Action
-                    </span>
-                  </div>
-                </th>
+                </td>
               </tr>
-            </thead>
+            ))}
+          </tbody>
 
-            <tbody
-              className="col-xxl-12 col-lg-6"
-              style={{
-                height: "105%",
-                width:'100%',
-                display: "flex",
-                flexDirection: "column",
-                minHeight: "calc(100vh - 550px)",
-                overflowY: "auto",
-                backgroundColor: "#F5F5F5",
-              }}
-            >
-              {filteredData.map((item, index) => (
-                <tr
-                  key={index}
-                  style={{
-                    height: "80px",
-                    paddingLeft: "30px",
-                    paddingTop: "25px",
-                    marginBottom: "5px",
-                    justifyContent: "space-between",
-                    width: "95%",
-                    display: "flex",
-                    // borderBottom:'1px solid grey'
-                  }}
-                >
-                                    <td>
-                    <div
-                      style={{
-                        width: "60px",
-                        display: "flex",
-                        justifyContent: "center",
-                        flexDirection: "column",
-                      }}
-                    >
-                      <span
-                        style={{
-                          fontSize: "14px",
-                          fontWeight: "500",
-                          lineHeight: "18px",
-                          color: "#1F1F1F",
-                          fontFamily: "Manrope",
-                        }}
-                      >
-                        {item.staff_name}
-                      </span>
-                    </div>
-                  </td>
-                  
-                  <td>
-                    <div
-                      style={{
-                        width: "60px",
-                        display: "flex",
-                        justifyContent: "center",
-                        flexDirection: "column",
-                      }}
-                    >
-                      <span
-                        style={{
-                          fontSize: "14px",
-                          fontWeight: "500",
-                          lineHeight: "18px",
-                          color: "#1F1F1F",
-                          fontFamily: "Manrope",
-                        }}
-                      >
-                        {item.gender}
-                      </span>
-                    </div>
-                  </td>
-                  <td>
-                    <div
-                      style={{
-                        width: "20px",
-                        display: "flex",
-                        justifyContent: "center",
-                        flexDirection: "column",
-                      }}
-                    >
-                      <span
-                        style={{
-                          fontSize: "14px",
-                          fontWeight: "500",
-                          lineHeight: "18px",
-                          color: "#1F1F1F",
-                          fontFamily: "Manrope",
-                        }}
-                      >
-                        {item.contact_no}
-                      </span>
-                    </div>
-                  </td>
-                  <td>
-                    <div
-                      style={{
-                        width: "120px",
-                        display: "flex",
-                        justifyContent: "center",
-                        flexDirection: "column",
-                      }}
-                    >
-                      <span
-                        style={{
-                          fontSize: "14px",
-                          fontWeight: "500",
-                          lineHeight: "18px",
-                          color: "#1F1F1F",
-                          fontFamily: "Manrope",
-                        }}
-                      >
-                        {item.email}
-                      </span>
-                    </div>
-                  </td>
-                  <td>
-                    <div
-                      style={{
-                        width: "70px",
-                        display: "flex",
-                        justifyContent: "center",
-                        flexDirection: "column",
-                      }}
-                    >
-                      <span
-                        style={{
-                          fontSize: "14px",
-                          fontWeight: "500",
-                          lineHeight: "18px",
-                          color: "#1F1F1F",
-                          fontFamily: "Manrope",
-                        }}
-                      >
-                        {item.name}
-                      </span>
-                    </div>
-                  </td>
-                  <td>
-                    <div
-                      style={{
-                        width: "40px",
-                        display: "flex",
-                        justifyContent: "center",
-                        flexDirection: "column",
-                      }}
-                    >
-                      <span
-                        style={{
-                          fontSize: "14px",
-                          fontWeight: "500",
-                          lineHeight: "18px",
-                          color: "#1F1F1F",
-                          fontFamily: "Manrope",
-                        }}
-                      >
-                        {item.marital_status
-                        }
-                      </span>
-                    </div>
-                  </td>
-                  
-                  <td>
-                    <div
-                      style={{
-                        width: "60px",
-                        display: "flex",
-                        justifyContent: "space-around",
-                        flexDirection: "row",
-                        gap: "6px",
-                        marginTop: "-8px",
-                      }}
-                    >
-                      <button
-                        type="button"
-                        className="btn"
-                        style={{
-                          backgroundColor: "#1F3259",
-                          fontFamily: "Manrope",
-                          fontSize: "12px",
-                          fontWeight: "600",
-                          color: "#FFF",
-                        }}
-                        // onClick={() => handleModalEdit(item.id)}
-                      >
-                        Edit
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
+    
 
-            {/* 
-          <UploadsFilter
-            show={showModal}
-            handleClose={handleModalClose}
-            filterData={applyfilters}
-          /> */}
-            {/* <CreateEnquiryAction show={showActionModal} handleClose={handleActionModalClose} enqId={enqId}/> */}
-            {/* <AddClasses show={showModal} handleClose={handleModalClose} /> */}
-
-            {/* end::Table body */}
-          </table>
-        </div>
+          {/* end::Table body */}
+        </table>
       </div>
+      
     </div>
   );
 };
