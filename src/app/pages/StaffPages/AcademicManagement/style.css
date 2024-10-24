@@ -1,35 +1,35 @@
 .fc-timegrid-slot {
-  height: auto !important; /* Automatically adjust height based on time slots */
-  font-family: 'Manrope';
+  height: 30px !important; /* Automatically adjust height based on time slots */
+  font-family: "Manrope";
   font-weight: 600;
   font-size: 12px !important;
 }
 
 .fc-event {
-  height: auto; /* Make sure events take up the correct height based on their time */
-  min-height: 10px; /* Set minimum height to 10px to account for small events */
-  background-color: #FFF;
+  background-color: #fff;
   font-size: 12px;
   padding: 8px;
-  font-family: 'Manrope';
+  font-family: "Manrope";
   font-weight: 600;
   border: none;
   box-shadow: 0 0 16.6px rgba(0, 0, 0, 0.15) !important;
   border-radius: 10px !important;
+  height: auto; /* Fixed height for better alignment */
+  min-height: 50px; /* Ensure minimum height is sufficient */
 }
 
 .fc-timegrid-event {
-  font-family: 'Manrope';
+  font-family: "Manrope";
   white-space: normal; /* Allow wrapping of event content */
   line-height: 1.2;
 }
 .fc-v-event .fc-event-main {
-    
-  color: #1C335C !important; /* Adjust text color for better contrast */
+  color: #1c335c !important; /* Adjust text color for better contrast */
 }
 
-
-.fc-event {
-  height: max-content; /* Fixed height for better alignment */
-  min-height: 50px; /* Ensure minimum height is sufficient */
+.card-content{
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  height: 100%;
 }

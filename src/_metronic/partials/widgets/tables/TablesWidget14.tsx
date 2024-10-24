@@ -31,6 +31,8 @@ const TablesWidget14: React.FC = () => {
   
   const { currentUser } = useAuth();
   const schoolId = currentUser?.school_id;
+  const sessionId = currentUser?.session_id;
+  
   const [showEditModal, setShowEditModal] = useState<boolean>(false);
   const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
   const [data, setData] = useState<any[]>([]); // Changed type to any[]
@@ -52,7 +54,7 @@ const TablesWidget14: React.FC = () => {
     setFeeId(fee_group_type_id);
     setShowDeleteModal(true);
   };
-
+  
   const handleShowAssignModal = (name: string, classId: string) => {
     // Find the group with the matching classId
     const selectedGroup = feeData.find((group) => group.name === name);
@@ -60,7 +62,6 @@ const TablesWidget14: React.FC = () => {
       // Extract fee group ID from the selected group
       const feeGroupId = selectedGroup.fee_group_id; // Assuming fee_group_id is directly on selectedGroup
       const feeGroupSessionId = selectedGroup.fee_group_session_id; // Assuming fee_group_id is directly on selectedGroup
-      const fee_group_type_id = selectedGroup.fee_group_type_id; // Assuming fee_group_id is directly on selectedGroup
       const fee_group_name = selectedGroup.name; // Assuming fee_group_id is directly on selectedGroup
 
       // Collect fee details including fee_id and fee_name
@@ -70,7 +71,7 @@ const TablesWidget14: React.FC = () => {
         fee_group_id: feeGroupId,
         fee_amount: fee.fee_amount,
         fee_group_session_id: feeGroupSessionId, // Set fee_group_id to the extracted value
-        fee_group_type_id: fee_group_type_id,
+        fee_group_type_id: fee.fee_group_type_id,
       }));
 
       // Extract fee IDs from fee details
@@ -115,7 +116,7 @@ const TablesWidget14: React.FC = () => {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          `${DOMAIN}/api/school/getfeemaster-list/${schoolId}/${19}`
+          `${DOMAIN}/api/school/getfeemaster-list/${schoolId}/${sessionId}`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch data");
@@ -204,7 +205,7 @@ const TablesWidget14: React.FC = () => {
             fontFamily: "Manrope",
           }}
         >
-          Fee Master List: 2022- 2023
+          Fee Master List
         </span>
         <div style={{ display: "flex", gap: "8px" }}>
           <div

@@ -336,13 +336,10 @@ const ClassTimetablePage = () => {
                         displayEventTime={true} // Show time for events
                         eventContent={(arg) => (
                           <div
-                            style={{
-                              display: "flex",
-                              flexDirection: "column",
-                              justifyContent: "space-between",
-                              gap: "5px",
-                              borderRadius: "10px",
-                            }}
+                          className="card-content"
+                          style={{
+                            borderRadius: "10px",
+                          }}
                           >
                             <div
                               style={{
@@ -390,6 +387,7 @@ const ClassTimetablePage = () => {
                                 {arg.timeText}
                               </div>
                             </div>
+                            <div>
                             <div style={{ color: "gray" }}>
                               {arg.event.extendedProps.roomNumber}
                             </div>
@@ -434,6 +432,7 @@ const ClassTimetablePage = () => {
                                 </defs>
                               </svg>
                               {arg.event.extendedProps.staffName}
+                            </div>
                             </div>
                           </div>
                         )}

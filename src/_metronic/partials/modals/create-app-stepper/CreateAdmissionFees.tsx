@@ -11,7 +11,7 @@ type Props = {
   show: boolean;
   handleClose: () => void;
   class_id: string | undefined;
-  sessionId: number | undefined;
+  sessionId: string | undefined;
   admission_enquiry_id: string | null;
   enqId: string | null;
   studentId: number | null;
@@ -19,6 +19,7 @@ type Props = {
 };
 
 interface FeeType {
+  fee_group_type_id: any;
   total_amount: any;
   adjustment: any;
   amount_paid: number;
@@ -31,6 +32,7 @@ interface FeeType {
 }
 
 interface FeeGroup {
+  fee_group_type_id: any;
   student_fees_master_id: number;
   fee_group_id: number;
   fee_group_name: string;
@@ -76,24 +78,22 @@ interface ApplicationData {
 
 const modalsRoot = document.getElementById("root-modals") || document.body;
 
-const CreateCollectFees = ({
+const CreateAdmissionFees = ({
   show,
   handleClose,
   class_id,
   sessionId,
   admission_enquiry_id,
   enqId,
-  studentId,
-  studentEmail,
+  setRefresh
 }: Props) => {
-  console.log(sessionId);
-  
 
   const [loading, setLoading] = useState(false);
   const { currentUser } = useAuth();
   const schoolId = currentUser?.school_id;
   const userId = currentUser?.id;
   const [data, setData] = useState<ApplicationData[]>([]);
+  
   const [showOfflineForm, setShowOfflineForm] = useState(false);
   const [offlineButtonText, setOfflineButtonText] = useState("Collect Offline");
   const [disableonlinebutton, setdisableonlinebutton] = useState("active");
@@ -102,7 +102,6 @@ const CreateCollectFees = ({
     useState<Map<string, ApplicationData[]>>();
   const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
   const [detailedData, setDetailedData] = useState<ApplicationData[]>([]);
-
   const [selectedId, setSelectedId] = useState(0);
   const [studentTransaction, setStudentTransaction] = useState([]);
   const [sendOffline, setSendOffline] = useState([]);
@@ -143,7 +142,7 @@ const CreateCollectFees = ({
   };
 
   useEffect(() => {
-    const formatData = (result: FeeGroup[], isStudentData: boolean) => {
+    const formatData = (result: FeeGroup[]) => {
       const formattedData = result.flatMap((group) =>
         group.fees.map((fee) => {
           const commonData = {
@@ -152,38 +151,24 @@ const CreateCollectFees = ({
             fee_session_group_id: group.fee_session_group_id,
             fee_group_name: group.fee_group_name,
             fee_type_name: fee.fee_type_name,
+            fee_group_type_id: group.fee_group_type_id,
             amount: fee.amount,
             due_date: fee.due_date,
-            status: fee.status,
-            amount_paid: fee.amount_paid,
-            adjustment: fee.adjustment,
-            total_amount: fee.total_amount, // Initialize total_amount with amount value
+            adjustment: fee.adjustment || 0,
+            total_amount: fee.total_amount || 0, // Initialize total_amount with amount value
             session_id: sessionId, // Add session_id prop
-            school_id: schoolId, // Add school_id from auth
             user_id: userId, // Add user_id from auth
             enqId: enqId,
-            student_fees_master_id: fee.student_fees_master_id,
+            schoolId: schoolId
           };
-
-          // Conditionally add properties based on whether it's student data or not
-          if (isStudentData) {
-            return {
-              ...commonData,
-              student_fees_master_id: fee.student_fees_master_id,
-              student_id: studentId, // Add student_id for student data
-            };
-          } else {
             return {
               ...commonData,
               due_date: fee.due_date,
-              status: fee.status,
-              amount_paid: fee.amount_paid,
               is_active: "1",
               is_tagged: false, // Initialize is_tagged as false
               class_id: class_id, // Use class_id for non-student data
               admission_enquiry_id: admission_enquiry_id, // Only add for admission
             };
-          }
         })
       );
 
@@ -201,7 +186,7 @@ const CreateCollectFees = ({
 
     const fetchFeeGroupType = async () => {
       try {
-        const url = `${DOMAIN}/api/school/get-studentwisefeegrouptype/${schoolId}/${studentId}/${sessionId}`
+        const url = `${DOMAIN}/api/school/get-feegrouptype/${schoolId}/${class_id}/${sessionId}`;
 
         const response = await fetch(url);
         if (!response.ok) {
@@ -211,7 +196,7 @@ const CreateCollectFees = ({
         const result: FeeGroup[] = await response.json();
         setAllRefresh(false);
         // Format the data based on whether student data is present
-        formatData(result, Boolean(studentId));
+        formatData(result);
       } catch (error) {
         console.error("Error fetching fee group/type data:", error);
       }
@@ -220,11 +205,10 @@ const CreateCollectFees = ({
     if (show) {
       fetchFeeGroupType();
     }
-  }, [schoolId, class_id, sessionId, studentId, show, DOMAIN, allRefresh]);
+  }, [schoolId, class_id, sessionId, show, DOMAIN, allRefresh]);
 
   const handleGroupClick = (groupName: string) => {
     const groupDetails = groupedData.get(groupName);
-console.log(groupDetails);
 
     if (!groupDetails) {
       console.error("No details found for group:", groupName);
@@ -250,31 +234,24 @@ console.log(groupDetails);
       )
     );
 
-    // If studentId is present, store all data related to the groupId in studentTransaction
-    if (studentId) {
       const studentDataForGroup = groupDetails.map((item) => ({
-        student_id: studentId,
-        student_email: studentEmail,
-        student_fees_master_id: item.student_fees_master_id,
+        admission_enquiry_id: item.admission_enquiry_id,
         feetype_id: item.feetype_id,
         fee_group_id: item.fee_group_id,
         user_id: item.user_id,
-        school_id: item.school_id,
-        total_amount: item.total_amount, // Include total amount, default to amount if total_amount is not present
-        // Add any other specific fields you want to include here
+        school_id: schoolId,
+        total_amount: item.total_amount, 
+        student_session: item.session_id
       }));
 
-      console.log("Student Data for Group:", studentDataForGroup); // Debug log
 
       setStudentTransaction((prevState) => {
         const updatedStudentTransaction = [
           ...prevState,
           ...studentDataForGroup,
         ];
-        console.log("Updated Student Transaction:", updatedStudentTransaction); // Debug log
         return updatedStudentTransaction;
       });
-    }
   };
 
   const handleBackClick = (selectedId: number) => {
@@ -345,7 +322,6 @@ console.log(groupDetails);
     setData(updatedData);
 
     // If studentId is present, update the studentTransaction state
-    if (studentId) {
       const updatedStudentTransaction = studentTransaction.map((item) =>
         item.feetype_id === feeTypeId && item.fee_group_id === feeGroupId
           ? {
@@ -362,19 +338,19 @@ console.log(groupDetails);
 
       setStudentTransaction(updatedStudentTransaction);
       setSendOffline(updatedStudentTransaction);
-    }
   };
 
   const offlineFormSubmit = async (e) => {
     e.preventDefault();
     const updatedOfflineFormData = {
       ...offlineFormData,
-      ...sendOffline,
+      ...data,
     };
+    
     try {
       // const response = await fetch(`${DOMAIN}/api/school/get-studentwisefeegrouptype/${}`, {
       const response = await fetch(
-        `${DOMAIN}/api/school/store-offlinefeetransaction`,
+        `${DOMAIN}/api/school/store-offlineadmissionfee-transaction`,
         {
           method: "POST",
           headers: {
@@ -385,13 +361,16 @@ console.log(groupDetails);
       );
 
       const result = await response.json();
+      
       if (result.status === 200) {
         // Handle success
         console.log("Form submitted successfully:", result);
         setShowOfflineForm(false);
         setOfflineButtonText("Collect Offline");
         setdisableonlinebutton("active");
-        setAllRefresh(true)
+        setAllRefresh(true);
+        setRefresh(true);
+        handleClose();
       } else {
         // Handle error
         console.error("Error submitting form:", result.message);
@@ -403,6 +382,8 @@ console.log(groupDetails);
 
   const handleSubmit = async () => {
     setLoading(true); // Optionally show loading state
+console.log(data);
+return;
 
     try {
       if (!studentEmail || studentEmail.trim() === "") {
@@ -412,13 +393,9 @@ console.log(groupDetails);
         return; // Exit the function to prevent further execution
       }
 
-      const url = studentId
-        ? `${DOMAIN}/api/school/store-feetransaction`
-        : `${DOMAIN}/api/school/collectadmissionfees`;
+      const url = `${DOMAIN}/api/school/collectadmissionfees`;
 
-      const requestBody = studentId
-        ? { transactions: studentTransaction }
-        : { data: data };
+      const requestBody =  { data: data };
 
       const response = await fetch(url, {
         method: "POST",
@@ -501,7 +478,7 @@ console.log(groupDetails);
   const fetchTransactionDetails = async (studentFeesMasterId: string) => {
     try {
       const response = await fetch(
-        `${DOMAIN}/api/school/get-transection-details/${studentFeesMasterId}`
+        `${DOMAIN}/api/school/offline-form-submit/${studentFeesMasterId}`
       );
       if (!response.ok) {
         throw new Error(`Network response was not ok for URL`);
@@ -1044,6 +1021,20 @@ console.log(groupDetails);
                                 parseFloat(item.total_amount) -
                                 parseFloat(item.amount_paid)
                               ).toFixed(2)}
+                              // onBlur={(e) => {
+                              //   // Check if the input value is empty and set to the placeholder
+                              //   if (!e.target.value) {
+                              //     handleAdjustmentChange(
+                              //       item.fee_group_id,
+                              //       item.feetype_id,
+                              //       (
+                              //         parseFloat(item.total_amount) -
+                              //         parseFloat(item.amount_paid)
+                              //       ).toFixed(2),
+                              //       "currentlyPaying"
+                              //     );
+                              //   }
+                              // }}
                               style={{ width: "100px" }}
                             />
                           </td>
@@ -1819,4 +1810,4 @@ console.log(groupDetails);
   );
 };
 
-export { CreateCollectFees };
+export { CreateAdmissionFees };

@@ -13,11 +13,9 @@ const SidebarMenu = () => {
         data-kt-scroll-wrappers='#kt_app_sidebar_menu'
         data-kt-scroll-offset='5px'
         data-kt-scroll-save-state='true'
-        style={{width:'110px'}}
       >
         <div
-          className='menu menu-column menu-sub-indention'
-          style={{paddingRight:'12px',paddingLeft:'5px', justifyContent:'center',alignItems:'center'}}
+          className='menu menu-column menu-rounded menu-sub-indention px-3'
           id='#kt_app_sidebar_menu'
           data-kt-menu='true'
           data-kt-menu-expand='false'

@@ -16,6 +16,7 @@ type Props = {
   hasArrow?: boolean;
   hasBullet?: boolean;
   isMega?: boolean;
+  title: string;
 };
 
 const SidebarMenuItemWithSub: React.FC<Props & WithChildren> = ({
@@ -24,10 +25,11 @@ const SidebarMenuItemWithSub: React.FC<Props & WithChildren> = ({
   icon,
   menuTrigger,
   menuPlacement,
+  title,
 }) => {
   const menuItemRef = useRef<HTMLDivElement>(null);
   const { pathname } = useLocation();
-  // const isActive = checkIsActive(pathname, to)
+  const isActive = checkIsActive(pathname, to);
   const { config } = useLayout();
   const { app } = config;
 
@@ -39,46 +41,74 @@ const SidebarMenuItemWithSub: React.FC<Props & WithChildren> = ({
   }, [menuTrigger, menuPlacement]);
 
   return (
-    <div ref={menuItemRef} className="menu-item menu-lg-down-accordion">
-      <div style={{display:'flex', justifyContent:'center',alignContent:'center', padding:'auto', textAlign:'center'}}>
-      <span
-        className={clsx("menu-link mt-2", {
-          active: checkIsActive(pathname, to),
-        })}
-        style={{borderRadius:'0px', display:'flex', justifyContent:'center', alignItems:'center', paddingLeft:'20px'}}
-      >
-        {icon && app?.sidebar?.default?.menu?.iconType === "svg" && (
-          <span className="menu-icon">
-            {" "}
-            <img
-              alt="Logo"
-              src={toAbsoluteUrl(icon)}
-              className="h-25px app-sidebar-logo-default"
-              style={{ color: "white" }}
-            />
-          </span>
-        )}
-      </span>
-      </div>
+    <div
+      ref={menuItemRef}
+      className={clsx("menu-item", { "here show": isActive }, "menu-accordion")}
+      data-kt-menu-trigger="click"
+    >
       <div
-        className={clsx(
-          "menu-sub menu-sub-dropdown my-5 py-5 px-5"
-        )}
         style={{
-          borderRadius:" 0px 15px 15px 15px",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          padding: "auto", // Padding is not a valid property here; try margins or proper padding values.
+          textAlign: "center",
         }}
-        // style={{
-        //   width: "170px",
-        //   fontFamily: "Manrope", // Using the Manrope font
-        //   fontWeight: "500", // Reduced weight for a softer look
-        //   fontSize: "14px", // Consistent font size
-        //   color: "#333", // Softer black color for text
-        //   borderRadius: "5px", // Rounded corners for a soft look
-        //   backgroundColor: "#fff", // White background for a clean look
-        //   boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)", // Subtle shadow for elevation
-        //   padding: "10px", // Adjust padding for inner content spacing
-        //   textAlign: "left",
-        // }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.backgroundColor = "#2B5093"; // Change background color on hover
+          e.currentTarget.style.color = "#ff0000"; // Change text color on hover
+          e.currentTarget.style.borderRadius = "10px"; // Add border radius on hover
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.backgroundColor = "transparent"; // Revert background color
+          e.currentTarget.style.color = "#000000"; // Revert text color
+          e.currentTarget.style.borderRadius = "0px"; // Add border radius on hover
+        }}
+      >
+        <span
+          className={clsx("menu-link", {})}
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            color: "white",
+            padding: "10px 15px", // Add padding to create space around the text
+          }}
+        >
+          {icon && app?.sidebar?.default?.menu?.iconType === "svg" && (
+            <span className="menu-icon">
+              <img
+                alt="Logo"
+                src={toAbsoluteUrl(icon)}
+                className="h-25px app-sidebar-logo-default"
+                style={{ color: "white" }}
+              />
+            </span>
+          )}
+          <div
+            className="menu-title"
+            style={{
+              color: "#fff",
+              whiteSpace: "nowrap", // Prevent the title from breaking into multiple lines
+              overflow: "hidden", // Hide overflowing content
+              textOverflow: "ellipsis", // Add ellipsis for overflowed content
+              marginLeft: "16px", // Add spacing between icon and title
+              opacity: 1,
+              fontSize: "14px",
+              fontFamily: "Manrope",
+              fontWeight: "600",
+            }}
+          >
+            {title}
+          </div>
+          <span className="menu-arrow"></span>
+        </span>
+      </div>
+
+      <div
+        className={clsx("menu-sub menu-sub-dropdown py-3 px-3", {
+          // "menu-active-bg": isActive,
+        })}
         data-kt-menu-dismiss="true"
       >
         {children}
@@ -97,13 +127,11 @@ export { SidebarMenuItemWithSub };
         )} */
 }
 {
-  /* {fontIcon && (
-          <span className='menu-icon'>
-            <i className={clsx('bi fs-3', fontIcon)}></i>
-          </span>
-        )}
-
-        <span className='menu-title'>{title}</span> */
+  //  {fontIcon && (
+  //         <span className='menu-icon'>
+  //           <i className={clsx('bi fs-3', fontIcon)}></i>
+  //         </span>
+  //       )}
 }
 
 {

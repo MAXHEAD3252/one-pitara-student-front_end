@@ -143,7 +143,7 @@ const VisitorManagementPage: FC = () => {
                   <div style={{ width: "224px", height: "12px" }}>
                     <span
                       style={{
-                        fontSize: "16px",
+                        fontSize: "20px",
                         fontWeight: "700",
                         lineHeight: "21.86px",
                         color: "#FFFFFF",

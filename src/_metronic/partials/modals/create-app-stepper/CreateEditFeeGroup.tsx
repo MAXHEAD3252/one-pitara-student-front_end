@@ -153,7 +153,9 @@ const CreateEditFeeGroup = ({
     if (selectedClass.id) fetchSections();
   }, [selectedClass.id, schoolId]);
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
 
     setFormData((prevFormData) => ({
@@ -223,11 +225,17 @@ const CreateEditFeeGroup = ({
       <div
         className="modal-header"
         style={{
-          backgroundColor: "#F2F6FF",
           borderBottom: "1px solid lightgray",
+          backgroundColor: "rgb(242, 246, 255)",
+          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
         }}
       >
-        <h2>Edit Fee Group</h2>
+        <h2 style={{
+            fontFamily: "Manrope",
+            fontSize: "18px",
+            fontWeight: "600",
+            color: "#1F4061",
+          }}>Edit Fee Group</h2>
         <div
           className="btn btn-sm btn-icon btn-active-color-primary"
           onClick={handleModalClose}
@@ -236,7 +244,10 @@ const CreateEditFeeGroup = ({
         </div>
       </div>
 
-      <div className="modal-body" style={{ backgroundColor: "#F2F6FF" }}>
+      <div className="modal-body"  style={{
+          backgroundColor: "rgb(242, 246, 255)",
+          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+        }}>
         <Form
           onSubmit={handleSubmit}
           className="d-flex flex-column align-items-center"
@@ -247,9 +258,9 @@ const CreateEditFeeGroup = ({
               <Form.Group controlId="formName">
                 <Form.Label
                   style={{
-                    fontSize: "12px",
-                    color: "#434343",
+                    fontFamily: "Manrope",
                     fontWeight: "500",
+                    fontSize: "14px",
                   }}
                 >
                   Name
@@ -267,6 +278,9 @@ const CreateEditFeeGroup = ({
                       paddingLeft: "10px",
                       border: "1px solid #ECEDF1",
                       borderRadius: "8px",
+                      fontFamily: "Manrope",
+                      fontWeight: "500",
+                      fontSize: "14px",
                     }}
                   />
                 </InputGroup>
@@ -276,15 +290,36 @@ const CreateEditFeeGroup = ({
             {/* Select Class Dropdown */}
             <Col md={6}>
               <Form.Group controlId="class">
-                <Form.Label>Select Class</Form.Label>
+                <Form.Label
+                  style={{
+                    fontFamily: "Manrope",
+                    fontWeight: "500",
+                    fontSize: "14px",
+                  }}
+                >
+                  Select Class
+                </Form.Label>
                 <Form.Select
                   name="class_id"
                   value={formData.class_id}
                   onChange={handleChange}
+                  style={{
+                    fontFamily: "Manrope",
+                    fontWeight: "500",
+                    fontSize: "14px",
+                  }}
                 >
                   <option value="">Select Class</option>
                   {getClass.map((item) => (
-                    <option key={item.class_id} value={item.class_id}>
+                    <option
+                      key={item.class_id}
+                      value={item.class_id}
+                      style={{
+                        fontFamily: "Manrope",
+                        fontWeight: "500",
+                        fontSize: "14px",
+                      }}
+                    >
                       {item.class}
                     </option>
                   ))}
@@ -293,15 +328,36 @@ const CreateEditFeeGroup = ({
             </Col>
             <Col md={6}>
               <Form.Group controlId="section">
-                <Form.Label>Select Section</Form.Label>
+                <Form.Label
+                  style={{
+                    fontFamily: "Manrope",
+                    fontWeight: "500",
+                    fontSize: "14px",
+                  }}
+                >
+                  Select Section
+                </Form.Label>
                 <Form.Select
                   name="section_id"
                   value={formData.section_id}
                   onChange={handleChange}
+                  style={{
+                    fontFamily: "Manrope",
+                    fontWeight: "500",
+                    fontSize: "14px",
+                  }}
                 >
                   <option value="">Select Section</option>
                   {getSection.map((item) => (
-                    <option key={item.id} value={item.id}>
+                    <option
+                      key={item.id}
+                      value={item.id}
+                      style={{
+                        fontFamily: "Manrope",
+                        fontWeight: "500",
+                        fontSize: "14px",
+                      }}
+                    >
                       {item.section}
                     </option>
                   ))}
@@ -310,15 +366,36 @@ const CreateEditFeeGroup = ({
             </Col>
             <Col md={6}>
               <Form.Group controlId="session">
-                <Form.Label>Select Session</Form.Label>
+                <Form.Label
+                  style={{
+                    fontFamily: "Manrope",
+                    fontWeight: "500",
+                    fontSize: "14px",
+                  }}
+                >
+                  Select Session
+                </Form.Label>
                 <Form.Select
                   name="session_id"
                   value={formData.session_id}
                   onChange={handleChange}
+                  style={{
+                    fontFamily: "Manrope",
+                    fontWeight: "500",
+                    fontSize: "14px",
+                  }}
                 >
                   <option value="">Select Session</option>
                   {getSession.map((item) => (
-                    <option key={item.id} value={item.id}>
+                    <option
+                      key={item.id}
+                      value={item.id}
+                      style={{
+                        fontFamily: "Manrope",
+                        fontWeight: "500",
+                        fontSize: "14px",
+                      }}
+                    >
                       {item.session}
                     </option>
                   ))}
@@ -327,8 +404,30 @@ const CreateEditFeeGroup = ({
             </Col>
           </Row>
           <div className="d-flex justify-content-end mt-8">
-            <Button type="submit" className="btn btn-primary">
-              Update
+            <Button
+              type="submit"
+              className="btn btn-primary"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                padding: "12px 16px",
+                backgroundColor: "#1C335C",
+                borderRadius: "8px",
+                cursor: "pointer",
+                transition: "background-color 0.3s",
+                width: "max-content",
+              }}
+            >
+              <span
+                style={{
+                  color: "#FFF",
+                  fontFamily: "Manrope",
+                  fontSize: "14px",
+                  fontWeight: "600",
+                }}
+              >
+                Update
+              </span>
             </Button>
           </div>
         </Form>

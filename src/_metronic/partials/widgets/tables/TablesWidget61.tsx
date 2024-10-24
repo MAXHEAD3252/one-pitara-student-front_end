@@ -12,6 +12,7 @@ import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
 import { CreateEditFeeGroup } from "../../modals/create-app-stepper/CreateEditFeeGroup";
 import { Button, Col, Form, InputGroup, Modal, Row } from "react-bootstrap";
 import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { DeleteConfirmationModal } from "../../modals/create-app-stepper/DeleteConfirmationModal";
 
 interface CurrentUser {
@@ -51,7 +52,6 @@ interface SessionData {
 const TablesWidget61 = () => {
   const [data, setData] = useState<DataItem[]>([]);
   const { currentUser } = useAuth();
-
   const [referesh, setReferesh] = useState(false);
   const [fee_group_id, setfee_group_id] = useState<number>(0);
   const [fee_group_session_id, setfee_group_session_id] = useState<number>(0);
@@ -61,9 +61,7 @@ const TablesWidget61 = () => {
   const [editsession, setEditSession] = useState<number>(0);
   const [editclass, setEditClass] = useState<number>(0);
   const [editsection, setEditSection] = useState<number>(0);
-
   const schoolId = (currentUser as CurrentUser)?.school_id;
-
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -90,6 +88,8 @@ const TablesWidget61 = () => {
   const [selectedSections, setSelectedSections] = useState<Section[]>([]);
   const [isAllSectionsSelected, setIsAllSectionsSelected] = useState(false);
   const [isAddModalVisible, setIsAddModalVisible] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filteredData, setFilteredData] = useState<DataItem[]>([]);
 
   const handleShowEditModal = (
     fee_group_id: number,
@@ -107,7 +107,6 @@ const TablesWidget61 = () => {
     setEditSection(section_id);
     setShowEditModal(true);
   };
-  
 
   const showAddModal = () => {
     setIsAddModalVisible(true);
@@ -119,7 +118,7 @@ const TablesWidget61 = () => {
   const handleCloseEditModal = () => {
     setShowEditModal(false);
     setfee_group_id(0);
-    setfee_group_name('');
+    setfee_group_name("");
     setfee_group_session_id(0);
     setEditSession(0);
     setEditClass(0);
@@ -127,7 +126,7 @@ const TablesWidget61 = () => {
   };
 
   const handleDelete = async () => {
-    console.log(fee_group_id,fee_group_session_id,schoolId)
+    console.log(fee_group_id, fee_group_session_id, schoolId);
     try {
       const response = await fetch(
         `${DOMAIN}/api/school/delete-feegroup/${fee_group_id}/${fee_group_session_id}/${schoolId}`,
@@ -148,9 +147,12 @@ const TablesWidget61 = () => {
       console.error("Error deleting designation:", error);
       toast.error("Failed to delete designation!", { autoClose: 3000 });
     }
-};
+  };
 
-  const handleShowDeleteModal = (fee_group_id: number, fee_group_session_id: number) => {
+  const handleShowDeleteModal = (
+    fee_group_id: number,
+    fee_group_session_id: number
+  ) => {
     setfee_group_id(fee_group_id);
     setfee_group_session_id(fee_group_session_id);
     setShowDeleteModal(true);
@@ -161,8 +163,6 @@ const TablesWidget61 = () => {
     setfee_group_id(0);
     setfee_group_session_id(0);
   };
-
-
 
   useEffect(() => {
     const fetchClasses = async () => {
@@ -233,8 +233,8 @@ const TablesWidget61 = () => {
           throw new Error("Failed to fetch fee groups");
         }
         const responseData = await response.json();
-        console.log(responseData);
         setData(responseData);
+        setFilteredData(responseData);
       } catch (error) {
         console.error("Error fetching fee groups:", error);
       }
@@ -311,12 +311,24 @@ const TablesWidget61 = () => {
       const data = await response.json();
       setReferesh(true);
       handleAddCancel();
-      console.log("Response:", data);
+      toast.success("Fee type added successfully!");
     } catch (error) {
       console.error("Error:", error);
+      toast.error("Failed to add fee type. Please try again.");
     }
   };
-  console.log(data);
+
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const query = e.target.value.toLowerCase(); // Convert the search query to lowercase
+    setSearchQuery(query);
+
+    // Filter data by checking if the query is present anywhere in the fee_group_name
+    const filtered = data.filter(
+      (item) => item.fee_group_name.toLowerCase().includes(query) // Match any part of the string
+    );
+
+    setFilteredData(filtered);
+  };
 
   return (
     <div
@@ -411,6 +423,8 @@ const TablesWidget61 = () => {
               placeholder="Search ...."
               aria-label="Search"
               aria-describedby="addon-wrapping"
+              value={searchQuery || ""} // Bind search input to state
+              onChange={handleSearch} // Pass the event to handleSearch
             />
           </div>
           <div
@@ -505,7 +519,7 @@ const TablesWidget61 = () => {
           </thead>
 
           <tbody>
-            {data.map((item, index) => (
+            {filteredData.map((item, index) => (
               <tr
                 key={index}
                 style={{
@@ -583,7 +597,12 @@ const TablesWidget61 = () => {
                     </svg>
                   </div>
                   <div
-                    onClick={() => handleShowDeleteModal(item.fee_groups_id,item.fee_group_session_id)}
+                    onClick={() =>
+                      handleShowDeleteModal(
+                        item.fee_groups_id,
+                        item.fee_group_session_id
+                      )
+                    }
                     style={{
                       width: "32px",
                       height: "40px",
@@ -658,8 +677,23 @@ const TablesWidget61 = () => {
         onHide={handleAddCancel}
         backdrop={true}
       >
-        <div className="modal-header">
-          <h2 style={{ fontFamily: "Manrope" }}>Add Fee Group :</h2>
+        <div
+          className="modal-header"
+          style={{
+            borderBottom: "1px solid lightgray",
+            backgroundColor: "rgb(242, 246, 255)",
+            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+          }}
+        >
+          <h2
+            style={{
+              fontFamily: "Manrope",
+              fontSize: "18px",
+              fontWeight: "600",
+            }}
+          >
+            Add Fee Group :
+          </h2>
           <div
             className="btn btn-sm btn-icon btn-active-color-primary"
             onClick={handleAddCancel}
@@ -667,13 +701,28 @@ const TablesWidget61 = () => {
             <i className="fas fa-times"></i>
           </div>
         </div>
-        <div className="modal-body py-lg-10 px-lg-10">
+        <div
+          className="modal-body py-lg-10 px-lg-10"
+          style={{
+            borderBottom: "1px solid lightgray",
+            backgroundColor: "rgb(242, 246, 255)",
+            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+          }}
+        >
           <Form onSubmit={handleSubmit}>
             <Row>
               {/* Fees Group Name */}
               <Col md={6}>
                 <Form.Group className="mb-4" controlId="formGroupName">
-                  <Form.Label>Fees Group Name</Form.Label>
+                  <Form.Label
+                    style={{
+                      fontFamily: "Manrope",
+                      fontWeight: "500",
+                      fontSize: "14px",
+                    }}
+                  >
+                    Fees Group Name
+                  </Form.Label>
                   <InputGroup>
                     <InputGroup.Text>
                       <i className="fas fa-school"></i>
@@ -685,6 +734,11 @@ const TablesWidget61 = () => {
                       value={formData.name || ""}
                       onChange={handleInputChange}
                       required
+                      style={{
+                        fontFamily: "Manrope",
+                        fontWeight: "500",
+                        fontSize: "14px",
+                      }}
                     />
                   </InputGroup>
                 </Form.Group>
@@ -693,7 +747,15 @@ const TablesWidget61 = () => {
               {/* Select Class */}
               <Col md={6}>
                 <div className="mb-2">
-                  <span>Select Class</span>
+                  <span
+                    style={{
+                      fontFamily: "Manrope",
+                      fontWeight: "500",
+                      fontSize: "14px",
+                    }}
+                  >
+                    Select Class
+                  </span>
                 </div>
                 <div style={{ marginBottom: "23px", width: "100%" }}>
                   <div className="dropdown" id="selectClass">
@@ -704,9 +766,12 @@ const TablesWidget61 = () => {
                         display: "flex",
                         justifyContent: "space-between",
                         alignItems: "center",
-                        backgroundColor: "transparent",
+                        backgroundColor: "white",
                         border: "1px solid #ECEDF1",
                         borderRadius: "8px",
+                        fontFamily: "Manrope",
+                        fontWeight: "500",
+                        fontSize: "14px",
                       }}
                       data-bs-toggle="dropdown"
                       aria-expanded="false"
@@ -734,6 +799,11 @@ const TablesWidget61 = () => {
                                 className: item.class,
                               });
                             }}
+                            style={{
+                              fontFamily: "Manrope",
+                              fontWeight: "500",
+                              fontSize: "14px",
+                            }}
                           >
                             {item.class}
                           </div>
@@ -747,7 +817,15 @@ const TablesWidget61 = () => {
               {/* Select Section */}
               <Col md={6}>
                 <div className="mb-2">
-                  <span>Select Section</span>
+                  <span
+                    style={{
+                      fontFamily: "Manrope",
+                      fontWeight: "500",
+                      fontSize: "14px",
+                    }}
+                  >
+                    Select Section
+                  </span>
                 </div>
                 <div style={{ marginBottom: "23px", width: "100%" }}>
                   <div className="dropdown" id="selectSection">
@@ -758,9 +836,12 @@ const TablesWidget61 = () => {
                         display: "flex",
                         justifyContent: "space-between",
                         alignItems: "center",
-                        backgroundColor: "transparent",
+                        backgroundColor: "white",
                         border: "1px solid #ECEDF1",
                         borderRadius: "8px",
+                        fontFamily: "Manrope",
+                        fontWeight: "500",
+                        fontSize: "14px",
                       }}
                       data-bs-toggle="dropdown"
                       aria-expanded="false"
@@ -786,12 +867,22 @@ const TablesWidget61 = () => {
                             e.preventDefault();
                             handleSelectAllSections();
                           }}
+                          style={{
+                            fontFamily: "Manrope",
+                            fontWeight: "500",
+                            fontSize: "14px",
+                          }}
                         >
                           <input
                             type="checkbox"
                             checked={isAllSectionsSelected}
                             readOnly
-                            style={{ marginRight: "8px" }}
+                            style={{
+                              marginRight: "8px",
+                              fontFamily: "Manrope",
+                              fontWeight: "500",
+                              fontSize: "14px",
+                            }}
                           />
                           Select All
                         </button>
@@ -804,12 +895,22 @@ const TablesWidget61 = () => {
                               e.preventDefault();
                               handleSectionSelected(section);
                             }}
+                            style={{
+                              fontFamily: "Manrope",
+                              fontWeight: "500",
+                              fontSize: "14px",
+                            }}
                           >
                             <input
                               type="checkbox"
                               checked={isSelectedSection(section)}
                               readOnly
-                              style={{ marginRight: "8px" }}
+                              style={{
+                                marginRight: "8px",
+                                fontFamily: "Manrope",
+                                fontWeight: "500",
+                                fontSize: "14px",
+                              }}
                             />
                             {section.section}
                           </button>
@@ -823,7 +924,15 @@ const TablesWidget61 = () => {
               {/* Select Session */}
               <Col md={6}>
                 <div className="mb-2">
-                  <span>Select Section</span>
+                  <span
+                    style={{
+                      fontFamily: "Manrope",
+                      fontWeight: "500",
+                      fontSize: "14px",
+                    }}
+                  >
+                    Select Session
+                  </span>
                 </div>
                 <div style={{ marginBottom: "23px", width: "100%" }}>
                   <div className="dropdown" id="selectSession">
@@ -834,9 +943,12 @@ const TablesWidget61 = () => {
                         display: "flex",
                         justifyContent: "space-between",
                         alignItems: "center",
-                        backgroundColor: "transparent",
+                        backgroundColor: "white",
                         border: "1px solid #ECEDF1",
                         borderRadius: "8px",
+                        fontFamily: "Manrope",
+                        fontWeight: "500",
+                        fontSize: "14px",
                       }}
                       data-bs-toggle="dropdown"
                       aria-expanded="false"
@@ -864,6 +976,11 @@ const TablesWidget61 = () => {
                                 session: item.session,
                               });
                             }}
+                            style={{
+                              fontFamily: "Manrope",
+                              fontWeight: "500",
+                              fontSize: "14px",
+                            }}
                           >
                             {item.session}
                           </div>
@@ -881,20 +998,21 @@ const TablesWidget61 = () => {
                 type="submit"
                 variant="primary"
                 style={{
-                  width: "118px",
-                  height: "36px",
                   display: "flex",
                   alignItems: "center",
-                  justifyContent: "center",
-                  gap: "10px",
-                  backgroundColor: "rgba(39, 59, 99, 0.76)",
+                  padding: "12px 16px",
+                  backgroundColor: "#1C335C",
+                  borderRadius: "8px",
+                  cursor: "pointer",
+                  transition: "background-color 0.3s",
+                  width: "max-content",
                 }}
               >
                 <span
                   style={{
                     color: "#FFF",
                     fontFamily: "Manrope",
-                    fontSize: "12px",
+                    fontSize: "14px",
                     fontWeight: "500",
                   }}
                 >
@@ -918,7 +1036,7 @@ const TablesWidget61 = () => {
         setReferesh={setReferesh}
       />
 
-<DeleteConfirmationModal
+      <DeleteConfirmationModal
         show={showDeletModal}
         handleClose={handleCloseDeleteModal}
         handleDelete={handleDelete}

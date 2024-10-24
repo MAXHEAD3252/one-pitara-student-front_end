@@ -625,7 +625,7 @@ const AddFeesMasterModal = ({ show, onHide }: Props) => {
   const [dueDate, setDueDate] = useState<string | null>(null);
   const [dueType, setDueType] = useState<string | null>(null);
   const [dueTypeName, setDueTypeName] = useState<string>("Select Due Type");
-  const [fineType, setFineType] = useState<string>("none");
+  const [fineType, setFineType] = useState<string>("None");
   const [percentage, setPercentage] = useState<number | null>(0);
   const [fineAmount, setFineAmount] = useState<number | null>(0);
 
@@ -737,7 +737,7 @@ const AddFeesMasterModal = ({ show, onHide }: Props) => {
     };
 
     fetchFeeGroups();
-  }, [schoolId]);
+  }, [schoolId,show]);
 
   useEffect(() => {
     const fetchFeeTypes = async () => {
@@ -756,7 +756,26 @@ const AddFeesMasterModal = ({ show, onHide }: Props) => {
     };
 
     fetchFeeTypes();
-  }, [schoolId]);
+  }, [schoolId,show]);
+
+  const handleCancle = () => {
+    setFeeGroups([]);
+    setFeeTypes([]);
+    setDueDate(null);
+    setDueType(null);
+    setDueTypeName("Select Due Type");
+    setFineType("None");
+    setPercentage(0);
+    setFineAmount(0);
+    setSelectedGroup(null);
+    setSelectedGroupName("Select Group");
+    setFeeGroupSessionId(0);
+    setSession(0);
+    setSelectedFeeTypes([]);
+    onHide();
+  };
+
+
 
   return createPortal(
     <Modal
@@ -765,27 +784,30 @@ const AddFeesMasterModal = ({ show, onHide }: Props) => {
       aria-hidden="true"
       dialogClassName="modal-dialog modal-dialog-centered mw-800px"
       show={show}
-      onHide={onHide}
+      onHide={handleCancle}
       backdrop="static"
     >
       <div
         className="modal-header"
         style={{
-          backgroundColor: "#F2F6FF",
           borderBottom: "1px solid lightgray",
-          fontFamily: "Manrope",
+          backgroundColor: "rgb(242, 246, 255)",
+          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
         }}
       >
-        <h2>Add Fees Master : 2023-24</h2>
+        <h2
+          style={{ fontFamily: "Manrope", fontSize: "18px", fontWeight: "600" }}
+        >
+          Add Fees Master : 2023-24
+        </h2>
         <div
           className="btn btn-sm btn-icon btn-active-color-primary"
-          onClick={onHide}
+          onClick={handleCancle}
         >
           <i className="fas fa-times"></i>
         </div>
       </div>
 
- 
       <div
         className="modal-body py-lg-10 px-lg-10"
         style={{
@@ -798,9 +820,9 @@ const AddFeesMasterModal = ({ show, onHide }: Props) => {
               htmlFor="feeGroupDropdown"
               className="form-label"
               style={{
-                fontSize: "12px",
-                color: "#434343",
+                fontFamily: "Manrope",
                 fontWeight: "500",
+                fontSize: "14px",
               }}
             >
               Fees Group
@@ -814,10 +836,13 @@ const AddFeesMasterModal = ({ show, onHide }: Props) => {
                   display: "flex",
                   justifyContent: "space-between",
                   alignItems: "center",
-                  backgroundColor: "transparent",
+                  backgroundColor: "white",
                   border: "1px solid #ECEDF1",
                   borderRadius: "8px",
                   overflow: "hidden",
+                  fontFamily: "Manrope",
+                  fontWeight: "500",
+                  fontSize: "14px",
                 }}
                 type="button"
                 data-bs-toggle="dropdown"
@@ -835,6 +860,11 @@ const AddFeesMasterModal = ({ show, onHide }: Props) => {
                       className="dropdown-item"
                       href="#"
                       onClick={() => handleSelectGroup(group)}
+                      style={{
+                        fontFamily: "Manrope",
+                        fontWeight: "500",
+                        fontSize: "14px",
+                      }}
                     >
                       {group.fee_group_name}
                     </a>
@@ -848,9 +878,10 @@ const AddFeesMasterModal = ({ show, onHide }: Props) => {
               htmlFor="feeTypeDropdown"
               className="form-label"
               style={{
-                fontSize: "12px",
                 color: "#434343",
+                fontFamily: "Manrope",
                 fontWeight: "500",
+                fontSize: "14px",
               }}
             >
               Fees Type
@@ -864,10 +895,13 @@ const AddFeesMasterModal = ({ show, onHide }: Props) => {
                   display: "flex",
                   justifyContent: "space-between",
                   alignItems: "center",
-                  backgroundColor: "transparent",
+                  backgroundColor: "white",
                   border: "1px solid #ECEDF1",
                   borderRadius: "8px",
                   overflow: "hidden",
+                  fontFamily: "Manrope",
+                  fontWeight: "500",
+                  fontSize: "14px",
                 }}
                 type="button"
                 data-bs-toggle="dropdown"
@@ -887,6 +921,11 @@ const AddFeesMasterModal = ({ show, onHide }: Props) => {
                       className="dropdown-item"
                       href="#"
                       onClick={() => handleSelectFeeType(type)}
+                      style={{
+                        fontFamily: "Manrope",
+                        fontWeight: "500",
+                        fontSize: "14px",
+                      }}
                     >
                       {type.type}
                     </a>
@@ -901,26 +940,88 @@ const AddFeesMasterModal = ({ show, onHide }: Props) => {
                 htmlFor="feeAmounts"
                 className="form-label"
                 style={{
-                  fontSize: "12px",
-                  color: "#434343",
+                  fontFamily: "Manrope",
                   fontWeight: "500",
+                  fontSize: "14px",
                 }}
               >
                 Fee Amounts
               </label>
-              <table className="table table-striped">
+              <table
+                className="table"
+                style={{
+                  width: "100%",
+                  borderCollapse: "collapse",
+                  marginTop: "10px",
+                  backgroundColor: "#FFFFFF", // White background for the table
+                  borderRadius: "12px", // Round corners for the table
+                  boxShadow: "0 4px 8px rgba(0, 0, 0, 0.05)", // Light shadow for the table
+                }}
+              >
                 <thead>
-                  <tr>
-                    <th>Fee Type</th>
-                    <th>Amount</th>
-                    <th>Actions</th>
+                  <tr
+                    style={{
+                      backgroundColor: "rgb(242, 246, 255)", // Header background color
+                      borderBottom: "1px solid #E0E4F0",
+                      fontFamily: "Manrope",
+                      fontWeight: "600",
+                      color: "#1C335C",
+                      fontSize: "14px",
+                    }}
+                  >
+                    <th
+                      style={{
+                        padding: "12px 20px",
+                        textAlign: "left",
+                      }}
+                    >
+                      Fee Type
+                    </th>
+                    <th
+                      style={{
+                        padding: "12px 20px",
+                        textAlign: "left",
+                      }}
+                    >
+                      Amount
+                    </th>
+                    <th
+                      style={{
+                        padding: "12px 20px",
+                        textAlign: "right",
+                      }}
+                    >
+                      Actions
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
                   {selectedFeeTypes.map((feeType) => (
-                    <tr key={feeType.id}>
-                      <td>{feeType.type}</td>
-                      <td>
+                    <tr
+                      key={feeType.id}
+                      style={{
+                        backgroundColor:
+                          feeType.id % 2 === 0
+                            ? "rgb(242, 246, 255)"
+                            : "#FFFFFF",
+                        borderBottom: "1px solid #E0E4F0",
+                        fontFamily: "Manrope",
+                        fontSize: "14px",
+                        color: "#1C335C",
+                      }}
+                    >
+                      <td
+                        style={{
+                          padding: "12px 20px",
+                        }}
+                      >
+                        {feeType.type}
+                      </td>
+                      <td
+                        style={{
+                          padding: "12px 20px",
+                        }}
+                      >
                         <input
                           type="number"
                           value={feeType.amount}
@@ -933,14 +1034,34 @@ const AddFeesMasterModal = ({ show, onHide }: Props) => {
                           style={{ width: "100%" }}
                         />
                       </td>
-                      <td>
-                        <button
-                          type="button"
-                          className="btn btn-danger btn-sm"
+                      <td
+                        style={{
+                          padding: "12px 20px",
+                        }}
+                      >
+                        <div
                           onClick={() => handleDeleteFeeType(feeType.id)}
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            padding: "8px 8px",
+                            backgroundColor: "#1C335C",
+                            borderRadius: "8px",
+                            cursor: "pointer",
+                            transition: "background-color 0.3s",
+                          }}
                         >
-                          Delete
-                        </button>
+                          <span
+                            style={{
+                              color: "#FFF",
+                              fontFamily: "Manrope",
+                              fontSize: "14px",
+                              fontWeight: "600",
+                            }}
+                          >
+                            Delete
+                          </span>
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -953,9 +1074,9 @@ const AddFeesMasterModal = ({ show, onHide }: Props) => {
               htmlFor="dueDate"
               className="form-label"
               style={{
-                fontSize: "12px",
-                color: "#434343",
+                fontFamily: "Manrope",
                 fontWeight: "500",
+                fontSize: "14px",
               }}
             >
               Due Date
@@ -966,6 +1087,11 @@ const AddFeesMasterModal = ({ show, onHide }: Props) => {
               id="dueDate"
               value={dueDate || ""}
               onChange={handleDateChange}
+              style={{
+                fontFamily: "Manrope",
+                fontWeight: "500",
+                fontSize: "14px",
+              }}
             />
           </div>
           <div style={{ marginBottom: "23px" }}>
@@ -973,9 +1099,9 @@ const AddFeesMasterModal = ({ show, onHide }: Props) => {
               htmlFor="dueTypeDropdown"
               className="form-label"
               style={{
-                fontSize: "12px",
-                color: "#434343",
+                fontFamily: "Manrope",
                 fontWeight: "500",
+                fontSize: "14px",
               }}
             >
               Due Type
@@ -989,10 +1115,13 @@ const AddFeesMasterModal = ({ show, onHide }: Props) => {
                   display: "flex",
                   justifyContent: "space-between",
                   alignItems: "center",
-                  backgroundColor: "transparent",
+                  backgroundColor: "white",
                   border: "1px solid #ECEDF1",
                   borderRadius: "8px",
                   overflow: "hidden",
+                  fontFamily: "Manrope",
+                  fontWeight: "500",
+                  fontSize: "14px",
                 }}
                 type="button"
                 data-bs-toggle="dropdown"
@@ -1002,13 +1131,18 @@ const AddFeesMasterModal = ({ show, onHide }: Props) => {
               </button>
               <ul
                 className="dropdown-menu"
-                style={{ width: "100%", height: "300px", overflow: "auto" }}
+                style={{ width: "100%", height: "120px", overflow: "auto" }}
               >
                 <li>
                   <a
                     className="dropdown-item"
                     href="#"
                     onClick={() => handleDueType({ id: "1", type: "Monthly" })}
+                    style={{
+                      fontFamily: "Manrope",
+                      fontWeight: "500",
+                      fontSize: "12px",
+                    }}
                   >
                     Monthly
                   </a>
@@ -1020,6 +1154,11 @@ const AddFeesMasterModal = ({ show, onHide }: Props) => {
                     onClick={() =>
                       handleDueType({ id: "2", type: "Quarterly" })
                     }
+                    style={{
+                      fontFamily: "Manrope",
+                      fontWeight: "500",
+                      fontSize: "12px",
+                    }}
                   >
                     Quarterly
                   </a>
@@ -1029,6 +1168,11 @@ const AddFeesMasterModal = ({ show, onHide }: Props) => {
                     className="dropdown-item"
                     href="#"
                     onClick={() => handleDueType({ id: "3", type: "Annually" })}
+                    style={{
+                      fontFamily: "Manrope",
+                      fontWeight: "500",
+                      fontSize: "12px",
+                    }}
                   >
                     Annually
                   </a>
@@ -1041,9 +1185,9 @@ const AddFeesMasterModal = ({ show, onHide }: Props) => {
               htmlFor="fineTypeDropdown"
               className="form-label"
               style={{
-                fontSize: "12px",
-                color: "#434343",
+                fontFamily: "Manrope",
                 fontWeight: "500",
+                fontSize: "14px",
               }}
             >
               Fine Type
@@ -1057,7 +1201,7 @@ const AddFeesMasterModal = ({ show, onHide }: Props) => {
                   display: "flex",
                   justifyContent: "space-between",
                   alignItems: "center",
-                  backgroundColor: "transparent",
+                  backgroundColor: "white",
                   border: "1px solid #ECEDF1",
                   borderRadius: "8px",
                   overflow: "hidden",
@@ -1070,13 +1214,18 @@ const AddFeesMasterModal = ({ show, onHide }: Props) => {
               </button>
               <ul
                 className="dropdown-menu"
-                style={{ width: "100%", height: "300px", overflow: "auto" }}
+                style={{ width: "100%", height: "120px", overflow: "auto" }}
               >
                 <li>
                   <a
                     className="dropdown-item"
                     href="#"
-                    onClick={() => setFineType("none")}
+                    onClick={() => setFineType("-None-")}
+                    style={{
+                      fontFamily: "Manrope",
+                      fontWeight: "500",
+                      fontSize: "12px",
+                    }}
                   >
                     None
                   </a>
@@ -1085,7 +1234,12 @@ const AddFeesMasterModal = ({ show, onHide }: Props) => {
                   <a
                     className="dropdown-item"
                     href="#"
-                    onClick={() => setFineType("fixed")}
+                    onClick={() => setFineType("Fixed")}
+                    style={{
+                      fontFamily: "Manrope",
+                      fontWeight: "500",
+                      fontSize: "12px",
+                    }}
                   >
                     Fixed
                   </a>
@@ -1094,7 +1248,12 @@ const AddFeesMasterModal = ({ show, onHide }: Props) => {
                   <a
                     className="dropdown-item"
                     href="#"
-                    onClick={() => setFineType("percentage")}
+                    onClick={() => setFineType("Percentage")}
+                    style={{
+                      fontFamily: "Manrope",
+                      fontWeight: "500",
+                      fontSize: "12px",
+                    }}
                   >
                     Percentage
                   </a>
@@ -1102,44 +1261,81 @@ const AddFeesMasterModal = ({ show, onHide }: Props) => {
               </ul>
             </div>
           </div>
-          {fineType !== "none" && (
+          {fineType !== "-None-" && (
             <div style={{ marginBottom: "23px" }}>
               <label
                 htmlFor="fineAmount"
                 className="form-label"
                 style={{
-                  fontSize: "12px",
-                  color: "#434343",
+                  fontFamily: "Manrope",
                   fontWeight: "500",
+                  fontSize: "12px",
                 }}
               >
-                {fineType === "percentage" ? "Percentage" : "Fine Amount"}
+                {fineType === "Percentage" ? "Percentage" : "Fine Amount"}
               </label>
               <input
                 type="number"
                 className="form-control"
                 id="fineAmount"
-                value={fineType === "percentage" ? percentage : fineAmount}
+                value={fineType === "Percentage" ? percentage : fineAmount}
                 onChange={(e) =>
                   fineType === "percentage"
                     ? setPercentage(parseFloat(e.target.value))
                     : setFineAmount(parseFloat(e.target.value))
                 }
+                style={{
+                  fontFamily: "Manrope",
+                  fontWeight: "500",
+                  fontSize: "12px",
+                }}
               />
             </div>
           )}
 
           <div className="modal-footer">
             <button
-              type="button"
-              className="btn btn-secondary"
-              onClick={onHide}
+              type="submit"
+              className="btn btn-primary"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                padding: "12px 16px",
+                backgroundColor: "#1C335C",
+                borderRadius: "8px",
+                cursor: "pointer",
+                transition: "background-color 0.3s",
+                width: "max-content",
+              }}
             >
-              Close
-            </button>
-            <button type="submit" className="btn btn-primary">
               Save changes
             </button>
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={handleCancle}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  padding: "12px 16px",
+                  backgroundColor: "#FFE7E1",
+                  borderRadius: "8px",
+                  cursor: "pointer",
+                  transition: "background-color 0.3s",
+                  width: "max-content",
+                }}
+              >
+                <span
+                  style={{
+                    color: "#FF5B5B",
+                    fontFamily: "Manrope",
+                    fontSize: "14px",
+                    fontWeight: "600",
+                  }}
+                >
+                  Close
+                </span>
+              </button>
           </div>
         </form>
       </div>

@@ -374,7 +374,7 @@ useEffect(() => {
                 >
                   <span
                     style={{
-                      fontSize: "13px",
+                      fontSize: "14px",
                       fontWeight: "600",
                       lineHeight: "18px",
                       color: "#FFFFFF",
@@ -399,7 +399,7 @@ useEffect(() => {
                 >
                   <span
                     style={{
-                      fontSize: "13px",
+                      fontSize: "14px",
                       fontWeight: "600",
                       lineHeight: "18px",
                       color: "#FFFFFF",

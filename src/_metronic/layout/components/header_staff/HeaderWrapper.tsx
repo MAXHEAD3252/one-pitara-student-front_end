@@ -108,7 +108,7 @@ export function HeaderWrapper({ toggleView }: HeaderWrapperProps) {
            padding: '8px 16px',
            fontFamily: 'Manrope, sans-serif',
            fontSize: '16px',
-           color: '#1C335C',
+           color: '#1f4061',
          }}
        >
          <svg

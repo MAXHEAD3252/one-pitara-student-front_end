@@ -1,17 +1,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from "react";
-import { Tooltip as ReactTooltip } from "react-tooltip";
+// import { Tooltip as ReactTooltip } from "react-tooltip";
 import "../../../../app/pages/StaffPages/FinancialManagement/style.css";
-import { CreateCollectFees } from "../../modals/create-app-stepper/CreateCollectFees";
+// import { CreateCollectFees } from "../../modals/create-app-stepper/CreateCollectFees";
 import { useAuth } from "../../../../app/modules/auth/core/Auth";
 import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
 import { CreateAdmissionEnquiryReject } from "../../modals/create-app-stepper/CreateAdmissionEnquiryReject";
+import { CreateAdmissionFees } from "../../modals/create-app-stepper/CreateAdmissionFees";
+import { AdmissionFeesHistory } from "../../modals/create-app-stepper/AdmissionFeesHistory";
 
 interface DataItem {
   status: string;
   name: string;
 }
 interface FilterData {
+  admission_enquiry_id: string;
   student_email: string;
   student_name: string;
   id: number;
@@ -34,11 +37,13 @@ const TablesWidget59: React.FC = () => {
   const [data, setData] = useState<DataItem[]>([]);
 
   const [filteredData, setFilteredData] = useState<FilterData[]>([]);
+
   const [searchQuery, setSearchQuery] = useState("");
   const { currentUser } = useAuth();
   const schoolId = currentUser?.school_id;
   const [showEditModal, setShowCollectFeeModal] = useState(false);
   const [showActionModal, setShowActionModal] = useState(false);
+  const [showHistoryModal, setShowHistoryModal] = useState(false);
   const [getClass, setClass] = useState("");
   const [getSession, setSession] = useState("");
   const [referesh, setRefresh] = useState(false);
@@ -55,9 +60,26 @@ const TablesWidget59: React.FC = () => {
     setShowActionModal(true);
   };
   const handleActionModalClose = () => {
+    setClass("");
+    setSession("");
     setShowActionModal(false);
   };
+  const handleViewTransaction = (enquiry_id: string) => {
+    console.log("Viewing transaction for enquiry ID:", enquiry_id);
 
+    // Set the admission enquiry ID to show transaction history
+    setAdmissionEnqId(enquiry_id);
+
+    // Show the transaction history modal
+    setShowHistoryModal(true);
+  };
+
+  // Function to close the transaction history modal
+  const handleViewTransactionClose = () => {
+    setAdmissionEnqId("")
+    setShowHistoryModal(false);
+    setRefresh(true); // You can use this to refresh data if needed
+  };
   const handleModalCollectFees = (
     class_id: string,
     session_id: string,
@@ -72,6 +94,10 @@ const TablesWidget59: React.FC = () => {
   };
 
   const handleModalCollectFeesClose = () => {
+    setClass("");
+    setSession("");
+    setAdmissionEnqId("");
+    setEnqId("");
     setShowCollectFeeModal(false);
   };
 
@@ -116,7 +142,6 @@ const TablesWidget59: React.FC = () => {
     return date.toLocaleDateString("en-GB", options);
   };
 
-  console.log(data);
   return (
     <div
       className="card-style"
@@ -350,6 +375,7 @@ const TablesWidget59: React.FC = () => {
                   fontFamily: "Manrope",
                   fontSize: "14px",
                   color: "#1C335C",
+                  opacity: 1,
                 }}
               >
                 <td
@@ -448,67 +474,103 @@ const TablesWidget59: React.FC = () => {
                       padding: "12px 20px",
                     }}
                   >
-                    <div
-                      onClick={() =>
-                        handleModalCollectFees(
-                          item.class_id,
-                          item.academic_year,
-                          item.admission_enquiry_id,
-                          item.enquiry_id
-                        )
-                      }
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        padding: "8px 12px",
-                        backgroundColor: "#1C335C",
-                        borderRadius: "8px",
-                        cursor: "pointer",
-                        transition: "background-color 0.3s",
-                      }}
-                      onMouseEnter={(e) =>
-                        (e.currentTarget.style.backgroundColor = "#16294D")
-                      }
-                      onMouseLeave={(e) =>
-                        (e.currentTarget.style.backgroundColor = "#1C335C")
-                      }
-                    >
-                      <span
+                    {item.status === "isCompleted" && (
+                      <div
+                        onClick={() => handleViewTransaction(item.admission_enquiry_id)}
                         style={{
-                          marginRight: "8px",
-                          color: "white",
-                          fontSize: "14px",
-                          fontWeight: "700",
-                          fontFamily: "Manrope",
+                          display: "flex",
+                          alignItems: "center",
+                          padding: "8px 12px",
+                          backgroundColor: "#1C335C",
+                          borderRadius: "8px",
+                          cursor: "pointer",
+                          color:'#fff',
+                          fontWeight:'600'
                         }}
                       >
-                        Collect Fees
-                      </span>
-                    </div>
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        padding: "8px 12px",
-                        backgroundColor: "#FFE7E1",
-                        borderRadius: "8px",
-                        cursor: "pointer",
-                        transition: "background-color 0.3s",
-                      }}
-                      onClick={() => handleActionModal(item.enquiry_id)}
-                    >
-                      Reject
-                    </div>
+                        <span>View History</span>
+                      </div>
+                    )}
+                    {item.status !== "isCompleted" && (
+                      <>
+                        <div
+                          onClick={() =>
+                            handleModalCollectFees(
+                              item.class_id,
+                              item.session_id,
+                              item.admission_enquiry_id,
+                              item.enquiry_id
+                            )
+                          }
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            padding: "8px 12px",
+                            backgroundColor: "#1C335C",
+                            borderRadius: "8px",
+                            cursor:
+                              item.status === "isCompleted"
+                                ? "not-allowed"
+                                : "pointer", // Disable pointer when 'isCompleted'
+                            transition: "background-color 0.3s",
+                            opacity: item.status === "isCompleted" ? 0.5 : 1, // Lower opacity when the status is 'isCompleted'
+                          }}
+                          onMouseEnter={(e) => {
+                            if (item.status !== "isCompleted") {
+                              e.currentTarget.style.backgroundColor = "#16294D";
+                            }
+                          }}
+                          onMouseLeave={(e) => {
+                            if (item.status !== "isCompleted") {
+                              e.currentTarget.style.backgroundColor = "#1C335C";
+                            }
+                          }}
+                        >
+                          <span
+                            style={{
+                              marginRight: "8px",
+                              color: "white",
+                              fontSize: "14px",
+                              fontWeight: "700",
+                              fontFamily: "Manrope",
+                            }}
+                          >
+                            Collect Fees
+                          </span>
+                        </div>
+                        <div
+                          onClick={() =>
+                            item.status !== "isCompleted" &&
+                            handleActionModal(item.admission_enquiry_id)
+                          }
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            padding: "8px 12px",
+                            backgroundColor: "#FFE7E1",
+                            borderRadius: "5px",
+                            cursor:
+                              item.status === "isCompleted"
+                                ? "not-allowed"
+                                : "pointer", // Disable pointer when 'isCompleted'
+                            transition: "background-color 0.3s",
+                            opacity: item.status === "isCompleted" ? 0.5 : 1, // Lower opacity when the status is 'isCompleted'
+                          }}
+                        >
+                          Reject
+                        </div>
+                      </>
+                    )}
                   </div>
                 </td>
               </tr>
             ))}
           </tbody>
-          <CreateCollectFees
+          <CreateAdmissionFees
             show={showEditModal}
             handleClose={handleModalCollectFeesClose}
             class_id={getClass}
-            session_id={getSession}
+            sessionId={getSession}
             admission_enquiry_id={admissionEnqId}
             enqId={enqId}
             setRefresh={setRefresh}
@@ -517,6 +579,13 @@ const TablesWidget59: React.FC = () => {
             show={showActionModal}
             handleClose={handleActionModalClose}
             setRefresh={setRefresh}
+            enqId={""}
+          />
+          <AdmissionFeesHistory
+            show={showHistoryModal}
+            handleClose={handleViewTransactionClose}
+            setRefresh={setRefresh}
+            admissionEnqId={admissionEnqId}
           />
         </table>
       </div>

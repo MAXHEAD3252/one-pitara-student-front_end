@@ -28,25 +28,98 @@ const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = ({
 }) => {
   return (
     <Modal show={show} onHide={handleClose} centered>
-      <Modal.Header closeButton>
-        <Modal.Title>{title}</Modal.Title>
+      <Modal.Header
+        closeButton
+        style={{
+          borderBottom: "1px solid lightgray",
+          backgroundColor: "rgb(242, 246, 255)",
+          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+        }}
+      >
+        <Modal.Title
+          style={{ fontFamily: "Manrope", fontWeight: "500", fontSize: "16px" }}
+        >
+          {title}
+        </Modal.Title>
       </Modal.Header>
-      <Modal.Body>
+      <Modal.Body
+        style={{
+          backgroundColor: "rgb(242, 246, 255)",
+        }}
+      >
         <div className="d-flex align-items-center">
-          {icon && <div className="me-3">{icon}</div>} {/* Display icon if provided */}
-          <p>{description}</p>
+          {icon && <div className="me-3">{icon}</div>}{" "}
+          {/* Display icon if provided */}
+          <p
+            style={{
+              fontFamily: "Manrope",
+              fontWeight: "500",
+              fontSize: "14px",
+            }}
+          >
+            {description}
+          </p>
         </div>
       </Modal.Body>
-      <Modal.Footer>
-        <Button variant={cancelButtonVariant} onClick={handleClose}>
-          {cancelButtonText}
+      <Modal.Footer
+        style={{
+          backgroundColor: "rgb(242, 246, 255)",
+          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+        }}
+      >
+        <Button
+          variant={confirmButtonVariant}
+          onClick={handleDelete}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            padding: "12px 16px",
+            backgroundColor: "#1C335C",
+            borderRadius: "8px",
+            cursor: "pointer",
+            transition: "background-color 0.3s",
+            width: "max-content",
+          }}
+        >
+          <span
+            style={{
+              color: "#FFF",
+              fontFamily: "Manrope",
+              fontSize: "14px",
+              fontWeight: "600",
+            }}
+          >
+            {confirmButtonText}
+          </span>
         </Button>
-        <Button variant={confirmButtonVariant} onClick={handleDelete}>
-          {confirmButtonText}
+        <Button
+          variant={cancelButtonVariant}
+          onClick={handleClose}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            padding: "12px 16px",
+            backgroundColor: "#FFE7E1",
+            borderRadius: "8px",
+            cursor: "pointer",
+            transition: "background-color 0.3s",
+            width: "max-content",
+          }}
+        >
+          <span
+            style={{
+              color: "#FF5B5B",
+              fontFamily: "Manrope",
+              fontSize: "14px",
+              fontWeight: "600",
+            }}
+          >
+            {cancelButtonText}
+          </span>
         </Button>
       </Modal.Footer>
     </Modal>
   );
 };
 
-export {DeleteConfirmationModal};
+export { DeleteConfirmationModal };

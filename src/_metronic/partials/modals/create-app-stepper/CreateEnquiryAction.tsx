@@ -329,7 +329,7 @@ const CreateEnquiryAction = ({
               onChange={(e) =>
                 setEnqdata({ ...enqdata, is_move_to_adm: 1 })
               }
-              disabled={latestHistory?.status === "Converted"}
+              disabled={enqdata?.status !== "Converted"}
             />
           </Form.Group>
           

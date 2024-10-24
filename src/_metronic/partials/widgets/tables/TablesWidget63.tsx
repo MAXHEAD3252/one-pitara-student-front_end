@@ -40,7 +40,7 @@ interface DataItem {
 }
 
 interface FilterData {
-  session_id: string;
+  session_id: number;
   class_id: string;
   father_phone: string;
   mobileno: string;
@@ -74,7 +74,8 @@ const TablesWidget63 = ({ class_id }: Props) => {
   const [studentId, setStudentId] = useState(0);
   const [studentEmail, setStudentEmail] = useState("");
   const [getClass, setClass] = useState("");
-  const [getSession, setSession] = useState("");
+  const [sessionId, setSession] = useState(0);
+  
 
   useEffect(() => {
     const fetchEnquiries = async () => {
@@ -112,7 +113,7 @@ const TablesWidget63 = ({ class_id }: Props) => {
   const handleActionModal = (
     id: number,
     class_id: string,
-    session_id: string,
+    session_id: number,
     email: string
   ) => {
     setStudentEmail(email);
@@ -448,7 +449,7 @@ const TablesWidget63 = ({ class_id }: Props) => {
           show={showCollectModal}
           handleClose={handleModalCollectFeesClose}
           class_id={getClass}
-          session_id={getSession}
+          sessionId={sessionId}
           admission_enquiry_id={null}
           enqId={null}
           studentId={studentId}

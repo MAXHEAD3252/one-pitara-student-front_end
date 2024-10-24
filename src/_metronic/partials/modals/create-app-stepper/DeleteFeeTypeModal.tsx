@@ -3,26 +3,35 @@ import React, { useEffect, useState } from "react";
 import { Modal } from "react-bootstrap";
 import { useAuth } from "../../../../app/modules/auth/index.ts";
 import { DOMAIN } from "../../../../app/routing/ApiEndpoints.tsx";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 type Props = {
   show: boolean;
   onHide: () => void;
   fee_type_id: number | null;
-  setReferesh : any;
+  setReferesh: any;
 };
 
-
-
-
-const DeleteFeeTypeModal = ({ show, onHide, fee_type_id, setReferesh}: Props) => {
+const DeleteFeeTypeModal = ({
+  show,
+  onHide,
+  fee_type_id,
+  setReferesh,
+}: Props) => {
   // const [FeeDetails, setFeesDetails] = useState([]);
   const { currentUser } = useAuth();
   const schoolId = currentUser?.school_id;
   const [isConfirmed, setIsConfirmed] = useState(false); // State to track confirmation
-  
 
   const handleConfirm = () => {
     setIsConfirmed(true); // Set confirmation state to true
+  };
+
+  const handleCancle = () => {
+    setIsConfirmed(false);
+    setReferesh(true);
+    onHide();
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -35,27 +44,34 @@ const DeleteFeeTypeModal = ({ show, onHide, fee_type_id, setReferesh}: Props) =>
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-          }
+          },
         }
       );
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
+
       const data = await response.json();
       console.log("Deleted Successfully:", data);
-      onHide();
-      setReferesh(true);
+
+      // Show success notification
+      toast.success("Fee type deleted successfully!");
+
+      handleCancle();
     } catch (error) {
       console.error("Error in Delete:", error);
+
+      // Show error notification
+      toast.error("Failed to delete fee type. Please try again.");
     }
   };
 
-  return(
+  return (
     <Modal
       id="kt_modal_create_app"
       tabIndex={-1}
-      size='sm'
+      size="sm"
       aria-hidden="true"
       dialogClassName="modal-dialog modal-dialog-centered mw-500px"
       show={show}
@@ -64,45 +80,155 @@ const DeleteFeeTypeModal = ({ show, onHide, fee_type_id, setReferesh}: Props) =>
       <div
         className="modal-header"
         style={{
-          backgroundColor: "#F2F6FF",
+          // backgroundColor: "#F2F6FF",
           borderBottom: "1px solid lightgray",
+          fontFamily: "Manrope",
+          backgroundColor: "rgb(242, 246, 255)",
+          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
         }}
       >
-        <h2>Delete Entry</h2>
+        <h2
+          style={{
+            fontFamily: "Manrope",
+            fontSize: "18px",
+            fontWeight: "600",
+            color: "#1F4061",
+          }}
+        >
+          Delete Entry
+        </h2>
         <div
           className="btn btn-sm btn-icon btn-active-color-primary"
-          onClick={onHide}
+          onClick={handleCancle}
         >
           <i className="fas fa-times"></i>
         </div>
       </div>
-      <div className="modal-body" style={{ backgroundColor: "#F2F6FF" }}>
-          {!isConfirmed ? (
-            <div style={{ textAlign: "center" }}>
-              <p>Are you sure you want to Delete this Entry?</p>
-              <button className="btn btn-danger" onClick={handleConfirm}>
+      <div
+        className="modal-body"
+        style={{
+          backgroundColor: "rgb(242, 246, 255)",
+          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+        }}
+      >
+        {!isConfirmed ? (
+          <div
+            className="mx-auto"
+            style={{
+              textAlign: "center",
+              fontFamily: "Manrope",
+              fontSize: "14px",
+              fontWeight: "500",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <p>Are you sure you want to Delete this Entry?</p>
+            <div
+              onClick={handleConfirm}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                padding: "12px 16px",
+                backgroundColor: "#1C335C",
+                borderRadius: "8px",
+                cursor: "pointer",
+                transition: "background-color 0.3s",
+                width: "max-content",
+              }}
+            >
+              <span
+                style={{
+                  color: "#FFF",
+                  fontFamily: "Manrope",
+                  fontSize: "14px",
+                  fontWeight: "600",
+                }}
+              >
                 Confirm
-              </button>
+              </span>
             </div>
-          ) : (
-            <form onSubmit={handleSubmit}>
-              <div style={{ marginBottom: "23px" , display:'flex', justifyContent:'center',alignItems:'center',}}>
-
-                <div style={{ display: "flex", justifyContent: "end" , marginRight:'5px',}}>
-                  <button className="btn btn-danger" type="submit">
+          </div>
+        ) : (
+          <form>
+            <div
+              style={{
+                marginBottom: "23px",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "end",
+                  marginRight: "5px",
+                }}
+              >
+                <div
+                  onClick={handleSubmit}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    padding: "12px 16px",
+                    backgroundColor: "#1C335C",
+                    borderRadius: "8px",
+                    cursor: "pointer",
+                    transition: "background-color 0.3s",
+                    width: "max-content",
+                  }}
+                >
+                  <span
+                    style={{
+                      color: "#FFF",
+                      fontFamily: "Manrope",
+                      fontSize: "14px",
+                      fontWeight: "600",
+                    }}
+                  >
                     Delete
-                  </button>
+                  </span>
                 </div>
-                <div style={{ display: "flex", justifyContent: "end", marginLeft:'5px', }}>
-                  <button className="btn btn-danger" type="button" onClick={()=>onHide()}>
-                    Cancel
-                  </button>
-                </div>
-
               </div>
-            </form>
-          )}
-        </div>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "end",
+                  marginLeft: "5px",
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    padding: "12px 16px",
+                    backgroundColor: "#FFE7E1",
+                    borderRadius: "8px",
+                    cursor: "pointer",
+                    transition: "background-color 0.3s",
+                    width: "max-content",
+                  }}
+                  onClick={handleCancle}
+                >
+                  <span
+                    style={{
+                      color: "#FF5B5B",
+                      fontFamily: "Manrope",
+                      fontSize: "14px",
+                      fontWeight: "600",
+                    }}
+                  >
+                    Cancle
+                  </span>
+                </div>
+              </div>
+            </div>
+          </form>
+        )}
+      </div>
     </Modal>
   );
 };

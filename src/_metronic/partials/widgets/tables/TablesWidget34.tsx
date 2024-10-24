@@ -160,7 +160,7 @@ const TablesWidget34: React.FC = () => {
           style={{
             fontSize: "20px",
             fontWeight: "600",
-            color: "#1C335C",
+            color: "#1F4061",
             fontFamily: "Manrope",
           }}
         >
@@ -173,7 +173,7 @@ const TablesWidget34: React.FC = () => {
               width: "300px",
               height: "36px",
               borderRadius: "8px",
-              border: "1px solid #1C335C",
+              border: "1px solid #1F4061",
             }}
           >
             <span
@@ -193,12 +193,12 @@ const TablesWidget34: React.FC = () => {
                     cx="8.50002"
                     cy="7.66665"
                     r="6.33333"
-                    stroke="#1C335C"
+                    stroke="#1F4061"
                     stroke-width="1.5"
                   />
                   <path
                     d="M14.1667 13.3333L15.5 14.6666"
-                    stroke="#1C335C"
+                    stroke="#1F4061"
                     stroke-width="1.5"
                     stroke-linecap="round"
                   />
@@ -208,7 +208,7 @@ const TablesWidget34: React.FC = () => {
                     <rect
                       width="16"
                       height="16"
-                      fill="#1C335C"
+                      fill="#1F4061"
                       transform="translate(0.833374)"
                     />
                   </clipPath>
@@ -235,7 +235,7 @@ const TablesWidget34: React.FC = () => {
               display: "flex",
               alignItems: "center",
               padding: "8px 12px",
-              backgroundColor: "#1C335C",
+              backgroundColor: "#1F4061",
               borderRadius: "8px",
               cursor: "pointer",
               transition: "background-color 0.3s",
@@ -491,10 +491,10 @@ const TablesWidget34: React.FC = () => {
                 style={{
                   backgroundColor:
                     index % 2 === 0 ? "rgb(242, 246, 255)" : "#FFFFFF",
-                  borderBottom: "1px solid #E0E4F0",
+                  borderBottom: "2px solid #E0E4F0",
                   fontFamily: "Manrope",
                   fontSize: "14px",
-                  color: "#1C335C",
+                  color: "#1F4061",
                 }}
               >
                 <td
@@ -526,7 +526,7 @@ const TablesWidget34: React.FC = () => {
                         backgroundColor: "#B1E3FF",
                         color: "#1C335C",
                         fontSize: "12px",
-                        fontWeight: "600",
+                        fontWeight: "700",
                       }}
                     >
                       Admission
@@ -603,20 +603,20 @@ const TablesWidget34: React.FC = () => {
                       borderRadius: "5px",
                       backgroundColor:
                         item.status === "New"
-                          ? "#E7FFEA"
+                          ? "#C0EBA6"
                           : item.status === "Deferred"
-                          ? "#FFF8B6"
+                          ? "#FFE7E1"
                           : item.status === "Converted"
                           ? "#E3F2FD"
-                          : "#FFEAEA", // for dead
+                          : "#FEFFA7", // for dead
                       color:
                         item.status === "New"
-                          ? "#4BCD60"
+                          ? "#347928"
                           : item.status === "Deferred"
                           ? "#D4840C"
                           : item.status === "Converted"
                           ? "#1976D2"
-                          : "#D32F2F", // for dead
+                          : "#EB8317", // for dead
                       fontSize: "12px",
                       fontWeight: "600",
                     }}
@@ -643,8 +643,8 @@ const TablesWidget34: React.FC = () => {
                       display: "flex",
                       alignItems: "center",
                       padding: "8px 12px",
-                      backgroundColor: "#1C335C",
-                      borderRadius: "8px",
+                      backgroundColor: "#1F4061",
+                      borderRadius: "5px",
                       cursor: "pointer",
                       transition: "background-color 0.3s",
                     }}
@@ -657,7 +657,7 @@ const TablesWidget34: React.FC = () => {
                   >
                     <span
                       style={{
-                        marginRight: "8px",
+                        marginRight: "5px",
                         color: "white",
                         fontSize: "14px",
                         fontWeight: "700",
@@ -683,7 +683,7 @@ const TablesWidget34: React.FC = () => {
                         alignItems: "center",
                         padding: "8px 12px",
                       backgroundColor: "#FFE7E1",
-                      borderRadius: "8px",
+                      borderRadius: "5px",
                       cursor: "pointer",
                       transition: "background-color 0.3s",
                     }}

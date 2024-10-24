@@ -1,22 +1,20 @@
 import React, { useEffect, useState } from "react";
-// import { Tooltip as ReactTooltip } from "react-tooltip";
 import "../../../../app/pages/StaffPages/FinancialManagement/style.css";
-// import { CreateWalkinEnquiry } from "../../modals/create-app-stepper/CreateWalkinEnquiry";
 import { DeleteFeeTypeModal } from "../../modals/create-app-stepper/DeleteFeeTypeModal";
 import { CreateEditFeeType } from "../../modals/create-app-stepper/CreateEditFeeType";
 import { useAuth } from "../../../../app/modules/auth/core/Auth";
-// import { UploadsFilter } from "../../modals/create-app-stepper/UploadsFilter";
-// import { AddClasses } from "../../modals/create-app-stepper/AddClasses";
 import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
 import { Button, Col, Form, InputGroup, Modal, Row } from "react-bootstrap";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 interface CurrentUser {
   school_id: string;
 }
 interface DataItem {
   id: number;
-  name: string;
-  feecode: string;
+  type: string;
+  code: string;
 }
 
 const TablesWidget60 = () => {
@@ -31,13 +29,15 @@ const TablesWidget60 = () => {
   const [fee_type_code, setfee_type_code] = useState<string>("");
   const [fee_type_description, setfee_type_description] = useState<string>("");
   const schoolId = (currentUser as unknown as CurrentUser)?.school_id;
-  
 
   const [formData, setFormData] = useState({
     name: "",
     feeCode: "",
     description: "",
   });
+
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filteredData, setFilteredData] = useState<DataItem[]>([]);
 
   const handleShowEditModal = (
     fee_type_id: number,
@@ -69,7 +69,12 @@ const TablesWidget60 = () => {
     setfee_type_id(null);
     setfee_type_name("");
     setfee_type_code("");
-    setfee_type_description("")
+    setfee_type_description("");
+    setFormData({
+      name: "",
+      feeCode: "",
+      description: "",
+    });
     setIsAddModalVisible(false);
   };
 
@@ -77,7 +82,7 @@ const TablesWidget60 = () => {
     setfee_type_id(null);
     setfee_type_name("");
     setfee_type_code("");
-    setfee_type_description("")
+    setfee_type_description("");
     setShowEditModal(false);
   };
 
@@ -92,6 +97,7 @@ const TablesWidget60 = () => {
         }
         const responseData = await response.json();
         setData(responseData);
+        setFilteredData(responseData);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -101,18 +107,19 @@ const TablesWidget60 = () => {
     setReferesh(false);
   }, [schoolId, referesh]);
 
-  //   const handleSearch = (e: any) => {
-  //     const query = e.target.value.toLowerCase();
-  //     setSearchQuery(query);
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const query = e.target.value.toLowerCase();
+    setSearchQuery(query);
+    console.log(data);
 
-  //     const filtered = data.filter(
-  //       (item) =>
-  //         item.status.toLowerCase().includes(query) ||
-  //         item.name.toLowerCase().includes(query)
-  //     );
-  //     /* @ts-ignore */
-  //     setFilteredData(filtered);
-  //   };
+    const filtered = data.filter(
+      (item) =>
+        item.type.toLowerCase().includes(query) ||
+        item.code.toLowerCase().includes(query)
+    );
+
+    setFilteredData(filtered);
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -141,8 +148,14 @@ const TablesWidget60 = () => {
       const data = await response.json();
       setReferesh(true);
       handleAddCancel();
+
+      // Show success notification
+      toast.success("Fee type added successfully!");
     } catch (error) {
       console.error("Error:", error);
+
+      // Show error notification
+      toast.error("Failed to add fee type. Please try again.");
     }
   };
 
@@ -186,7 +199,7 @@ const TablesWidget60 = () => {
             style={{
               width: "300px",
               height: "36px",
-              borderRadius: "8px",
+              borderRadius: "5px",
               border: "1px solid #1C335C",
             }}
           >
@@ -234,11 +247,15 @@ const TablesWidget60 = () => {
               style={{
                 backgroundColor: "transparent",
                 color: "#1C335C",
+                fontFamily:'Manrope', fontWeight:'500', fontSize:'14px'
               }}
               className="form-control border-0"
               placeholder="Search ...."
               aria-label="Search"
               aria-describedby="addon-wrapping"
+              value={searchQuery || ""} // Bind search input to state
+              onChange={handleSearch} // Pass the event to handleSearch
+              
             />
           </div>
           <div
@@ -247,7 +264,7 @@ const TablesWidget60 = () => {
               display: "flex",
               alignItems: "center",
               padding: "8px 12px",
-              backgroundColor: "#1C335C",
+              backgroundColor: "#1F4061",
               borderRadius: "8px",
               cursor: "pointer",
               transition: "background-color 0.3s",
@@ -285,7 +302,7 @@ const TablesWidget60 = () => {
       </div>
       <div
         style={{
-          height: "620px", // Fixed height for the table container
+          height: "680px", // Fixed height for the table container
           overflowY: "auto", // Enable vertical scrolling
           padding: "16px 0", // Optional: adds some padding around the table
         }}
@@ -340,7 +357,7 @@ const TablesWidget60 = () => {
           </thead>
 
           <tbody>
-            {data.map((item, index) => (
+            {filteredData.map((item, index) => (
               <tr
                 key={index}
                 style={{
@@ -377,14 +394,19 @@ const TablesWidget60 = () => {
                 >
                   <div
                     onClick={() =>
-                      handleShowEditModal(item.id, item.type, item.code, item.description)
+                      handleShowEditModal(
+                        item.id,
+                        item.type,
+                        item.code,
+                        item.description
+                      )
                     }
                     style={{
                       display: "flex",
                       alignItems: "center",
                       padding: "8px 12px",
-                      backgroundColor: "#1C335C",
-                      borderRadius: "8px",
+                      backgroundColor: "#1F4061",
+                      borderRadius: "5px",
                       cursor: "pointer",
                       transition: "background-color 0.3s",
                     }}
@@ -477,13 +499,20 @@ const TablesWidget60 = () => {
         id="kt_modal_create_app"
         tabIndex={-1}
         aria-hidden="true"
-        dialogClassName="modal-dialog modal-dialog-centered mw-1000px"
+        dialogClassName="modal-dialog modal-dialog-centered mw-800px"
         show={isAddModalVisible}
         onHide={handleAddCancel}
         backdrop={true}
       >
-        <div className="modal-header">
-          <h2 style={{ fontFamily: "Manrope" }}>Add Fees Type :</h2>
+        <div
+          className="modal-header"
+          style={{
+            borderBottom: "1px solid lightgray",
+            backgroundColor: "rgb(242, 246, 255)",
+            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+          }}
+        >
+          <h2 style={{ fontFamily: "Manrope", fontSize:'18px', fontWeight:'600' }}>Add Fees Type :</h2>
           <div
             className="btn btn-sm btn-icon btn-active-color-primary"
             onClick={handleAddCancel}
@@ -491,7 +520,10 @@ const TablesWidget60 = () => {
             <i className="fas fa-times"></i>
           </div>
         </div>
-        <div className="modal-body py-lg-10 px-lg-10">
+        <div className="modal-body py-lg-10 px-lg-10" style={{
+            backgroundColor: "rgb(242, 246, 255)",
+            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+          }}>
           <Form onSubmit={handleSubmit}>
             <Row>
               <Col md={6}>
@@ -499,7 +531,7 @@ const TablesWidget60 = () => {
                   className="mb-3 custom-input"
                   controlId="formDesignationName"
                 >
-                  <Form.Label>Fees Type Name</Form.Label>
+                  <Form.Label style={{fontFamily:'Manrope', fontWeight:'500', fontSize:'14px'}}>Fees Type Name</Form.Label>
                   <InputGroup>
                     <InputGroup.Text>
                       <i className="fas fa-school"></i>
@@ -511,6 +543,7 @@ const TablesWidget60 = () => {
                       value={formData.name || ""}
                       onChange={handleInputChange}
                       required
+                      style={{fontFamily:'Manrope', fontWeight:'500', fontSize:'14px'}}
                     />
                   </InputGroup>
                 </Form.Group>
@@ -520,7 +553,7 @@ const TablesWidget60 = () => {
                   className="mb-3 custom-input"
                   controlId="formFeesCode"
                 >
-                  <Form.Label>Fees Code</Form.Label>
+                  <Form.Label style={{fontFamily:'Manrope', fontWeight:'500', fontSize:'14px'}}>Fees Code</Form.Label>
                   <InputGroup>
                     <InputGroup.Text>
                       <i className="fas fa-code"></i>
@@ -532,6 +565,7 @@ const TablesWidget60 = () => {
                       value={formData.feeCode || ""}
                       onChange={handleInputChange}
                       required
+                      style={{fontFamily:'Manrope', fontWeight:'500', fontSize:'14px'}}
                     />
                   </InputGroup>
                 </Form.Group>
@@ -541,7 +575,7 @@ const TablesWidget60 = () => {
                   className="mb-3 custom-input"
                   controlId="formDescription"
                 >
-                  <Form.Label>Description</Form.Label>
+                  <Form.Label style={{fontFamily:'Manrope', fontWeight:'500', fontSize:'14px'}}>Description</Form.Label>
                   <InputGroup>
                     <InputGroup.Text>
                       <i className="fas fa-info-circle"></i>
@@ -553,6 +587,7 @@ const TablesWidget60 = () => {
                       value={formData.description || ""}
                       onChange={handleInputChange}
                       required
+                      style={{fontFamily:'Manrope', fontWeight:'500', fontSize:'14px'}}
                     />
                   </InputGroup>
                 </Form.Group>
@@ -563,20 +598,21 @@ const TablesWidget60 = () => {
                 type="submit"
                 variant="secondary"
                 style={{
-                  width: "118px",
-                  height: "36px",
-                  padding: "8px 10px",
-                  justifyContent: "center",
+                  display: "flex",
                   alignItems: "center",
-                  gap: "10px",
-                  backgroundColor: "rgba(39, 59, 99, 0.76)",
+                  padding: "12px 16px",
+                  backgroundColor: "#1C335C",
+                  borderRadius: "8px",
+                  cursor: "pointer",
+                  transition: "background-color 0.3s",
+                  width: "max-content",
                 }}
               >
                 <span
                   style={{
                     color: "#FFF",
                     fontFamily: "Manrope",
-                    fontSize: "12px",
+                    fontSize: "14px",
                     fontWeight: "500",
                   }}
                 >
@@ -588,22 +624,22 @@ const TablesWidget60 = () => {
         </div>
       </Modal>
 
-<CreateEditFeeType
-  show={showEditModal}
-  handleClose={handleCloseEditModal}
-  fee_type_id={fee_type_id}
-  fee_type_name = {fee_type_name}
-  fee_type_code = {fee_type_code}
-  fee_type_description = {fee_type_description}
-  setReferesh = {setReferesh}
-/>
+      <CreateEditFeeType
+        show={showEditModal}
+        handleClose={handleCloseEditModal}
+        fee_type_id={fee_type_id}
+        fee_type_name={fee_type_name}
+        fee_type_code={fee_type_code}
+        fee_type_description={fee_type_description}
+        setReferesh={setReferesh}
+      />
 
-<DeleteFeeTypeModal
-  show={showDeleteModal}
-  onHide={handleCloseDeleteModal}
-  fee_type_id={fee_type_id}
-  setReferesh = {setReferesh}
-/>
+      <DeleteFeeTypeModal
+        show={showDeleteModal}
+        onHide={handleCloseDeleteModal}
+        fee_type_id={fee_type_id}
+        setReferesh={setReferesh}
+      />
     </div>
   );
 };
