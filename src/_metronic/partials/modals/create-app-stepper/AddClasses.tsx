@@ -178,7 +178,7 @@ const AddClasses = ({ show, handleClose, setRefresh }: Props) => {
                         options={sectionOptions}
                         isMulti
                         onChange={handleSectionChange}
-                        placeholder="Select designations..."
+                        placeholder="Select Sections..."
                         className="basic-multi-select"
                         classNamePrefix="select"
                       />

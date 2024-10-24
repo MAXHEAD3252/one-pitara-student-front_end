@@ -503,7 +503,7 @@ const CreateCollectFees = ({
   const fetchTransactionDetails = async (studentFeesMasterId: string) => {
     try {
       const response = await fetch(
-        `${DOMAIN}/api/school/offline-form-submit/${studentFeesMasterId}`
+        `${DOMAIN}/api/school/get-transection-details/${studentFeesMasterId}`
       );
       if (!response.ok) {
         throw new Error(`Network response was not ok for URL`);
@@ -1046,20 +1046,6 @@ const CreateCollectFees = ({
                                 parseFloat(item.total_amount) -
                                 parseFloat(item.amount_paid)
                               ).toFixed(2)}
-                              // onBlur={(e) => {
-                              //   // Check if the input value is empty and set to the placeholder
-                              //   if (!e.target.value) {
-                              //     handleAdjustmentChange(
-                              //       item.fee_group_id,
-                              //       item.feetype_id,
-                              //       (
-                              //         parseFloat(item.total_amount) -
-                              //         parseFloat(item.amount_paid)
-                              //       ).toFixed(2),
-                              //       "currentlyPaying"
-                              //     );
-                              //   }
-                              // }}
                               style={{ width: "100px" }}
                             />
                           </td>

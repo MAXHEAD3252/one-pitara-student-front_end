@@ -3,10 +3,11 @@ import { createPortal } from "react-dom";
 import { useAuth } from "../../../../app/modules/auth";
 import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
 import { Col, Form, InputGroup, Modal, Row } from "react-bootstrap";
+import Select from "react-select";
 
 type Props = {
-  show: boolean;
-  handleClose: () => void;
+    showAssignClassModal: boolean;
+    handleAssignClassTeacherModalClose: () => void;
   setRefresh: any;
 };
 interface Class {
@@ -21,20 +22,29 @@ interface Teacher {
   id: number;
   name: string;
 }
+interface Sessions {
+  id: number;
+  session: string;
+}
+
 
 const modalsRoot = document.getElementById("root-modals") || document.body;
 
-const AddTeacher = ({ show, handleClose, setRefresh }: Props) => {
+const AssignClassTeacher = ({ showAssignClassModal, handleAssignClassTeacherModalClose, setRefresh }: Props) => {
   const { currentUser } = useAuth();
   const school_id = currentUser?.school_id;
 
   const [getClass, setClass] = useState<Class[]>([]);
   const [getTeachers, setTeachers] = useState<Teacher[]>([]);
   const [getSection, setSection] = useState<Section[]>([]);
+  const [getSession, setSession] = useState<Sessions[]>([]);
+
+
 
   const [selectedClass, setSelectedClass] = useState(0);
   const [selectedSection, setSelectedSection] = useState(0);
   const [selectedTeacher, setSelectedTeacher] = useState(0);
+  const [selectedSession, setSelectedSession] = useState("");
 
   useEffect(() => {
     const fetchTeacher = async () => {
@@ -88,6 +98,7 @@ const AddTeacher = ({ show, handleClose, setRefresh }: Props) => {
         }
         const data = await response.json();
         setSection(data);
+        console.log(data);
       } catch (error) {
         console.log(error);
       }
@@ -96,6 +107,22 @@ const AddTeacher = ({ show, handleClose, setRefresh }: Props) => {
 
   }, [selectedClass]);
 
+  useEffect(() => {
+    const fetchSessions = async () => {
+      try {
+        const response = await fetch(
+          `${DOMAIN}/api/school/get-session-subjectgroup/${school_id}`
+        );
+        if (!response.ok) throw new Error("Failed to fetch data");
+        const data = await response.json();
+        setSession(data);
+        console.log(data);
+      } catch (error) {
+        console.error("Error fetching classes:", error);
+      }
+    };
+    fetchSessions();
+  }, [school_id]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -105,15 +132,20 @@ const AddTeacher = ({ show, handleClose, setRefresh }: Props) => {
       );
       return;
     }
+    console.log(selectedSession,
+      selectedClass,
+      selectedSection,
+      selectedTeacher)
     try {
       const response = await fetch(
-        `${DOMAIN}/api/school/add-teacher/${school_id}`,
+        `${DOMAIN}/api/school/add-class-teacher/${school_id}`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
+            selectedSession,
             selectedClass,
             selectedSection,
             selectedTeacher,
@@ -127,17 +159,17 @@ const AddTeacher = ({ show, handleClose, setRefresh }: Props) => {
 
       const result = await response.json();
       console.log("Form submitted successfully!", result);
-      handleClose(); // Close the modal after submission
+      handleAssignClassTeacherModalClose(); // Close the modal after submission
       setRefresh(true);
     } catch (error) {
       console.error("Error submitting form:", error);
     }
   };
 
+  const handleSessionSelected = (id: string) => {
+    setSelectedSession(id);
+  };
 
-  //   const handleTeacherSelected = ({ id, name }: any) => {
-  //     setSelectedTeacher({ id, name }); // Update selected section state
-  //   };
 
   return createPortal(
     <Modal
@@ -146,8 +178,8 @@ const AddTeacher = ({ show, handleClose, setRefresh }: Props) => {
       size="lg"
       aria-hidden="true"
       dialogClassName="modal-dialog modal-dialog-centered mw-500px"
-      show={show}
-      onHide={handleClose}
+      show={showAssignClassModal}
+      onHide={handleAssignClassTeacherModalClose}
     >
       <div
         className="modal-header"
@@ -159,13 +191,35 @@ const AddTeacher = ({ show, handleClose, setRefresh }: Props) => {
         <h2>Assign Class Teacher</h2>
         <div
           className="btn btn-sm btn-icon btn-active-color-primary"
-          onClick={handleClose}
+          onClick={handleAssignClassTeacherModalClose}
         >
           <i className="fas fa-times"></i>
         </div>
       </div>
       <div className="modal-body" style={{ backgroundColor: "#F2F6FF" }}>
         <Form onSubmit={handleSubmit}>
+        <Row className="mb-3">
+            <Col md={6}>
+              <Form.Group controlId="session">
+                <Form.Label>Select Session</Form.Label>
+                <Form.Select
+                  onChange={(e) =>
+                    handleSessionSelected(
+                      e.target.value
+                    )
+                  }
+                >
+                  <option value="">Select Session</option>
+                  {getSession.map((s) => (
+                    <option key={s.id} value={s.id}>
+                      {s.session}
+                    </option>
+                  ))}
+                </Form.Select>
+              </Form.Group>
+            </Col>
+          </Row>
+
           <Row className="mb-3">
             <Col md={6}>
               <Form.Group controlId="class">
@@ -177,7 +231,7 @@ const AddTeacher = ({ show, handleClose, setRefresh }: Props) => {
                   <Form.Select
                     value={selectedClass}
                     onChange={(e) => setSelectedClass(e.target.value)}
-                  >
+                  > 
                     <option value="">Select Class</option>
                     {getClass.map((item) => (
                       <option key={item.class_id} value={item.class_id}>
@@ -189,22 +243,22 @@ const AddTeacher = ({ show, handleClose, setRefresh }: Props) => {
               </Form.Group>
             </Col>
           </Row>
-          ;
+          
           <Row className="mb-3">
             <Col md={6}>
-              <Form.Group controlId="section">
+              <Form.Group controlId="class">
                 <Form.Label>Select Section</Form.Label>
                 <InputGroup>
                   <InputGroup.Text>
-                    <i className="fas fa-chalkboard"></i>
+                    <i className="fas fa-school"></i>
                   </InputGroup.Text>
                   <Form.Select
                     value={selectedSection}
                     onChange={(e) => setSelectedSection(e.target.value)}
-                  >
+                  > 
                     <option value="">Select Section</option>
                     {getSection.map((item) => (
-                      <option key={item.id} value={item.section}>
+                      <option key={item.id} value={item.id}>
                         {item.section}
                       </option>
                     ))}
@@ -213,6 +267,7 @@ const AddTeacher = ({ show, handleClose, setRefresh }: Props) => {
               </Form.Group>
             </Col>
           </Row>
+
           <Row className="mb-3">
             <Col md={6}>
               <Form.Group controlId="teacher">
@@ -236,9 +291,10 @@ const AddTeacher = ({ show, handleClose, setRefresh }: Props) => {
               </Form.Group>
             </Col>
           </Row>
+
           <div className="d-flex justify-content-end">
             <button type="submit" className="btn btn-primary">
-              Add
+              Assign
             </button>
           </div>
         </Form>
@@ -248,4 +304,4 @@ const AddTeacher = ({ show, handleClose, setRefresh }: Props) => {
   );
 };
 
-export { AddTeacher };
+export { AssignClassTeacher };
