@@ -40,6 +40,8 @@ const TablesWidget44: React.FC<TablesWidget44Props> = ({ schoolId }: any) => {
   const [isActive, setIsActive] = useState(false);
   const [roles, setRoles] = useState([]);
   const [designations, setDesignations] = useState([]);
+  console.log(designations);
+  
 
   useEffect(() => {
     const fetchData = async () => {
@@ -52,7 +54,6 @@ const TablesWidget44: React.FC<TablesWidget44Props> = ({ schoolId }: any) => {
         }
         const data = await response.json();
         setUsersDetails(data);
-        // console.log(data);
         setRefresh(false);
       } catch (error) {
         console.error("Error fetching school details:", error);
@@ -81,24 +82,27 @@ const TablesWidget44: React.FC<TablesWidget44Props> = ({ schoolId }: any) => {
   }, []);
 
   const fetchDesignation = async () => {
-    // try {
-    //   const response = await fetch(
-    //     `${DOMAIN}/api/superadmin/get_designationmodule`
-    //   );
-    //   if (!response.ok) {
-    //     throw new Error("Failed to fetch roles");
-    //   }
-    //   const data = await response.json();
-    //   setDesignations(data);
-    // } catch (error) {
-    //   console.error("Error fetching roles:", error);
-    //   toast.error("Failed to fetch roles!", { autoClose: 3000 });
-    // }
+    try {
+      const response = await fetch(
+        `${DOMAIN}/api/superadmin/get_designation`
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch roles");
+      }
+      const data = await response.json();
+      setDesignations(data);
+    } catch (error) {
+      console.error("Error fetching roles:", error);
+      toast.error("Failed to fetch roles!", { autoClose: 3000 });
+    }
   };
 
+  
   useEffect(() => {
-    fetchDesignation(); // Fetch roles when the component mounts
-  }, []);
+    if(formData.role_id == 3){
+      fetchDesignation(); // Fetch roles when the component mounts
+    }
+  }, [formData.role_id]);
 
   const fetchUserById = async () => {
     try {
@@ -109,7 +113,6 @@ const TablesWidget44: React.FC<TablesWidget44Props> = ({ schoolId }: any) => {
         throw new Error("Failed to fetch roles");
       }
       const data = await response.json();
-      console.log(data);
       
       setUserData(data[0]);
     } catch (error) {
@@ -134,7 +137,6 @@ const TablesWidget44: React.FC<TablesWidget44Props> = ({ schoolId }: any) => {
 
   const handleAddSave = async () => {
     const updatedFormData = { ...formData, isActive: isActive ? 1 : 0 }; // Add isActive as 0 or 1
-    console.log(updatedFormData);
 
     try {
       const response = await fetch(
@@ -688,7 +690,7 @@ const TablesWidget44: React.FC<TablesWidget44Props> = ({ schoolId }: any) => {
                   <Form.Label>Select Role</Form.Label>
                   <Form.Control
                     as="select"
-                    name="roleId"
+                    name="role_id"
                     value={formData.role_id}
                     onChange={handleInputChange}
                     required
@@ -872,7 +874,7 @@ const TablesWidget44: React.FC<TablesWidget44Props> = ({ schoolId }: any) => {
                   <Form.Label>Select Role</Form.Label>
                   <Form.Control
                     as="select"
-                    name="roleId"
+                    name="role_id"
                     value={userData.role_id}
                     onChange={handleInputEditChange}
                     required
