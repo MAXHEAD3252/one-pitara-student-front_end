@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useLocation } from "react-router-dom";
-import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
+import { DOMAIN,getDesignationModule,StoreDesignationPermission} from "../../../../app/routing/ApiEndpoints";
 import { useAuth } from "../../../../app/modules/auth";
 
 interface Module {
@@ -24,7 +24,6 @@ const TablesWidget66 = ({school_id, designation_id}:any) => {
     const params = new URLSearchParams(location.search);
     const restrict = params.get("restrict");
     const [schoolModules, setSchoolModules] = useState<Category[]>([]);
-    console.log(schoolModules);
     
     const [selectedIds, setSelectedIds] = useState<{ [key: string]: boolean }>(
       {}
@@ -46,18 +45,20 @@ const TablesWidget66 = ({school_id, designation_id}:any) => {
       const fetchData = async () => {
         try {
           const response = await fetch(
-            `${DOMAIN}/api/superadmin/designation-modules/${school_id}/${designation_id}`
+            `${DOMAIN}/${getDesignationModule}/${school_id}/${designation_id}`
           );
           if (!response.ok) {
-            throw new Error("Network response was not ok");
+            // Extract the status and error message from the response
+            const errorData = await response.json();
+            throw new Error(`Error ${errorData.status}: ${errorData.error || "Unknown error"}`);
           }
-          const data: Category[] = await response.json();
-          setSchoolModules(data);
+          const result = await response.json();
+          setSchoolModules(result.data);
   
           // Initialize selectedIds based on fetched data
           const initialIds: { [key: string]: boolean } = {};
-          data.forEach((category) => {
-            category.modules.forEach((module) => {
+          result.data.forEach((category: any) => {
+            category.modules.forEach((module : any) => {
               if (module.is_assigned === 1) {
                 initialIds[`${category.id}:${module.module_id}`] = true;
               }
@@ -66,7 +67,11 @@ const TablesWidget66 = ({school_id, designation_id}:any) => {
           setSelectedIds(initialIds);
           setInitialSelectedIds(initialIds);
         } catch (error) {
-          console.error("Error fetching school details:", error);
+          if (error instanceof Error) {
+            console.error("Error fetching Designation Module:", error.message);
+          } else {
+            console.error("An unexpected error occurred");
+          }
         }
       };
   
@@ -107,7 +112,7 @@ const TablesWidget66 = ({school_id, designation_id}:any) => {
         }
   
         const response = await fetch(
-          `${DOMAIN}/api/superadmin/store-designation-permission`,
+          `${DOMAIN}/${StoreDesignationPermission}`,
           {
             method: "POST",
             headers: {
@@ -116,17 +121,19 @@ const TablesWidget66 = ({school_id, designation_id}:any) => {
             body: JSON.stringify(updatedPermissions),
           }
         );
-  
         if (!response.ok) {
-          console.log("Error occurred while sending data.");
+          const errorData = await response.json();
           toast.error("An error occurred!", { autoClose: 3000 });
+          throw new Error(`Error ${errorData.status}: ${errorData.error || "Unknown error"}`);
         } else {
-          console.log("Data sent successfully.");
           toast.success("Data sent successfully.", { autoClose: 3000 });
         }
-      } catch (err) {
-        console.log(err);
-        toast.error("Failed to communicate with server!", { autoClose: 3000 });
+      } catch (error) {
+        if (error instanceof Error) {
+          console.error("Error Storing Designation Permissions:", error.message);
+        } else {
+          console.error("An unexpected error occurred");
+        }
       }
     };
   

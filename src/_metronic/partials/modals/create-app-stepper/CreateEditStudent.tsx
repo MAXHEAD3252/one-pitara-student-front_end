@@ -343,7 +343,7 @@ const CreateEditStudent = ({
                 <Form.Control
                   as="select"
                   name="section" // Updated name
-                  value={formData.session_id} // Bind selected section
+                  value={formData.section_id} 
                   onChange={handleSectionChange}
                   disabled={!selectedClass}
                   required

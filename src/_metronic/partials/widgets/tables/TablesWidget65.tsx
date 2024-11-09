@@ -1,34 +1,46 @@
 import React, { useEffect, useState } from "react";
 import "../../../../app/pages/StaffPages/FinancialManagement/style.css";
 import { useAuth } from "../../../../app/modules/auth/core/Auth";
-import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
+import { DOMAIN,getAllSchoolsWithSubscription} from "../../../../app/routing/ApiEndpoints";
 import { CreateViewSchool } from "../../modals/create-app-stepper/CreateViewSchool";
 
-const TablesWidget65 = () => {
-  const [schools, setSchools] = useState([]);
-  console.log(schools);
+interface School {
+  school_id:number;
+  name:string;
+  email:string;
+  sub_type : string;
+  is_active:number;
+  subscription_id:number;
+}
 
-  const { currentUser } = useAuth();
-  const schoolId = currentUser?.school_id;
+const TablesWidget65 = () => {
+  const [schools, setSchools] = useState<School[]>([]);
+
   const [showViewSchoolModal, setShowViewSchoolModal] = useState(false);
-  const [selectedSchoolId, setSelectedSchoolId] = useState(null); // Keep track of selected school
+  const [selectedSchoolId, setSelectedSchoolId] = useState(0);
   const [refresh, setRefresh] = useState(false);
-  const [selectedSchoolDetails, setSelectedSchoolDetails] = useState(null);
+  const [selectedSchoolDetails, setSelectedSchoolDetails] = useState<School[]>([]);
 
   // Fetch the schools list
   useEffect(() => {
     const fetchSchools = async () => {
       try {
         const response = await fetch(
-          `${DOMAIN}/api/superadmin/get-all-schools`
+          `${DOMAIN}/${getAllSchoolsWithSubscription}`
         );
         if (!response.ok) {
-          throw new Error("Failed to fetch schools");
+          // Extract the status and error message from the response
+          const errorData = await response.json();
+          throw new Error(`Error ${errorData.status}: ${errorData.error || "Unknown error"}`);
         }
         const responseData = await response.json();
-        setSchools(responseData);
+        setSchools(responseData.data);
       } catch (error) {
-        console.error("Error fetching schools:", error);
+        if (error instanceof Error) {
+          console.error("Error fetching Subscriptions:", error.message);
+        } else {
+          console.error("An unexpected error occurred");
+        }
       }
     };
     setRefresh(false);
@@ -36,7 +48,7 @@ const TablesWidget65 = () => {
   }, [refresh]);
 
   // Handle modal show for the specific school
-  const handleShowModal = (schoolId) => {
+  const handleShowModal = (schoolId: number) => {
     const school = schools.find((s) => s.school_id === schoolId);
     if (school) {
       setSelectedSchoolDetails(school);
@@ -47,8 +59,8 @@ const TablesWidget65 = () => {
 
   const handleModalClose = () => {
     setShowViewSchoolModal(false);
-    setSelectedSchoolId(null);
-    setSelectedSchoolDetails(null);
+    setSelectedSchoolId(0);
+    setSelectedSchoolDetails([]);
   };
   return (
     <div
@@ -207,28 +219,7 @@ const TablesWidget65 = () => {
                   >
                       {school.sub_type}
                 </td>
-                {/* <td>
-                  <div
-                    style={{
-                      width: "0px",
-                      display: "flex",
-                      justifyContent: "center",
-                      flexDirection: "column",
-                    }}
-                  >
-                    <span
-                      style={{
-                        fontSize: "14px",
-                        fontWeight: "500",
-                        lineHeight: "18px",
-                        color: "#1F1F1F",
-                        fontFamily: "Manrope",
-                      }}
-                    >
-                      {school.is_active === 1 ? "Active" : "Not Active"}
-                    </span>
-                  </div>
-                </td> */}
+                
                 <td
                     style={{
                       padding: "12px 20px",

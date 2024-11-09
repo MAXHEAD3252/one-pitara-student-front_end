@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
+import { DOMAIN,AddSchoolDesignations,getAllDesignations } from "../../../../app/routing/ApiEndpoints";
 import Select from "react-select"; // For multi-select dropdown
 import { Modal } from "react-bootstrap";
 
@@ -15,7 +15,7 @@ type Props = {
   handleClose: () => void;
   setRefresh: (refresh: boolean) => void;
   assignedDesignationIds?: number[]; // List of already assigned designations (to disable)
-  schoolId: string; // Ensure schoolId is passed from the parent component
+  schoolId: string| undefined; // Ensure schoolId is passed from the parent component
 };
 
 const AddDesignationSchool: React.FC<Props> = ({
@@ -33,16 +33,21 @@ const AddDesignationSchool: React.FC<Props> = ({
   useEffect(() => {
     const fetchDesignations = async () => {
       try {
-        const response = await fetch(`${DOMAIN}/api/superadmin/get-designations`);
+        const response = await fetch(`${DOMAIN}/${getAllDesignations}`);
         if (!response.ok) {
-          throw new Error("Failed to fetch designations");
+          // Extract the status and error message from the response
+          const errorData = await response.json();
+          throw new Error(`Error ${errorData.status}: ${errorData.error || "Unknown error"}`);
         }
         
-        const data: Designation[] = await response.json();
-        setDesignations(data); // Populate designations
+        const result = await response.json();
+        setDesignations(result.data); // Populate designations
       } catch (error) {
-        console.error("Error fetching designations:", error);
-        toast.error("Failed to fetch designations", { autoClose: 3000 });
+        if (error instanceof Error) {
+          console.error("Error fetching Designations:", error.message);
+        } else {
+          console.error("An unexpected error occurred");
+        }
       }
     };
 
@@ -72,7 +77,7 @@ const AddDesignationSchool: React.FC<Props> = ({
   
       // Send the payload to the server
       const response = await fetch(
-        `${DOMAIN}/api/superadmin/store-school-designations`,
+        `${DOMAIN}/${AddSchoolDesignations}`,
         {
           method: "POST",
           headers: {
@@ -88,22 +93,22 @@ const AddDesignationSchool: React.FC<Props> = ({
       );
   
       if (!response.ok) {
-        throw new Error("Failed to save designations");
+      // Extract the status and error message from the response
+        const errorData = await response.json();
+        throw new Error(`Error ${errorData.status}: ${errorData.error || "Unknown error"}`);
       }
   
       toast.success("Designations saved successfully", { autoClose: 3000 });
       setRefresh(true); // Trigger a refresh if necessary
       handleClose();    // Close the modal after successful submission
     } catch (error) {
-      console.error("Error saving designations:", error);
+      console.error("Error Adding designation:", error);
       toast.error("Failed to save designations", { autoClose: 3000 });
     } finally {
       setIsLoading(false);
     }
   };
   
-
-  console.log(assignedDesignationIds);
   
   // Create options for Select component with disabled checkboxes for already assigned designations
   const designationOptions = designations.map((designation) => ({

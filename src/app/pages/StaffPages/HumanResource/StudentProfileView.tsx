@@ -41,7 +41,6 @@ const StudentProfileView: React.FC = () => {
 
   const handleModal = (student_fees_master_id: number) => {
     setShowTransectionModal(true);
-    console.log(student_fees_master_id);
     setStudentFeeMasterId(student_fees_master_id);
   };
 
@@ -51,7 +50,6 @@ const StudentProfileView: React.FC = () => {
   };
 
   const handleEditModal = (student_id: number) => {
-    console.log(student_id);
     setStudentId(student_id);
     setShowEditModal(true);
   };
@@ -120,7 +118,7 @@ const StudentProfileView: React.FC = () => {
     };
 
     fetchFees();
-  }, [school_id, refresh,student_id]);
+  }, [school_id,student_id]);
 
 
 

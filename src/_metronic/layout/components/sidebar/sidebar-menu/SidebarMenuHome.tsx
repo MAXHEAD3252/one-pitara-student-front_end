@@ -25,7 +25,6 @@ const SidebarMenuHome: FC<Props & WithChildren> = ({
   const { pathname } = useLocation();
   const isActive = checkIsActive(pathname, to);
   const { app } = config;
-  console.log(app?.sidebar?.default);
 
   return (
     <div

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
-import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
+import { DOMAIN ,get_subscriptions,UpdateSubscriptionForSchool} from "../../../../app/routing/ApiEndpoints";
 
 interface Subscription {
   id: number;
@@ -42,14 +42,20 @@ const CreateViewSchool: React.FC<AssignFeesMasterProps> = ({
   const fetchSubscriptions = async () => {
     try {
       // Fetch all available subscriptions
-      const response = await fetch(`${DOMAIN}/api/superadmin/get-allsubscriptions`);
+      const response = await fetch(`${DOMAIN}/${get_subscriptions}`);
       if (!response.ok) {
-        throw new Error("Failed to fetch data");
+        // Extract the status and error message from the response
+        const errorData = await response.json();
+        throw new Error(`Error ${errorData.status}: ${errorData.error || "Unknown error"}`);
       }
       const responseData = await response.json();
-      setSubscriptions(responseData);
+      setSubscriptions(responseData.data);
     } catch (error) {
-      console.error("Error fetching data:", error);
+      if (error instanceof Error) {
+        console.error("Error fetching Subscriptions:", error.message);
+      } else {
+        console.error("An unexpected error occurred");
+      }
     }
   };
 
@@ -61,7 +67,7 @@ const CreateViewSchool: React.FC<AssignFeesMasterProps> = ({
   const confirmSave = async () => {
     try {
       const response = await fetch(
-        `${DOMAIN}/api/superadmin/update-subscription-for-school`,
+        `${DOMAIN}/${UpdateSubscriptionForSchool}`,
         {
           method: "POST",
           headers: {
@@ -75,14 +81,19 @@ const CreateViewSchool: React.FC<AssignFeesMasterProps> = ({
       );
 
       if (!response.ok) {
-        throw new Error("Failed to update subscription");
+        // Extract the status and error message from the response
+        const errorData = await response.json();
+        throw new Error(`Error Updating Assigned Subscription: ${errorData.status}: ${errorData.error || "Unknown error"}`);
       }
-      console.log("Subscription updated successfully");
       handleClose();
       setRefresh(true);
       setShowConfirmationModal(false); // Close confirmation modal
     } catch (error) {
-      console.error("Error updating subscription:", error);
+      if (error instanceof Error) {
+        console.error("Error Updating Subscriptions:", error.message);
+      } else {
+        console.error("An unexpected error occurred");
+      }
     }
   };
 

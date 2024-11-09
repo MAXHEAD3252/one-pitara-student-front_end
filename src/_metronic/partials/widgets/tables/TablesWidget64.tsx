@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "../../../../app/pages/StaffPages/FinancialManagement/style.css";
 import { useAuth } from "../../../../app/modules/auth/core/Auth";
-import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
+import { DOMAIN,get_subscriptions,AddSubscription,UpdateSubscription,DeleteSubscription} from "../../../../app/routing/ApiEndpoints";
 import { useNavigate } from "react-router-dom";
 import { DeleteConfirmationModal } from "../../modals/create-app-stepper/DeleteConfirmationModal";
 import { Modal, Form, Row, Col, InputGroup } from "react-bootstrap";
@@ -12,6 +12,7 @@ interface CurrentUser {
 interface DataItem {
   id: number;
   name: string;
+  is_active:string;
 }
 
 const TablesWidget64 = () => {
@@ -48,27 +49,32 @@ const TablesWidget64 = () => {
   };
 
   useEffect(() => {
-    const fetchEnquiries = async () => {
+    const fetchSubscription = async () => {
       try {
         const response = await fetch(
-          `${DOMAIN}/api/superadmin/get-allsubscriptions`
+          `${DOMAIN}/${get_subscriptions}`
         );
         if (!response.ok) {
-          throw new Error("Failed to fetch data");
+          // Extract the status and error message from the response
+          const errorData = await response.json();
+          throw new Error(`Error ${errorData.status}: ${errorData.error || "Unknown error"}`);
         }
         const responseData = await response.json();
-        setData(responseData);
+        setData(responseData.data);
       } catch (error) {
-        console.error("Error fetching data:", error);
+        if (error instanceof Error) {
+          console.error("Error fetching Subscriptions:", error.message);
+        } else {
+          console.error("An unexpected error occurred");
+        }
       }
     };
 
     setRefresh(false);
-    fetchEnquiries();
+    fetchSubscription();
   }, [schoolId, refresh]);
 
-  const handleSave = (e) => {
-    console.log('hi');
+  const handleSave = (e: any) => {
     
     e.preventDefault();
     if (isEditMode) {
@@ -83,11 +89,11 @@ const TablesWidget64 = () => {
     resetForm();
   };
 
-  const createSubscription = async (data) => {
+  const createSubscription = async (data:any) => {
     try {
       // Replace with your backend API call
       const response = await fetch(
-        `${DOMAIN}/api/superadmin/create-subscription`,
+        `${DOMAIN}/${AddSubscription}`,
         {
           method: "POST",
           headers: {
@@ -96,24 +102,30 @@ const TablesWidget64 = () => {
           body: JSON.stringify(data),
         }
       );
+
       if (response.ok) {
-        console.log("Subscription created successfully");
         setRefresh(true);
         handleAddCancel();
         // Refresh the data list or update UI accordingly
-      } else {
-        console.error("Failed to create subscription");
+      } else if (!response.ok) {
+        // Extract the status and error message from the response
+        const errorData = await response.json();
+        throw new Error(`Error ${errorData.status}: ${errorData.error || "Unknown error"}`);
       }
-    } catch (error) {
-      console.error("Error creating subscription:", error);
+    }catch (error) {
+      if (error instanceof Error) {
+        console.error("Error Adding Subscription:", error);
+      } else {
+        console.error("An unexpected error occurred");
+      }
     }
   };
 
-  const updateSubscription = async (data) => {
+  const updateSubscription = async (data:any) => {
     try {
       // Replace with your backend API call
       const response = await fetch(
-        `${DOMAIN}/api/superadmin/update-subscription/${data.id}`,
+        `${DOMAIN}/${UpdateSubscription}/${data.id}`,
         {
           method: "PUT",
           headers: {
@@ -127,15 +139,21 @@ const TablesWidget64 = () => {
         setRefresh(true);
         handleAddCancel();
         // Refresh the data list or update UI accordingly
-      } else {
-        console.error("Failed to update subscription");
+      } else if (!response.ok) {
+        // Extract the status and error message from the response
+        const errorData = await response.json();
+        throw new Error(`Failed To Update Subscription: ${errorData.status}: ${errorData.error || "Unknown error"}`);
       }
-    } catch (error) {
-      console.error("Error updating subscription:", error);
+    }catch (error) {
+      if (error instanceof Error) {
+        console.error("Error Updating Subscriptions:", error);
+      } else {
+        console.error("An unexpected error occurred");
+      }
     }
   };
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: any) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
@@ -182,7 +200,7 @@ const TablesWidget64 = () => {
 
     try {
       const response = await fetch(
-        `${DOMAIN}/api/superadmin/delete-subscription/${selectedSubscription.id}`,
+        `${DOMAIN}/${DeleteSubscription}/${selectedSubscription.id}`,
         {
           method: "DELETE",
           headers: {
@@ -194,11 +212,17 @@ const TablesWidget64 = () => {
         console.log("Subscription deleted successfully");
         setRefresh(true);
         handleCloseDeleteModal();
-      } else {
-        console.error("Failed to delete subscription");
+      } else if (!response.ok) {
+        // Extract the status and error message from the response
+        const errorData = await response.json();
+        throw new Error(`Failed to delete subscription: ${errorData.status}: ${errorData.error || "Unknown error"}`);
       }
     } catch (error) {
-      console.error("Error deleting subscription:", error);
+      if (error instanceof Error) {
+        console.error("Error fetching Subscriptions:", error);
+      } else {
+        console.error("An unexpected error occurred");
+      }
     }
   };
 
@@ -566,157 +590,6 @@ const TablesWidget64 = () => {
         cancelButtonText="Cancel"
       />
 
-      {/* <div
-        className="col-xxl-4"
-        style={{
-          borderRadius: "16px",
-          border: "1px solid #5D637A",
-          overflowX: "hidden",
-          minHeight: "100%",
-          marginBottom: "20px",
-          height: "280px",
-          display: "flex",
-          flexDirection: "column",
-          fontFamily: "Manrope",
-          maxWidth: "100%",
-          overflow: "hidden",
-        }}
-      >
-        <div
-          style={{
-            padding: "20px",
-            backgroundColor: "#1C335C",
-            height: "80px",
-            display: "flex",
-            alignItems: "center",
-          }}
-        >
-          <span
-            className=""
-            id="staticBackdropLabel"
-            style={{
-              fontSize: "18px",
-              fontWeight: "600",
-              fontFamily: "Manrope",
-              color: "white",
-            }}
-          >
-            Add Subscription:
-          </span>
-        </div>
-        <div>
-          <form
-            onSubmit={handleSave}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              padding: "20px",
-              flexDirection: "column",
-              marginTop: "10px",
-            }}
-          >
-            <div style={{ marginBottom: "23px", width: "100%" }}>
-              <label
-                htmlFor="name"
-                className="form-label"
-                style={{
-                  fontSize: "12px",
-                  color: "#434343",
-                  fontWeight: "500",
-                }}
-              >
-                Name
-              </label>
-
-              <div id="name">
-                <input
-                  className=""
-                  style={{
-                    height: "46px",
-                    width: "100%",
-                    paddingLeft: "10px",
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    backgroundColor: "transparent",
-                    border: "1px solid #ECEDF1",
-                    borderRadius: "8px",
-                  }}
-                  onChange={handleInputChange}
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  placeholder="Enter Name"
-                  aria-expanded="false"
-                  required
-                />
-              </div>
-            </div>
-            <div
-              style={{
-                width: "100%",
-                justifyContent: "right",
-                display: "flex",
-              }}
-            >
-              {isEditMode && (
-                <button
-                  type="button"
-                  onClick={resetForm}
-                  className="btn btn-secondary"
-                  style={{
-                    width: "118px",
-                    height: "36px",
-                    padding: "8px 10px",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    gap: "10px",
-                    flexShrink: "0",
-                    backgroundColor: "#ECEDF1",
-                    color: "#000",
-                  }}
-                >
-                  <span
-                    style={{
-                      fontFamily: "Manrope",
-                      fontSize: "12px",
-                      fontWeight: "500",
-                    }}
-                  >
-                    Cancel
-                  </span>
-                </button>
-              )}
-              <button
-                type="submit"
-                className="btn btn-secondary"
-                data-bs-dismiss="modal"
-                style={{
-                  width: "118px",
-                  height: "36px",
-                  padding: "8px 10px",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  gap: "10px",
-                  flexShrink: "0",
-                  backgroundColor: "rgba(39, 59, 99, 0.76)",
-                }}
-              >
-                <span
-                  style={{
-                    color: "#FFF",
-                    fontFamily: "Manrope",
-                    fontSize: "12px",
-                    fontWeight: "500",
-                  }}
-                >
-                  {isEditMode ? "Update" : "Save"}
-                </span>
-              </button>
-            </div>
-          </form>
-        </div>
-      </div> */}
 
       <Modal
         id="kt_modal_create_app"
@@ -728,7 +601,7 @@ const TablesWidget64 = () => {
         backdrop={true}
       >
         <div className="modal-header">
-          <h2 style={{ fontFamily: "Manrope" }}>Add Subscription:</h2>
+          <h2 style={{ fontFamily: "Manrope" }}>{isEditMode ? 'Edit Subscription:' : 'Add Subscription:'}</h2>
           <div
             className="btn btn-sm btn-icon btn-active-color-primary"
             onClick={handleAddCancel}

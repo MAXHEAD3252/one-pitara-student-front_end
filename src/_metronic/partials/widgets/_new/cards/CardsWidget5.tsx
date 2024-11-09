@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from "react";
-import { DOMAIN, get_schoolbyid } from "../../../../../app/routing/ApiEndpoints"; // Import the update endpoint if available
+import { DOMAIN, get_schoolbyid,upload_school_files,update_school } from "../../../../../app/routing/ApiEndpoints"; // Import the update endpoint if available
 import { Modal, Button, Form, Row, Col, InputGroup } from 'react-bootstrap';
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -23,14 +23,15 @@ interface SchoolDetail {
   website: string;
   year_founded: string;
   ifsc_code: string;
+  school_logo:string;
   // Add other fields here as needed
 }
-
+  
 const CardsWidget5: FC<CardsWidget5Props> = ({ schoolId }) => {
   const [schoolDetail, setSchoolDetails] = useState<SchoolDetail | null>(null);
   
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [formData, setFormData] = useState<Partial<SchoolDetail>>({});
+  const [formData, setFormData] = useState<SchoolDetail[]>([]);
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [refresh, setRefresh] = useState(false);
 
@@ -39,14 +40,21 @@ const CardsWidget5: FC<CardsWidget5Props> = ({ schoolId }) => {
       try {
         const response = await fetch(`${DOMAIN}/${get_schoolbyid}/${schoolId}`);
         if (!response.ok) {
-          throw new Error("Network response was not ok");
+          // Extract the status and error message from the response
+          const errorData = await response.json();
+          throw new Error(`Error ${errorData.status}: ${errorData.error || "Unknown error"}`);
         }
-        const data = await response.json();
-        setSchoolDetails(data[0]);
-        setFormData(data[0]); // Populate the form data 
-      } catch (error) {
-        console.error("Error fetching school details:", error);
+        const result = await response.json();
+        setSchoolDetails(result.data[0]);
+        setFormData(result.data[0]); 
       }
+        catch (error) {
+          if (error instanceof Error) {
+            console.error("Error fetching Subscriptions:", error.message);
+          } else {
+            console.error("An unexpected error occurred");
+          }
+        }
     };
 
     if (schoolId) {
@@ -89,7 +97,7 @@ const CardsWidget5: FC<CardsWidget5Props> = ({ schoolId }) => {
       }
   
       // Update school details after file uploads
-      const response = await fetch(`${DOMAIN}/api/superadmin/school_update/${schoolId}`, {
+      const response = await fetch(`${DOMAIN}/${update_school}/${schoolId}`, {
         method: "PUT", // Assuming you are using PUT method to update
         headers: {
           "Content-Type": "application/json",
@@ -98,7 +106,7 @@ const CardsWidget5: FC<CardsWidget5Props> = ({ schoolId }) => {
       });
   
       if (!response.ok) {
-        toast.error("An error occurred!", { autoClose: 3000 });
+        toast.error("An error occurred Fetching School Details!", { autoClose: 3000 });
         throw new Error("Failed to update school details");
       }
   
@@ -135,12 +143,12 @@ const CardsWidget5: FC<CardsWidget5Props> = ({ schoolId }) => {
     }
   };
 
-  const uploadFile = async (file, schoolId) => {
+  const uploadFile = async (file :File, schoolId:string) => {
     const formData = new FormData();
     formData.append('file', file);
     formData.append('school_id', schoolId);
     try {
-      const response = await fetch(`${DOMAIN}/api/superadmin/school_update_upload`, {
+      const response = await fetch(`${DOMAIN}/${upload_school_files}`, {
         method: 'POST',
         body: formData,
       });

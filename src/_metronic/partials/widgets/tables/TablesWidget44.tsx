@@ -4,6 +4,12 @@ import React, { useEffect, useState } from "react";
 import {
   DOMAIN,
   getUsersBySchoolId,
+  getAllRoles,
+  getAllDesignations,
+  getUserDetails,
+  AddUser,
+  UpdateUser,
+  DeleteUser,
 } from "../../../../app/routing/ApiEndpoints";
 
 import { Modal, Form, Row, Col, InputGroup } from "react-bootstrap";
@@ -35,13 +41,10 @@ const TablesWidget44: React.FC<TablesWidget44Props> = ({ schoolId }: any) => {
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [userId, setUserId] = useState("");
   const [userData, setUserData] = useState([]);
-  
 
   const [isActive, setIsActive] = useState(false);
   const [roles, setRoles] = useState([]);
   const [designations, setDesignations] = useState([]);
-  console.log(designations);
-  
 
   useEffect(() => {
     const fetchData = async () => {
@@ -50,13 +53,21 @@ const TablesWidget44: React.FC<TablesWidget44Props> = ({ schoolId }: any) => {
           `${DOMAIN}/${getUsersBySchoolId}/${schoolId}`
         );
         if (!response.ok) {
-          throw new Error("Network response was not ok");
+          // Extract the status and error message from the response
+          const errorData = await response.json();
+          throw new Error(
+            `Error ${errorData.status}: ${errorData.error || "Unknown error"}`
+          );
         }
-        const data = await response.json();
-        setUsersDetails(data);
+        const result = await response.json();
+        setUsersDetails(result.data);
         setRefresh(false);
       } catch (error) {
-        console.error("Error fetching school details:", error);
+        if (error instanceof Error) {
+          console.error("Error fetching School Users:", error.message);
+        } else {
+          console.error("An unexpected error occurred");
+        }
       }
     };
 
@@ -65,15 +76,22 @@ const TablesWidget44: React.FC<TablesWidget44Props> = ({ schoolId }: any) => {
 
   const fetchRoles = async () => {
     try {
-      const response = await fetch(`${DOMAIN}/api/superadmin/get_rolemodule`);
+      const response = await fetch(`${DOMAIN}/${getAllRoles}`);
       if (!response.ok) {
-        throw new Error("Failed to fetch roles");
+        // Extract the status and error message from the response
+        const errorData = await response.json();
+        throw new Error(
+          `Error ${errorData.status}: ${errorData.error || "Unknown error"}`
+        );
       }
-      const data = await response.json();
-      setRoles(data); // Update roles state
+      const result = await response.json();
+      setRoles(result.data); // Update roles state
     } catch (error) {
-      console.error("Error fetching roles:", error);
-      toast.error("Failed to fetch roles!", { autoClose: 3000 });
+      if (error instanceof Error) {
+        console.error("Error fetching Roles:", error.message);
+      } else {
+        console.error("An unexpected error occurred");
+      }
     }
   };
 
@@ -83,48 +101,58 @@ const TablesWidget44: React.FC<TablesWidget44Props> = ({ schoolId }: any) => {
 
   const fetchDesignation = async () => {
     try {
-      const response = await fetch(
-        `${DOMAIN}/api/superadmin/get_designation`
-      );
+      const response = await fetch(`${DOMAIN}/${getAllDesignations}`);
       if (!response.ok) {
-        throw new Error("Failed to fetch roles");
+        // Extract the status and error message from the response
+        const errorData = await response.json();
+        throw new Error(
+          `Error ${errorData.status}: ${errorData.error || "Unknown error"}`
+        );
       }
-      const data = await response.json();
-      setDesignations(data);
+      const result = await response.json();
+      setDesignations(result.data);
     } catch (error) {
-      console.error("Error fetching roles:", error);
-      toast.error("Failed to fetch roles!", { autoClose: 3000 });
+      if (error instanceof Error) {
+        console.error("Error fetching Designations:", error.message);
+      } else {
+        console.error("An unexpected error occurred");
+      }
     }
   };
 
-  
   useEffect(() => {
-    if(formData.role_id == 3){
+    if (formData.role_id == 3) {
       fetchDesignation(); // Fetch roles when the component mounts
     }
   }, [formData.role_id]);
 
   const fetchUserById = async () => {
     try {
-      const response = await fetch(
-        `${DOMAIN}/api/superadmin/get_user/${userId}`
-      );
+      const response = await fetch(`${DOMAIN}/${getUserDetails}/${userId}`);
       if (!response.ok) {
-        throw new Error("Failed to fetch roles");
+        // Extract the status and error message from the response
+        const errorData = await response.json();
+        throw new Error(
+          `Error ${errorData.status}: ${errorData.error || "Unknown error"}`
+        );
       }
-      const data = await response.json();
-      
-      setUserData(data[0]);
+      const result = await response.json();
+
+      setUserData(result.data[0]);
     } catch (error) {
-      console.error("Error fetching roles:", error);
+      if (error instanceof Error) {
+        console.error("Error fetching User Details:", error.message);
+      } else {
+        console.error("An unexpected error occurred");
+      }
     }
   };
 
   useEffect(() => {
-    fetchUserById(); // Fetch roles when the component mounts
+    if (isEditModalVisible) {
+      fetchUserById();
+    }
   }, [isEditModalVisible]);
-
-  
 
   const showAddModal = () => {
     setIsAddModalVisible(true);
@@ -133,26 +161,26 @@ const TablesWidget44: React.FC<TablesWidget44Props> = ({ schoolId }: any) => {
   const showEditModal = (id: string) => {
     setIsEditModalVisible(true);
     setUserId(id);
+
   };
 
   const handleAddSave = async () => {
     const updatedFormData = { ...formData, isActive: isActive ? 1 : 0 }; // Add isActive as 0 or 1
-
     try {
-      const response = await fetch(
-        `${DOMAIN}/api/superadmin/add_user/${schoolId}`,
-        {
-          method: "POST", // Assuming you are using PUT method to update
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(updatedFormData), // Send updated form data including isActive
-        }
-      );
+      const response = await fetch(`${DOMAIN}/${AddUser}/${schoolId}`, {
+        method: "POST", // Assuming you are using PUT method to update
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedFormData), // Send updated form data including isActive
+      });
 
       if (!response.ok) {
+        const errorData = await response.json();
         toast.error("An error occurred!", { autoClose: 3000 });
-        throw new Error("Failed to update school details");
+        throw new Error(
+          `Error ${errorData.status}: ${errorData.error || "Unknown error"}`
+        );
       }
       const updatedData = await response.json();
       toast.success("Data sent successfully.", { autoClose: 3000 });
@@ -169,22 +197,22 @@ const TablesWidget44: React.FC<TablesWidget44Props> = ({ schoolId }: any) => {
   };
 
   const handleEditSave = async () => {
-    const updatedFormData = { ...userData, isActive: isActive ? 1 : 0 }; 
+    const updatedFormData = { ...userData, isActive: isActive ? 1 : 0 };
     try {
-      const response = await fetch(
-        `${DOMAIN}/api/superadmin/edit_user/${userId}`,
-        {
-          method: "PUT", // Assuming you are using PUT method to update
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(updatedFormData), // Send updated form data including isActive
-        }
-      );
+      const response = await fetch(`${DOMAIN}/${UpdateUser}/${userId}`, {
+        method: "PUT", // Assuming you are using PUT method to update
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedFormData), // Send updated form data including isActive
+      });
 
       if (!response.ok) {
+        const errorData = await response.json();
         toast.error("An error occurred!", { autoClose: 3000 });
-        throw new Error("Failed to update Designation details");
+        throw new Error(
+          `Error ${errorData.status}: ${errorData.error || "Unknown error"}`
+        );
       }
       const updatedData = await response.json();
       toast.success("Data sent successfully.", { autoClose: 3000 });
@@ -206,23 +234,26 @@ const TablesWidget44: React.FC<TablesWidget44Props> = ({ schoolId }: any) => {
 
     if (confirmDelete) {
       try {
-        const response = await fetch(
-          `${DOMAIN}/api/superadmin/delete_user/${id}`,
-          {
-            method: "DELETE",
-          }
-        );
+        const response = await fetch(`${DOMAIN}/${DeleteUser}/${id}`, {
+          method: "DELETE",
+        });
 
         if (!response.ok) {
-          throw new Error("Failed to delete the designation");
+          // Extract the status and error message from the response
+          const errorData = await response.json();
+          throw new Error(
+            `Error ${errorData.status}: ${errorData.error || "Unknown error"}`
+          );
         }
-
         // Optionally, you can refresh the list or update the state to remove the deleted item
         setRefresh(true); // Assuming you have a way to refresh the list of designations
         toast.success("User deleted successfully.", { autoClose: 3000 });
       } catch (error) {
-        console.error("Error deleting designation:", error);
-        toast.error("Failed to delete designation!", { autoClose: 3000 });
+        if (error instanceof Error) {
+          console.error("Error Deleting User:", error);
+        } else {
+          console.error("An unexpected error occurred");
+        }
       }
     }
   };
@@ -260,7 +291,6 @@ const TablesWidget44: React.FC<TablesWidget44Props> = ({ schoolId }: any) => {
       is_active: !prevData.is_active, // Toggle the boolean value
     }));
   };
-  
 
   return (
     <div

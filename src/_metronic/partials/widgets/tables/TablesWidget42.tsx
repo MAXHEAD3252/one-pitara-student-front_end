@@ -1,13 +1,20 @@
 import React, { useEffect, useState } from "react";
 import {
   DOMAIN,
-  getDesignationModule,
+  getAllDesignations,
+  getDesignationById,
+  AddDesignation,
+  UpdateDesignation,
+  DeleteDesignation,
 } from "../../../../app/routing/ApiEndpoints";
 import { DeleteConfirmationModal } from "../../modals/create-app-stepper/DeleteConfirmationModal";
 import { Modal, Form, Row, Col, InputGroup } from "react-bootstrap";
 import { toast } from "react-toastify";
 
 interface SchoolModule {
+  id: number;
+  name: string;
+  is_active: number;
   parent_name: string; // Replace with actual types as needed
   module_name: string;
   can_view: string;
@@ -15,8 +22,15 @@ interface SchoolModule {
 }
 
 interface DesignationDetail {
+  id: number;
   name: string;
-  is_active: string;
+  is_active: number;
+  // Add other fields here as needed
+}
+interface DesData {
+  id: number;
+  name: string;
+  is_active: boolean;
   // Add other fields here as needed
 }
 
@@ -33,62 +47,75 @@ const TablesWidget42 = () => {
   const [refresh, setRefresh] = useState(false);
   const [isAddModalVisible, setIsAddModalVisible] = useState(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
-  const [desId, setDesId] = useState("");
-  const [id, setId] = useState('');
-  const [DesData, setDesData] = useState([]);
+  const [desId, setDesId] = useState(0);
+  const [id, setId] = useState(0);
+  const [DesData, setDesData] = useState<Partial<DesData>>({});
   const [isActive, setIsActive] = useState(false);
   const [showModal, setShowModal] = useState(false);
-
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`${DOMAIN}/${getDesignationModule}`);
+        const response = await fetch(`${DOMAIN}/${getAllDesignations}`);
         if (!response.ok) {
-          throw new Error("Network response was not ok");
+          // Extract the status and error message from the response
+          const errorData = await response.json();
+          throw new Error(
+            `Error ${errorData.status}: ${errorData.error || "Unknown error"}`
+          );
         }
-        const data = await response.json();
-        setDesignationModules(data);
+        const result = await response.json();
+        setDesignationModules(result.data);
         setRefresh(false);
       } catch (error) {
-        console.error("Error fetching school details:", error);
+        if (error instanceof Error) {
+          console.error("Error fetching Designations:", error.message);
+        } else {
+          console.error("An unexpected error occurred");
+        }
       }
     };
 
     fetchData();
   }, [refresh]);
 
-console.log(DesData)
-
   useEffect(() => {
     const fetchDesignation = async () => {
       try {
-        const response = await fetch(`${DOMAIN}/api/superadmin/get_designation/${desId}`);
+        const response = await fetch(
+          `${DOMAIN}/${getDesignationById}/${desId}`
+        );
         if (!response.ok) {
-          throw new Error("Network response was not ok");
+          // Extract the status and error message from the response
+          const errorData = await response.json();
+          throw new Error(
+            `Error ${errorData.status}: ${errorData.error || "Unknown error"}`
+          );
         }
-        const data = await response.json();
-        console.log(data);
-        setDesData(data[0]);
+        const result = await response.json();
+        setDesData(result.data);
         setRefresh(false);
       } catch (error) {
-        console.error("Error fetching school details:", error);
+        if (error instanceof Error) {
+          console.error("Error fetching Designations by DesId:", error.message);
+        } else {
+          console.error("An unexpected error occurred");
+        }
       }
     };
 
-    fetchDesignation();
-  }, [refresh,desId]);
+    if (isEditModalVisible) {
+      fetchDesignation();
+    }
+  }, [refresh, desId]);
 
-
-  
-
-  const handleShowDeleteModal = (id: string) => {
+  const handleShowDeleteModal = (id: number) => {
     setId(id);
     setShowModal(true);
   };
 
   const handleCloseDeleteModal = () => {
-    setId('');
+    setId(0);
     setShowModal(false);
   };
 
@@ -96,7 +123,7 @@ console.log(DesData)
     setIsAddModalVisible(true);
   };
 
-  const showEditModal = (id: string) => {
+  const showEditModal = (id: number) => {
     setIsEditModalVisible(true);
     setDesId(id);
   };
@@ -106,7 +133,7 @@ console.log(DesData)
     // console.log(updatedFormData);
 
     try {
-      const response = await fetch(`${DOMAIN}/api/superadmin/add_designation`, {
+      const response = await fetch(`${DOMAIN}/${AddDesignation}`, {
         method: "POST", // Assuming you are using PUT method to update
         headers: {
           "Content-Type": "application/json",
@@ -115,8 +142,14 @@ console.log(DesData)
       });
 
       if (!response.ok) {
+        // Extract the status and error message from the response
+        const errorData = await response.json();
         toast.error("An error occurred!", { autoClose: 3000 });
-        throw new Error("Failed to update school details");
+        throw new Error(
+          `Failed to update school details: ${errorData.status}: ${
+            errorData.error || "Unknown error"
+          }`
+        );
       }
       const updatedData = await response.json();
       toast.success("Data sent successfully.", { autoClose: 3000 });
@@ -133,20 +166,16 @@ console.log(DesData)
   };
 
   const handleEditSave = async () => {
-    const updatedFormData = { ...DesData, isActive: isActive ? 1 : 0 }; // Add isActive as 0 or 1
-    console.log(updatedFormData);
+    const updatedFormData = { ...DesData, isActive: isActive ? 1 : 0 };
 
     try {
-      const response = await fetch(
-        `${DOMAIN}/api/superadmin/edit_designation/${desId}`,
-        {
-          method: "PUT", // Assuming you are using PUT method to update
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(updatedFormData), // Send updated form data including isActive
-        }
-      );
+      const response = await fetch(`${DOMAIN}/${UpdateDesignation}/${desId}`, {
+        method: "PUT", // Assuming you are using PUT method to update
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedFormData), // Send updated form data including isActive
+      });
 
       if (!response.ok) {
         toast.error("An error occurred!", { autoClose: 3000 });
@@ -167,26 +196,29 @@ console.log(DesData)
   };
 
   const handleDelete = async () => {
-      try {
-        const response = await fetch(
-          `${DOMAIN}/api/superadmin/delete_designationmodule/${id}`,
-          {
-            method: "DELETE",
-          }
+    try {
+      const response = await fetch(`${DOMAIN}/${DeleteDesignation}/${id}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        // Extract the status and error message from the response
+        const errorData = await response.json();
+        throw new Error(
+          `Error Deleting Designation: ${errorData.status}: ${
+            errorData.error || "Unknown error"
+          }`
         );
-
-        if (!response.ok) {
-          throw new Error("Failed to delete the designation");
-        }
-
-        // Optionally, you can refresh the list or update the state to remove the deleted item
-        setRefresh(true); // Assuming you have a way to refresh the list of designations
-        toast.success("Designation deleted successfully.", { autoClose: 3000 });
-        handleCloseDeleteModal();
-      } catch (error) {
-        console.error("Error deleting designation:", error);
-        toast.error("Failed to delete designation!", { autoClose: 3000 });
       }
+
+      // Optionally, you can refresh the list or update the state to remove the deleted item
+      setRefresh(true); // Assuming you have a way to refresh the list of designations
+      toast.success("Designation deleted successfully.", { autoClose: 3000 });
+      handleCloseDeleteModal();
+    } catch (error) {
+      console.error("Error deleting designation:", error);
+      toast.error("Failed to delete designation!", { autoClose: 3000 });
+    }
   };
 
   const handleAddCancel = () => {
@@ -212,12 +244,9 @@ console.log(DesData)
       [name]: value,
     }));
   };
-
-
   const handleToggle = () => {
     setIsActive((prevState) => !prevState); // Toggles the isActive state
   };
-
 
   const handleEditToggle = () => {
     setDesData((prevData) => ({
@@ -238,7 +267,7 @@ console.log(DesData)
         marginTop: "20px",
         padding: "20px",
       }}
-    >
+      >
       <div
         className="card-header"
         style={{
@@ -482,7 +511,9 @@ console.log(DesData)
                     </div>
 
                     <div
-                      onClick={() => handleShowDeleteModal(designationDetail.id)}
+                      onClick={() =>
+                        handleShowDeleteModal(designationDetail.id)
+                      }
                       style={{
                         width: "32px",
                         height: "40px",
@@ -689,7 +720,7 @@ console.log(DesData)
                       type="text"
                       name="name"
                       placeholder="Update school name"
-                      value={DesData.name} // Update the formData value
+                      value={DesData.name}
                       onChange={handleEditInputChange}
                       required
                     />

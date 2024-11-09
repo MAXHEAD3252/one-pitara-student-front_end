@@ -31,8 +31,10 @@ const TablesWidget55 = () => {
   const school_id = (currentUser as any)?.school_id;
   const [classId, setClassId] = useState(null);
   const [sectionId, setsectionId] = useState(null);
+  const [sessionId, setsessionId] = useState(null);
   const [classes, setClasses] = useState([]);
   const [sections, setSections] = useState([]);
+  const [sessions, setSessions] = useState([]);
 
   const handleClassChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const class_id = e.target.value;
@@ -42,6 +44,11 @@ const TablesWidget55 = () => {
   const handleSectionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const section_id = e.target.value;
     setsectionId(section_id);
+  };
+
+  const handleSessionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const session_id = e.target.value;
+    setsessionId(session_id);
   };
 
   // const [showModal, setShowModal] = useState(false);
@@ -60,11 +67,33 @@ const TablesWidget55 = () => {
   };
 
   useEffect(() => {
-    const fetchStudents = async () => {
-      console.log(classId, sectionId);
+    const fetchSessions = async () => {
       try {
         const response = await fetch(
-          `${DOMAIN}/api/school/get-class-section-wise-students/${classId}/${sectionId}/${school_id}`
+          `${DOMAIN}/api/school/get-onlysessions/${school_id}`
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch data");
+        }
+        const responseData = await response.json();
+        setSessions(responseData);
+        console.log(responseData);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchSessions();
+  }, [school_id, sectionId]);
+
+
+  useEffect(() => {
+    const fetchStudents = async () => {
+      console.log(classId, sectionId,sessionId);
+      try {
+        const response = await fetch(
+          `${DOMAIN}/api/school/get-class-section-session-wise-students/${classId}/${sectionId}/${sessionId}/${school_id}`
         );
 
         if (!response.ok) {
@@ -79,7 +108,7 @@ const TablesWidget55 = () => {
     };
 
     fetchStudents();
-  }, [school_id, sectionId]);
+  }, [school_id, sectionId,sessionId]);
 
   useEffect(() => {
     const fetchClasses = async () => {
@@ -192,6 +221,25 @@ const TablesWidget55 = () => {
           {sections.map((sec) => (
             <option key={sec.id} value={sec.id}>
               {sec.section}
+            </option>
+          ))}
+        </select>
+        <select
+          value={sessionId || ""}
+          onChange={handleSessionChange}
+          style={{
+            padding: "10px",
+            borderRadius: "5px",
+            border: "1px solid #ccc",
+            width: "20%",
+            backgroundColor: "#fff",
+          }}
+          className="form-select"
+        >
+          <option value="">Select Session</option>
+          {sessions.map((sec) => (
+            <option key={sec.id} value={sec.id}>
+              {sec.session}
             </option>
           ))}
         </select>

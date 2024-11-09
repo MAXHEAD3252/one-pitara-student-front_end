@@ -64,15 +64,17 @@ export interface SuperAdminModel {
   username:string,
   role:string,
   roleId?:string,
-  roleName?:string,
+  role_name?:string,
   school_id?:string,
   firstname?:string,
   middlename?:string,
   lastname?:string,
   admission_no?:number,
   email?:string,
-  roll_no?:string
-  student_session_id?:number
+  roll_no?:string,
+  student_session_id?:number,
+  currency_symbol?:string,
+  designation?:string,
 }
 
 export interface AdminModel {
@@ -80,7 +82,7 @@ export interface AdminModel {
     id: string,
     role:string,
     roleId?:string,
-    roleName?:string,
+    role_name?:string,
     employee_id: string,
     lang_id: string,
     department: string,
@@ -138,11 +140,12 @@ export interface AdminModel {
     student_session_id :string
     class_id:string,
     school_id?:string,
+    currency_symbol?:string,
 }
   
 
 export interface StudentModel {
-  // id: number
+  id: string,
   // username: string
   // password: string | undefined
   // email: string
@@ -164,7 +167,7 @@ export interface StudentModel {
   // socialNetworks?: UserSocialNetworksModel
   roleId?:string,
   school_id?:string,
-  roleName?:string,
+  role_name?:string,
   student_id:string,
   admission_no: string,
   roll_no: string,
@@ -193,9 +196,10 @@ export interface StudentModel {
   student_year:string,
   firstname:string,
   middlename:string,
-  lastname:string
-  token: string
-  role:string
-  user_id:string
-  
+  lastname:string,
+  token: string,
+  role:string,
+  user_id:string,
+  currency_symbol:string,
+  designation:string,
 }

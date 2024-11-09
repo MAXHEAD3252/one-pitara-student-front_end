@@ -19,7 +19,6 @@ interface SchoolDetail {
 
 const TablesWidget43: React.FC<TablesWidget43Props> = ({ schoolId }) => {
   const [designations, setDesignations] = useState<SchoolDetail[]>([]);
-  console.log(designations);
   
   const [showModal, setShowModal] = useState(false);
   const [refresh, setRefresh] = useState(false);
@@ -34,12 +33,18 @@ const TablesWidget43: React.FC<TablesWidget43Props> = ({ schoolId }) => {
           `${DOMAIN}/${getSchoolWiseDesignations}/${schoolId}`
         );
         if (!response.ok) {
-          throw new Error("Network response was not ok");
+          // Extract the status and error message from the response
+          const errorData = await response.json();
+          throw new Error(`Error ${errorData.status}: ${errorData.error || "Unknown error"}`);
         }
         const data = await response.json();
         setDesignations(data);
-      } catch (error) {
-        console.error("Error fetching school details:", error);
+      }catch (error) {
+        if (error instanceof Error) {
+          console.error("Error fetching Designations:", error.message);
+        } else {
+          console.error("An unexpected error occurred");
+        }
       }
     };
 

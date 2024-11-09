@@ -5,15 +5,17 @@ import React from "react";
 import { useIntl } from "react-intl";
 import { PageTitle } from "../../../_metronic/layout/core";
 import { Content } from "../../../_metronic/layout/components/content";
-import { HeaderWrapper } from "../../../_metronic/layout/components/header_staff";
 import { useEffect, useState } from "react";
-import { CreateSchoolDetailModal } from "../../../_metronic/partials/";
 import { CreateSchoolModal } from "../../../_metronic/partials/modals/create-app-stepper/CreateSchoolModal";
 import { useNavigate } from "react-router-dom";
-import { DOMAIN } from "../../routing/ApiEndpoints";
+import { DOMAIN,get_schools } from "../../routing/ApiEndpoints";
+
+
+
 
 interface School {
   id: string;
+  school_id:number;
   name: string;
   email: string;
   phone: string;
@@ -32,22 +34,28 @@ const ManageSchoolsPage = () => {
     // Fetch schools data from API
     const fetchSchools = async () => {
       try {
-        const response = await fetch(`${DOMAIN}/api/superadmin/get_schools`);
+        const response = await fetch(`${DOMAIN}/${get_schools}`);
         if (!response.ok) {
-          throw new Error("Failed to fetch schools");
+          // Extract the status and error message from the response
+          const errorData = await response.json();
+          throw new Error(`Error ${errorData.status}: ${errorData.error || "Unknown error"}`);
         }
-        const data = await response.json();
-        // console.log(data);
-
-        setSchools(data);
+  
+        const result = await response.json();
+        setSchools(result.data);
       } catch (error) {
-        console.error("Error fetching schools:", error);
+        if (error instanceof Error) {
+          console.error("Error fetching schools:", error.message);
+        } else {
+          console.error("An unexpected error occurred");
+        }
       }
     };
-
+  
     setRefreshData(false);
     fetchSchools();
   }, [refreshData]);
+  
 
   // const editDetails = (id) => {
   //   // Navigate to a page/modal to edit details of the school with the given ID
@@ -405,12 +413,12 @@ const ManageSchoolsPage = () => {
           <CreateSchoolModal
             show={showModal}
             handleClose={handleModalClose}
-            refresh={refreshData}
+            refresh={setRefreshData}
           />
         </div>
       </Content>
     </div>
-  );
+  );  
 };
 
 const ManageSchools = () => {

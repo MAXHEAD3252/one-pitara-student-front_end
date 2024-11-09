@@ -5,47 +5,55 @@ import { PageTitle } from "../../../_metronic/layout/core";
 import { EngageWidget10 } from "../../../_metronic/partials/widgets";
 import { Content } from "../../../_metronic/layout/components/content";
 import { useAuth } from "../../modules/auth/core/Auth";
-// import { Calendar, momentLocalizer } from "react-big-calendar";
-// import moment from "moment";
 import { TablesWidget52 } from "../../../_metronic/partials/widgets/tables/TablesWidget52";
 import { Dashboardheader } from "../../../_metronic/partials/components/student/DashboardHeader";
 import { ListsWidget10 } from "../../../_metronic/partials/widgets/lists/ListsWidget10";
 import { ListsWidget11 } from "../../../_metronic/partials/widgets/lists/ListsWidget11";
-import { DOMAIN } from "../../routing/ApiEndpoints";
+import { DOMAIN,
+  get_school_count,
+  get_users_count,
+  get_subscription_count,
+  get_module_count,
+  get_school_details, } from "../../routing/ApiEndpoints";
 import ChartsWidget19 from "../../../_metronic/partials/widgets/charts/ChartsWidget19";
 import SchoolEventsCalendar from "../../../_metronic/partials/widgets/_new/cards/SchoolEventsCalendar";
-// import { HeaderWrapper } from "../../../_metronic/layout/components/header_student";
 
-// const localizer = momentLocalizer(moment);
+
+interface school {
+  id:number;
+  name:string;
+  email:string;
+  phone:number;
+  sub_name:string;
+  sub_date:string;
+}
 
 const DashboardPage: FC = () => {
   const { currentUser } = useAuth();
-  const currency = currentUser.currency_symbol;
+  const currency = currentUser?.currency_symbol;
 
   const [totalSchools, setTotalSchools] = useState(0);
   const [activeUsers, setActiveUsers] = useState(0);
   const [subscription, setSubscription] = useState(0);
   const [modules, setModules] = useState(0);
-  const [schoolDetails, setSchoolDetails] = useState(0);
+  const [schoolDetails, setSchoolDetails] = useState<school[]>([]);
 
   const [userRole, setUserRole] = useState<string | null>(null);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
     // Define an async function to fetch the school count
     const fetchSchoolCount = async () => {
       try {
         // Fetch data from the server
-        const response = await fetch(`${DOMAIN}/api/superadmin/school-count`); // Update the URL to match your API endpoint
+        const response = await fetch(`${DOMAIN}/${get_school_count}`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
-        // Set the school count in the state
-        setTotalSchools(data.totalSchools);
-      } catch (err) {
+        setTotalSchools(data.totalSchools); 
+      } catch (error) {
         // Set error in the state
-        setError(err.message);
+        console.error(error);
       }
     };
 
@@ -56,16 +64,16 @@ const DashboardPage: FC = () => {
     const fetchUsersCount = async () => {
       try {
         // Fetch data from the server
-        const response = await fetch(`${DOMAIN}/api/superadmin/users-count`); // Update the URL to match your API endpoint
+        const response = await fetch(`${DOMAIN}/${get_users_count}`); // Update the URL to match your API endpoint
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
         // Set the school count in the state
         setActiveUsers(data.totalActiveUsers);
-      } catch (err) {
+      } catch (error) {
         // Set error in the state
-        setError(err.message);
+        console.error(error);
       }
     };
 
@@ -76,7 +84,7 @@ const DashboardPage: FC = () => {
       try {
         // Fetch data from the server
         const response = await fetch(
-          `${DOMAIN}/api/superadmin/subscription-count`
+          `${DOMAIN}/${get_subscription_count}`
         ); // Update the URL to match your API endpoint
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -84,9 +92,9 @@ const DashboardPage: FC = () => {
         const data = await response.json();
         // Set the school count in the state
         setSubscription(data.totalSubscriptions);
-      } catch (err) {
+      } catch (error) {
         // Set error in the state
-        setError(err.message);
+        console.error(error);
       }
     };
 
@@ -96,16 +104,16 @@ const DashboardPage: FC = () => {
     const fetchModulesCount = async () => {
       try {
         // Fetch data from the server
-        const response = await fetch(`${DOMAIN}/api/superadmin/module-count`); // Update the URL to match your API endpoint
+        const response = await fetch(`${DOMAIN}/${get_module_count}`); // Update the URL to match your API endpoint
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
         // Set the school count in the state
         setModules(data.totalModules);
-      } catch (err) {
+      } catch (error) {
         // Set error in the state
-        setError(err.message);
+        console.error(error);
       }
     };
 
@@ -114,18 +122,16 @@ const DashboardPage: FC = () => {
     const fetchSchoolDetails = async () => {
       try {
         // Fetch data from the server
-        const response = await fetch(`${DOMAIN}/api/superadmin/school-details`); // Update the URL to match your API endpoint
+        const response = await fetch(`${DOMAIN}/${get_school_details}`); // Update the URL to match your API endpoint
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
-        console.log(data);
-
         // Set the school count in the state
         setSchoolDetails(data);
-      } catch (err) {
+      } catch (error) {
         // Set error in the state
-        setError(err.message);
+        console.error(error);
       }
     };
 
@@ -613,7 +619,7 @@ const DashboardPage: FC = () => {
                           ))
                         ) : (
                           <tr>
-                            <td colSpan="6" className="text-center">
+                            <td colSpan={6} className="text-center">
                               No tenants available
                             </td>
                           </tr>
