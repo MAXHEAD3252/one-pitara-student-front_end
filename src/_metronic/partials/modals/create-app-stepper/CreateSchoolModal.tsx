@@ -1,55 +1,45 @@
 import React, { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { Modal, Button, Form, Row, Col, InputGroup } from "react-bootstrap";
-import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
+import { DOMAIN,get_subscriptions,get_acedamic_year,AddSchool } from "../../../../app/routing/ApiEndpoints";
 import "./CreateSchoolModal.css";
 import { useAuth } from "../../../../app/modules/auth";
 
 type Props = {
   show: boolean;
   handleClose: () => void;
-  refresh: (refreshState: boolean) => void;
+  refresh:any;
 };
+
+interface AcedamicYear {
+  id:number;
+  session:string;
+}
+interface Subscription {
+  id:number;
+  name:string;
+}
 
 const modalsRoot = document.getElementById("root-modals") || document.body;
 
 const CreateSchoolModal = ({ show, handleClose, refresh }: Props) => {
   const { currentUser } = useAuth();
-
   const [schoolName, setSchoolName] = useState("");
-  // const [tagline, setTagline] = useState('');
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
   const [state, setState] = useState("");
   const [country, setCountry] = useState("");
-  // const [educationalBoard, setEducationalBoard] = useState('');
   const [dateFormat, setDateFormat] = useState("dd/mm/yyyy");
   const [timeFormat, setTimeFormat] = useState("hh:mm");
   const [currency, setCurrency] = useState("Rs");
   const [currencySymbol, setCurrencySymbol] = useState("₹");
-  // const [bankAccountNo, setBankAccountNo] = useState('');
-  // const [ifscCode, setIfscCode] = useState('');
-  // const [bankName, setBankName] = useState('');
   const [subscriptionType, setSubscriptionType] = useState("");
   const [academicType, setAcademicType] = useState("");
-  const [subscriptionOptions, setSubscriptionOptions] = useState([]);
-  const [academicYear, setAcademicYear] = useState([]);
-  // const [schoolLogo, setSchoolLogo] = useState<File | null>(null);
-  // const [schoolSmallLogo, setSchoolSmallLogo] = useState<File | null>(null);
+  const [subscriptionOptions, setSubscriptionOptions] = useState<Subscription[]>([]);
+  const [academicYear, setAcademicYear] = useState<AcedamicYear[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   if (e.target.files && e.target.files.length > 0) {
-  //     setSchoolLogo(e.target.files[0]);
-  //   }
-  // };
-
-  // const handleSmallLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   if (e.target.files && e.target.files.length > 0) {
-  //     setSchoolSmallLogo(e.target.files[0]);
-  //   }
-  // };
 
   const validateForm = () => {
     if (!schoolName || !email || !phone || !subscriptionType) {
@@ -63,39 +53,50 @@ const CreateSchoolModal = ({ show, handleClose, refresh }: Props) => {
     const fetchSubscriptionOptions = async () => {
       try {
         const response = await fetch(
-          `${DOMAIN}/api/superadmin/get-allsubscriptions`
+          `${DOMAIN}/${get_subscriptions}`
         );
         if (!response.ok) {
-          throw new Error("Failed to fetch subscription types");
+          // Extract the status and error message from the response
+          const errorData = await response.json();
+          throw new Error(`Error ${errorData.status}: ${errorData.error || "Unknown error"}`);
         }
-        const data = await response.json();
-        console.log(data);
+        const result = await response.json();
 
-        setSubscriptionOptions(data); // Assuming the response has this structure
+        setSubscriptionOptions(result.data);
       } catch (error) {
-        console.error("Error fetching subscription types:", error);
+        if (error instanceof Error) {
+          console.error("Error fetching Subscriptions:", error.message);
+        } else {
+          console.error("An unexpected error occurred");
+        }
       }
     };
 
     fetchSubscriptionOptions();
-    const fetchAcademicYear = async () => {
-      try {
-        const response = await fetch(
-          `${DOMAIN}/api/superadmin/get_academicyear`
-        );
-        if (!response.ok) {
-          throw new Error("Failed to fetch subscription types");
-        }
-        const data = await response.json();
-        console.log(data);
 
-        setAcademicYear(data); // Assuming the response has this structure
-      } catch (error) {
-        console.error("Error fetching subscription types:", error);
-      }
-    };
 
-    fetchAcademicYear();
+    // const fetchAcademicYear = async () => {
+    //   try {
+    //     const response = await fetch(
+    //       `${DOMAIN}/${get_acedamic_year}`
+    //     );
+    //     if (!response.ok) {
+    //       // Extract the status and error message from the response
+    //       const errorData = await response.json();
+    //       throw new Error(`Error ${errorData.status}: ${errorData.error || "Unknown error"}`);
+    //     }
+    //     const result = await response.json();
+
+    //     setAcademicYear(result.data);
+    //   }catch (error) {
+    //     if (error instanceof Error) {
+    //       console.error("Error fetching Acedamic years:", error.message);
+    //     } else {
+    //       console.error("An unexpected error occurred");
+    //     }
+    //   }
+    // };
+    // fetchAcademicYear();
   }, []);
 
   const handleSubmit = async () => {
@@ -104,10 +105,8 @@ const CreateSchoolModal = ({ show, handleClose, refresh }: Props) => {
       alert("Please fill in all required fields.");
       return;
     }
-
     setIsSubmitting(true);
 
-    // Prepare JSON data
     const formData = {
       name: schoolName,
       email: email,
@@ -125,7 +124,7 @@ const CreateSchoolModal = ({ show, handleClose, refresh }: Props) => {
     };
 
     try {
-      const response = await fetch(`${DOMAIN}/api/superadmin/create_school`, {
+      const response = await fetch(`${DOMAIN}/${AddSchool}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json", // Set header for JSON
@@ -134,7 +133,9 @@ const CreateSchoolModal = ({ show, handleClose, refresh }: Props) => {
       });
 
       if (!response.ok) {
-        throw new Error("Failed to create school");
+        // Extract the status and error message from the response
+        const errorData = await response.json();
+        throw new Error(`Error ${errorData.status}: ${errorData.error || "Unknown error"}`);
       }
 
       const result = await response.json();
