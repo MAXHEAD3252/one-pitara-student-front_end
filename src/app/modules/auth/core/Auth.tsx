@@ -17,6 +17,7 @@ import {
 } from "./_models";
 import * as authHelper from "./AuthHelpers";
 import {
+  getSchoolMasterBySchoolId,
   getSchoolUserByToken,
   getStudentByToken,
   getSuperAdminByToken,
@@ -82,10 +83,9 @@ const AuthInit: FC<WithChildren> = ({ children }) => {
   const [showSplashScreen, setShowSplashScreen] = useState(true);
 
   useEffect(() => {
-    const requestStaff = async (id: string) => {
+    const requestStaff = async (id: string, school_id:string,session_id:number) => {
       try {
-        const { data } = await getSchoolUserByToken(id);
-        console.log(data);
+        const { data } = await getSchoolUserByToken(id,school_id,session_id);
         
         if (data) {
           setCurrentUser(data?.data?.[0]);
@@ -116,9 +116,24 @@ const AuthInit: FC<WithChildren> = ({ children }) => {
         setShowSplashScreen(false);
       }
     };
-    const requestAdmin = async (id: string) => {
+    const requestAdmin = async (id: string, school_id:string, session_id:number) => {
       try {
-        const { data } = await getSchoolUserByToken(id);
+        const { data } = await getSchoolUserByToken(id,school_id,session_id);
+        if (data) {
+          setCurrentUser(data?.data?.[0]);
+        }
+      } catch (error) {
+        console.error(error);
+        if (currentUser) {
+          logout();
+        }
+      } finally {
+        setShowSplashScreen(false);
+      }
+    };
+    const requestMasterAdmin = async (id: string,school_id:string, session_id:number) => {
+      try {
+        const { data } = await getSchoolUserByToken(id,school_id,session_id);
         if (data) {
           setCurrentUser(data?.data?.[0]);
         }
@@ -150,10 +165,12 @@ const AuthInit: FC<WithChildren> = ({ children }) => {
     if (auth && auth.user_id && auth.role === "student") {
       /* @ts-ignore */
       requestStudent(auth.user_id, auth.role);
-    } else if (auth && auth.id && auth.role === "School Staff") {
-      requestStaff(auth.id);
-    } else if (auth && auth.id && auth.role === "School Admin") {
-      requestAdmin(auth.id);
+    } else if (auth && auth.id && auth.school_id && auth.session_id && auth.role === "School Staff") {
+      requestStaff(auth.id, auth.school_id,auth.session_id);
+    } else if (auth && auth.id && auth.school_id && auth.session_id && auth.role === "School Admin") {
+      requestAdmin(auth.id,auth.school_id,auth.session_id);
+    } else if (auth && auth.id && auth.school_id && auth.session_id && auth.role === "School Master") {
+      requestMasterAdmin(auth.id,auth.school_id,auth.session_id );
     } else if (auth && auth.username && auth.role === "Super Admin") {
       requestSuperAdmin(auth.username);
     } else {

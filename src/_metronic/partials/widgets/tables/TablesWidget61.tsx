@@ -187,7 +187,7 @@ const TablesWidget61 = () => {
     const fetchSessions = async () => {
       try {
         const response = await fetch(
-          `${DOMAIN}/api/school/get-session?schoolId=${schoolId}`
+          `${DOMAIN}/api/school/get-school-sessions/${schoolId}`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch data");

@@ -27,6 +27,11 @@ export const SchoolProfilePage = () => {
               <CardsWidget5 schoolId={schoolId} />
             </div>
           </div>
+            {/* <div className="col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+              <div className="h-md-100">
+                <TablesWidget68 schoolId={schoolId} />
+              </div>
+            </div> */}
             <div className="col-md-12 col-lg-12 col-xl-12 col-xxl-12">
               <div className="h-md-100">
                 <TablesWidget44 schoolId={schoolId} />

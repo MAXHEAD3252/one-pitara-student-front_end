@@ -1,4 +1,6 @@
 export interface AuthModel {
+  session_id: string | AuthModel | undefined
+  school_id: AuthModel | undefined
   user_id(user_id: AuthModel, role: string): unknown
   // user_id: AuthModel | undefined
   id: string

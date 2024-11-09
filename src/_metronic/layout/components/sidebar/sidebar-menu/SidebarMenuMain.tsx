@@ -54,6 +54,7 @@ const SidebarMenuMain = () => {
             apiUrl = `${DOMAIN}/api/superadmin/get-modules`;
             break;
           case "School Admin":
+          case "School Master":
             apiUrl = `${DOMAIN}/api/superadmin/get-parent-module/${subscriptionId}`;
             break;
           case "School Staff":

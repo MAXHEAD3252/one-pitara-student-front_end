@@ -52,11 +52,12 @@ const TablesWidget29 = ({school_id, designation_id}:any) => {
             throw new Error("Network response was not ok");
           }
           const data: Category[] = await response.json();
-          setSchoolModules(data);
+          
+          setSchoolModules(data.data);
   
           // Initialize selectedIds based on fetched data
           const initialIds: { [key: string]: boolean } = {};
-          data.forEach((category) => {
+          data.data.forEach((category) => {
             category.modules.forEach((module) => {
               if (module.is_assigned === 1) {
                 initialIds[`${category.id}:${module.module_id}`] = true;

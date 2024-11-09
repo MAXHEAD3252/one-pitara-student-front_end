@@ -35,14 +35,20 @@ const CreateSchoolModal = ({ show, handleClose, refresh }: Props) => {
   const [currency, setCurrency] = useState("Rs");
   const [currencySymbol, setCurrencySymbol] = useState("₹");
   const [subscriptionType, setSubscriptionType] = useState("");
+  const [schoolMaster, setSchoolMaster] = useState("");
   const [academicType, setAcademicType] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [schoolMasterOptions, setSchoolMasterOptions] = useState([]);
+  // const [schoolLogo, setSchoolLogo] = useState<File | null>(null);
+  // const [schoolSmallLogo, setSchoolSmallLogo] = useState<File | null>(null);
   const [subscriptionOptions, setSubscriptionOptions] = useState<Subscription[]>([]);
   const [academicYear, setAcademicYear] = useState<AcedamicYear[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
 
   const validateForm = () => {
-    if (!schoolName || !email || !phone || !subscriptionType) {
+    if (!schoolName || !email || !phone || !subscriptionType || !schoolMaster) {
       return false;
     }
     return true;
@@ -73,30 +79,41 @@ const CreateSchoolModal = ({ show, handleClose, refresh }: Props) => {
     };
 
     fetchSubscriptionOptions();
-
-
     // const fetchAcademicYear = async () => {
     //   try {
     //     const response = await fetch(
-    //       `${DOMAIN}/${get_acedamic_year}`
+    //       `${DOMAIN}/api/superadmin/get_academicyear`
     //     );
     //     if (!response.ok) {
-    //       // Extract the status and error message from the response
-    //       const errorData = await response.json();
-    //       throw new Error(`Error ${errorData.status}: ${errorData.error || "Unknown error"}`);
+    //       throw new Error("Failed to fetch subscription types");
     //     }
-    //     const result = await response.json();
+    //     const data = await response.json();
 
-    //     setAcademicYear(result.data);
-    //   }catch (error) {
-    //     if (error instanceof Error) {
-    //       console.error("Error fetching Acedamic years:", error.message);
-    //     } else {
-    //       console.error("An unexpected error occurred");
-    //     }
+    //     setAcademicYear(data); // Assuming the response has this structure
+    //   } catch (error) {
+    //     console.error("Error fetching subscription types:", error);
     //   }
     // };
+
     // fetchAcademicYear();
+    const fetchSchoolMaster = async () => {
+      try {
+        const response = await fetch(
+          `${DOMAIN}/api/superadmin/get-all-schools-masters`
+        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch subscription types");
+        }
+        const data = await response.json();
+        console.log(data);
+
+        setSchoolMasterOptions(data); // Assuming the response has this structure
+      } catch (error) {
+        console.error("Error fetching subscription types:", error);
+      }
+    };
+
+    fetchSchoolMaster();
   }, []);
 
   const handleSubmit = async () => {
@@ -120,6 +137,9 @@ const CreateSchoolModal = ({ show, handleClose, refresh }: Props) => {
       currency_symbol: currencySymbol,
       academic_year: academicType,
       subscription_type: subscriptionType,
+      school_master: schoolMaster,
+      start_date: startDate,
+      end_date: endDate,
       userId: currentUser?.id,
     };
 
@@ -140,8 +160,9 @@ const CreateSchoolModal = ({ show, handleClose, refresh }: Props) => {
 
       const result = await response.json();
       console.log("School created successfully:", result);
-      handleClose();
+      // newSchoolId(result.school_id)
       refresh(true);
+      handleClose();
     } catch (error) {
       console.error("Error creating school:", error);
     } finally {
@@ -165,7 +186,7 @@ const CreateSchoolModal = ({ show, handleClose, refresh }: Props) => {
           backgroundColor: "#F2F6FF",
           borderBottom: "1px solid lightgray",
           fontFamily: "Manrope",
-          color:'#'
+          color: "#",
         }}
       >
         <h2>Create School</h2>
@@ -267,7 +288,7 @@ const CreateSchoolModal = ({ show, handleClose, refresh }: Props) => {
             </Col>
           </Row>
           <Row>
-            <Col md={8}>
+            <Col md={4}>
               <Form.Group className="mb-3 custom-input" controlId="formAddress">
                 <Form.Label>School Address</Form.Label>
                 <InputGroup>
@@ -305,8 +326,6 @@ const CreateSchoolModal = ({ show, handleClose, refresh }: Props) => {
                 </Form.Text>
               </Form.Group>
             </Col>
-          </Row>
-          <Row>
             <Col md={4}>
               <Form.Group className="mb-3 custom-input" controlId="formCountry">
                 <Form.Label>Country</Form.Label>
@@ -326,6 +345,8 @@ const CreateSchoolModal = ({ show, handleClose, refresh }: Props) => {
                 </Form.Text>
               </Form.Group>
             </Col>
+          </Row>
+          <Row>
             {/* <Col md={4}>
               <Form.Group className='mb-3 custom-input' controlId='formBoard'>
                 <Form.Label>Educational Board</Form.Label>
@@ -381,28 +402,6 @@ const CreateSchoolModal = ({ show, handleClose, refresh }: Props) => {
                 </Form.Text>
               </Form.Group>
             </Col>
-          </Row>
-          <Row>
-            <Col md={8}>
-              <Form.Group className="mb-3" controlId="formAcademicYear">
-                <Form.Label>Academic Year *</Form.Label>
-                <Form.Select
-                  value={academicType}
-                  onChange={(e) => setAcademicType(e.target.value)}
-                  required
-                >
-                  <option value="">Select Academic Year</option>
-                  {academicYear.map((option) => (
-                    <option key={option.id} value={option.id}>
-                      {option.session}
-                    </option>
-                  ))}
-                </Form.Select>
-                <Form.Text className="text-muted">
-                  Choose the type of subscription for the school.
-                </Form.Text>
-              </Form.Group>
-            </Col>
             <Col md={4}>
               <Form.Group className="mb-3 custom-input" controlId="formCountry">
                 <Form.Label>Currency</Form.Label>
@@ -415,6 +414,77 @@ const CreateSchoolModal = ({ show, handleClose, refresh }: Props) => {
                     placeholder="Enter Curreny"
                     value={currency}
                     onChange={(e) => setCurrency(e.target.value)}
+                  />
+                </InputGroup>
+                <Form.Text className="text-muted">
+                  Enter the Short form of the currency.
+                </Form.Text>
+              </Form.Group>
+            </Col>
+          </Row>
+          <Row>
+            <Col md={4}>
+              <Form.Group className="mb-3" controlId="formAcademicYear">
+                <Form.Label>Academic Year *</Form.Label>
+                <InputGroup>
+                  <InputGroup.Text>
+                    <i className="fas fa-calendar"></i>
+                  </InputGroup.Text>
+                  <Form.Control
+                    type="text"
+                    placeholder="Enter Academic year"
+                    value={academicType}
+                    onChange={(e) => setAcademicType(e.target.value)}
+                    required
+                  >
+                    {/* <option value="">Select Academic Year</option>
+                  {academicYear.map((option) => (
+                    <option key={option.id} value={option.id}>
+                    {option.session}
+                    </option>
+                    ))} */}
+                  </Form.Control>
+                </InputGroup>
+                <Form.Text className="text-muted">
+                  Choose the type of subscription for the school.
+                </Form.Text>
+              </Form.Group>
+            </Col>
+
+            <Col md={4}>
+              <Form.Group
+                className="mb-3 custom-input"
+                controlId="formStartDate"
+              >
+                <Form.Label>Start Date *</Form.Label>
+                <InputGroup>
+                  <InputGroup.Text>
+                    <i className="fas fa-date"></i>
+                  </InputGroup.Text>
+                  <Form.Control
+                    type="date"
+                    placeholder="Enter Start Date"
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
+                  />
+                </InputGroup>
+                <Form.Text className="text-muted">
+                  Enter the Short form of the currency.
+                </Form.Text>
+              </Form.Group>
+            </Col>
+            <Col md={4}>
+              <Form.Group className="mb-3 custom-input" controlId="formEndDate">
+                <Form.Label>End Date *</Form.Label>
+                <InputGroup>
+                  <InputGroup.Text>
+                    <i className="fas fa-date"></i>
+                  </InputGroup.Text>
+                  <Form.Control
+                    type="date"
+                    placeholder="Enter End Date"
+                    value={endDate}
+                    onChange={(e) => setEndDate(e.target.value)}
                   />
                 </InputGroup>
                 <Form.Text className="text-muted">
@@ -475,7 +545,7 @@ const CreateSchoolModal = ({ show, handleClose, refresh }: Props) => {
                 <Form.Text className='text-muted'>Enter the Short form of the currency.</Form.Text>
               </Form.Group>
             </Col> */}
-            <Col md={8}>
+            <Col md={4}>
               <Form.Group className="mb-3" controlId="formSubscriptionType">
                 <Form.Label>Subscription Type *</Form.Label>
                 <Form.Select
@@ -492,6 +562,26 @@ const CreateSchoolModal = ({ show, handleClose, refresh }: Props) => {
                 </Form.Select>
                 <Form.Text className="text-muted">
                   Choose the type of subscription for the school.
+                </Form.Text>
+              </Form.Group>
+            </Col>
+            <Col md={4}>
+              <Form.Group className="mb-3" controlId="formCompannyMaster">
+                <Form.Label>Select Company *</Form.Label>
+                <Form.Select
+                  value={schoolMaster}
+                  onChange={(e) => setSchoolMaster(e.target.value)}
+                  required
+                >
+                  <option value="">Select Company</option>
+                  {schoolMasterOptions.map((option) => (
+                    <option key={option.id} value={option.id}>
+                      {option.name}
+                    </option>
+                  ))}
+                </Form.Select>
+                <Form.Text className="text-muted">
+                  Choose the Company for the school.
                 </Form.Text>
               </Form.Group>
             </Col>
@@ -516,18 +606,6 @@ const CreateSchoolModal = ({ show, handleClose, refresh }: Props) => {
             </Col>
           </Row>
           {/* <Row>
-            <Col md={6}>
-              <Form.Group className='mb-3 custom-input' controlId='formSchoolLogo'>
-                <Form.Label>School Logo *</Form.Label>
-                <InputGroup>
-                  <InputGroup.Text>
-                    <i className='fas fa-upload'></i>
-                  </InputGroup.Text>
-                  <Form.Control type='file' onChange={handleLogoUpload} required />
-                </InputGroup>
-                {schoolLogo && <p className='mt-2'>Selected file: {schoolLogo.name}</p>}
-              </Form.Group>
-            </Col>
             <Col md={6}>
               <Form.Group className='mb-3 custom-input' controlId='formSchoolSmallLogo'>
                 <Form.Label>School Small Logo *</Form.Label>

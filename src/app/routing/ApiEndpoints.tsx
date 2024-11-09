@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 // Define your base domain
 // const DOMAIN = 'http://onepitaraapi.payplatter.in/';
 const DOMAIN = "http://localhost:5000";
@@ -78,6 +79,8 @@ const getSchoolModuleById = "api/superadmin/get_schoolmodulesbyid";
 
 //student apis
 const getTimetableStudentWise = "api/student/time-table";
+const getSchoolWiseSessions = 'api/school/get-school-sessions';
+const getMasterUsers = 'api/school/get-master-users';
 // const getNoticeBoardLastestMonth = 'api/student/notice-board/latest-month-data'
 
 // eslint-disable-next-line react-refresh/only-export-components
@@ -147,4 +150,6 @@ UpdateSubscriptionForSchool,
   getEnquiriesStatus,
   getAllAdmissions,
   getStudentAdmissionDetails,
+  getMasterUsers,getSchoolWiseSessions
+  
 };

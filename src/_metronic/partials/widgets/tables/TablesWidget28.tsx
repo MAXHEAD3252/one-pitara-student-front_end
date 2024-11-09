@@ -17,7 +17,6 @@ interface SchoolDetail {
 
 const TablesWidget28 = () => {
   const [designations, setDesignations] = useState<SchoolDetail[]>([]);
-  console.log(designations);
 
   const { currentUser } = useAuth();
   const schoolId = currentUser?.school_id;

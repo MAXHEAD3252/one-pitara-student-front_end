@@ -188,7 +188,7 @@ const CreateWalkinAdmission = ({ show, handleClose, setRefresh }: Props) => {
 
       try {
         const response = await fetch(
-          `${DOMAIN}/api/school/get-session?schoolId=${schoolId}`
+          `${DOMAIN}/api/school/get-school-sessions/${schoolId}`
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);

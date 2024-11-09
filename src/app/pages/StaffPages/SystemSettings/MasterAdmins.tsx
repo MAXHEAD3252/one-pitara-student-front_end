@@ -2,19 +2,19 @@ import { FC } from "react";
 import { useIntl } from "react-intl";
 import { PageTitle } from "../../../../_metronic/layout/core";
 import { Content } from "../../../../_metronic/layout/components/content";
-import { TablesWidget67 } from "../../../../_metronic/partials/widgets/tables/TablesWidget67";
+import { TablesWidget68 } from "../../../../_metronic/partials/widgets/tables/TablesWidget68";
 
 const Roles: FC = () => {
   return (
     <div className="">
       <Content>
-        <TablesWidget67 />
+        <TablesWidget68 schoolId={undefined} />
       </Content>
     </div>
   );
 };
 
-const SessionSetting: FC = () => {
+const MasterAdmins: FC = () => {
   const intl = useIntl();
 
   return (
@@ -28,4 +28,4 @@ const SessionSetting: FC = () => {
   );
 };
 
-export default SessionSetting;
+export default MasterAdmins;

@@ -6,9 +6,13 @@ const API_URL = import.meta.env.VITE_APP_API_URL;
 
 export const GET_STUDENT_BY_ACCESSTOKEN_URL = `${DOMAIN}/api/student/student-details`;
 export const GET_SCHOOL_USER_BY_ACCESSTOKEN_URL = `${DOMAIN}/api/school/school-user/details`;
+export const GET_SCHOOL_MASTER_BY_SCHOOL_CHANGE_URL = `${DOMAIN}/api/school/master-user/change-details`;
+export const GET_SCHOOL_USER_BY_SCHOOL_CHANGE_URL = `${DOMAIN}/api/school/school-user/change-details`;
 export const GET_SUPER_ADMIN_BY_ACCESSTOKEN_URL = `${DOMAIN}/api/superadmin/by_token`;
 
 export const LOGIN_URL_SCHOOL_USER = `${DOMAIN}/api/school/school-user/login`;
+export const CHANGE_URL_SCHOOL_MASTER = `${DOMAIN}/api/school/school-master/change`;
+export const CHANGE_URL_SCHOOL_USER = `${DOMAIN}/api/school/school-user/change`;
 export const LOGIN_URL_STUDENT = `${DOMAIN}/api/student/userlogin`;
 export const LOGIN_URL_SUPER_ADMIN = `${DOMAIN}/api/superadmin/login`;
 // export const REGISTER_URL = `${API_URL}/register`;
@@ -34,6 +38,46 @@ export function loginSchoolUser(email: string, password: string) {
   )
    
 }
+export function changeMasterSchoolUser(email: string, school_id: string, session_id?: number) {
+  return axios.post<AuthModel>(CHANGE_URL_SCHOOL_MASTER, {
+    email,
+    school_id,
+    ...(session_id !== undefined && { session_id })  // Only include session_id if it's provided
+  })
+  .then(response => {
+    if (response.data && response.data.res_code === "00") {
+      throw new Error('Invalid response');
+    } else {
+      console.log(response.data);
+      return { response, data: response.data }; 
+    }
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    return error;
+  });
+}
+export function changeSchoolUser(email: string, school_id: string, session_id?: number) {
+  return axios.post<AuthModel>(CHANGE_URL_SCHOOL_USER, {
+    email,
+    school_id,
+    ...(session_id !== undefined && { session_id })  // Only include session_id if it's provided
+  })
+  .then(response => {
+    if (response.data && response.data.res_code === "00") {
+      throw new Error('Invalid response');
+    } else {
+      console.log(response.data);
+      return { response, data: response.data }; 
+    }
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    return error;
+  });
+}
+
+
 export function loginSuperAdmin(username: string, password: string) {
   return axios.post<AuthModel>(LOGIN_URL_SUPER_ADMIN, {
     username,
@@ -89,10 +133,12 @@ export async function getStudentByToken(user_id: string) {
     response
    )
 }
-export async function getSchoolUserByToken(token: string) {
+export async function getSchoolUserByToken(token: string,school_id:string, session_id?: number) {
   try {
     const response = await axios.post(GET_SCHOOL_USER_BY_ACCESSTOKEN_URL, {
       id: token,
+      school_id:school_id,
+      ...(session_id !== undefined && { session_id })
     });
     
     const userData = response; // Log the response data
@@ -103,6 +149,37 @@ export async function getSchoolUserByToken(token: string) {
     throw error;
   }
 }
+export async function getSchoolMasterBySchoolId(token: string, school_id: string, session_id?: number) {
+  try {
+    const response = await axios.post(GET_SCHOOL_MASTER_BY_SCHOOL_CHANGE_URL, {
+      id: token,
+      school_id: school_id,
+      ...(session_id !== undefined && { session_id })  // Only include session_id if it's defined
+    });
+    
+    const userData = response;  // Log the response data
+    return userData;
+  } catch (error) {
+    console.error('Error fetching admin by token:', error);
+    throw error;
+  }
+}
+export async function getSchoolBySchoolId(token: string, school_id: string, session_id?: number) {
+  try {
+    const response = await axios.post(GET_SCHOOL_USER_BY_SCHOOL_CHANGE_URL, {
+      id: token,
+      school_id: school_id,
+      ...(session_id !== undefined && { session_id })  // Only include session_id if it's defined
+    });
+    
+    const userData = response;  // Log the response data
+    return userData;
+  } catch (error) {
+    console.error('Error fetching admin by token:', error);
+    throw error;
+  }
+}
+
 
 export async function getSuperAdminByToken(username: string) {
   try {

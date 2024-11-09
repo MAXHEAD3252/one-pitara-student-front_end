@@ -31,12 +31,17 @@ interface school {
 const DashboardPage: FC = () => {
   const { currentUser } = useAuth();
   const currency = currentUser?.currency_symbol;
+  const school_id = currentUser?.school_id;
+  const session_id = currentUser?.session_id;
 
   const [totalSchools, setTotalSchools] = useState(0);
   const [activeUsers, setActiveUsers] = useState(0);
   const [subscription, setSubscription] = useState(0);
   const [modules, setModules] = useState(0);
-  const [schoolDetails, setSchoolDetails] = useState<school[]>([]);
+  const [schoolDetails, setSchoolDetails] = useState(0);
+  const [studentsCount, setstudentsCount] = useState(0);
+  const [staffCount, setstaffCount] = useState(0);
+  
 
   const [userRole, setUserRole] = useState<string | null>(null);
 
@@ -127,6 +132,7 @@ const DashboardPage: FC = () => {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
+
         // Set the school count in the state
         setSchoolDetails(data);
       } catch (error) {
@@ -137,7 +143,43 @@ const DashboardPage: FC = () => {
 
     // Call the fetch function
     fetchSchoolDetails();
-  }, []);
+    const fetchStudentsCount = async () => {
+      try {
+        // Fetch data from the server
+        const response = await fetch(`${DOMAIN}/api/school/get-students-count-by-schoolid/${school_id}/${session_id}`); // Update the URL to match your API endpoint
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        // Set the school count in the state
+        setstudentsCount(data);
+      } catch (err) {
+        // Set error in the state
+        setError(err.message);
+      }
+    };
+
+    // Call the fetch function
+    fetchStudentsCount();
+    const fetchStaffCount = async () => {
+      try {
+        // Fetch data from the server
+        const response = await fetch(`${DOMAIN}/api/school/get-staff-count-by-schoolid/${school_id}`); // Update the URL to match your API endpoint
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        // Set the school count in the state
+        setstaffCount(data);
+      } catch (err) {
+        // Set error in the state
+        setError(err.message);
+      }
+    };
+
+    // Call the fetch function
+    fetchStaffCount();
+  }, [school_id,session_id]);
 
   useEffect(() => {
     const prefetchUserRole = async () => {
@@ -158,13 +200,13 @@ const DashboardPage: FC = () => {
 
   return (
     <div className="bg-white">
-      {userRole === "School Admin" && (
+      {userRole === "School Master" && (
         <Content>
           <div className="row g-5 g-xl-5" style={{ maxHeight: "160px" }}>
             <div className="col-xxl-3">
               <EngageWidget10
                 title={"No. of Students"}
-                number={850}
+                number={studentsCount}
                 image={"students"}
                 backgroundColor={"#1F3259"}
                 titlecolor={"#fff"}
@@ -175,7 +217,69 @@ const DashboardPage: FC = () => {
             <div className="col-xxl-3">
               <EngageWidget10
                 title={"No. of Teacher"}
-                number={150}
+                number={staffCount}
+                image={"teachers"}
+                backgroundColor={"#DFFFB6"}
+                titlecolor={"#1F3259"}
+                textcolor={"#29B837"}
+                />
+            </div>
+            <div className="col-xxl-3">
+              <EngageWidget10
+                title={"Monthly Fees Collection"}
+                number={ currency +" "+"24,30,800"}
+                image={"fees"}
+                backgroundColor={"#FFE7E1"}
+                titlecolor={"#1F3259"}
+                textcolor={"#FF5B5B"}
+                />
+            </div>
+
+            <div className="col-xxl-3">
+              <EngageWidget10
+                title={"Monthly Expense"}
+                number={currency +" "+ "5,32,200"}
+                image={"expense"}
+                backgroundColor={"#F2F6FF"}
+                titlecolor={"#1F3259"}
+                textcolor={"#1F3259"}
+              />
+            </div>
+          </div>
+
+          <div className="row">
+            <div className="col-xxl-8 mb-xl-10">
+              <SchoolEventsCalendar />
+            </div>
+            <div className="col-xxl-4 mb-5 mb-xl-10">
+              <TablesWidget52 />
+            </div>
+          </div>
+          <div className="row">
+            <div className="col-xxl-12 mb-5 mb-xl-10">
+              <ChartsWidget19 />
+            </div>
+          </div>
+        </Content>
+      )}
+      {userRole === "School Admin" && (
+        <Content>
+          <div className="row g-5 g-xl-5" style={{ maxHeight: "160px" }}>
+            <div className="col-xxl-3">
+              <EngageWidget10
+                title={"No. of Students"}
+                number={studentsCount}
+                image={"students"}
+                backgroundColor={"#1F3259"}
+                titlecolor={"#fff"}
+                textcolor={"#fff"}
+                />
+            </div>
+
+            <div className="col-xxl-3">
+              <EngageWidget10
+                title={"No. of Teacher"}
+                number={staffCount}
                 image={"teachers"}
                 backgroundColor={"#DFFFB6"}
                 titlecolor={"#1F3259"}
@@ -226,7 +330,7 @@ const DashboardPage: FC = () => {
           <div className="col-xxl-3">
             <EngageWidget10
               title={"No. of Students"}
-              number={850}
+              number={studentsCount}
               image={"students"}
               backgroundColor={"#1F3259"}
               titlecolor={"#fff"}

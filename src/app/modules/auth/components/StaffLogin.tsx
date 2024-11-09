@@ -44,7 +44,7 @@ export function StaffLogin() {
           saveAuth(auth)
           
           
-          const {data: user} = await getSchoolUserByToken(auth.id)
+          const {data: user} = await getSchoolUserByToken(auth.id,auth.school_id, auth.session_id)
           
           setCurrentUser(user.data?.[0])
       } catch (error) {

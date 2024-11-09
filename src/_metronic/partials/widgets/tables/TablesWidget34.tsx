@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import "../../../../app/pages/StaffPages/FinancialManagement/style.css";
 import { CreateGeneralEnquiry } from "../../modals/create-app-stepper/CreateGeneralEnquiry";
 import { CreateEnquiryAction } from "../../modals/create-app-stepper/CreateEnquiryAction";
-import {  CreateEditGeneral } from "../../modals/create-app-stepper/CreateEditGeneral";
+import { CreateEditGeneral } from "../../modals/create-app-stepper/CreateEditGeneral";
 import { useAuth } from "../../../../app/modules/auth/core/Auth";
 import { DOMAIN } from "../../../../app/routing/ApiEndpoints";
 import { CreateWalkinAdmission } from "../../modals/create-app-stepper/CreateWalkinAdmission";
@@ -29,7 +29,7 @@ interface FilterData {
   enquiry_type: string;
   // Add other properties as needed
 }
-  
+
 const TablesWidget34: React.FC = () => {
   const [data, setData] = useState<DataItem[]>([]);
 
@@ -65,7 +65,7 @@ const TablesWidget34: React.FC = () => {
     setShowActionModal(true);
   };
   const handleActionModalClose = () => {
-    setEnqId('');
+    setEnqId("");
     setShowActionModal(false);
   };
 
@@ -75,7 +75,7 @@ const TablesWidget34: React.FC = () => {
   };
 
   const handleModalGeneralEditClose = () => {
-    setEnqId('');
+    setEnqId("");
     setShowGeneralEditModal(false);
   };
   const handleModalAdmissionEdit = (value: string) => {
@@ -84,7 +84,7 @@ const TablesWidget34: React.FC = () => {
   };
 
   const handleModalAdmissionEditClose = () => {
-    setEnqId('');
+    setEnqId("");
     setShowAdmissionEditModal(false);
   };
 
@@ -142,7 +142,7 @@ const TablesWidget34: React.FC = () => {
         overflow: "hidden",
         marginTop: "20px",
         padding: "20px",
-        fontFamily:'Manrope'
+        fontFamily: "Manrope",
       }}
     >
       <div
@@ -432,14 +432,14 @@ const TablesWidget34: React.FC = () => {
               >
                 Phone No
               </th>
-                <th
-                  style={{
-                    padding: "12px 20px",
-                    textAlign: "left",
-                  }}
-                >
-                  Student Name
-                </th>
+              <th
+                style={{
+                  padding: "12px 20px",
+                  textAlign: "left",
+                }}
+              >
+                Student Name
+              </th>
               <th
                 style={{
                   padding: "12px 20px",
@@ -485,262 +485,236 @@ const TablesWidget34: React.FC = () => {
           </thead>
 
           <tbody>
-            {filteredData.map((item, index) => (
-              <tr
-                key={index}
-                style={{
-                  backgroundColor:
-                    index % 2 === 0 ? "rgb(242, 246, 255)" : "#FFFFFF",
-                  borderBottom: "2px solid #E0E4F0",
-                  fontFamily: "Manrope",
-                  fontSize: "14px",
-                  color: "#1F4061",
-                }}
-              >
-                <td
+            {filteredData.length > 0 ? (
+              filteredData.map((item, index) => (
+                <tr
+                  key={index}
                   style={{
-                    padding: "12px 20px",
+                    backgroundColor:
+                      index % 2 === 0 ? "rgb(242, 246, 255)" : "#FFFFFF",
+                    borderBottom: "2px solid #E0E4F0",
+                    fontFamily: "Manrope",
+                    fontSize: "14px",
+                    color: "#1F4061",
                   }}
                 >
-                  {item.enquiry_id}
-                </td>
-                <td
-                  style={{
-                    padding: "12px 20px",
-                  }}
-                >
-                  {item.full_name ? item.full_name : "-"}
-                </td>
-                <td
-                  style={{
-                    padding: "12px 20px",
-                    textAlign: "start",
-                  }}
-                >
-                  {item.enquiry_type === "Admission" ? (
+                  <td style={{ padding: "12px 20px" }}>{item.enquiry_id}</td>
+                  <td style={{ padding: "12px 20px" }}>
+                    {item.full_name || "-"}
+                  </td>
+                  <td style={{ padding: "12px 20px", textAlign: "start" }}>
+                    {item.enquiry_type === "Admission" ? (
+                      <span
+                        style={{
+                          display: "inline-block",
+                          padding: "5px",
+                          borderRadius: "5px",
+                          backgroundColor: "#B1E3FF",
+                          color: "#1C335C",
+                          fontSize: "12px",
+                          fontWeight: "700",
+                        }}
+                      >
+                        Admission
+                      </span>
+                    ) : (
+                      <span
+                        style={{
+                          display: "inline-block",
+                          padding: "5px",
+                          borderRadius: "5px",
+                          backgroundColor: "#FFE7E1",
+                          color: "#ED5578",
+                          fontSize: "12px",
+                          fontWeight: "600",
+                        }}
+                      >
+                        General
+                      </span>
+                    )}
+                  </td>
+                  <td style={{ padding: "12px 20px" }}>
+                    {item.email || item.student_email}
+                  </td>
+                  <td style={{ padding: "12px 20px" }}>
+                    {item.contact_number}
+                  </td>
+                  <td style={{ padding: "12px 20px" }}>
+                    {item.student_name || "-"}
+                  </td>
+                  <td style={{ padding: "12px 20px" }}>
+                    {item.father_name || "-"}
+                  </td>
+                  <td style={{ padding: "12px 20px" }}>
+                    {item.father_phone || "-"}
+                  </td>
+                  <td style={{ padding: "12px 20px" }}>
+                    {formatDate(item.follow_up_date)}
+                  </td>
+                  <td style={{ padding: "12px 20px", textAlign: "start" }}>
                     <span
                       style={{
                         display: "inline-block",
                         padding: "5px",
                         borderRadius: "5px",
-                        backgroundColor: "#B1E3FF",
-                        color: "#1C335C",
-                        fontSize: "12px",
-                        fontWeight: "700",
-                      }}
-                    >
-                      Admission
-                    </span>
-                  ) : (
-                    <span
-                      style={{
-                        display: "inline-block",
-                        padding: "5px",
-                        borderRadius: "5px",
-                        backgroundColor: "#FFE7E1",
-                        color: "#ED5578",
+                        backgroundColor:
+                          item.status === "New"
+                            ? "#C0EBA6"
+                            : item.status === "Deferred"
+                            ? "#FFE7E1"
+                            : item.status === "Converted"
+                            ? "#E3F2FD"
+                            : "#FEFFA7", // for dead
+                        color:
+                          item.status === "New"
+                            ? "#347928"
+                            : item.status === "Deferred"
+                            ? "#D4840C"
+                            : item.status === "Converted"
+                            ? "#1976D2"
+                            : "#EB8317", // for dead
                         fontSize: "12px",
                         fontWeight: "600",
                       }}
                     >
-                      General
+                      {item.status.charAt(0).toUpperCase() +
+                        item.status.slice(1)}
                     </span>
-                  )}
-                </td>
-                <td
-                  style={{
-                    padding: "12px 20px",
-                  }}
-                >
-                  {item.email ? item.email : item.student_email}
-                </td>
+                  </td>
                   <td
                     style={{
+                      display: "flex",
+                      gap: "10px",
+                      justifyContent: "right",
+                      alignItems: "center",
                       padding: "12px 20px",
                     }}
                   >
-                    {item.contact_number}
-                  </td>
-                <td
-                  style={{
-                    padding: "12px 20px",
-                  }}
-                >
-                  {item.student_name ? item.student_name : "-" }
-                </td>
-                <td
-                  style={{
-                    padding: "12px 20px",
-                  }}
-                >
-                  {item.father_name ? item.father_name : '-'}
-                </td>
-                <td
-                  style={{
-                    padding: "12px 20px",
-                  }}
-                >
-                  {item.father_phone ? item.father_phone : '-'}
-                </td>
-
-                <td
-                  style={{
-                    padding: "12px 20px",
-                  }}
-                >
-                  {formatDate(item.follow_up_date)}
-                </td>
-                <td
-                  style={{
-                    padding: "12px 20px",
-                    textAlign: "start",
-                  }}
-                >
-                  <span
-                    style={{
-                      display: "inline-block",
-                      padding: "5px",
-                      borderRadius: "5px",
-                      backgroundColor:
-                        item.status === "New"
-                          ? "#C0EBA6"
-                          : item.status === "Deferred"
-                          ? "#FFE7E1"
-                          : item.status === "Converted"
-                          ? "#E3F2FD"
-                          : "#FEFFA7", // for dead
-                      color:
-                        item.status === "New"
-                          ? "#347928"
-                          : item.status === "Deferred"
-                          ? "#D4840C"
-                          : item.status === "Converted"
-                          ? "#1976D2"
-                          : "#EB8317", // for dead
-                      fontSize: "12px",
-                      fontWeight: "600",
-                    }}
-                  >
-                    {item.status.charAt(0).toUpperCase() + item.status.slice(1)}
-                  </span>
-                </td>
-                <td
-                  style={{
-                    display: "flex",
-                    gap: "10px", // Adds space between the buttons
-                    justifyContent: "right", // Aligns buttons horizontally in the center
-                    alignItems: "center", // Vertically centers the buttons
-                    padding: "12px 20px",
-                  }}
-                >
-                  <div
-                    onClick={() =>
-                      item.enquiry_type === "Admission"
-                        ? handleModalAdmissionEdit(item.enquiry_id)
-                        : handleModalGeneralEdit(item.enquiry_id)
-                    }
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      padding: "8px 12px",
-                      backgroundColor: "#1F4061",
-                      borderRadius: "5px",
-                      cursor: "pointer",
-                      transition: "background-color 0.3s",
-                    }}
-                    onMouseEnter={(e) =>
-                      (e.currentTarget.style.backgroundColor = "#16294D")
-                    }
-                    onMouseLeave={(e) =>
-                      (e.currentTarget.style.backgroundColor = "#1C335C")
-                    }
-                  >
-                    <span
+                    <div
+                      onClick={() =>
+                        item.enquiry_type === "Admission"
+                          ? handleModalAdmissionEdit(item.enquiry_id)
+                          : handleModalGeneralEdit(item.enquiry_id)
+                      }
                       style={{
-                        marginRight: "5px",
-                        color: "white",
-                        fontSize: "14px",
-                        fontWeight: "700",
-                        fontFamily: "Manrope",
-                      }}
-                    >
-                      Edit
-                    </span>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      width="16px"
-                      height="16px"
-                      fill="#ffffff"
-                    >
-                      <path d="M0 0h24v24H0V0z" fill="none" />
-                      <path d="M3 17.25V21h3.75l11-11.03-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
-                    </svg>
-                  </div>
-                  <div
-                    style={{
-                      display: "flex",
+                        display: "flex",
                         alignItems: "center",
                         padding: "8px 12px",
-                      backgroundColor: "#FFE7E1",
-                      borderRadius: "5px",
-                      cursor: "pointer",
-                      transition: "background-color 0.3s",
-                    }}
-                    onClick={() => handleActionModal(item.enquiry_id)}
-                  >
-                    <span
-                      style={{
-                        marginRight: "8px",
-                        color: "#ED5578",
-                        fontSize: "14px",
-                        fontWeight: "700",
-                        fontFamily: "Manrope",
+                        backgroundColor: "#1F4061",
+                        borderRadius: "5px",
+                        cursor: "pointer",
+                        transition: "background-color 0.3s",
                       }}
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.backgroundColor = "#16294D")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.backgroundColor = "#1C335C")
+                      }
                     >
-                      Action
-                    </span>
-                    <svg
-                      width="17"
-                      height="16"
-                      viewBox="0 0 17 16"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
+                      <span
+                        style={{
+                          marginRight: "5px",
+                          color: "white",
+                          fontSize: "14px",
+                          fontWeight: "700",
+                          fontFamily: "Manrope",
+                        }}
+                      >
+                        Edit
+                      </span>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        width="16px"
+                        height="16px"
+                        fill="#ffffff"
+                      >
+                        <path d="M0 0h24v24H0V0z" fill="none" />
+                        <path d="M3 17.25V21h3.75l11-11.03-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
+                      </svg>
+                    </div>
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        padding: "8px 12px",
+                        backgroundColor: "#FFE7E1",
+                        borderRadius: "5px",
+                        cursor: "pointer",
+                        transition: "background-color 0.3s",
+                      }}
+                      onClick={() => handleActionModal(item.enquiry_id)}
                     >
-                      <path
-                        d="M7.16672 9.3333C8.27129 9.3333 9.16672 10.2287 9.16672 11.3333C9.16672 12.4379 8.27129 13.3333 7.16672 13.3333C6.06215 13.3333 5.16672 12.4379 5.16672 11.3333C5.16672 10.2287 6.06215 9.3333 7.16672 9.3333Z"
-                        stroke="#ED5578"
-                      />
-                      <path
-                        d="M10.5 2.66667C9.39546 2.66667 8.50003 3.5621 8.50003 4.66667C8.50003 5.77124 9.39546 6.66667 10.5 6.66667C11.6046 6.66667 12.5 5.77124 12.5 4.66667C12.5 3.5621 11.6046 2.66667 10.5 2.66667Z"
-                        stroke="#ED5578"
-                      />
-                      <path
-                        d="M10.8334 11.3057L15.5 11.3057"
-                        stroke="#ED5578"
-                        stroke-linecap="round"
-                      />
-                      <path
-                        d="M6.83337 4.63898L2.16671 4.63898"
-                        stroke="#ED5578"
-                        stroke-linecap="round"
-                      />
-                      <path
-                        d="M2.16672 11.3057L3.50005 11.3057"
-                        stroke="#ED5578"
-                        stroke-linecap="round"
-                      />
-                      <path
-                        d="M15.5 4.63898L14.1667 4.63898"
-                        stroke="#ED5578"
-                        stroke-linecap="round"
-                      />
-                    </svg>
-                  </div>
+                      <span
+                        style={{
+                          marginRight: "8px",
+                          color: "#ED5578",
+                          fontSize: "14px",
+                          fontWeight: "700",
+                          fontFamily: "Manrope",
+                        }}
+                      >
+                        Action
+                      </span>
+                      <svg
+                        width="17"
+                        height="16"
+                        viewBox="0 0 17 16"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M7.16672 9.3333C8.27129 9.3333 9.16672 10.2287 9.16672 11.3333C9.16672 12.4379 8.27129 13.3333 7.16672 13.3333C6.06215 13.3333 5.16672 12.4379 5.16672 11.3333C5.16672 10.2287 6.06215 9.3333 7.16672 9.3333Z"
+                          stroke="#ED5578"
+                        />
+                        <path
+                          d="M10.5 2.66667C9.39546 2.66667 8.50003 3.5621 8.50003 4.66667C8.50003 5.77124 9.39546 6.66667 10.5 6.66667C11.6046 6.66667 12.5 5.77124 12.5 4.66667C12.5 3.5621 11.6046 2.66667 10.5 2.66667Z"
+                          stroke="#ED5578"
+                        />
+                        <path
+                          d="M10.8334 11.3057L15.5 11.3057"
+                          stroke="#ED5578"
+                          strokeLinecap="round"
+                        />
+                        <path
+                          d="M6.83337 4.63898L2.16671 4.63898"
+                          stroke="#ED5578"
+                          strokeLinecap="round"
+                        />
+                        <path
+                          d="M2.16672 11.3057L3.50005 11.3057"
+                          stroke="#ED5578"
+                          strokeLinecap="round"
+                        />
+                        <path
+                          d="M15.5 4.63898L14.1667 4.63898"
+                          stroke="#ED5578"
+                          strokeLinecap="round"
+                        />
+                      </svg>
+                    </div>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td
+                  colSpan="12"
+                  style={{
+                    textAlign: "center",
+                    padding: "20px",
+                    fontFamily: "Manrope",
+                    fontSize: "16px",
+                    color: "#1F4061",
+                  }}
+                >
+                  No enquiries added yet. Please add a new enquiry first.
                 </td>
               </tr>
-            ))}
+            )}
           </tbody>
+
           <CreateGeneralEnquiry
             show={showGeneralModal}
             handleClose={handleGeneralModalClose}

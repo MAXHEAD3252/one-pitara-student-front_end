@@ -1,96 +1,65 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import React from "react";
-// import { FC } from "react";
+import React, { useEffect, useState } from "react";
 import { useIntl } from "react-intl";
 import { PageTitle } from "../../../_metronic/layout/core";
 import { Content } from "../../../_metronic/layout/components/content";
-import { useEffect, useState } from "react";
-import { CreateSchoolModal } from "../../../_metronic/partials/modals/create-app-stepper/CreateSchoolModal";
-import { useNavigate } from "react-router-dom";
-import { DOMAIN,get_schools } from "../../routing/ApiEndpoints";
-
-
-
-
-interface School {
-  id: string;
-  school_id:number;
+import { HeaderWrapper } from "../../../_metronic/layout/components/header_staff";
+import { DOMAIN } from "../../routing/ApiEndpoints";
+import { CreateSchoolMasterModal } from "../../../_metronic/partials/modals/create-app-stepper/CreateSchoolMaster";
+import { useAuth } from "../../../app/modules/auth/core/Auth";
+interface SchoolMaster {
+  id: number;
   name: string;
-  email: string;
-  phone: string;
-  address: string;
   // Add other properties as needed
 }
 
-const ManageSchoolsPage = () => {
-  const [schools, setSchools] = useState<School[]>([]);
-  const [showModal, setShowModal] = useState(false);
-  // const [selectedSchool, setSelectedSchool] = useState(0);
-  const [refreshData, setRefreshData] = useState(false);
-  const [refresh, setRefresh] = useState(false);
-  const navigate = useNavigate();
+export const ManageSchoolMastersPage = () => {
+  const [schoolMasters, setSchoolMasters] = useState<SchoolMaster[]>([]);
+  const [schoolId, setSchoolId] = useState<number | null>(null);
+  const [selectedSchool, setSelectedSchool] = useState<School | null>(null);
+  const [showModal, setShowModal] = useState<boolean>(false);
+  const [refresh,setRefresh] = useState(false);
+  const {currentUser} = useAuth();
+  const userId = currentUser?.id;
 
   useEffect(() => {
-    // Fetch schools data from API
-    const fetchSchools = async () => {
+    const fetchSchoolMasters = async () => {
       try {
-        const response = await fetch(`${DOMAIN}/${get_schools}`);
+        const response = await fetch(
+          `${DOMAIN}/api/superadmin/get-school-masters/${userId}`
+        );
         if (!response.ok) {
-          // Extract the status and error message from the response
-          const errorData = await response.json();
-          throw new Error(`Error ${errorData.status}: ${errorData.error || "Unknown error"}`);
+          throw new Error("Failed to fetch school masters");
         }
-  
-        const result = await response.json();
-        setSchools(result.data);
+        const data = await response.json();
+        console.log(data);
+        setSchoolMasters(data); // Update state with fetched data
+        setRefresh(false);
       } catch (error) {
-        if (error instanceof Error) {
-          console.error("Error fetching schools:", error.message);
-        } else {
-          console.error("An unexpected error occurred");
-        }
+        console.error("Error fetching school masters:", error);
       }
     };
-  
-    setRefreshData(false);
-    fetchSchools();
-  }, [refreshData]);
-  
 
-  // const editDetails = (id) => {
-  //   // Navigate to a page/modal to edit details of the school with the given ID
-  // };
+    fetchSchoolMasters();
+  }, [refresh]);
 
-  // const deleteSchool = (id) => {
-  //   // Implement logic to delete the school with the given ID
-  // };
+  const handleSelect = (schoolMaster: School) => {
+    setSelectedSchool(school);
+    setSchoolId(school.id);
+  };
 
-  const handlePrimaryButtonClick = () => {
+  const handleAddSuperAdmin = () => {
     setShowModal(true);
   };
 
-  const handleModalClose = () => {
-    setShowModal(false);
+  const handleViewSchool = () => {
+    setShowModal(true);
   };
-
-
-
-  // const handleCloseModal = () => {
-  //   setShowModal(false);
-  // };
-
-  const handleViewSchool = (value: any) => {
-    const schoolId = value;
-
-    navigate(`/school-profile/${schoolId}`);
+  const handleCloseModal = () => {
+    setShowModal(false);
   };
 
   return (
     <div className="bg-white">
-      {/* <HeaderWrapper toggleView={() => {}} /> */}
-
-      {/* <ToolbarDashBoard /> */}
       <Content>
         <div
           className="card-style"
@@ -123,10 +92,10 @@ const ManageSchoolsPage = () => {
                 fontFamily: "Manrope",
               }}
             >
-              School Lists
+              Company Master's
             </span>
             <div
-              onClick={handlePrimaryButtonClick}
+                onClick={handleViewSchool}
               style={{
                 display: "flex",
                 alignItems: "center",
@@ -152,7 +121,7 @@ const ManageSchoolsPage = () => {
                   fontFamily: "Manrope",
                 }}
               >
-                Add New School
+                New Company Master
               </span>
               <svg
                 width="20"
@@ -182,6 +151,7 @@ const ManageSchoolsPage = () => {
               </svg>
             </div>
           </div>
+
           <div
             style={{
               height: "650px", // Fixed height for the table container
@@ -217,7 +187,7 @@ const ManageSchoolsPage = () => {
                       textAlign: "left",
                     }}
                   >
-                    School Id
+                    School Master Id
                   </th>
                   <th
                     style={{
@@ -225,7 +195,7 @@ const ManageSchoolsPage = () => {
                       textAlign: "left",
                     }}
                   >
-                    School Name
+                    School Master Name
                   </th>
 
                   <th
@@ -234,7 +204,7 @@ const ManageSchoolsPage = () => {
                       textAlign: "left",
                     }}
                   >
-                    School Email
+                    School Master Email
                   </th>
                   <th
                     style={{
@@ -242,7 +212,7 @@ const ManageSchoolsPage = () => {
                       textAlign: "left",
                     }}
                   >
-                    School Phone
+                    School Masster Phone
                   </th>
                   <th
                     style={{
@@ -250,7 +220,7 @@ const ManageSchoolsPage = () => {
                       textAlign: "left",
                     }}
                   >
-                    School Address
+                    Assigned Schools
                   </th>
                   <th
                     style={{
@@ -263,7 +233,7 @@ const ManageSchoolsPage = () => {
                 </tr>
               </thead>
               <tbody>
-                {schools.map((group, index) => (
+                {schoolMasters.map((group, index) => (
                   <tr
                     key={index}
                     style={{
@@ -280,14 +250,14 @@ const ManageSchoolsPage = () => {
                         padding: "12px 20px",
                       }}
                     >
-                      {group.school_id}
+                      {group.id}
                     </td>
                     <td
                       style={{
                         padding: "12px 20px",
                       }}
                     >
-                      {group.name}
+                      {group.name} {group.surname}
                     </td>
                     <td
                       style={{
@@ -301,14 +271,23 @@ const ManageSchoolsPage = () => {
                         padding: "12px 20px",
                       }}
                     >
-                      {group.phone}
+                      {group.contact_no}
                     </td>
                     <td
                       style={{
                         padding: "12px 20px",
                       }}
                     >
-                      {group.address}
+                      {group.school_names && group.school_names.length > 0 ? (
+                        group.school_names.map((school, index) => (
+                          <span key={index}>
+                            {school}
+                            {index < group.school_names.length - 1 && ", "}
+                          </span>
+                        ))
+                      ) : (
+                        <span>No schools assigned</span>
+                      )}
                     </td>
 
                     <td
@@ -321,7 +300,7 @@ const ManageSchoolsPage = () => {
                       }}
                     >
                       <div
-                        onClick={() => handleViewSchool(group.school_id)}
+                        // onClick= {() => handleViewSchool()}
                         style={{
                           display: "flex",
                           alignItems: "center",
@@ -414,24 +393,22 @@ const ManageSchoolsPage = () => {
               </tbody>
             </table>
           </div>
-          <CreateSchoolModal
-            show={showModal}
-            handleClose={handleModalClose}
-            refresh={setRefreshData}
-          />
-          {/* <CreateSchoolMasterModal
-            show={showNextModal}
-            onHide={handleNextModalClose}
-            setRefresh={setRefreshData}
-            newSchoolId= {newSchoolId}
-          /> */}
+
+          <div>
+            <CreateSchoolMasterModal
+              show={showModal}
+              onHide={handleCloseModal}
+              setRefresh={setRefresh}
+              userType={"company"}
+            />
+          </div>
         </div>
       </Content>
     </div>
-  );  
+  );
 };
 
-const ManageSchools = () => {
+const ManageSchoolMasters = () => {
   const intl = useIntl();
 
   return (
@@ -440,10 +417,10 @@ const ManageSchools = () => {
         {intl.formatMessage({ id: "MENU.HOMEWORK" })}
       </PageTitle>
 
-      {/* <HeaderWrapper toggleView={() => {}} /> */}
-      <ManageSchoolsPage />
+      <HeaderWrapper toggleView={() => {}} />
+      <ManageSchoolMastersPage />
     </>
   );
 };
 
-export default ManageSchools;
+export default ManageSchoolMasters;

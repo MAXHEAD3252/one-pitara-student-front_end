@@ -19,6 +19,7 @@ interface RouteConfig {
 
 const PrivateRoutes = () => {
   const { currentUser } = useAuth();
+  
   const [userRole, setUserRole] = useState<string | null>(null);
   const [routes, setRoutes] = useState<RouteConfig[]>([]);
   
@@ -41,7 +42,7 @@ const PrivateRoutes = () => {
   // Fetch Subscription ID for School Admin
   useEffect(() => {
     const fetchSubscriptionId = async () => {
-      if (school_id && userRole === "School Admin") {
+      if (school_id && (userRole === "School Admin" || userRole === "School Master")) {
         try {
           const response = await fetch(
             `${DOMAIN}/api/superadmin/get-subscription-id/${school_id}`
@@ -50,6 +51,7 @@ const PrivateRoutes = () => {
             throw new Error(`Error: ${response.statusText}`);
           }
           const data = await response.json();
+          
           setSubscriptionId(data.result[0].subscription_id);
         } catch (err) {
           console.error("Error fetching subscription ID:", err);
@@ -103,7 +105,6 @@ const PrivateRoutes = () => {
 
       const fetchedRoutes = (await Promise.all(routesPromises)).filter(Boolean);
       setRoutes(fetchedRoutes);
-
       setAuthorizedPaths((prevPaths) => [
         ...prevPaths,
         ...fetchedRoutes.map((route) => route.path),
@@ -123,7 +124,7 @@ const PrivateRoutes = () => {
           `${DOMAIN}/api/superadmin/get-modules`,
           "../pages/SuperAdminPages/"
         );
-      } else if (userRole === "School Admin" && subscriptionId) {
+      } else if ((userRole === "School Admin" || userRole === "School Master") && subscriptionId)  {
         fetchRoutes(
           `${DOMAIN}/api/superadmin/get-parent-module/${subscriptionId}`,
           "../pages/StaffPages/"
@@ -141,19 +142,22 @@ const PrivateRoutes = () => {
   useEffect(() => {
     if (!loading && window.location.pathname) {
       const currentPath = window.location.pathname.split("?")[0];
-      const pathIsAuthorized = authorizedPaths.some((authorizedPath) =>
-        matchPath(authorizedPath, currentPath)
-      );
-
+      const pathIsAuthorized = authorizedPaths.includes(currentPath);
+  
+      console.log("Authorized paths:", authorizedPaths);
+      console.log("Current path:", currentPath);
+      console.log("Path is authorized:", pathIsAuthorized);
+  
       if (
         !pathIsAuthorized &&
         currentPath !== "/" &&
         currentPath !== "/unauthorized"
       ) {
-        navigate("/unauthorized", { replace: true }); // Use replace instead of navigate
+        navigate("/unauthorized", { replace: true });
       }
     }
   }, [authorizedPaths, loading, navigate]);
+  
 
   if (loading) {
     return <div>Loading...</div>; // Customize the loading state

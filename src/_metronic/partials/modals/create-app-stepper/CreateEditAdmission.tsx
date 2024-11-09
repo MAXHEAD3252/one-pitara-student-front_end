@@ -69,6 +69,9 @@ const CreateEditAdmission = ({ show, handleClose, enqId, setRefresh }: Props) =>
   const [reference, setReference] = useState<Reference[]>([]);
   const [classes, setClasses] = useState<Class[]>([]);
   const [sessions, setSessions] = useState<Session[]>([]);
+
+  console.log(sessions);
+  
   const [changedFields, setChangedFields] = useState({});
   
   const initialFormData: FormData = {
@@ -136,7 +139,7 @@ const CreateEditAdmission = ({ show, handleClose, enqId, setRefresh }: Props) =>
     const fetchSessions = async () => {
       if (!schoolId) return;
       try {
-        const response = await fetch(`${DOMAIN}/api/school/get-session?schoolId=${schoolId}`);
+        const response = await fetch(`${DOMAIN}/api/school/get-school-sessions/${schoolId}`);
         const data = await response.json();
         console.log(data);
         
