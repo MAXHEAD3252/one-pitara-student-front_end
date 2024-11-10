@@ -39,7 +39,7 @@ const TablesWidget28 = () => {
         const data = await response.json();
         setDesignations(data);
       } catch (error) {
-        console.error("Error fetching school details:", error);
+        console.error("Error fetching Designation details:", error);
       }
     };
 

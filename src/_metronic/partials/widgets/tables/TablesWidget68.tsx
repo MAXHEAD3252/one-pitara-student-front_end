@@ -79,8 +79,9 @@ const TablesWidget68: React.FC<TablesWidget68Props> = ({ schoolId }: any) => {
       if (!response.ok) {
         throw new Error("Failed to fetch roles");
       }
-      const data = await response.json();
-      setRoles(data); // Update roles state
+      const result = await response.json();
+      setRoles(result.data);
+      console.log(result.data);
     } catch (error) {
       console.error("Error fetching roles:", error);
       toast.error("Failed to fetch roles!", { autoClose: 3000 });

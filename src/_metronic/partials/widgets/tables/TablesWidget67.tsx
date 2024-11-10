@@ -220,7 +220,7 @@ const TablesWidget67 = () => {
                             fontWeight: "600",
                           }}
                         >
-                          -
+                          {item.is_active == "yes" ? 'active' : 'in-active'}
                         </span>
                       )}
                     </td>

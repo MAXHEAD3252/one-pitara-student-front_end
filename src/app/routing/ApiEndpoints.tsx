@@ -44,7 +44,7 @@ const update_school = "api/superadmin/school_update";
 // SuperAdmin Manager Users
 const getUsersBySchoolId = "api/superadmin/school-users";
 const getAllRoles = "api/superadmin/get_rolemodule";
-const getAllDesignations = "api/superadmin/get-designation";
+const getAllDesignations = "api/superadmin/get-designations";
 const getUserDetails = "api/superadmin/get-user";
 const AddUser = "api/superadmin/add_user";
 const UpdateUser = "api/superadmin/edit_user";

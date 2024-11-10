@@ -62,8 +62,9 @@ const modalsRoot = document.getElementById("root-modals") || document.body;
 
 const CreateWalkinAdmission = ({ show, handleClose, setRefresh }: Props) => {
   const { currentUser } = useAuth();
-
   const schoolId = currentUser?.school_id;
+  const session_name = currentUser?.session_name;
+  const session_id = currentUser?.session_id;
   /* @ts-ignore */
   const userId = currentUser?.id;
 
@@ -92,8 +93,8 @@ const CreateWalkinAdmission = ({ show, handleClose, setRefresh }: Props) => {
     father_phone: "",
     mother_name: "",
     mother_phone: "",
-    session_id: 0,
-    academic_year: "",
+    session_id: session_id,
+    academic_year: session_name,
   });
   /* @ts-ignore */
   const handleChange = (e) => {
@@ -110,7 +111,7 @@ const CreateWalkinAdmission = ({ show, handleClose, setRefresh }: Props) => {
       const [session_id, academic_year] = value.split(":");
       setFormData((prevState) => ({
         ...prevState,
-        session_id, // session_id from the dropdown
+        session_id,
         academic_year, // academic year from the dropdown
       }));
     } else {
@@ -206,7 +207,7 @@ const CreateWalkinAdmission = ({ show, handleClose, setRefresh }: Props) => {
   /* @ts-ignore */
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    console.log(formData)
     try {
       const response = await fetch(
         `${DOMAIN}/api/school/admissionEnquiry/${schoolId}/${userId}`,
@@ -561,6 +562,7 @@ const CreateWalkinAdmission = ({ show, handleClose, setRefresh }: Props) => {
                     value={`${formData.session_id}:${formData.academic_year}`}
                     onChange={handleChange}
                     name="academic_year"
+                    disabled
                   >
                     <option value="">
                       {formData.academic_year
@@ -572,7 +574,7 @@ const CreateWalkinAdmission = ({ show, handleClose, setRefresh }: Props) => {
                         key={session.id}
                         value={`${session.id}:${session.academic_year}`}
                       >
-                        {session.academic_year}
+                        {session_name}
                       </option>
                     ))}
                   </Form.Select>

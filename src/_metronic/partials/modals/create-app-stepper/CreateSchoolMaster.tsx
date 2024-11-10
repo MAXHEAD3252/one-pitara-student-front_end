@@ -7,17 +7,22 @@ type Props = {
   show: boolean;
   onHide: () => void;
   setRefresh: (refreshState: boolean) => void;
-  userType:string;
+  userType: string;
 };
 
-const CreateSchoolMasterModal = ({ show, setRefresh, onHide, userType }: Props) => {
+const CreateSchoolMasterModal = ({
+  show,
+  setRefresh,
+  onHide,
+  userType,
+}: Props) => {
   const [passwordError, setPasswordError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [uploadStatus, setUploadStatus] = useState("");
   const [image, setImage] = useState<File | null>(null);
   const [otherDocument, setOtherDocument] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const {currentUser} = useAuth();
+  const { currentUser } = useAuth();
   const userId = currentUser?.id;
 
   const [formData, setFormData] = useState({
@@ -39,8 +44,7 @@ const CreateSchoolMasterModal = ({ show, setRefresh, onHide, userType }: Props) 
     user_id: userId,
     is_active: 1,
     disable_at: "0000-00-00",
-    userType:userType
-    
+    userType: userType,
   });
 
   const handleChange = (
@@ -130,13 +134,13 @@ const CreateSchoolMasterModal = ({ show, setRefresh, onHide, userType }: Props) 
 
   return (
     <Modal
-    id="kt_modal_create_school"
-    tabIndex={-1}
-    aria-hidden="true"
-    dialogClassName="modal-dialog modal-dialog-centered mw-1000px"
-    show={show}
-    onHide={onHide}
-    backdrop={true}
+      id="kt_modal_create_school"
+      tabIndex={-1}
+      aria-hidden="true"
+      dialogClassName="modal-dialog modal-dialog-centered mw-1000px"
+      show={show}
+      onHide={onHide}
+      backdrop={true}
     >
       <div
         className="modal-header"
@@ -162,172 +166,172 @@ const CreateSchoolMasterModal = ({ show, setRefresh, onHide, userType }: Props) 
       >
         
         
-          <Form>
-            <Row>
-              <Col md={6}>
-                <Form.Group controlId="formName">
-                  <Form.Label>Master Name:</Form.Label>
-                  <Form.Control
-                    type="text"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    placeholder="Enter name"
-                    required
-                  />
-                </Form.Group>
-              </Col>
-              <Col md={6}>
-                <Form.Group controlId="formSurname">
-                  <Form.Label>Master Surname:</Form.Label>
-                  <Form.Control
-                    type="text"
-                    name="surname"
-                    value={formData.surname}
-                    onChange={handleChange}
-                    placeholder="Enter surname"
-                    required
-                  />
-                </Form.Group>
-              </Col>
-            </Row>
+        <Form>
+          <Row>
+            <Col md={6}>
+              <Form.Group controlId="formName">
+                <Form.Label>Master Name:</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  placeholder="Enter name"
+                  required
+                />
+              </Form.Group>
+            </Col>
+            <Col md={6}>
+              <Form.Group controlId="formSurname">
+                <Form.Label>Master Surname:</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="surname"
+                  value={formData.surname}
+                  onChange={handleChange}
+                  placeholder="Enter surname"
+                  required
+                />
+              </Form.Group>
+            </Col>
+          </Row>
 
-            <Row>
-              <Col md={6}>
-                <Form.Group controlId="formContactNo">
-                  <Form.Label>Contact No:</Form.Label>
-                  <Form.Control
-                    type="number"
-                    name="contact_no"
-                    value={formData.contact_no}
-                    onChange={handleChange}
-                    placeholder="Enter contact number"
-                    required
-                  />
-                </Form.Group>
-              </Col>
-              <Col md={6}>
-                <Form.Group controlId="formEmergencyContactNo">
-                  <Form.Label>Emergency Contact No:</Form.Label>
-                  <Form.Control
-                    type="number"
-                    name="emergency_contact_no"
-                    value={formData.emergency_contact_no}
-                    onChange={handleChange}
-                    placeholder="Enter emergency contact number"
-                    required
-                  />
-                </Form.Group>
-              </Col>
-            </Row>
+          <Row>
+            <Col md={6}>
+              <Form.Group controlId="formContactNo">
+                <Form.Label>Contact No:</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="contact_no"
+                  value={formData.contact_no}
+                  onChange={handleChange}
+                  placeholder="Enter contact number"
+                  required
+                />
+              </Form.Group>
+            </Col>
+            <Col md={6}>
+              <Form.Group controlId="formEmergencyContactNo">
+                <Form.Label>Emergency Contact No:</Form.Label>
+                <Form.Control
+                  type="number"
+                  name="emergency_contact_no"
+                  value={formData.emergency_contact_no}
+                  onChange={handleChange}
+                  placeholder="Enter emergency contact number"
+                  required
+                />
+              </Form.Group>
+            </Col>
+          </Row>
 
-            <Row>
-              <Col md={6}>
-                <Form.Group controlId="formEmail">
-                  <Form.Label>Email:</Form.Label>
-                  <Form.Control
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    placeholder="Enter email"
-                    required
-                  />
-                </Form.Group>
-              </Col>
-              <Col md={6}>
-                <Form.Group controlId="formDOB">
-                  <Form.Label>Date of Birth:</Form.Label>
-                  <Form.Control
-                    type="date"
-                    name="dob"
-                    value={formData.dob}
-                    onChange={handleChange}
-                    required
-                  />
-                </Form.Group>
-              </Col>
-            </Row>
+          <Row>
+            <Col md={6}>
+              <Form.Group controlId="formEmail">
+                <Form.Label>Email:</Form.Label>
+                <Form.Control
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  placeholder="Enter email"
+                  required
+                />
+              </Form.Group>
+            </Col>
+            <Col md={6}>
+              <Form.Group controlId="formDOB">
+                <Form.Label>Date of Birth:</Form.Label>
+                <Form.Control
+                  type="date"
+                  name="dob"
+                  value={formData.dob}
+                  onChange={handleChange}
+                  required
+                />
+              </Form.Group>
+            </Col>
+          </Row>
 
-            <Row>
-              <Col md={6}>
-                <Form.Group controlId="formFacebook">
-                  <Form.Label>Facebook:</Form.Label>
-                  <Form.Control
-                    type="url"
-                    name="facebook"
-                    value={formData.facebook}
-                    onChange={handleChange}
-                    placeholder="Enter Facebook profile link"
-                  />
-                </Form.Group>
-              </Col>
-              <Col md={6}>
-                <Form.Group controlId="formTwitter">
-                  <Form.Label>Twitter:</Form.Label>
-                  <Form.Control
-                    type="url"
-                    name="twitter"
-                    value={formData.twitter}
-                    onChange={handleChange}
-                    placeholder="Enter Twitter profile link"
-                  />
-                </Form.Group>
-              </Col>
-            </Row>
+          <Row>
+            <Col md={6}>
+              <Form.Group controlId="formFacebook">
+                <Form.Label>Facebook:</Form.Label>
+                <Form.Control
+                  type="url"
+                  name="facebook"
+                  value={formData.facebook}
+                  onChange={handleChange}
+                  placeholder="Enter Facebook profile link"
+                />
+              </Form.Group>
+            </Col>
+            <Col md={6}>
+              <Form.Group controlId="formTwitter">
+                <Form.Label>Twitter:</Form.Label>
+                <Form.Control
+                  type="url"
+                  name="twitter"
+                  value={formData.twitter}
+                  onChange={handleChange}
+                  placeholder="Enter Twitter profile link"
+                />
+              </Form.Group>
+            </Col>
+          </Row>
 
-            <Row>
-              <Col md={6}>
-                <Form.Group controlId="formLinkedIn">
-                  <Form.Label>LinkedIn:</Form.Label>
-                  <Form.Control
-                    type="url"
-                    name="linkedin"
-                    value={formData.linkedin}
-                    onChange={handleChange}
-                    placeholder="Enter LinkedIn profile link"
-                  />
-                </Form.Group>
-              </Col>
-              <Col md={6}>
-                <Form.Group controlId="formInstagram">
-                  <Form.Label>Instagram:</Form.Label>
-                  <Form.Control
-                    type="url"
-                    name="instagram"
-                    value={formData.instagram}
-                    onChange={handleChange}
-                    placeholder="Enter Instagram profile link"
-                  />
-                </Form.Group>
-              </Col>
-            </Row>
+          <Row>
+            <Col md={6}>
+              <Form.Group controlId="formLinkedIn">
+                <Form.Label>LinkedIn:</Form.Label>
+                <Form.Control
+                  type="url"
+                  name="linkedin"
+                  value={formData.linkedin}
+                  onChange={handleChange}
+                  placeholder="Enter LinkedIn profile link"
+                />
+              </Form.Group>
+            </Col>
+            <Col md={6}>
+              <Form.Group controlId="formInstagram">
+                <Form.Label>Instagram:</Form.Label>
+                <Form.Control
+                  type="url"
+                  name="instagram"
+                  value={formData.instagram}
+                  onChange={handleChange}
+                  placeholder="Enter Instagram profile link"
+                />
+              </Form.Group>
+            </Col>
+          </Row>
 
-            <Row>
-              <Col md={6}>
-                <Form.Group controlId="formImage">
-                  <Form.Label>Image:</Form.Label>
-                  <Form.Control
-                    type="file"
-                    name="image"
-                    onChange={handleFileChange}
-                    accept="image/*"
-                  />
-                </Form.Group>
-              </Col>
-              <Col md={6}>
-                <Form.Group controlId="formOtherDocumentFile">
-                  <Form.Label>Other Document:</Form.Label>
-                  <Form.Control
-                    type="file"
-                    name="other_document_file"
-                    onChange={handleFileChange}
-                  />
-                </Form.Group>
-              </Col>
-            </Row>
-          </Form>
-<br />
+          <Row>
+            <Col md={6}>
+              <Form.Group controlId="formImage">
+                <Form.Label>Image:</Form.Label>
+                <Form.Control
+                  type="file"
+                  name="image"
+                  onChange={handleFileChange}
+                  accept="image/*"
+                />
+              </Form.Group>
+            </Col>
+            <Col md={6}>
+              <Form.Group controlId="formOtherDocumentFile">
+                <Form.Label>Other Document:</Form.Label>
+                <Form.Control
+                  type="file"
+                  name="other_document_file"
+                  onChange={handleFileChange}
+                />
+              </Form.Group>
+            </Col>
+          </Row>
+        </Form>
+        <br />
         <Button
           variant="primary"
           type="submit"
