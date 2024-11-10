@@ -139,10 +139,20 @@ const PrivateRoutes = () => {
   }, [userRole, subscriptionId, designation_id, school_id, role_id]);
 
   // Redirect to unauthorized if the path is not in authorized paths
+  const matchPath = (path: string, currentPath: string) => {
+    // Replace dynamic segments like ":schoolId" with a regex pattern to match any value
+    const pathRegex = new RegExp(
+      `^${path.replace(/:\w+/g, "[^/]+")}$`
+    );
+    return pathRegex.test(currentPath);
+  };
+  
   useEffect(() => {
     if (!loading && window.location.pathname) {
       const currentPath = window.location.pathname.split("?")[0];
-      const pathIsAuthorized = authorizedPaths.includes(currentPath);
+  
+      // Check if the current path matches any authorized path, accounting for dynamic segments
+      const pathIsAuthorized = authorizedPaths.some((path) => matchPath(path, currentPath));
   
       console.log("Authorized paths:", authorizedPaths);
       console.log("Current path:", currentPath);
@@ -157,6 +167,7 @@ const PrivateRoutes = () => {
       }
     }
   }, [authorizedPaths, loading, navigate]);
+  
   
 
   if (loading) {
