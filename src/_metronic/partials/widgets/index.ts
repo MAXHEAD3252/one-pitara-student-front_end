@@ -120,6 +120,7 @@ export * from './tables/TablesWidget60'
 export * from './tables/TablesWidget61'
 export * from './tables/TablesWidget62'
 export * from './tables/TablesWidget63'
+export * from './tables/TablesWidget69'
 
 // engage
 export * from './engage/EngageWidget1'

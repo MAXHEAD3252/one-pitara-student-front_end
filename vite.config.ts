@@ -8,9 +8,10 @@ export default defineConfig({
   build: {
     chunkSizeWarningLimit: 3000,
   },
-  resolve: {
-    alias: {
-      'react-big-calendar': 'react-big-calendar/lib',
+  server: {
+    watch: {
+      usePolling: true,
+      interval: 100, // adjust this value as necessary
     },
   },
   

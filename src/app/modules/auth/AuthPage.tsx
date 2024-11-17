@@ -9,14 +9,14 @@ import { FC } from 'react'
 
 const AuthPage = () => (
   <Routes>
-    <Route element={<AuthLayout />}>
-      <Route path='userlogin' element={<StudentLogin />} />
-      <Route path='login' element={<StaffLogin />} />
-      <Route path='superadmin/login' element={<SuperAdminLogin />} />
-      <Route path="forgot-password/:role" element={<ForgotPasswordWrapper />} />
-      <Route index element={<StaffLogin />} />
-    </Route>
-  </Routes>
+  <Route element={<AuthLayout />}>
+    <Route path='userlogin' element={<StudentLogin />} />
+    {/* <Route path='login' element={<StaffLogin />} /> */}
+    {/* <Route path='superadmin/login' element={<SuperAdminLogin />} /> */}
+    <Route path="forgot-password/:role" element={<ForgotPasswordWrapper />} />
+    <Route index element={<StudentLogin />} />
+  </Route>
+</Routes>
 )
 const ForgotPasswordWrapper: FC = () => {
   const { role } = useParams();

@@ -224,7 +224,7 @@ const CreateCollectFees = ({
 
   const handleGroupClick = (groupName: string) => {
     const groupDetails = groupedData.get(groupName);
-console.log(groupDetails);
+    console.log(groupDetails);
 
     if (!groupDetails) {
       console.error("No details found for group:", groupName);

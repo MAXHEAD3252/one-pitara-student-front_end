@@ -1,6 +1,7 @@
 import axios from "axios";
 import { AdminModel, AuthModel, StudentModel,SuperAdminModel} from "./_models";
 import { DOMAIN } from "../../../routing/ApiEndpoints";
+import { useDebounce } from "../../../../_metronic/helpers";
 
 const API_URL = import.meta.env.VITE_APP_API_URL;
 
@@ -128,7 +129,6 @@ export async function getStudentByToken(user_id: string) {
   const response = await axios.post<StudentModel>(GET_STUDENT_BY_ACCESSTOKEN_URL, {
     user_id,
    } );
-   
    return(
     response
    )
@@ -172,7 +172,8 @@ export async function getSchoolBySchoolId(token: string, school_id: string, sess
       ...(session_id !== undefined && { session_id })  // Only include session_id if it's defined
     });
     
-    const userData = response;  // Log the response data
+    const userData = response;
+    console.log(userData)
     return userData;
   } catch (error) {
     console.error('Error fetching admin by token:', error);

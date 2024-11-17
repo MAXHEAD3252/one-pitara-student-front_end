@@ -12,9 +12,11 @@ import { useLayout } from "../../../core";
 type Props = {
   to: string;
   title: string;
+  icon?: string;
 };
 
-const SidebarMenuItem: FC<Props & WithChildren> = ({ children, to, title }) => {
+const SidebarMenuItem: FC<Props & WithChildren> = ({ children, to, title,  icon,
+}) => {
   const { pathname } = useLocation();
   const isActive = pathname === to;
   const { config } = useLayout();
@@ -25,6 +27,7 @@ const SidebarMenuItem: FC<Props & WithChildren> = ({ children, to, title }) => {
       <Link
         className={clsx("menu-link")}
         to={to}
+        
         onMouseEnter={(e) => {
           e.currentTarget.style.backgroundColor = "#e4e6ef"; // Change background color on hover
           e.currentTarget.style.color = "#ff0000"; // Change text color on hover
@@ -48,7 +51,7 @@ const SidebarMenuItem: FC<Props & WithChildren> = ({ children, to, title }) => {
             fontWeight: "600",
           }}
         >
-       > {title}
+        {title}
         </span>
       </Link>
       {children}

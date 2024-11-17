@@ -1,25 +1,22 @@
-
-import {useState} from 'react'
-import * as Yup from 'yup'
-import clsx from 'clsx'
-import {Link} from 'react-router-dom'
-import {useFormik} from 'formik'
-import {getStudentByToken, loginStudent} from '../core/_requests'
-import {toAbsoluteUrl} from '../../../../_metronic/helpers'
-import {useAuth} from '../core/Auth'
+import { useState } from "react";
+import * as Yup from "yup";
+import clsx from "clsx";
+import { Link } from "react-router-dom";
+import { useFormik } from "formik";
+import { getStudentByToken, loginStudent } from "../core/_requests";
+import { toAbsoluteUrl } from "../../../../_metronic/helpers";
+import { useAuth } from "../core/Auth";
 
 const loginSchema = Yup.object().shape({
   username: Yup.string()
-    .min(3, 'Minimum 3 symbols')
-    .max(50, 'Maximum 50 symbols')
-    .required('Username is required'),
+    .min(3, "Minimum 3 symbols")
+    .max(50, "Maximum 50 symbols")
+    .required("Username is required"),
   password: Yup.string()
-    .min(3, 'Minimum 3 symbols')
-    .max(50, 'Maximum 50 symbols')
-    .required('Password is required'),
-})
-
-
+    .min(3, "Minimum 3 symbols")
+    .max(50, "Maximum 50 symbols")
+    .required("Password is required"),
+});
 
 /*
   Formik+YUP+Typescript:
@@ -28,166 +25,132 @@ const loginSchema = Yup.object().shape({
 */
 
 export function StudentLogin() {
-  const [loading, setLoading] = useState(false)
-  const {saveAuth, setCurrentUser} = useAuth()
-  
-  
+  const [loading, setLoading] = useState(false);
+  const { saveAuth, setCurrentUser } = useAuth();
+
   const formik = useFormik({
     initialValues: {
-      username:'',
-      password: ''
+      username: "",
+      password: "",
     },
     validationSchema: loginSchema,
-    onSubmit: async (values, {setStatus, setSubmitting}) => {
-      setLoading(true)
-        try {
-          const {data: auth} = await loginStudent(values.username, values.password)
-          saveAuth(auth)
+    onSubmit: async (values, { setStatus, setSubmitting }) => {
+      setLoading(true);
+      try {
+        const { data: auth } = await loginStudent(
+          values.username,
+          values.password
+        );
+        saveAuth(auth);
 
-          const {data: user} = await getStudentByToken(auth.user_id)
-          
-          setCurrentUser(user)
+        const { data: user } = await getStudentByToken(auth.user_id);
+        setCurrentUser(user);
       } catch (error) {
         // console.error(error)
-        saveAuth(undefined)
-        setStatus('The login details are incorrect')
-        setSubmitting(false)
-        setLoading(false)
+        saveAuth(undefined);
+        setStatus("The login details are incorrect");
+        setSubmitting(false);
+        setLoading(false);
       }
     },
-  })
-  
-  
+  });
 
   return (
     <form
-      className='form w-100'
+      className="form w-100"
       onSubmit={formik.handleSubmit}
       noValidate
-      id='kt_login_signin_form'
+      id="kt_login_signin_form"
     >
+      <div className="text-center mb-11">
+        <h1 className="text-gray-900 fw-bolder mb-3">Sign In Student</h1>
+        <div className="text-gray-500 fw-semibold fs-6">
+          Your Login Credentials
+        </div>
+      </div>
 
-       <div className='text-center mb-11'>
-         <h1 className='text-gray-900 fw-bolder mb-3'>Sign In Student</h1>
-         <div className='text-gray-500 fw-semibold fs-6'>Your Login Credentials</div>
-       </div>
-      
       {formik.status ? (
-        <div className='mb-lg-15 alert alert-danger'>
-          <div className='alert-text font-weight-bold'>{formik.status}</div>
+        <div className="mb-lg-15 alert alert-danger">
+          <div className="alert-text font-weight-bold">{formik.status}</div>
         </div>
       ) : (
-        <div className='mb-10 bg-light-info p-8 rounded'>
-          <div className='text-info'>
-            Use a valid account <strong>Username</strong> and  <strong>password</strong> to
-            continue.
+        <div className="mb-10 bg-light-info p-8 rounded">
+          <div className="text-info">
+            Use a valid account <strong>Username</strong> and{" "}
+            <strong>Password</strong> to continue.
           </div>
         </div>
       )}
 
-      {/* begin::Form group */}
-      <div className='fv-row mb-8'>
-        <label className='form-label fs-6 fw-bolder text-gray-900'>Username</label>
+      {/* Form group for Username */}
+      <div className="fv-row mb-8">
+        <label className="form-label fs-6 fw-bolder text-gray-900">
+          Username
+        </label>
         <input
-          placeholder='Username'
+          placeholder="Username"
           type="text"
-          {...formik.getFieldProps('username')}
-          className={clsx(
-            'form-control bg-transparent')}
-          name='username'
-          autoComplete='off'
+          {...formik.getFieldProps("username")}
+          className="form-control bg-transparent"
+          name="username"
+          autoComplete="off"
         />
         {formik.touched.username && formik.errors.username && (
-          <div className='fv-plugins-message-container'>
-            <span role='alert'>{formik.errors.username}</span>
+          <div className="fv-plugins-message-container">
+            <span role="alert">{formik.errors.username}</span>
           </div>
         )}
       </div>
-      {/* end::Form group */}
 
-      {/* begin::Form group */}
-      <div className='fv-row mb-3'>
-        <label className='form-label fw-bolder text-gray-900 fs-6 mb-0'>Password</label>
+      {/* Form group for Password */}
+      <div className="fv-row mb-3">
+        <label className="form-label fw-bolder text-gray-900 fs-6 mb-0">
+          Password
+        </label>
         <input
-          type='password'
-          placeholder='Password'
-          autoComplete='off'
-          {...formik.getFieldProps('password')}
-          className={clsx(
-            'form-control bg-transparent')}
+          type="password"
+          placeholder="Password"
+          autoComplete="off"
+          {...formik.getFieldProps("password")}
+          className="form-control bg-transparent"
         />
         {formik.touched.password && formik.errors.password && (
-          <div className='fv-plugins-message-container'>
-            <div className='fv-help-block'>
-              <span role='alert'>{formik.errors.password}</span>
+          <div className="fv-plugins-message-container">
+            <div className="fv-help-block">
+              <span role="alert">{formik.errors.password}</span>
             </div>
           </div>
         )}
       </div>
-      {/* end::Form group */}
 
-      {/* begin::Wrapper */}
-      <div className='d-flex flex-stack flex-wrap gap-3 fs-base fw-semibold mb-8'>
+      {/* Wrapper for "Forgot Password" link */}
+      <div className="d-flex flex-column flex-md-row flex-stack gap-3 fs-base fw-semibold mb-8">
         <div />
-
-        {/* begin::Link */}
-        <Link to='/auth/forgot-password/students' className='link-primary'>
-          Forgot Password ?
+        <Link to="/auth/forgot-password/students" className="link-primary">
+          Forgot Password?
         </Link>
-        {/* end::Link */}
       </div>
-      {/* end::Wrapper */}
 
-      {/* begin::Action */}
-      <div className='d-grid mb-10'>
+      {/* Submit button */}
+      <div className="d-grid mb-10">
         <button
-          type='submit'
-          id='kt_sign_in_submit'
-          className='btn btn-primary'
+          type="submit"
+          id="kt_sign_in_submit"
+          className="btn btn-primary"
           disabled={formik.isSubmitting || !formik.isValid}
         >
-          {!loading && <span className='indicator-label'>Continue</span>}
+          {!loading && <span className="indicator-label">Continue</span>}
           {loading && (
-            <span className='indicator-progress' style={{display: 'block'}}>
+            <span className="indicator-progress" style={{ display: "block" }}>
               Please wait...
-              <span className='spinner-border spinner-border-sm align-middle ms-2'></span>
+              <span className="spinner-border spinner-border-sm align-middle ms-2"></span>
             </span>
           )}
         </button>
       </div>
-      {/* end::Action */}
-
-      <div className='text-gray-500 text-center fw-semibold fs-6'>
-        Swtich Logins?{' '}
-        <Link to='/auth' className='link-primary'>
-          School Login
-        </Link>
-      </div>
     </form>
-  )
+  );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // import {useState} from 'react'
 // import * as Yup from 'yup'
